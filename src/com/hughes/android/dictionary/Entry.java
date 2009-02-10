@@ -12,6 +12,13 @@ public final class Entry {
   String lang1 = "";
   String lang2 = "";
 
+  Entry() {}
+
+  Entry(final String line) {
+    final boolean parsed = parseFromLine(line);
+    assert parsed;
+  }
+
   boolean parseFromLine(final String line) {
     final String[] parts = lineSplitPattern.split(line);
     if (parts.length != 2) {
@@ -42,6 +49,15 @@ public final class Entry {
     return token.toLowerCase().replaceAll("ß", "ss").replaceAll("ä", "ae")
         .replaceAll("ö", "oe").replaceAll("ü", "ue")
         .replaceAll("[^A-Za-z]", "");
+  }
+
+  public Object getFormattedEntry(final byte lang) {
+    return getAllText(lang) + "\n" + getAllText(OtherLang(lang));
+  }
+
+  private byte OtherLang(final byte lang) {
+    assert lang == LANG1 || lang == LANG2;
+    return lang == LANG1 ? LANG2 : LANG1;
   }
 
 }

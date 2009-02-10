@@ -4,10 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,19 +25,24 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.hughes.util.FileUtil;
+
 public class Dictionary extends Activity {
 
-  private String searchText = "";
-  
-  private List<Entry> entries = new ArrayList<Entry>(100);
+  public static final String INDEX_FORMAT = "%s_index_%d";
+  private File dictionaryFile = new File("/sdcard/dict-de-en.txt");
 
-  public static final String INDEX_FORMAT = "%s_index_%d"; 
-  private final File dictionaryFile = new File("/sdcard/dict-de-en.txt");
+  private RandomAccessFile dictionaryRaf;
   private final Index[] indexes = new Index[2];
-  private final byte lang = Entry.LANG1; 
-
-  private DictionaryListAdapter dictionaryListAdapter = new DictionaryListAdapter();
+  private final byte lang = Entry.LANG1;
   
+  final Handler uiHandler = new Handler();
+
+  private final Object mutex = new Object();
+  private Executor searchExecutor = Executors.newSingleThreadExecutor();
+  private SearchOperation searchOperation = null;
+  private List<Entry> entries = Collections.emptyList();
+  private DictionaryListAdapter dictionaryListAdapter = new DictionaryListAdapter();
 
   /** Called when the activity is first created. */
   @Override
@@ -44,57 +56,91 @@ public class Dictionary extends Activity {
 
     ListView searchResults = (ListView) findViewById(R.id.SearchResults);
     searchResults.setAdapter(dictionaryListAdapter);
-
     try {
       loadIndex();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-
+    onSearchTextChange("");
   }
 
   private void loadIndex() throws IOException, ClassNotFoundException {
     Log.d("THAD", "enter loadIndex");
-    indexes[0] = new Index(String.format(INDEX_FORMAT, dictionaryFile.getAbsolutePath(), Entry.LANG1));
+    indexes[0] = new Index(String.format(INDEX_FORMAT, dictionaryFile
+        .getAbsolutePath(), Entry.LANG1));
+    dictionaryRaf = new RandomAccessFile(dictionaryFile, "r");
     Log.d("THAD", "exit loadIndex");
   }
 
   void onSearchTextChange(final String searchText) {
-    this.searchText = searchText;
-    final Index.Node node = indexes[lang].lookup(searchText);
+    Log.d("THAD", "onSearchTextChange: " + searchText);
+    synchronized (mutex) {
+      if (searchOperation != null) {
+        searchOperation.interrupted.set(true);
+      }
+      searchOperation = new SearchOperation(searchText);
+    }
+    searchExecutor.execute(searchOperation);
+  }
 
-    try {
-      final long length = dictionaryFile.length();
-      Log.d("THAD", "Dictionary file length=" + length);
+  private final class SearchOperation implements Runnable {
+    final String searchText;
+    final int count = 100;
+    final AtomicBoolean interrupted = new AtomicBoolean(false);
+    
+    public SearchOperation(final String searchText) {
+      this.searchText = searchText;
+    }
+    
+    public void run() {
+      Log.d("THAD", "SearchOperation: " + searchText);
+      final List<Entry> newEntries = new ArrayList<Entry>(count);
+      try {
+        final Index.Node node = indexes[lang].lookup(searchText);
+        final Set<Integer> entryOffsets = new LinkedHashSet<Integer>(count);
+        node.getDescendantEntryOffsets(entryOffsets, count);
+        for (final int entryOffset : entryOffsets) {
+          if (interrupted.get()) {
+            Log.d("THAD", "Interrupted while parsing entries.");
+            return;
+          }
+          final String line = FileUtil.readLine(dictionaryRaf, entryOffset);
+          final Entry entry = new Entry(line);
+          newEntries.add(entry);
+        }
+      } catch (IOException e) {
+        Log.e("THAD", "Search failure.", e);
+      }
 
-      final RandomAccessFile raf = new RandomAccessFile(dictionaryFile, "r");
-      raf.seek(length / 2);
-//      final InputStreamReader dictionaryReader = new InputStreamReader(new BufferedInputStream(new FileInputStream("/sdcard/dict-de-en.txt")));
-//      skip(dictionaryReader, length / 2);
-
-      for (int i = 0; i < entries.length; ++i) {
-        entries[i] = raf.readLine();
-        raf.skipBytes((int) (length / 100000));
+      synchronized (mutex) {
+        if (interrupted.get()) {
+          return;
+        }
+        entries = newEntries;
       }
       
-      raf.close();
-
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      uiHandler.post(new Runnable() {
+        public void run() {
+          synchronized (mutex) {
+            dictionaryListAdapter.notifyDataSetChanged();
+          }
+        }});
     }
-
-    dictionaryListAdapter.notifyDataSetChanged();
   }
-  
+
   private class DictionaryListAdapter extends BaseAdapter {
 
     public int getCount() {
-      return 1000000;
-
+      synchronized (mutex) {
+        return entries.size();
+      }
     }
 
     public Object getItem(int position) {
-      return searchText + position + entries[position % entries.length];
+      synchronized (mutex) {
+        assert position < entries.size();
+        return entries.get(position).getFormattedEntry(lang);
+      }
     }
 
     public long getItemId(int position) {
@@ -125,6 +171,11 @@ public class Dictionary extends Activity {
 
     public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
     }
+  }
+
+  public void run() {
+    // TODO Auto-generated method stub
+
   }
 
 }
