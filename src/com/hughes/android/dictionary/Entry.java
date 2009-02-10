@@ -60,4 +60,8 @@ public final class Entry {
     return lang == LANG1 ? LANG2 : LANG1;
   }
 
+  public String getRawText() {
+    return getAllText(LANG1) + " :: " + getAllText(LANG2);
+  }
+
 }

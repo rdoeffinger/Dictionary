@@ -28,14 +28,14 @@ public final class Index {
     return lookup(text, 0, root);
   }
   
-  private Node lookup(final String text, final int pos, final Node n) throws IOException {
+  private Node lookup(final String text, final int pos, final Node node) throws IOException {
     if (pos == text.length()) {
-      return n;
+      return node;
     }
     
     // Check whether any prefix of text is a child.
     for (int i = pos + 1; i <= text.length(); ++i) {
-      final Integer child = n.children.get(text.substring(pos, i));
+      final Integer child = node.children.get(text.substring(pos, i));
       if (child != null) {
         return lookup(text, i, getNode(text.substring(0, i), child));
       }
@@ -43,13 +43,13 @@ public final class Index {
     
     // Check whether any child starts with what's left of text.
     final String remainder = text.substring(pos);
-    for (final Map.Entry<String, Integer> childEntry : n.children.entrySet()) {
+    for (final Map.Entry<String, Integer> childEntry : node.children.entrySet()) {
       if (childEntry.getKey().startsWith(remainder)) {
-        return getNode(n.text + childEntry.getKey(), childEntry.getValue());
+        return getNode(node.text + childEntry.getKey(), childEntry.getValue());
       }
     }
     
-    return n;
+    return node;
   }
   
   private Node getNode(final String text, final int indexOffset) throws IOException {
