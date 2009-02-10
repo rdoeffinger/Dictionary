@@ -1,7 +1,10 @@
 package com.hughes.android.dictionary;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +15,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,20 +23,16 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.hughes.util.FileUtil;
@@ -41,6 +41,7 @@ public class Dictionary extends ListActivity {
 
   public static final String INDEX_FORMAT = "%s_index_%d";
   private File dictionaryFile = new File("/sdcard/dict-de-en.txt");
+  private File wordList = new File("/sdcard/wordList.txt");
 
   private RandomAccessFile dictionaryRaf;
   private final Index[] indexes = new Index[2];
@@ -84,6 +85,14 @@ public class Dictionary extends ListActivity {
     }));
   }
 
+  private void loadIndex() throws IOException, ClassNotFoundException {
+    Log.d("THAD", "enter loadIndex");
+    indexes[0] = new Index(String.format(INDEX_FORMAT, dictionaryFile
+        .getAbsolutePath(), Entry.LANG1));
+    dictionaryRaf = new RandomAccessFile(dictionaryFile, "r");
+    Log.d("THAD", "exit loadIndex");
+  }
+
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v,
       ContextMenuInfo menuInfo) {
@@ -93,9 +102,16 @@ public class Dictionary extends ListActivity {
     final MenuItem addToWordlist = menu.add("Add to wordlist.");
     addToWordlist.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(MenuItem item) {
-        Log
-            .d("THAD", "context menu: "
-                + entries.get(selectedItem).getRawText());
+        final String rawText = entries.get(selectedItem).getRawText();
+        Log.d("THAD", "Writing : "
+                + rawText);
+        try {
+          final OutputStream out = new FileOutputStream(wordList, true);
+          out.write((rawText + "\n").getBytes());
+          out.close();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
         return false;
       }
     });
@@ -106,14 +122,6 @@ public class Dictionary extends ListActivity {
     Log.d("THAD", "Clicked: " + entries.get(position).getRawText());
     selectedItem = position;
     openContextMenu(getListView());
-  }
-
-  private void loadIndex() throws IOException, ClassNotFoundException {
-    Log.d("THAD", "enter loadIndex");
-    indexes[0] = new Index(String.format(INDEX_FORMAT, dictionaryFile
-        .getAbsolutePath(), Entry.LANG1));
-    dictionaryRaf = new RandomAccessFile(dictionaryFile, "r");
-    Log.d("THAD", "exit loadIndex");
   }
 
   void onSearchTextChange(final String searchText) {
@@ -220,11 +228,6 @@ public class Dictionary extends ListActivity {
 
     public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
     }
-  }
-
-  public void run() {
-    // TODO Auto-generated method stub
-
   }
 
 }
