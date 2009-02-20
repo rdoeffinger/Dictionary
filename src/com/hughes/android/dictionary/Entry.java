@@ -45,12 +45,6 @@ public final class Entry {
     return text;
   }
 
-  public String normalizeToken(final String token, final byte lang) {
-    return token.toLowerCase().replaceAll("ß", "ss").replaceAll("ä", "ae")
-        .replaceAll("ö", "oe").replaceAll("ü", "ue")
-        .replaceAll("[^A-Za-z]", "");
-  }
-
   public Object getFormattedEntry(final byte lang) {
     return getAllText(lang) + "\n" + getAllText(OtherLang(lang));
   }
