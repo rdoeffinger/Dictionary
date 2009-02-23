@@ -45,7 +45,7 @@ public final class Entry {
     return text;
   }
 
-  public Object getFormattedEntry(final byte lang) {
+  public String getFormattedEntry(final byte lang) {
     return getAllText(lang) + "\n" + getAllText(OtherLang(lang));
   }
 

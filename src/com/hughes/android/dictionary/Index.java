@@ -110,26 +110,57 @@ public final class Index {
         tokenToOffsets.put(token, offsets);
       }
       
+      // TODO: move this up, and defer the loading of the other stuff until it's needed.
       descendantTokenCount = file.readInt();
       descendantEntryCount = file.readInt();
+    }
+    
+    @Override
+    public String toString() {
+      return String.format("%s(%d,%d)", nodeHandle.normalizedToken, getThisCount(), getDescendantCount());
     }
     
     public int getDescendantCount() {
       return descendantEntryCount + descendantTokenCount;
     }
-
-    public Object getDescendant(final int position) throws IOException {
-      if (position < getDescendantCount()) {
-        return null;
+    
+    public int getThisCount() {
+      int count = tokenToOffsets.size();
+      for (final int[] offsets : tokenToOffsets.values()) {
+        count += offsets.length;
       }
+      return count;
+    }
+
+    public Object getDescendant(int position) throws IOException {
+      assert position < getDescendantCount(); 
+
+//      System.out.println("getD: " + this + ", " + position);
+      if (position < getThisCount()) {
+        for (final Map.Entry<String, int[]> tokenEntry : tokenToOffsets.entrySet()) {
+          if (position == 0) {
+            return tokenEntry.getKey();
+          }
+          --position;
+          if (position < tokenEntry.getValue().length) {
+            return tokenEntry.getValue()[position];
+          }
+          position -= tokenEntry.getValue().length;
+        }
+        assert false;
+      }
+      position -= getThisCount();
+      
+      
       for (final Map.Entry<String,NodeHandle> childEntry : children.entrySet()) {
         final Node child = childEntry.getValue().getNode();
         if (position < child.getDescendantCount()) {
-          
-        } else {
-          position -= child.getDescendantCount();
+          return child.getDescendant(position);
         }
+        position -= child.getDescendantCount();
       }
+      assert false;
+      return null;
     }
 
     public void getDescendantEntryOffsets(final Set<Integer> entryOffsets, int maxSize) throws IOException {
