@@ -67,19 +67,19 @@ public final class Entry implements RAFSerializable<Entry> {
     return text;
   }
 
-  public String getFormattedEntry(final byte lang) {
-    return getAllText(lang) + "\n" + getAllText(OtherLang(lang));
+  String getFormattedEntry(final byte lang) {
+    return getAllText(lang) + "\n" + getAllText(otherLang(lang));
   }
 
-  private byte OtherLang(final byte lang) {
+  String getRawText() {
+    return getAllText(LANG1) + " :: " + getAllText(LANG2);
+  }
+  
+  static byte otherLang(final byte lang) {
     assert lang == LANG1 || lang == LANG2;
     return lang == LANG1 ? LANG2 : LANG1;
   }
 
-  public String getRawText() {
-    return getAllText(LANG1) + " :: " + getAllText(LANG2);
-  }
-  
   
 
   static Entry parseFromLine(final String line) {

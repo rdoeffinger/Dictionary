@@ -3,12 +3,16 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<EditText android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:id="@+id/SearchText"
-		android:hint="Search Text"></EditText>
+	<LinearLayout android:layout_height="wrap_content" android:id="@+id/SearchBarLinearLayout" android:layout_width="wrap_content">
+
+
+</LinearLayout><TableLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/SearchBarTableLayout" android:stretchColumns="0">
+<TableRow android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/SearchBarTableRow"><EditText android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/SearchText" android:hint="Search Text"></EditText><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/LangButton" android:text="LANG"></Button><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/DownButton" android:text="v"></Button><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/UpButton" android:text="^"></Button></TableRow>
+</TableLayout>
 
 	<ListView android:id="@id/android:list"
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
 		android:choiceMode="singleChoice" android:clickable="true"></ListView>
+
 
 </LinearLayout>
