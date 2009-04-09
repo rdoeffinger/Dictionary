@@ -3,7 +3,6 @@ package com.hughes.android.dictionary;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,45 +24,46 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
       IndexEntry.RAF_FACTORY);
 
   final List<Entry> entries;
-  final Language[] languages = new Language[2];
+  final LanguageData[] languageDatas = new LanguageData[2];
 
-  public Dictionary(final String lang0, final String lang1) {
-    languages[0] = new Language(lang0, Entry.LANG1);
-    languages[1] = new Language(lang1, Entry.LANG2);
+  public Dictionary(final Language language0, final Language language1) {
+    languageDatas[0] = new LanguageData(language0, Entry.LANG1);
+    languageDatas[1] = new LanguageData(language1, Entry.LANG2);
     entries = new ArrayList<Entry>();
   }
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
     entries = CachingList.create(FileList.create(raf, ENTRY_SERIALIZER, raf
         .getFilePointer()), 10000);
-    languages[0] = new Language(raf, Entry.LANG1);
-    languages[1] = new Language(raf, Entry.LANG2);
+    languageDatas[0] = new LanguageData(raf, Entry.LANG1);
+    languageDatas[1] = new LanguageData(raf, Entry.LANG2);
   }
 
   public void write(RandomAccessFile raf) throws IOException {
     FileList.write(raf, entries, ENTRY_SERIALIZER);
-    languages[0].write(raf);
-    languages[1].write(raf);
+    languageDatas[0].write(raf);
+    languageDatas[1].write(raf);
   }
 
-  final class Language implements RAFSerializable<Language> {
+  final class LanguageData implements RAFSerializable<LanguageData> {
+    final Language language;
     final byte lang;
-    final String symbol;
     final List<Row> rows;
     final List<IndexEntry> sortedIndex;
-    final Comparator<String> comparator = EntryFactory.entryFactory
-        .getEntryComparator();
 
-    Language(final String symbol, final byte lang) {
+    LanguageData(final Language language, final byte lang) {
+      this.language = language;
       this.lang = lang;
-      this.symbol = symbol;
       rows = new ArrayList<Row>();
       sortedIndex = new ArrayList<IndexEntry>();
     }
 
-    Language(final RandomAccessFile raf, final byte lang) throws IOException {
+    LanguageData(final RandomAccessFile raf, final byte lang) throws IOException {
+      language = Language.lookup(raf.readUTF());
+      if (language == null) {
+        throw new RuntimeException("Unknown language.");
+      }
       this.lang = lang;
-      symbol = raf.readUTF();
       rows = CachingList.create(UniformFileList.create(raf, ROW_SERIALIZER, raf
           .getFilePointer()), 10000);
       sortedIndex = CachingList.create(FileList.create(raf,
@@ -71,7 +71,7 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
     }
 
     public void write(final RandomAccessFile raf) throws IOException {
-      raf.writeUTF(symbol);
+      raf.writeUTF(language.symbol);
       UniformFileList.write(raf, rows, ROW_SERIALIZER, 4);
       FileList.write(raf, sortedIndex, INDEX_ENTRY_SERIALIZER);
     }
@@ -93,10 +93,10 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
         }
         final IndexEntry midEntry = sortedIndex.get(mid);
 
-        final int comp = comparator.compare(word, midEntry.word.toLowerCase());
+        final int comp = language.tokenComparator.compare(word, midEntry.word.toLowerCase());
         if (comp == 0) {
           int result = mid;
-          while (result > 0 && comparator.compare(word, sortedIndex.get(result - 1).word.toLowerCase()) == 0) {
+          while (result > 0 && language.tokenComparator.compare(word, sortedIndex.get(result - 1).word.toLowerCase()) == 0) {
             --result;
             if (interrupted.get()) {
               return result;
@@ -109,12 +109,32 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
           start = mid + 1;
         }
       }
-      return start;
+      return Math.min(sortedIndex.size() - 1, start);
+    }
+
+    public int getTokenRow(final int rowIndex) {
+      int r = rowIndex;
+      Row row;
+      while (true) {
+        row = rows.get(r); 
+        if (row.isToken() || row.tokenRow != -1) {
+          break;
+        }
+        --r;
+      }
+      final int result = row.isToken() ? r : row.tokenRow;
+      for (; r <= rowIndex; ++r) {
+        rows.get(r).tokenRow = result;
+      }
+      assert rows.get(result).isToken();
+      return result;
     }
   }
 
   public static final class Row implements RAFSerializable<Row> {
     final int index;
+
+    int tokenRow = -1;
 
     public Row(final int index) {
       this.index = index;

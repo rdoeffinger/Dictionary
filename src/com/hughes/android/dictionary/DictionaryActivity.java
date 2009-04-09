@@ -10,12 +10,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.ListActivity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,16 +34,17 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.hughes.android.dictionary.Dictionary.IndexEntry;
-import com.hughes.android.dictionary.Dictionary.Language;
+import com.hughes.android.dictionary.Dictionary.LanguageData;
 import com.hughes.android.dictionary.Dictionary.Row;
 
 public class DictionaryActivity extends ListActivity {
 
   private RandomAccessFile dictRaf = null;
   private Dictionary dictionary = null;
-  private Language activeLanguge = null;
+  private LanguageData activeLangaugeData = null;
 
   private File wordList = new File("/sdcard/wordList.txt");
 
@@ -51,7 +54,8 @@ public class DictionaryActivity extends ListActivity {
   private SearchOperation searchOperation = null;
   // private List<Entry> entries = Collections.emptyList();
   private DictionaryListAdapter dictionaryListAdapter = new DictionaryListAdapter();
-  private int selectedRow = -1;
+  private int selectedRowIndex = -1;
+  private int selectedTokenRowIndex = -1;
 
   /** Called when the activity is first created. */
   @Override
@@ -62,7 +66,7 @@ public class DictionaryActivity extends ListActivity {
     try {
       dictRaf = new RandomAccessFile("/sdcard/de-en.dict", "r");
       dictionary = new Dictionary(dictRaf);
-      activeLanguge = dictionary.languages[Entry.LANG1];
+      activeLangaugeData = dictionary.languageDatas[Entry.LANG1];
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -75,6 +79,8 @@ public class DictionaryActivity extends ListActivity {
     setListAdapter(dictionaryListAdapter);
 
     onSearchTextChange("");
+    
+    // Language button.
     final Button langButton = (Button) findViewById(R.id.LangButton);
     langButton.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
@@ -82,18 +88,62 @@ public class DictionaryActivity extends ListActivity {
       }});
     updateLangButton();
 
+    final Button upButton = (Button) findViewById(R.id.UpButton);
+    upButton.setOnClickListener(new OnClickListener() {
+      public void onClick(View v) {
+        final int destRowIndex;
+        final Row tokenRow = activeLangaugeData.rows.get(selectedTokenRowIndex);
+        assert tokenRow.isToken();
+        final int prevTokenIndex = tokenRow.getIndex() - 1;
+        if (selectedRowIndex == selectedTokenRowIndex && selectedRowIndex > 0) {
+          destRowIndex = activeLangaugeData.sortedIndex.get(prevTokenIndex).startRow;
+        } else {
+          destRowIndex = selectedTokenRowIndex;
+        }
+        jumpToRow(destRowIndex);
+      }});
+    final Button downButton = (Button) findViewById(R.id.DownButton);
+    downButton.setOnClickListener(new OnClickListener() {
+      public void onClick(View v) {
+        final Row tokenRow = activeLangaugeData.rows.get(selectedTokenRowIndex);
+        assert tokenRow.isToken();
+        final int nextTokenIndex = tokenRow.getIndex() + 1;
+        final int destRowIndex;
+        if (nextTokenIndex < activeLangaugeData.sortedIndex.size()) {
+          destRowIndex = activeLangaugeData.sortedIndex.get(nextTokenIndex).startRow;
+        } else {
+          destRowIndex = activeLangaugeData.rows.size() - 1;
+        }
+        jumpToRow(destRowIndex);
+      }});
+
+    // Context menu.
     registerForContextMenu(getListView());
-    getListView().setOnItemLongClickListener((new OnItemLongClickListener() {
-      public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+    
+    getListView().setOnItemSelectedListener(new OnItemSelectedListener() {
+      public void onItemSelected(AdapterView<?> arg0, View arg1, int rowIndex,
           long arg3) {
-        selectedRow = arg2;
+        Log.d("THAD", "onItemSelected: " + rowIndex);
+        selectedRowIndex = rowIndex;
+        selectedTokenRowIndex = activeLangaugeData.getTokenRow(rowIndex);
+        updateSearchText();
+      }
+
+      public void onNothingSelected(AdapterView<?> arg0) {
+      }});
+    
+    
+    getListView().setOnItemLongClickListener((new OnItemLongClickListener() {
+      public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int rowIndex,
+          long arg3) {
+        selectedRowIndex = rowIndex;
         return false;
       }
     }));
   }
   
   public String getSelectedRowText() {
-    return activeLanguge.rowToString(activeLanguge.rows.get(selectedRow));
+    return activeLangaugeData.rowToString(activeLangaugeData.rows.get(selectedRowIndex));
   }
 
   private MenuItem switchLanguageMenuItem = null;
@@ -106,7 +156,7 @@ public class DictionaryActivity extends ListActivity {
   
   @Override
   public boolean onPrepareOptionsMenu(final Menu menu) {
-    switchLanguageMenuItem.setTitle(String.format("Switch to %s", dictionary.languages[Entry.otherLang(activeLanguge.lang)].symbol));
+    switchLanguageMenuItem.setTitle(String.format("Switch to %s", dictionary.languageDatas[Entry.otherLang(activeLangaugeData.lang)].language.symbol));
     return super.onPrepareOptionsMenu(menu);
   }
   
@@ -121,7 +171,7 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v,
       ContextMenuInfo menuInfo) {
-    if (selectedRow == -1) {
+    if (selectedRowIndex == -1) {
       return;
     }
     final MenuItem addToWordlist = menu.add("Add to wordlist.");
@@ -142,7 +192,7 @@ public class DictionaryActivity extends ListActivity {
   }
   
   void switchLanguage() {
-    activeLanguge = dictionary.languages[(activeLanguge == dictionary.languages[0]) ? 1 : 0];
+    activeLangaugeData = dictionary.languageDatas[(activeLangaugeData == dictionary.languageDatas[0]) ? 1 : 0];
     updateLangButton();
     dictionaryListAdapter.notifyDataSetChanged();
     final EditText searchText = (EditText) findViewById(R.id.SearchText);
@@ -151,12 +201,26 @@ public class DictionaryActivity extends ListActivity {
   
   void updateLangButton() {
     final Button langButton = (Button) findViewById(R.id.LangButton);
-    langButton.setText(dictionary.languages[activeLanguge.lang].symbol.toUpperCase());
+    langButton.setText(activeLangaugeData.language.symbol);
+  }
+  
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (event.getUnicodeChar() != 0) {
+      final EditText searchText = (EditText) findViewById(R.id.SearchText);
+      if (!searchText.hasFocus()) {
+        searchText.setText("" + (char)event.getUnicodeChar());
+        onSearchTextChange(searchText.getText().toString());
+        searchText.requestFocus();
+      }
+      return true;
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override
   protected void onListItemClick(ListView l, View v, int row, long id) {
-    selectedRow = row;
+    selectedRowIndex = row;
     Log.d("THAD", "Clicked: " + getSelectedRowText());
     openContextMenu(getListView());
   }
@@ -170,9 +234,19 @@ public class DictionaryActivity extends ListActivity {
     searchExecutor.execute(searchOperation);
   }
   
-  private void jumpToRow(final int row) {
-    selectedRow = row;
-    getListView().setSelection(row);
+  private void jumpToRow(final int rowIndex) {
+    selectedRowIndex = rowIndex;
+    selectedTokenRowIndex = activeLangaugeData.getTokenRow(rowIndex);
+    getListView().setSelection(rowIndex);
+    getListView().setSelected(true);
+    updateSearchText();
+  }
+
+  private void updateSearchText() {
+    final EditText searchText = (EditText) findViewById(R.id.SearchText);
+    if (!searchText.hasFocus()) {
+      searchText.setText(activeLangaugeData.rowToString(activeLangaugeData.rows.get(selectedTokenRowIndex)));
+    }
   }
 
   private final class SearchOperation implements Runnable {
@@ -185,11 +259,11 @@ public class DictionaryActivity extends ListActivity {
 
     public void run() {
       Log.d("THAD", "SearchOperation: " + searchText);
-      final int indexLocation = activeLanguge.lookup(searchText, interrupted);
+      final int indexLocation = activeLangaugeData.lookup(searchText, interrupted);
       if (interrupted.get()) {
         return;
       }
-      final IndexEntry indexEntry = activeLanguge.sortedIndex
+      final IndexEntry indexEntry = activeLangaugeData.sortedIndex
           .get(indexLocation);
       uiHandler.post(new Runnable() {
         public void run() {
@@ -202,21 +276,23 @@ public class DictionaryActivity extends ListActivity {
   private class DictionaryListAdapter extends BaseAdapter {
 
     public int getCount() {
-      return activeLanguge.rows.size();
+      return activeLangaugeData.rows.size();
     }
 
-    public Dictionary.Row getItem(int position) {
-      assert position < activeLanguge.rows.size();
-      return activeLanguge.rows.get(position);
+    public Dictionary.Row getItem(int rowIndex) {
+      assert rowIndex < activeLangaugeData.rows.size();
+      return activeLangaugeData.rows.get(rowIndex);
     }
 
-    public long getItemId(int position) {
-      return position;
+    public long getItemId(int rowIndex) {
+      return rowIndex;
     }
 
-    public View getView(final int position, final View convertView,
+    public View getView(final int rowIndex, final View convertView,
         final ViewGroup parent) {
-      final Row row = getItem(position);
+      final Row row = getItem(rowIndex);
+      
+      // Token row.
       if (row.isToken()) {
         TextView result = null;
         if (convertView instanceof TextView) {
@@ -224,53 +300,56 @@ public class DictionaryActivity extends ListActivity {
         } else {
           result = new TextView(parent.getContext());
         }
-        result.setText(activeLanguge.rowToString(row));
+//        result.setBackgroundColor(Color.WHITE);
+        result.setText(activeLangaugeData.rowToString(row));
         result.setTextAppearance(parent.getContext(),
             android.R.style.TextAppearance_Large);
         return result;
       }
 
-      TableLayout result = null;
-      if (convertView instanceof TableLayout) {
-        result = (TableLayout) convertView;
-      } else {
-        result = new TableLayout(parent.getContext());
-      }
+      // Entry row(s).
+      final TableLayout result = new TableLayout(parent.getContext());
 
-      TableRow tableRow = null;
-      if (result.getChildCount() != 1) {
-        result.removeAllViews();
-        tableRow = new TableRow(result.getContext());
-        result.addView(tableRow);
-      } else {
-        tableRow = (TableRow) result.getChildAt(0);
-      }
-      TextView column1 = null;
-      TextView column2 = null;
-      if (tableRow.getChildCount() != 2
-          || !(tableRow.getChildAt(0) instanceof TextView)
-          || !(tableRow.getChildAt(1) instanceof TextView)) {
-        tableRow.removeAllViews();
-        column1 = new TextView(tableRow.getContext());
-        column2 = new TextView(tableRow.getContext());
-        tableRow.addView(column1);
-        tableRow.addView(column2);
-      } else {
-        column1 = (TextView) tableRow.getChildAt(0);
-        column2 = (TextView) tableRow.getChildAt(1);
-      }
-      column1.setWidth(100);
-      column2.setWidth(100);
-      // column1.setTextAppearance(parent.getContext(), android.R.style.Text);
       final Entry entry = dictionary.entries.get(row.getIndex());
-      column1.setText(entry.getAllText(activeLanguge.lang));
-      column2.setText(entry.getAllText(Entry.otherLang(activeLanguge.lang)));
-      // result.setTextAppearance(parent.getContext(),
-      // android.R.style.TextAppearance_Small);
+      final int rowCount = entry.getRowCount();
+      for (int r = 0; r < rowCount; ++r) {
+        final TableRow tableRow = new TableRow(result.getContext());
+//        if (r > 0) {
+//          tableRow.setBackgroundColor(Color.DKGRAY);  
+//        }
+        
+        TextView column1 = new TextView(tableRow.getContext());
+        TextView column2 = new TextView(tableRow.getContext());
+        final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
+        layoutParams.weight = 0.5f;
+        
+        if (r>0){
+          final TextView spacer = new TextView(tableRow.getContext());
+          spacer.setText(r == 0 ? "• " : " • ");
+          tableRow.addView(spacer);
+        }
+        tableRow.addView(column1, layoutParams);
+        if (r>0){
+          final TextView spacer = new TextView(tableRow.getContext());
+          spacer.setText(r == 0 ? "• " : " • ");
+          tableRow.addView(spacer);
+        }
+        tableRow.addView(column2, layoutParams);
+        
+        column1.setWidth(1);
+        column2.setWidth(1);
+        // column1.setTextAppearance(parent.getContext(), android.R.style.Text);
+        
+        // TODO: highlight query word in entries.
+        column1.setText(entry.getAllText(activeLangaugeData.lang)[r]);
+        column2.setText(entry.getAllText(Entry.otherLang(activeLangaugeData.lang))[r]);
+        
+        result.addView(tableRow);
+      }
+      
       return result;
-
     }
-  }
+  }  // DictionaryListAdapter
 
   private class DictionaryTextWatcher implements TextWatcher {
     public void afterTextChanged(Editable searchText) {
