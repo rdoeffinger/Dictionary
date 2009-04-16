@@ -112,29 +112,30 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
       return Math.min(sortedIndex.size() - 1, start);
     }
 
-    public int getTokenRow(final int rowIndex) {
+    public IndexEntry getIndexEntryForRow(final int rowIndex) {
+      // TODO: this kinda blows.
       int r = rowIndex;
       Row row;
       while (true) {
         row = rows.get(r); 
-        if (row.isToken() || row.tokenRow != -1) {
+        if (row.isToken() || row.indexEntry != null) {
           break;
         }
         --r;
       }
-      final int result = row.isToken() ? r : row.tokenRow;
+      final IndexEntry indexEntry = row.isToken() ? sortedIndex.get(row.getIndex()) : row.indexEntry;
       for (; r <= rowIndex; ++r) {
-        rows.get(r).tokenRow = result;
+        rows.get(r).indexEntry = indexEntry;
       }
-      assert rows.get(result).isToken();
-      return result;
+      assert false && rows.get(indexEntry.startRow).isToken();
+      return indexEntry;
     }
   }
 
   public static final class Row implements RAFSerializable<Row> {
     final int index;
 
-    int tokenRow = -1;
+    IndexEntry indexEntry = null;
 
     public Row(final int index) {
       this.index = index;

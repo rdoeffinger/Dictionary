@@ -10,11 +10,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.ListActivity;
-import android.graphics.Color;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.Spannable;
 import android.text.TextWatcher;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -56,6 +59,8 @@ public class DictionaryActivity extends ListActivity {
   private DictionaryListAdapter dictionaryListAdapter = new DictionaryListAdapter();
   private int selectedRowIndex = -1;
   private int selectedTokenRowIndex = -1;
+  
+  private final Intent aboutIntent = new Intent().setClassName(AboutActivity.class.getPackage().getName(), AboutActivity.class.getCanonicalName());
 
   /** Called when the activity is first created. */
   @Override
@@ -73,8 +78,7 @@ public class DictionaryActivity extends ListActivity {
 
     setContentView(R.layout.main);
 
-    final EditText searchText = (EditText) findViewById(R.id.SearchText);
-    searchText.addTextChangedListener(new DictionaryTextWatcher());
+    getSearchText().addTextChangedListener(new DictionaryTextWatcher());
 
     setListAdapter(dictionaryListAdapter);
 
@@ -117,22 +121,24 @@ public class DictionaryActivity extends ListActivity {
         jumpToRow(destRowIndex);
       }});
 
-    // Context menu.
+    // ContextMenu.
     registerForContextMenu(getListView());
-    
+
+    // ItemSelectedListener.
     getListView().setOnItemSelectedListener(new OnItemSelectedListener() {
       public void onItemSelected(AdapterView<?> arg0, View arg1, int rowIndex,
           long arg3) {
         Log.d("THAD", "onItemSelected: " + rowIndex);
         selectedRowIndex = rowIndex;
-        selectedTokenRowIndex = activeLangaugeData.getTokenRow(rowIndex);
+        selectedTokenRowIndex = activeLangaugeData.getIndexEntryForRow(rowIndex).startRow;
         updateSearchText();
       }
 
       public void onNothingSelected(AdapterView<?> arg0) {
       }});
     
-    
+
+    // LongClickListener.
     getListView().setOnItemLongClickListener((new OnItemLongClickListener() {
       public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int rowIndex,
           long arg3) {
@@ -145,12 +151,33 @@ public class DictionaryActivity extends ListActivity {
   public String getSelectedRowText() {
     return activeLangaugeData.rowToString(activeLangaugeData.rows.get(selectedRowIndex));
   }
+  
+  public EditText getSearchText() {
+    return (EditText) findViewById(R.id.SearchText);
+  }
+  
+  // ----------------------------------------------------------------
+  // OptionsMenu
+  // ----------------------------------------------------------------
 
   private MenuItem switchLanguageMenuItem = null;
   
   @Override
   public boolean onCreateOptionsMenu(final Menu menu) {
     switchLanguageMenuItem = menu.add("Switch to language.");
+    switchLanguageMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener(){
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        switchLanguage();
+        return false;
+      }});
+
+    final MenuItem about = menu.add("About...");
+    about.setOnMenuItemClickListener(new OnMenuItemClickListener(){
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        startActivity(aboutIntent);
+        return false;
+      }});
+
     return true;
   }
   
@@ -159,22 +186,32 @@ public class DictionaryActivity extends ListActivity {
     switchLanguageMenuItem.setTitle(String.format("Switch to %s", dictionary.languageDatas[Entry.otherLang(activeLangaugeData.lang)].language.symbol));
     return super.onPrepareOptionsMenu(menu);
   }
-  
-  @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
-    if (item == switchLanguageMenuItem) {
-      switchLanguage();
-    }
-    return super.onOptionsItemSelected(item);
-  }
 
+  void switchLanguage() {
+    activeLangaugeData = dictionary.languageDatas[(activeLangaugeData == dictionary.languageDatas[0]) ? 1 : 0];
+    selectedRowIndex = 0;
+    selectedTokenRowIndex = 0;
+    updateLangButton();
+    dictionaryListAdapter.notifyDataSetChanged();
+    onSearchTextChange(getSearchText().getText().toString());
+  }
+  
+  void updateLangButton() {
+    final Button langButton = (Button) findViewById(R.id.LangButton);
+    langButton.setText(activeLangaugeData.language.symbol);
+  }
+  
+  // ----------------------------------------------------------------
+  // ContextMenu
+  // ----------------------------------------------------------------
+  
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v,
       ContextMenuInfo menuInfo) {
     if (selectedRowIndex == -1) {
       return;
     }
-    final MenuItem addToWordlist = menu.add("Add to wordlist.");
+    final MenuItem addToWordlist = menu.add("Add to wordlist: " + wordList.getName());
     addToWordlist.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(MenuItem item) {
         final String rawText = getSelectedRowText();
@@ -191,23 +228,10 @@ public class DictionaryActivity extends ListActivity {
     });
   }
   
-  void switchLanguage() {
-    activeLangaugeData = dictionary.languageDatas[(activeLangaugeData == dictionary.languageDatas[0]) ? 1 : 0];
-    updateLangButton();
-    dictionaryListAdapter.notifyDataSetChanged();
-    final EditText searchText = (EditText) findViewById(R.id.SearchText);
-    onSearchTextChange(searchText.getText().toString());
-  }
-  
-  void updateLangButton() {
-    final Button langButton = (Button) findViewById(R.id.LangButton);
-    langButton.setText(activeLangaugeData.language.symbol);
-  }
-  
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (event.getUnicodeChar() != 0) {
-      final EditText searchText = (EditText) findViewById(R.id.SearchText);
+      final EditText searchText = getSearchText();
       if (!searchText.hasFocus()) {
         searchText.setText("" + (char)event.getUnicodeChar());
         onSearchTextChange(searchText.getText().toString());
@@ -235,17 +259,23 @@ public class DictionaryActivity extends ListActivity {
   }
   
   private void jumpToRow(final int rowIndex) {
+    Log.d("THAD", "jumpToRow: " + rowIndex);
     selectedRowIndex = rowIndex;
-    selectedTokenRowIndex = activeLangaugeData.getTokenRow(rowIndex);
+    selectedTokenRowIndex = activeLangaugeData.getIndexEntryForRow(rowIndex).startRow;
     getListView().setSelection(rowIndex);
-    getListView().setSelected(true);
+    getListView().setSelected(true);  // TODO: is this doing anything?
     updateSearchText();
   }
 
   private void updateSearchText() {
-    final EditText searchText = (EditText) findViewById(R.id.SearchText);
+    final EditText searchText = getSearchText();
     if (!searchText.hasFocus()) {
-      searchText.setText(activeLangaugeData.rowToString(activeLangaugeData.rows.get(selectedTokenRowIndex)));
+      // TODO: Not so nice:
+      final String word = activeLangaugeData.getIndexEntryForRow(selectedRowIndex).word;
+      if (!word.equals(searchText.getText().toString())) {
+        Log.d("THAD", "updateSearchText: setText: " + word);
+        searchText.setText(word);
+      }
     }
   }
 
@@ -304,6 +334,7 @@ public class DictionaryActivity extends ListActivity {
         result.setText(activeLangaugeData.rowToString(row));
         result.setTextAppearance(parent.getContext(),
             android.R.style.TextAppearance_Large);
+        result.setClickable(false);
         return result;
       }
 
@@ -341,8 +372,17 @@ public class DictionaryActivity extends ListActivity {
         // column1.setTextAppearance(parent.getContext(), android.R.style.Text);
         
         // TODO: highlight query word in entries.
-        column1.setText(entry.getAllText(activeLangaugeData.lang)[r]);
-        column2.setText(entry.getAllText(Entry.otherLang(activeLangaugeData.lang))[r]);
+        final String col1Text = entry.getAllText(activeLangaugeData.lang)[r]; 
+        column1.setText(col1Text, TextView.BufferType.SPANNABLE);
+        final Spannable col1Spannable = (Spannable) column1.getText();
+        int startPos = 0;
+        final String token = activeLangaugeData.getIndexEntryForRow(rowIndex).word;
+        while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
+          col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos, startPos + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+         startPos += token.length();
+        }
+        
+        column2.setText(entry.getAllText(Entry.otherLang(activeLangaugeData.lang))[r], TextView.BufferType.NORMAL);
         
         result.addView(tableRow);
       }
@@ -353,7 +393,9 @@ public class DictionaryActivity extends ListActivity {
 
   private class DictionaryTextWatcher implements TextWatcher {
     public void afterTextChanged(Editable searchText) {
-      onSearchTextChange(searchText.toString());
+      if (getSearchText().hasFocus()) {
+        onSearchTextChange(searchText.toString());
+      }
     }
 
     public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,

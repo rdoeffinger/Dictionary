@@ -1,0 +1,39 @@
+
+<LinearLayout android:id="@+id/LinearLayout01"
+	android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent">
+
+	<LinearLayout android:id="@+id/LinearLayout02"
+		android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal">
+		
+		<ImageView android:id="@+id/ImageView01"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal" android:background="@drawable/icon"></ImageView>
+			
+		<TextView android:text=" Dictionary 1.0" android:id="@+id/title"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical|fill_vertical"></TextView>
+			
+	</LinearLayout>
+
+	
+
+	<TextView android:text=" " android:id="@+id/space1"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"></TextView>
+
+	<TextView android:text="(c) 2009" android:id="@+id/copyright"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"></TextView>
+
+	<TextView android:text="by Thad Hughes" android:id="@+id/author"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"></TextView>
+
+	<TextView android:text="thughes@cs.stanford.edu" android:id="@+id/email"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal" android:autoLink="email"
+		android:clickable="true"></TextView>
+
+
+</LinearLayout>
