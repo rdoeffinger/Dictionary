@@ -9,11 +9,14 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
@@ -44,32 +47,53 @@ import com.hughes.android.dictionary.Dictionary.LanguageData;
 import com.hughes.android.dictionary.Dictionary.Row;
 
 public class DictionaryActivity extends ListActivity {
+  
+  static final Intent aboutIntent = new Intent().setClassName(AboutActivity.class.getPackage().getName(), AboutActivity.class.getCanonicalName());
+  static final Intent preferencesIntent = new Intent().setClassName(PreferenceActivity.class.getPackage().getName(), PreferenceActivity.class.getCanonicalName());
 
+  private final Handler uiHandler = new Handler();
+  private final Executor searchExecutor = Executors.newSingleThreadExecutor();
+  private final DictionaryListAdapter dictionaryListAdapter = new DictionaryListAdapter();
+
+  // Never null.
+  private File wordList = new File("/sdcard/wordList.txt");
+
+  // Can be null.
+  private File dictFile = null;
   private RandomAccessFile dictRaf = null;
   private Dictionary dictionary = null;
   private LanguageData activeLangaugeData = null;
 
-  private File wordList = new File("/sdcard/wordList.txt");
-
-  final Handler uiHandler = new Handler();
-
-  private Executor searchExecutor = Executors.newSingleThreadExecutor();
   private SearchOperation searchOperation = null;
-  // private List<Entry> entries = Collections.emptyList();
-  private DictionaryListAdapter dictionaryListAdapter = new DictionaryListAdapter();
   private int selectedRowIndex = -1;
   private int selectedTokenRowIndex = -1;
   
-  private final Intent aboutIntent = new Intent().setClassName(AboutActivity.class.getPackage().getName(), AboutActivity.class.getCanonicalName());
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     Log.d("THAD", "onCreate");
     super.onCreate(savedInstanceState);
+  }
+  
+  @Override
+  public void onResume() {
+    super.onResume();
 
+    closeCurrentDictionary();
+
+    final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    wordList = new File(settings.getString(getResources().getString(R.string.wordListFile), wordList.getAbsolutePath()));
+    dictFile = new File(settings.getString(getResources().getString(R.string.dictFile), "/sdcard/de-en.dict"));
+    Log.d("THAD", "wordList=" + wordList);
+    Log.d("THAD", "dictFile=" + dictFile);
+
+    if (!dictFile.canRead()) {
+      return;
+    }
+    
     try {
-      dictRaf = new RandomAccessFile("/sdcard/de-en.dict", "r");
+      dictRaf = new RandomAccessFile(dictFile, "r");
       dictionary = new Dictionary(dictRaf);
       activeLangaugeData = dictionary.languageDatas[Entry.LANG1];
     } catch (Exception e) {
@@ -82,8 +106,6 @@ public class DictionaryActivity extends ListActivity {
 
     setListAdapter(dictionaryListAdapter);
 
-    onSearchTextChange("");
-    
     // Language button.
     final Button langButton = (Button) findViewById(R.id.LangButton);
     langButton.setOnClickListener(new OnClickListener() {
@@ -146,6 +168,28 @@ public class DictionaryActivity extends ListActivity {
         return false;
       }
     }));
+
+    onSearchTextChange("");
+  }
+  
+  
+  @Override
+  public void onStop() {
+    super.onStop();
+    closeCurrentDictionary();
+  }
+
+  private void closeCurrentDictionary() {
+    dictionary = null;
+    activeLangaugeData = null;
+    try {
+      if (dictRaf != null) {
+        dictRaf.close();
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    dictRaf = null;
   }
   
   public String getSelectedRowText() {
@@ -171,6 +215,13 @@ public class DictionaryActivity extends ListActivity {
         return false;
       }});
 
+    final MenuItem preferences = menu.add("Preferences...");
+    preferences.setOnMenuItemClickListener(new OnMenuItemClickListener(){
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        startActivity(preferencesIntent);
+        return false;
+      }});
+
     final MenuItem about = menu.add("About...");
     about.setOnMenuItemClickListener(new OnMenuItemClickListener(){
       public boolean onMenuItemClick(final MenuItem menuItem) {
@@ -183,7 +234,10 @@ public class DictionaryActivity extends ListActivity {
   
   @Override
   public boolean onPrepareOptionsMenu(final Menu menu) {
-    switchLanguageMenuItem.setTitle(String.format("Switch to %s", dictionary.languageDatas[Entry.otherLang(activeLangaugeData.lang)].language.symbol));
+    if (dictionary != null) {
+      switchLanguageMenuItem.setTitle(String.format("Switch to %s", dictionary.languageDatas[Entry.otherLang(activeLangaugeData.lang)].language.symbol));
+    }
+    switchLanguageMenuItem.setEnabled(dictionary != null);
     return super.onPrepareOptionsMenu(menu);
   }
 
@@ -221,7 +275,9 @@ public class DictionaryActivity extends ListActivity {
           out.write((rawText + "\n").getBytes());
           out.close();
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          final AlertDialog alert = new AlertDialog.Builder(DictionaryActivity.this).create();
+          alert.setMessage("Failed to append to file: " + wordList.getAbsolutePath());
+          alert.show();
         }
         return false;
       }
@@ -306,7 +362,7 @@ public class DictionaryActivity extends ListActivity {
   private class DictionaryListAdapter extends BaseAdapter {
 
     public int getCount() {
-      return activeLangaugeData.rows.size();
+      return dictionary != null ? activeLangaugeData.rows.size() : 0;
     }
 
     public Dictionary.Row getItem(int rowIndex) {
@@ -330,7 +386,6 @@ public class DictionaryActivity extends ListActivity {
         } else {
           result = new TextView(parent.getContext());
         }
-//        result.setBackgroundColor(Color.WHITE);
         result.setText(activeLangaugeData.rowToString(row));
         result.setTextAppearance(parent.getContext(),
             android.R.style.TextAppearance_Large);
@@ -345,9 +400,6 @@ public class DictionaryActivity extends ListActivity {
       final int rowCount = entry.getRowCount();
       for (int r = 0; r < rowCount; ++r) {
         final TableRow tableRow = new TableRow(result.getContext());
-//        if (r > 0) {
-//          tableRow.setBackgroundColor(Color.DKGRAY);  
-//        }
         
         TextView column1 = new TextView(tableRow.getContext());
         TextView column2 = new TextView(tableRow.getContext());
