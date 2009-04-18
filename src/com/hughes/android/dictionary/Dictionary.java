@@ -27,16 +27,16 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
   final LanguageData[] languageDatas = new LanguageData[2];
 
   public Dictionary(final Language language0, final Language language1) {
-    languageDatas[0] = new LanguageData(language0, Entry.LANG1);
-    languageDatas[1] = new LanguageData(language1, Entry.LANG2);
+    languageDatas[0] = new LanguageData(this, language0, Entry.LANG1);
+    languageDatas[1] = new LanguageData(this, language1, Entry.LANG2);
     entries = new ArrayList<Entry>();
   }
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
     entries = CachingList.create(FileList.create(raf, ENTRY_SERIALIZER, raf
         .getFilePointer()), 10000);
-    languageDatas[0] = new LanguageData(raf, Entry.LANG1);
-    languageDatas[1] = new LanguageData(raf, Entry.LANG2);
+    languageDatas[0] = new LanguageData(this, raf, Entry.LANG1);
+    languageDatas[1] = new LanguageData(this, raf, Entry.LANG2);
   }
 
   public void write(RandomAccessFile raf) throws IOException {
@@ -46,19 +46,22 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
   }
 
   final class LanguageData implements RAFSerializable<LanguageData> {
+    final Dictionary dictionary;
     final Language language;
     final byte lang;
     final List<Row> rows;
     final List<IndexEntry> sortedIndex;
 
-    LanguageData(final Language language, final byte lang) {
+    LanguageData(final Dictionary dictionary, final Language language, final byte lang) {
+      this.dictionary = dictionary;
       this.language = language;
       this.lang = lang;
       rows = new ArrayList<Row>();
       sortedIndex = new ArrayList<IndexEntry>();
     }
 
-    LanguageData(final RandomAccessFile raf, final byte lang) throws IOException {
+    LanguageData(final Dictionary dictionary, final RandomAccessFile raf, final byte lang) throws IOException {
+      this.dictionary = dictionary;
       language = Language.lookup(raf.readUTF());
       if (language == null) {
         throw new RuntimeException("Unknown language.");

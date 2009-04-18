@@ -26,6 +26,7 @@ import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -206,6 +207,7 @@ public class DictionaryActivity extends ListActivity {
 
   private MenuItem switchLanguageMenuItem = null;
   
+
   @Override
   public boolean onCreateOptionsMenu(final Menu menu) {
     switchLanguageMenuItem = menu.add("Switch to language.");
@@ -326,7 +328,6 @@ public class DictionaryActivity extends ListActivity {
   private void updateSearchText() {
     final EditText searchText = getSearchText();
     if (!searchText.hasFocus()) {
-      // TODO: Not so nice:
       final String word = activeLangaugeData.getIndexEntryForRow(selectedRowIndex).word;
       if (!word.equals(searchText.getText().toString())) {
         Log.d("THAD", "updateSearchText: setText: " + word);
@@ -423,7 +424,7 @@ public class DictionaryActivity extends ListActivity {
         column2.setWidth(1);
         // column1.setTextAppearance(parent.getContext(), android.R.style.Text);
         
-        // TODO: highlight query word in entries.
+        // TODO: color words by gender
         final String col1Text = entry.getAllText(activeLangaugeData.lang)[r]; 
         column1.setText(col1Text, TextView.BufferType.SPANNABLE);
         final Spannable col1Spannable = (Spannable) column1.getText();
