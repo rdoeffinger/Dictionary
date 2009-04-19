@@ -12,7 +12,7 @@
 
 	<ListView android:id="@id/android:list"
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
-		android:choiceMode="singleChoice" android:clickable="true"></ListView>
+		android:choiceMode="singleChoice" android:clickable="true" android:focusableInTouchMode="true" android:focusable="true"></ListView>
 
 
 </LinearLayout>

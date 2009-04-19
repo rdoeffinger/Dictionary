@@ -88,7 +88,15 @@ public final class Entry implements RAFSerializable<Entry> {
   }
   
   String getRawText() {
-    return Arrays.asList(getAllText(LANG1)) + "\t" + Arrays.asList(getAllText(LANG2));
+    final StringBuilder result = new StringBuilder();
+    for (int i = 0; i < lang1.length; ++i) {
+      result.append(i == 0 ? "" : " | ").append(lang1[i]);
+    }
+    result.append(" :: ");
+    for (int i = 0; i < lang2.length; ++i) {
+      result.append(i == 0 ? "" : " | ").append(lang2[i]);
+    }
+    return result.toString();
   }
   
   static byte otherLang(final byte lang) {

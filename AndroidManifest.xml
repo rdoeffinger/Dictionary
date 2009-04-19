@@ -12,5 +12,6 @@
 
 		<activity android:name="AboutActivity"></activity>
 		<activity android:name="PreferenceActivity"></activity>
+		<activity android:name="DownloadActivity"></activity>
 	</application>
 </manifest> 

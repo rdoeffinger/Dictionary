@@ -1,16 +1,19 @@
 package com.hughes.android.dictionary;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -26,7 +29,6 @@ import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -48,8 +50,11 @@ import com.hughes.android.dictionary.Dictionary.LanguageData;
 import com.hughes.android.dictionary.Dictionary.Row;
 
 public class DictionaryActivity extends ListActivity {
+
+  String WORD_LIST_FILE; 
+  String DICT_FILE; 
+  String DICT_FETCH_URL; 
   
-  static final Intent aboutIntent = new Intent().setClassName(AboutActivity.class.getPackage().getName(), AboutActivity.class.getCanonicalName());
   static final Intent preferencesIntent = new Intent().setClassName(PreferenceActivity.class.getPackage().getName(), PreferenceActivity.class.getCanonicalName());
 
   private final Handler uiHandler = new Handler();
@@ -73,23 +78,40 @@ public class DictionaryActivity extends ListActivity {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    Log.d("THAD", "onCreate");
     super.onCreate(savedInstanceState);
+    WORD_LIST_FILE = getResources().getString(R.string.wordListFile); 
+    DICT_FILE = getResources().getString(R.string.dictFile); 
+    DICT_FETCH_URL = getResources().getString(R.string.dictFetchUrl); 
+
+    Log.d("THAD", "onCreate");
+    
+    
   }
   
   @Override
   public void onResume() {
     super.onResume();
 
+    // Have to close, because we might have downloaded a new copy of the dictionary.
     closeCurrentDictionary();
 
     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    wordList = new File(settings.getString(getResources().getString(R.string.wordListFile), wordList.getAbsolutePath()));
-    dictFile = new File(settings.getString(getResources().getString(R.string.dictFile), "/sdcard/de-en.dict"));
+    wordList = new File(settings.getString(WORD_LIST_FILE, wordList.getAbsolutePath()));
+    final File newDictFile = new File(settings.getString(DICT_FILE, "/sdcard/de-en.dict"));
+    dictFile = newDictFile;
     Log.d("THAD", "wordList=" + wordList);
     Log.d("THAD", "dictFile=" + dictFile);
 
     if (!dictFile.canRead()) {
+      dictionaryListAdapter.notifyDataSetChanged();
+      Log.d("THAD", "Unable to read dictionary file.");
+      final AlertDialog alert = new AlertDialog.Builder(DictionaryActivity.this).create();
+      alert.setMessage("Unable to read dictionary file: " + wordList.getAbsolutePath());
+      alert.setButton("Download dictionary from Internet", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+          startDownloadDictActivity();
+        }});
+      alert.show();
       return;
     }
     
@@ -97,6 +119,7 @@ public class DictionaryActivity extends ListActivity {
       dictRaf = new RandomAccessFile(dictFile, "r");
       dictionary = new Dictionary(dictRaf);
       activeLangaugeData = dictionary.languageDatas[Entry.LANG1];
+      dictionaryListAdapter.notifyDataSetChanged();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -193,7 +216,7 @@ public class DictionaryActivity extends ListActivity {
     dictRaf = null;
   }
   
-  public String getSelectedRowText() {
+  public String getSelectedRowRawText() {
     return activeLangaugeData.rowToString(activeLangaugeData.rows.get(selectedRowIndex));
   }
   
@@ -227,7 +250,28 @@ public class DictionaryActivity extends ListActivity {
     final MenuItem about = menu.add("About...");
     about.setOnMenuItemClickListener(new OnMenuItemClickListener(){
       public boolean onMenuItemClick(final MenuItem menuItem) {
-        startActivity(aboutIntent);
+        final Intent intent = new Intent().setClassName(AboutActivity.class.getPackage().getName(), AboutActivity.class.getCanonicalName());
+        final StringBuilder currentDictInfo = new StringBuilder();
+        if (dictionary == null) {
+          currentDictInfo.append("No dictionary loaded.");
+        } else {
+          currentDictInfo.append("Entry count: " + dictionary.entries.size()).append("\n");
+          for (int i = 0; i < 2; ++i) {
+            final LanguageData languageData = dictionary.languageDatas[i]; 
+            currentDictInfo.append(languageData.language.symbol).append(":\n");
+            currentDictInfo.append("  Unique token count: " + languageData.sortedIndex.size()).append("\n");
+            currentDictInfo.append("  Row count: " + languageData.rows.size()).append("\n");
+          }
+        }
+        intent.putExtra(AboutActivity.CURRENT_DICT_INFO, currentDictInfo.toString());
+        startActivity(intent);
+        return false;
+      }});
+
+    final MenuItem download = menu.add("Download dictionary...");
+    download.setOnMenuItemClickListener(new OnMenuItemClickListener(){
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        startDownloadDictActivity();
         return false;
       }});
 
@@ -270,13 +314,19 @@ public class DictionaryActivity extends ListActivity {
     final MenuItem addToWordlist = menu.add("Add to wordlist: " + wordList.getName());
     addToWordlist.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(MenuItem item) {
-        final String rawText = getSelectedRowText();
+        final StringBuilder rawText = new StringBuilder();
+        final String word = activeLangaugeData.getIndexEntryForRow(selectedRowIndex).word;
+        rawText.append(new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date())).append("\t");
+        rawText.append(word).append("\t");
+        rawText.append(getSelectedRowRawText());
         Log.d("THAD", "Writing : " + rawText);
         try {
-          final OutputStream out = new FileOutputStream(wordList, true);
-          out.write((rawText + "\n").getBytes());
+          wordList.getParentFile().mkdirs();
+          final PrintWriter out = new PrintWriter(new FileWriter(wordList, true));
+          out.println(rawText.toString());
           out.close();
         } catch (IOException e) {
+          Log.e("THAD", "Unable to append to " + wordList.getAbsolutePath(), e);
           final AlertDialog alert = new AlertDialog.Builder(DictionaryActivity.this).create();
           alert.setMessage("Failed to append to file: " + wordList.getAbsolutePath());
           alert.show();
@@ -303,7 +353,7 @@ public class DictionaryActivity extends ListActivity {
   @Override
   protected void onListItemClick(ListView l, View v, int row, long id) {
     selectedRowIndex = row;
-    Log.d("THAD", "Clicked: " + getSelectedRowText());
+    Log.d("THAD", "Clicked: " + getSelectedRowRawText());
     openContextMenu(getListView());
   }
 
@@ -334,6 +384,18 @@ public class DictionaryActivity extends ListActivity {
         searchText.setText(word);
       }
     }
+  }
+
+  private void startDownloadDictActivity() {
+    final Intent intent = new Intent().setClassName(
+        DownloadActivity.class.getPackage().getName(),
+        DownloadActivity.class.getCanonicalName());
+    final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(DictionaryActivity.this);
+    final String dictFetchUrl = settings.getString(DICT_FETCH_URL, null);
+    final String dictFileName = settings.getString(DICT_FILE, null);
+    intent.putExtra(DownloadActivity.SOURCE, dictFetchUrl);
+    intent.putExtra(DownloadActivity.DEST, dictFileName);
+    startActivity(intent);
   }
 
   private final class SearchOperation implements Runnable {
@@ -445,8 +507,9 @@ public class DictionaryActivity extends ListActivity {
   }  // DictionaryListAdapter
 
   private class DictionaryTextWatcher implements TextWatcher {
-    public void afterTextChanged(Editable searchText) {
+    public void afterTextChanged(final Editable searchText) {
       if (getSearchText().hasFocus()) {
+        // If they were typing to cause the change, update the UI.
         onSearchTextChange(searchText.toString());
       }
     }
@@ -458,5 +521,5 @@ public class DictionaryActivity extends ListActivity {
     public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
     }
   }
-
+  
 }
