@@ -21,7 +21,7 @@ public abstract class Language {
         if (c != 0) {
           return c;
         }
-        return StringUtil.reverse(s1).compareTo(StringUtil.reverse(s2));
+        return StringUtil.flipCase(StringUtil.reverse(s1)).compareTo(StringUtil.flipCase(StringUtil.reverse(s2)));
       }};
   }
   
@@ -34,23 +34,48 @@ public abstract class Language {
 
 
   // ----------------------------------------------------------------
+  
+  static final String normalizeTokenForSort(final String token, final boolean vowelETranslation) {
+    final StringBuilder result = new StringBuilder();
+    for (int i = 0; i < token.length(); ++i) {
+      Character c = token.charAt(i);
+      c = Character.toLowerCase(c);
+      // only check for lowercase 'e' in subsequent position means don't treat acronyms as umlauted: SAE.
+      if (vowelETranslation && (c == 'a' || c == 'o' || c == 'u') && i + 1 < token.length() && token.charAt(i + 1) == 'e') {
+        if (c == 'a') {
+          result.append('ä');
+        } else if (c == 'o') {
+          result.append('ö');
+        } else if (c == 'u') {
+          result.append('ü');
+        }
+        ++i;
+      } else if (c >= 'a' && c <= 'z' || c >= '0' && c <= '9') {
+        result.append(c);
+      } else if (c == 'ß') {
+        result.append("ss");
+      } else if (c == 'ä') {
+        result.append(c);
+      } else if (c == 'ö') {
+        result.append(c);
+      } else if (c == 'ü') {
+        result.append(c);
+      }
+    }
+    return result.toString();
+  }
 
   public static final Language EN = new Language("EN") {
     @Override
     public String normalizeTokenForSort(final String token) {
-      return token.toLowerCase().replaceAll("ß", "ss").replaceAll("ä", "a")
-          .replaceAll("ö", "o").replaceAll("ü", "u").replaceAll("[^A-Za-z0-9]",
-              "");
+      return Language.normalizeTokenForSort(token, false);
     }
   };
-
+    
   public static final Language DE = new Language("DE") {
     @Override
     String normalizeTokenForSort(final String token) {
-      return token.toLowerCase().replaceAll("ß", "ss").replaceAll("ä", "a")
-          .replaceAll("ae", "a").replaceAll("ö", "o").replaceAll("oe", "o")
-          .replaceAll("ü", "u").replaceAll("ue", "u").replaceAll(
-              "[^A-Za-z0-9]", "");
+      return Language.normalizeTokenForSort(token, true);
     }
   };
 

@@ -10,10 +10,10 @@
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal" android:background="@drawable/icon"></ImageView>
 
-		<TextView android:text=" Dictionary 1.0" android:id="@+id/title"
+		<TextView android:id="@+id/title"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical|fill_vertical"></TextView>
+			android:layout_gravity="center_vertical|fill_vertical" android:text="QuickDic 1.0"></TextView>
 
 	</LinearLayout>
 
@@ -31,20 +31,28 @@
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"></TextView>
 
-	<TextView android:text="thughes@cs.stanford.edu" android:id="@+id/email"
+	<TextView android:text=" " android:id="@+id/space3"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal" android:autoLink="email"
-		android:clickable="true"></TextView>
+		android:layout_gravity="center_horizontal"></TextView>
+
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/emailMe"
+		android:text="If you're using QuickDic, I'd love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:"></TextView>
+
+	<TextView android:id="@+id/email" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:autoLink="email" android:clickable="true"
+		android:text="thad.hughes+quickdic@gmail.com" android:layout_gravity="left"></TextView>
 
 	<TextView android:text=" " android:id="@+id/space2"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"></TextView>
 
-	<TextView android:text="Current dictionary info" android:id="@+id/currentDictInfoTitle"
+	<TextView android:id="@+id/currentDictInfoTitle"
 		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"></TextView>
+		android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Current dictionary info:"></TextView>
 
 	<TextView android:text="No dictionary loaded." android:id="@+id/currentDictInfo"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"></TextView>
+
 
 </LinearLayout>

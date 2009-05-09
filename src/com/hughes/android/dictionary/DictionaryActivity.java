@@ -84,8 +84,6 @@ public class DictionaryActivity extends ListActivity {
     DICT_FETCH_URL = getResources().getString(R.string.dictFetchUrl); 
 
     Log.d("THAD", "onCreate");
-    
-    
   }
   
   @Override
@@ -106,8 +104,8 @@ public class DictionaryActivity extends ListActivity {
       dictionaryListAdapter.notifyDataSetChanged();
       Log.d("THAD", "Unable to read dictionary file.");
       final AlertDialog alert = new AlertDialog.Builder(DictionaryActivity.this).create();
-      alert.setMessage("Unable to read dictionary file: " + wordList.getAbsolutePath());
-      alert.setButton("Download dictionary from Internet", new DialogInterface.OnClickListener() {
+      alert.setMessage("Unable to read dictionary file: " + dictFile.getAbsolutePath());
+      alert.setButton("Download dictionary", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           startDownloadDictActivity();
         }});
@@ -141,6 +139,9 @@ public class DictionaryActivity extends ListActivity {
     final Button upButton = (Button) findViewById(R.id.UpButton);
     upButton.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
+        if (dictionary == null) {
+          return;
+        }
         final int destRowIndex;
         final Row tokenRow = activeLangaugeData.rows.get(selectedTokenRowIndex);
         assert tokenRow.isToken();
@@ -155,6 +156,9 @@ public class DictionaryActivity extends ListActivity {
     final Button downButton = (Button) findViewById(R.id.DownButton);
     downButton.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
+        if (dictionary == null) {
+          return;
+        }
         final Row tokenRow = activeLangaugeData.rows.get(selectedTokenRowIndex);
         assert tokenRow.isToken();
         final int nextTokenIndex = tokenRow.getIndex() + 1;
@@ -255,6 +259,7 @@ public class DictionaryActivity extends ListActivity {
         if (dictionary == null) {
           currentDictInfo.append("No dictionary loaded.");
         } else {
+          currentDictInfo.append(dictionary.dictionaryInfo).append("\n\n");
           currentDictInfo.append("Entry count: " + dictionary.entries.size()).append("\n");
           for (int i = 0; i < 2; ++i) {
             final LanguageData languageData = dictionary.languageDatas[i]; 
@@ -288,6 +293,9 @@ public class DictionaryActivity extends ListActivity {
   }
 
   void switchLanguage() {
+    if (dictionary == null) {
+      return;
+    }
     activeLangaugeData = dictionary.languageDatas[(activeLangaugeData == dictionary.languageDatas[0]) ? 1 : 0];
     selectedRowIndex = 0;
     selectedTokenRowIndex = 0;
@@ -359,6 +367,9 @@ public class DictionaryActivity extends ListActivity {
 
   void onSearchTextChange(final String searchText) {
     Log.d("THAD", "onSearchTextChange: " + searchText);
+    if (dictionary == null) {
+      return;
+    }
     if (searchOperation != null) {
       searchOperation.interrupted.set(true);
     }
@@ -475,7 +486,7 @@ public class DictionaryActivity extends ListActivity {
           tableRow.addView(spacer);
         }
         tableRow.addView(column1, layoutParams);
-        if (r>0){
+        if (r > 0) {
           final TextView spacer = new TextView(tableRow.getContext());
           spacer.setText(r == 0 ? "• " : " • ");
           tableRow.addView(spacer);

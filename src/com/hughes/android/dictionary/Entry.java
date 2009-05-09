@@ -140,13 +140,18 @@ public final class Entry implements RAFSerializable<Entry> {
   
   public Set<String> getIndexableTokens(final byte lang) {
     final Set<String> result = new LinkedHashSet<String>();
-    String text = Arrays.asList(getAllText(lang)).toString();
+    String text = " ";
+    for (final String subentry : getAllText(lang)) {
+      text += subentry + " ";
+    }
 
     text = text.replaceAll("fig\\.", " ");
     text = text.replaceAll("\\{[^\\}]+}", " ");
     text = text.replaceAll("\"-", "-");
     text = text.replaceAll("-\"", "-");
-    text = text.replaceAll("[\":/\\()<>\\[\\],;?!.]", " ");
+    text = text.replaceAll("[\"/\\()<>\\[\\],;?!.]", " ");
+    text = text.replaceAll("[:] ", " ");
+    text = text.replaceAll(" [:]", " ");
     result.addAll(Arrays.asList(WHITESPACE.split(text)));
 
     text = text.replaceAll("[-]", " ");

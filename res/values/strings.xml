@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="app_name">Dictionary</string>
-<string name="about_text">Dictionary\nby Thad Hughes</string>
+    <string name="app_name">QuickDic</string>
+<string name="about_text">QuickDic\nby Thad Hughes</string>
 
 <string name="wordListFile">wordListFile</string>
 <string name="dictFile">dictFile</string>

@@ -23,16 +23,19 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
   static final RAFSerializer<IndexEntry> INDEX_ENTRY_SERIALIZER = new RAFSerializableSerializer<IndexEntry>(
       IndexEntry.RAF_FACTORY);
 
+  final String dictionaryInfo;
   final List<Entry> entries;
   final LanguageData[] languageDatas = new LanguageData[2];
 
-  public Dictionary(final Language language0, final Language language1) {
+  public Dictionary(final String dictionaryInfo, final Language language0, final Language language1) {
+    this.dictionaryInfo = dictionaryInfo;
     languageDatas[0] = new LanguageData(this, language0, Entry.LANG1);
     languageDatas[1] = new LanguageData(this, language1, Entry.LANG2);
     entries = new ArrayList<Entry>();
   }
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
+    dictionaryInfo = raf.readUTF();
     entries = CachingList.create(FileList.create(raf, ENTRY_SERIALIZER, raf
         .getFilePointer()), 10000);
     languageDatas[0] = new LanguageData(this, raf, Entry.LANG1);
@@ -40,6 +43,7 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
   }
 
   public void write(RandomAccessFile raf) throws IOException {
+    raf.writeUTF(dictionaryInfo);
     FileList.write(raf, entries, ENTRY_SERIALIZER);
     languageDatas[0].write(raf);
     languageDatas[1].write(raf);
