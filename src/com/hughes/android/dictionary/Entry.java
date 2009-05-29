@@ -152,6 +152,11 @@ public final class Entry implements RAFSerializable<Entry> {
     text = text.replaceAll("[\"/\\()<>\\[\\],;?!.]", " ");
     text = text.replaceAll("[:] ", " ");
     text = text.replaceAll(" [:]", " ");
+    
+    // Now be really conservative about what we allow inside a token:
+    // See: http://unicode.org/Public/UNIDATA/UCD.html#General_Category_Values
+    text = text.replaceAll("[^-:\\p{Lu}\\p{Ll}\\p{Lt}\\p{Lm}\\p{Lo}\\p{Nd}\\p{Nl}\\p{No}]", " ");
+    
     result.addAll(Arrays.asList(WHITESPACE.split(text)));
 
     text = text.replaceAll("[-]", " ");

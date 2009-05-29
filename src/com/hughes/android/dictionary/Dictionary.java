@@ -100,10 +100,10 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
         }
         final IndexEntry midEntry = sortedIndex.get(mid);
 
-        final int comp = language.tokenComparator.compare(word, midEntry.word.toLowerCase());
+        final int comp = language.sortComparator.compare(word, midEntry.word.toLowerCase());
         if (comp == 0) {
           int result = mid;
-          while (result > 0 && language.tokenComparator.compare(word, sortedIndex.get(result - 1).word.toLowerCase()) == 0) {
+          while (result > 0 && language.findComparator.compare(word, sortedIndex.get(result - 1).word.toLowerCase()) == 0) {
             --result;
             if (interrupted.get()) {
               return result;
