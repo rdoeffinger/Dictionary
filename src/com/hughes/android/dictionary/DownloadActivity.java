@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +27,8 @@ public class DownloadActivity extends Activity {
 
   private final Executor downloadExecutor = Executors.newSingleThreadExecutor();
   private final Handler uiHandler = new Handler();
+
+  final AtomicBoolean stop = new AtomicBoolean(false);
 
   /** Called when the activity is first created. */
   @Override
@@ -51,11 +54,12 @@ public class DownloadActivity extends Activity {
 
     final InputStream in;
     final FileOutputStream out;
-    
+
     final File destFile = new File(dest);
     final File destTmpFile;
     try {
-      destTmpFile = File.createTempFile("dictionaryDownload", "tmp", destFile.getParentFile());
+      destTmpFile = File.createTempFile("dictionaryDownload", "tmp", destFile
+          .getParentFile());
       final URL uri = new URL(source);
       in = uri.openStream();
       out = new FileOutputStream(destTmpFile);
@@ -70,20 +74,30 @@ public class DownloadActivity extends Activity {
         try {
           long byteCount = 0;
           int bytesRead;
-          final byte[] bytes = new byte[4096];
-          while ((bytesRead = in.read(bytes)) != -1) {
+          final byte[] bytes = new byte[1024 * 8];
+          int count = 0;
+          while ((bytesRead = in.read(bytes)) != -1 && !stop.get()) {
             out.write(bytes, 0, bytesRead);
             byteCount += bytesRead;
-            setDownloadStatus(String.format("Downloading: %d bytes so far", byteCount));
+            if (count++ % 20 == 0) {
+              setDownloadStatus(String.format("Downloading: %d bytes so far",
+                  byteCount));
+            }
           }
           in.close();
           out.close();
-          destFile.delete();
-          destTmpFile.renameTo(destFile);
-          setDownloadStatus(String.format("Downloaded finished: %d bytes", byteCount));
+          if (bytesRead == -1 && !stop.get()) {
+            destFile.delete();
+            destTmpFile.renameTo(destFile);
+          } else {
+            Log.d("THAD", "Stopped downloading file.");
+          }
+          setDownloadStatus(String.format("Downloaded finished: %d bytes",
+              byteCount));
         } catch (IOException e) {
           Log.e("THAD", "Error downloading file", e);
-          setDownloadStatus("Error downloading file: \n" + e.getLocalizedMessage());
+          setDownloadStatus("Error downloading file: \n"
+              + e.getLocalizedMessage());
         }
       }
     };
@@ -91,8 +105,15 @@ public class DownloadActivity extends Activity {
     downloadExecutor.execute(runnable);
   }
 
+  @Override
+  protected void onStop() {
+    stop.set(true);
+    super.onStop();
+  }
+
   private void setDownloadStatus(final String status) {
     final TextView downloadStatus = (TextView) findViewById(R.id.downloadStatus);
+//    final ProgressBar progressBar = (ProgressBar) findViewById(R.id.downloadProgressBar);
     uiHandler.post(new Runnable() {
       public void run() {
         downloadStatus.setText(status);

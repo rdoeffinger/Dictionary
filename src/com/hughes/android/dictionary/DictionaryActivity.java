@@ -79,9 +79,9 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    WORD_LIST_FILE = getResources().getString(R.string.wordListFile); 
-    DICT_FILE = getResources().getString(R.string.dictFile); 
-    DICT_FETCH_URL = getResources().getString(R.string.dictFetchUrl); 
+    WORD_LIST_FILE = getResources().getString(R.string.wordListFileKey); 
+    DICT_FILE = getResources().getString(R.string.dictFileKey); 
+    DICT_FETCH_URL = getResources().getString(R.string.dictFetchUrlKey); 
 
     Log.d("THAD", "onCreate");
   }
@@ -402,8 +402,8 @@ public class DictionaryActivity extends ListActivity {
         DownloadActivity.class.getPackage().getName(),
         DownloadActivity.class.getCanonicalName());
     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(DictionaryActivity.this);
-    final String dictFetchUrl = settings.getString(DICT_FETCH_URL, null);
-    final String dictFileName = settings.getString(DICT_FILE, null);
+    final String dictFetchUrl = settings.getString(DICT_FETCH_URL, getResources().getString(R.string.dictFetchUrl));
+    final String dictFileName = settings.getString(DICT_FILE, getResources().getString(R.string.dictFile));
     intent.putExtra(DownloadActivity.SOURCE, dictFetchUrl);
     intent.putExtra(DownloadActivity.DEST, dictFileName);
     startActivity(intent);

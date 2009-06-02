@@ -4,8 +4,12 @@
     <string name="app_name">QuickDic</string>
 <string name="about_text">QuickDic\nby Thad Hughes</string>
 
-<string name="wordListFile">wordListFile</string>
-<string name="dictFile">dictFile</string>
+<string name="wordListFileKey">wordListFile</string>
+<string name="wordListFile">/sdcard/wordList.txt</string>
 
-<string name="dictFetchUrl">dictFetchUrl</string>
+<string name="dictFileKey">dictFile</string>
+<string name="dictFile">/sdcard/de-en.dict</string>
+
+<string name="dictFetchUrlKey">dictFetchUrl</string>
+<string name="dictFetchUrl">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
 </resources>

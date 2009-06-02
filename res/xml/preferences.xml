@@ -1,8 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 	
-	
-<EditTextPreference android:persistent="true" android:title="Dictionary file" android:defaultValue="/sdcard/de-en.dict" android:summary="The local filename where the dictionary is stored." android:key="@string/dictFile"></EditTextPreference>
-<EditTextPreference android:key="@string/wordListFile" android:summary="The local file where the word list will be appended." android:title="Word list file" android:persistent="true" android:defaultValue="/sdcard/wordList.txt"></EditTextPreference>
-<EditTextPreference android:key="@string/dictFetchUrl" android:summary="URL to use to download the dictionary from the Internet." android:persistent="true" android:title="Dictionary fetch URL" android:defaultValue="http://www.google.com"></EditTextPreference>
+<EditTextPreference android:key="@string/dictFileKey" android:persistent="true" android:title="Dictionary file" android:summary="The local filename where the dictionary is stored." android:defaultValue="@string/dictFile"></EditTextPreference>
+<EditTextPreference android:key="@string/wordListFileKey" android:summary="The local file where the word list will be appended." android:title="Word list file" android:persistent="true" android:defaultValue="@string/wordListFile"></EditTextPreference>
+<EditTextPreference android:key="@string/dictFetchUrlKey" android:summary="URL to use to download the dictionary from the Internet." android:persistent="true" android:title="Dictionary fetch URL" android:defaultValue="@string/dictFetchUrl"></EditTextPreference>
 
 </PreferenceScreen>  
