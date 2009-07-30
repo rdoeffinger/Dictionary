@@ -92,7 +92,7 @@ public final class Entry implements RAFSerializable<Entry> {
     for (int i = 0; i < lang1.length; ++i) {
       result.append(i == 0 ? "" : " | ").append(lang1[i]);
     }
-    result.append(" :: ");
+    result.append("\t");
     for (int i = 0; i < lang2.length; ++i) {
       result.append(i == 0 ? "" : " | ").append(lang2[i]);
     }

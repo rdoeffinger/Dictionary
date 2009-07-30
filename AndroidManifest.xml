@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.hughes.android.dictionary" android:versionCode="1"
-	android:versionName="1.0.0">
+	package="com.hughes.android.dictionary" android:versionCode="4"
+	android:versionName="1.1">
 	
 	<uses-sdk android:minSdkVersion="2" />
 	<uses-permission android:name="android.permission.INTERNET"/>
@@ -14,9 +14,9 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name="AboutActivity"></activity>
-		<activity android:name="PreferenceActivity"></activity>
-		<activity android:name="DownloadActivity"></activity>
+		<activity android:name="AboutActivity"/>
+		<activity android:name="PreferenceActivity"/>
+		<activity android:name="DownloadActivity"/>
 	</application>
 
 </manifest> 

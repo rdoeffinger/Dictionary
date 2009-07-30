@@ -1,58 +1,82 @@
-<LinearLayout android:id="@+id/LinearLayout01"
-	android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent">
+<ScrollView android:id="@+id/ScrollView01"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" 
+	android:layout_height="wrap_content">
+	
+<LinearLayout 
+	android:id="@+id/LinearLayout01"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	>
 
-	<LinearLayout android:id="@+id/LinearLayout02"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal">
+	<LinearLayout 
+		android:id="@+id/LinearLayout02"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:paddingBottom="10dip">
 
-		<ImageView android:id="@+id/ImageView01"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal" android:background="@drawable/icon"></ImageView>
+		<ImageView 
+			android:id="@+id/ImageView01"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:background="@drawable/icon"/>
 
-		<TextView android:id="@+id/title"
+		<TextView 
+			android:id="@+id/title" 
+			android:text="@string/titleWithVersion"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical|fill_vertical" android:text="QuickDic 1.0"></TextView>
-
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical|fill_vertical" />
 	</LinearLayout>
 
+	<TextView 
+		android:id="@+id/copyright"
+		android:text="(c) 2009" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"/>
 
+	<TextView 
+		android:id="@+id/author"
+		android:text="Thad Hughes" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:paddingBottom="10dip"/>
 
-	<TextView android:text=" " android:id="@+id/space1"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"></TextView>
+	<TextView 
+		android:id="@+id/emailMe"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:text="@string/contactMe"/>
 
-	<TextView android:text="(c) 2009" android:id="@+id/copyright"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"></TextView>
+	<TextView 
+		android:id="@+id/email" 
+		android:text="@string/myEmail"
+		android:autoLink="email"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:clickable="true" 
+		android:layout_gravity="left"
+		android:paddingBottom="10dip"/>
 
-	<TextView android:text="by Thad Hughes" android:id="@+id/author"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"></TextView>
-
-	<TextView android:text=" " android:id="@+id/space3"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"></TextView>
-
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:id="@+id/emailMe"
-		android:text="If you're using QuickDic, I'd love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:"></TextView>
-
-	<TextView android:id="@+id/email" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:autoLink="email" android:clickable="true"
-		android:text="thad.hughes+quickdic@gmail.com" android:layout_gravity="left"></TextView>
-
-	<TextView android:text=" " android:id="@+id/space2"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"></TextView>
-
-	<TextView android:id="@+id/currentDictInfoTitle"
+	<TextView 
+		android:id="@+id/currentDictInfoTitle"
 		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Current dictionary info:"></TextView>
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:text="@string/currentDictInfo"/>
 
-	<TextView android:text="No dictionary loaded." android:id="@+id/currentDictInfo"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"></TextView>
-
+	<TextView 
+		android:id="@+id/currentDictInfo"
+		android:text="@string/noDictLoaded" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"/>
 
 </LinearLayout>
+
+</ScrollView>

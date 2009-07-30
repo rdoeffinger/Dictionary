@@ -99,6 +99,9 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
           return mid;
         }
         final IndexEntry midEntry = sortedIndex.get(mid);
+        if (midEntry.word.equals("pre-print")) {
+          System.out.println();
+        }
 
         final int comp = language.sortComparator.compare(word, midEntry.word.toLowerCase());
         if (comp == 0) {
@@ -111,8 +114,10 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
           }
           return result;
         } else if (comp < 0) {
+//          Log.d("THAD", "Upper bound: " + midEntry);
           end = mid;
         } else {
+//          Log.d("THAD", "Lower bound: " + midEntry);
           start = mid + 1;
         }
       }
@@ -134,7 +139,7 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
       for (; r <= rowIndex; ++r) {
         rows.get(r).indexEntry = indexEntry;
       }
-      assert false && rows.get(indexEntry.startRow).isToken();
+      assert rows.get(indexEntry.startRow).isToken();
       return indexEntry;
     }
   }

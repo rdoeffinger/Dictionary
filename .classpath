@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Util"/>
+	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

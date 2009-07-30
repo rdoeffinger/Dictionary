@@ -65,7 +65,7 @@ public class DownloadActivity extends Activity {
       out = new FileOutputStream(destTmpFile);
     } catch (Exception e) {
       Log.e("THAD", "Error downloading file", e);
-      setDownloadStatus("Error downloading file: \n" + e.getLocalizedMessage());
+      setDownloadStatus(String.format(getString(R.string.errorDownloadingFile), e.getLocalizedMessage()));
       return;
     }
 
@@ -80,7 +80,7 @@ public class DownloadActivity extends Activity {
             out.write(bytes, 0, bytesRead);
             byteCount += bytesRead;
             if (count++ % 20 == 0) {
-              setDownloadStatus(String.format("Downloading: %d bytes so far",
+              setDownloadStatus(String.format(getString(R.string.downloading),
                   byteCount));
             }
           }
@@ -92,12 +92,11 @@ public class DownloadActivity extends Activity {
           } else {
             Log.d("THAD", "Stopped downloading file.");
           }
-          setDownloadStatus(String.format("Downloaded finished: %d bytes",
+          setDownloadStatus(String.format(getString(R.string.downloadFinished),
               byteCount));
         } catch (IOException e) {
           Log.e("THAD", "Error downloading file", e);
-          setDownloadStatus("Error downloading file: \n"
-              + e.getLocalizedMessage());
+          setDownloadStatus(String.format(getString(R.string.errorDownloadingFile), e.getLocalizedMessage()));
         }
       }
     };

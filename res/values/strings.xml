@@ -1,15 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <string name="app_name">QuickDic</string>
-<string name="about_text">QuickDic\nby Thad Hughes</string>
 
-<string name="wordListFileKey">wordListFile</string>
-<string name="wordListFile">/sdcard/wordList.txt</string>
+	<string name="app_name">QuickDic</string>
+	<string name="about_text">QuickDic\nby Thad Hughes</string>
+	
+	<!-- Main -->
+	<string name="searchText">Search Text</string>
+	<string name="unableToReadDictionaryFile">Unable to read dictionary file: %s</string>
+	<string name="downloadDictionary">Download dictionary...</string>
+	<string name="switchToLanguage">Switch to %s</string>
+	<string name="preferences">Preferences...</string>
+	<string name="about">About...</string>
+	<string name="addToWordList">Add to word list: %s</string>
 
-<string name="dictFileKey">dictFile</string>
-<string name="dictFile">/sdcard/de-en.dict</string>
+	<!-- About. -->
+	<string name="titleWithVersion">QuickDic 1.2</string>
+	<string name="thadHughes">Thad Hughes</string>
+	<string name="contactMe">If you're using QuickDic, I'd love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
+	<string name="myEmail">thad.hughes+quickdic@gmail.com</string>
+	<string name="currentDictInfo">Current dictionary info:</string>
+	<string name="noDictLoaded">No dictionary loaded.</string>
+	
+	<!-- Download. -->
+	<string name="downloading">Downloading, %d bytes so far</string>
+	<string name="downloadFinished">Download finished, %d bytes downloaded.</string>
+	<string name="errorDownloadingFile">"Error downloading file: \n%s"</string>
 
-<string name="dictFetchUrlKey">dictFetchUrl</string>
-<string name="dictFetchUrl">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
+	<!-- Preferences -->
+	<string name="wordListFileKey">wordListFile</string>
+	<string name="wordListFileTitle">Word list file</string>
+	<string name="wordListFileSummary">The local file where the word list will be appended.</string>
+	<string name="wordListFileDefault">/sdcard/wordList.txt</string>
+
+	<string name="dictFileKey">dictFile</string>
+	<string name="dictFileTitle">Dictionary file</string>
+	<string name="dictFileSummary">The local filename where the dictionary is stored (and downloaded to).</string>
+	<string name="dictFileDefault">/sdcard/de-en.dict</string>
+
+	<string name="dictFetchUrlKey">dictFetchUrl</string>
+	<string name="dictFetchUrlTitle">Dictionary fetch URL</string>
+	<string name="dictFetchUrlSummary">URL to use to download the dictionary from the Internet.</string>
+	<string name="dictFetchUrlDefault">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
+	
 </resources>
