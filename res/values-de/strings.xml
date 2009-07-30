@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">QuickDic</string>
+	<string name="about_text">QuickDic\nvon Thad Hughes</string>
+	
+	<!-- Main -->
+	<string name="searchText">Stichwort</string>
+	<string name="unableToReadDictionaryFile">Wörterbuch Datei existiert nicht: %s</string>
+	<string name="downloadDictionary">Wörterbuch herunterladen...</string>
+	<string name="switchToLanguage">Switch to %s</string>
+	<string name="preferences">Einstellungen...</string>
+	<string name="about">Über QuickDic...</string>
+	<string name="addToWordList">Zu Wortliste hinzufugen: %s</string>
+
+	<!-- About. -->
+	<string name="titleWithVersion">QuickDic 1.2</string>
+	<string name="thadHughes">Thad Hughes</string>
+	<string name="contactMe">Wenn QuickDic dir gefällt, würde ich gern von dir hören.  Bitte schicke Bemerkungen, Aufforderungen, oder Programmfehler an:</string>
+	<string name="myEmail">thad.hughes+quickdic@gmail.com</string>
+	<string name="currentDictInfo">Wörterbuch Info:</string>
+	<string name="noDictLoaded">Kein Wörterbuch geöffnet.</string>
+	
+	<!-- Download. -->
+	<string name="downloading">%d Bytes heruntergeladen...</string>
+	<string name="downloadFinished">Herunterladen fertig, %d Bytes heruntergeladen.</string>
+	<string name="errorDownloadingFile">"Fehler während des Herunterladens: \n%s"</string>
+
+	<!-- Preferences -->
+	<string name="wordListFileKey">wordListFile</string>
+	<string name="wordListFileTitle">Wortliste Datei</string>
+	<string name="wordListFileSummary">Die Datei, in der neue Worte hinzugefügt werden.</string>
+	<string name="wordListFileDefault">/sdcard/wordList.txt</string>
+
+	<string name="dictFileKey">dictFile</string>
+	<string name="dictFileTitle">Wörterbuch Datei</string>
+	<string name="dictFileSummary">Die Datei, die das Wörterbuch enthält (und worein das Wörterbuch heruntergeladen wird).</string>
+	<string name="dictFileDefault">/sdcard/de-en.dict</string>
+
+	<string name="dictFetchUrlKey">dictFetchUrl</string>
+	<string name="dictFetchUrlTitle">Wörterbuch URL</string>
+	<string name="dictFetchUrlSummary">Das URL, wovon das Wörterbuch heruntergeladen wird.</string>
+	<string name="dictFetchUrlDefault">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
+	
+</resources>
