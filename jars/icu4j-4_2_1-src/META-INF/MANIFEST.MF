@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.0
+Created-By: 2.4 (IBM Corporation)
+Built-By: IBM Corporation
+
+Name: common
+Specification-Title: ICU4J Sources
+Specification-Version: 4.2
+Specification-Vendor: ICU
+Implementation-Title: ICU for Java source files
+Implementation-Version: 4.2.1
+Implementation-Vendor: IBM Corporation
+Implementation-Vendor-Id: com.ibm
+Copyright-Info: Copyright (c) 2000-2009, International Business Machin
+ es Corporation and others.  All Rights Reserved.
+Sealed: false
+

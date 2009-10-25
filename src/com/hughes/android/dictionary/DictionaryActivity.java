@@ -204,6 +204,7 @@ public class DictionaryActivity extends ListActivity {
   }
 
   private void closeCurrentDictionary() {
+    Log.i(LOG, "closeCurrentDictionary");
     searchOperation.stopAndWait();
     languageList = null;
     setListAdapter(null);
