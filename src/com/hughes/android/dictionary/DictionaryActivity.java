@@ -205,7 +205,10 @@ public class DictionaryActivity extends ListActivity {
 
   private void closeCurrentDictionary() {
     Log.i(LOG, "closeCurrentDictionary");
-    searchOperation.stopAndWait();
+    if (searchOperation != null) {
+      searchOperation.stopAndWait();
+      searchOperation = null;
+    }
     languageList = null;
     setListAdapter(null);
     dictionary = null;
@@ -313,6 +316,7 @@ public class DictionaryActivity extends ListActivity {
     languageList = new LanguageListAdapter(
         dictionary.languageDatas[(languageList.languageData == dictionary.languageDatas[0]) ? 1
             : 0]);
+    Log.d(LOG, "onLanguageButton, newLang=" + languageList.languageData.language.symbol);
     setListAdapter(languageList);
     updateLangButton();
     onSearchTextChange(searchText.getText().toString());
@@ -327,8 +331,10 @@ public class DictionaryActivity extends ListActivity {
     if (selectedRowIndex == selectedTokenRowIndex && selectedRowIndex > 0) {
       destRowIndex = languageList.languageData.sortedIndex
           .get(prevTokenIndex).startRow;
+      Log.d(LOG, "onUpButton, jumping back a word, destRowIndex=" + destRowIndex);
     } else {
       destRowIndex = selectedTokenRowIndex;
+      Log.d(LOG, "onUpButton, jumping to top of word, destRowIndex=" + destRowIndex);
     }
     jumpToRow(languageList, destRowIndex);
   }
@@ -342,8 +348,10 @@ public class DictionaryActivity extends ListActivity {
     if (nextTokenIndex < languageList.languageData.sortedIndex.size()) {
       destRowIndex = languageList.languageData.sortedIndex
           .get(nextTokenIndex).startRow;
+      Log.d(LOG, "onDownButton, jumping down a word, destRowIndex=" + destRowIndex);
     } else {
       destRowIndex = languageList.languageData.rows.size() - 1;
+      Log.d(LOG, "onDownButton, jumping to end of dict, destRowIndex=" + destRowIndex);
     }
     jumpToRow(languageList, destRowIndex);
   }

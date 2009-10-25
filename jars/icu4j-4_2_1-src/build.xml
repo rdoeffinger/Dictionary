@@ -376,6 +376,12 @@
     </java>
   </target>
 
+  <target name="collIndices" depends="build_indexgenerator">
+    <java classname="com.ibm.icu.dev.tool.index.IndexGenerator" classpath="${build.dir}" logError="true">
+      <arg value="${build.dir}/${icu4j.data.path}/coll" />
+    </java>
+  </target>
+
   <target name="tools"
           depends="core"
           unless="before.java14"
@@ -913,7 +919,14 @@
   </target>
 
   <target name="moduleJar" depends="initBase" description="modular build of 'icu4j.jar' jar file">
-    <jar jarfile="${jar.file}" compress="true" includes="com/ibm/icu/util/**/*,com/ibm/icu/text/**/*,com/ibm/icu/math/**/*,com/ibm/icu/impl/**/*,com/ibm/icu/lang/**/*" basedir="${build.dir}">
+    <jar jarfile="${jar.file}" compress="true">
+
+    	<!-- com/ibm/icu/util/**/*,com/ibm/icu/text/**/*,com/ibm/icu/math/**/*,com/ibm/icu/impl/**/*,com/ibm/icu/lang/**/* -->
+      <fileset dir="${build.dir}" includes="com/ibm/icu/util/**/*,com/ibm/icu/text/**/*,com/ibm/icu/math/**/*,com/ibm/icu/impl/**/*,com/ibm/icu/lang/**/*" excludes="META-INF/services/**/*,com/ibm/icu/charset/**/*,${icu4j.data.path}/*.cnv,${icu4j.data.path}/cnvalias.icu" />
+
+    	<fileset dir="${basedir}" includes="license.html,unicode-license.txt" />
+      <fileset dir="${src.dir}" includes="com/ibm/icu/ICUConfig.properties" />
+    	
       <manifest>
         <attribute name="Built-By" value="${corp}" />
         <section name="common">

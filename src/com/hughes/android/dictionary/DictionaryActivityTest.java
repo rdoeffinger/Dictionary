@@ -34,7 +34,7 @@ public class DictionaryActivityTest extends ActivityInstrumentationTestCase2<Dic
     assertEquals(Language.EN, dict.languageList.languageData.language);
 
     dict.uiHandler.post(switchLang);
-    Thread.sleep(100);
+    Thread.sleep(200);
     assertEquals(Language.DE, dict.languageList.languageData.language);
     
     dict.finish();
