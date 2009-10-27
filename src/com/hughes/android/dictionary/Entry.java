@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.hughes.util.raf.RAFFactory;
@@ -104,10 +105,52 @@ public final class Entry implements RAFSerializable<Entry> {
     return lang == LANG1 ? LANG2 : LANG1;
   }
   
+/*
+Lu     Letter, Uppercase
+Ll  Letter, Lowercase
+Lt  Letter, Titlecase
+Lm  Letter, Modifier
+Lo  Letter, Other
+Mn  Mark, Nonspacing
+Mc  Mark, Spacing Combining
+Me  Mark, Enclosing
+Nd  Number, Decimal Digit
+Nl  Number, Letter
+No  Number, Other
+Pc  Punctuation, Connector
+Pd  Punctuation, Dash
+Ps  Punctuation, Open
+Pe  Punctuation, Close
+Pi  Punctuation, Initial quote (may behave like Ps or Pe depending on usage)
+Pf  Punctuation, Final quote (may behave like Ps or Pe depending on usage)
+Po  Punctuation, Other
+Sm  Symbol, Math
+Sc  Symbol, Currency
+Sk  Symbol, Modifier
+So  Symbol, Other
+Zs  Separator, Space
+Zl  Separator, Line
+Zp  Separator, Paragraph
+*/
 
+  static Pattern htmlDecimalCode = Pattern.compile("&#([0-9]+);");
+  static Pattern htmlCode = Pattern.compile("&#[^;]+;");
+  
   static Entry parseFromLine(String line, final boolean hasMultipleSubentries) {
+    
     line = line.replaceAll("&lt;", "<");
     line = line.replaceAll("&gt;", ">");
+    Matcher matcher;
+    while ((matcher = htmlDecimalCode.matcher(line)).find()) {
+      final int intVal = Integer.parseInt(matcher.group(1));
+      final String charCode = "" + ((char) intVal);
+      System.out.println("Replacing " + matcher.group() + " with " + charCode);
+      line = matcher.replaceAll(charCode);
+    }
+    if ((matcher = htmlCode.matcher(line)).find()) {
+      System.err.println("HTML code: " + matcher.group());
+    }
+    
     final String[] parts = lineSplitPattern.split(line);
     if (parts.length != 2) {
       System.err.println("Entry:" + "Invalid line: " + line);
@@ -136,7 +179,8 @@ public final class Entry implements RAFSerializable<Entry> {
     bracketToClose.put(" '", "' ");
   }
   
-  static final Pattern WHITESPACE = Pattern.compile("\\s+");
+  // This used to be called WHITESPACE.
+  static final Pattern NON_TOKEN_CHAR = Pattern.compile("\\s+");
   
   public Set<String> getIndexableTokens(final byte lang) {
     final Set<String> result = new LinkedHashSet<String>();
@@ -150,17 +194,16 @@ public final class Entry implements RAFSerializable<Entry> {
     text = text.replaceAll("\"-", "-");
     text = text.replaceAll("-\"", "-");
     text = text.replaceAll("[\"/\\()<>\\[\\],;?!.]", " ");
-    text = text.replaceAll("[:] ", " ");
-    text = text.replaceAll(" [:]", " ");
+    text = text.replaceAll("[-:] ", " ");
+    text = text.replaceAll(" [-:]", " ");
     
     // Now be really conservative about what we allow inside a token:
     // See: http://unicode.org/Public/UNIDATA/UCD.html#General_Category_Values
-    text = text.replaceAll("[^-:\\p{Lu}\\p{Ll}\\p{Lt}\\p{Lm}\\p{Lo}\\p{Nd}\\p{Nl}\\p{No}]", " ");
-    
-    result.addAll(Arrays.asList(WHITESPACE.split(text)));
+    text = text.replaceAll("[^-:\\p{L}\\p{N}\\p{S}]", " ");
+    result.addAll(Arrays.asList(NON_TOKEN_CHAR.split(text)));
 
     text = text.replaceAll("[-]", " ");
-    result.addAll(Arrays.asList(WHITESPACE.split(text)));
+    result.addAll(Arrays.asList(NON_TOKEN_CHAR.split(text)));
     
     final Set<String> result2 = new LinkedHashSet<String>();
     for (final String token : result) {

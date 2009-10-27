@@ -11,7 +11,7 @@
 	>
 
 	<TextView 
-		android:id="@+id/noDictTextId" 
+		android:id="@+id/statusTextId" 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical|fill_vertical"
@@ -27,6 +27,13 @@
   <Button 
     android:id="@+id/preferences"
     android:text="@string/preferences"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+  />
+
+  <Button 
+    android:id="@+id/launchDict"
+    android:text="@string/launchDict"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
   />

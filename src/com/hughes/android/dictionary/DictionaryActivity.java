@@ -11,7 +11,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +35,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,6 +43,7 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hughes.android.dictionary.Dictionary.IndexEntry;
 import com.hughes.android.dictionary.Dictionary.LanguageData;
@@ -51,10 +52,12 @@ import com.hughes.android.dictionary.Dictionary.Row;
 public class DictionaryActivity extends ListActivity {
   
   // TODO:
-  // * Only have one live SearchActivity, and a way to wait for it to die.
-  // * Don't destroy dict unless we're really shutting down (not on screen rotate).
-  // * Move (re-)init code to a method, set a flag if prefs might have changed, invoke re-init in onResume, which clears flag and reloads prefs.
+  // * Version magic number at end of dictionary, checked for correctness. (Throw exception in ctor, remember to check for it).
+  // * Localize "about" string if % codes
+  // * Toast when word gets added to word list.
   // * Compress all the strings everywhere, put compression table in file.
+  // Done:
+  // * Only one way to way for current search to end. (won't do).
 
   static final String LOG = "QuickDic";
   static final String PREF_DICT_ACTIVE_LANG = "DICT_DIR_PREF";
@@ -62,31 +65,28 @@ public class DictionaryActivity extends ListActivity {
 
   // package for test.
   final Handler uiHandler = new Handler();
-
-  EditText searchText;
-
   private final Executor searchExecutor = Executors.newSingleThreadExecutor();
 
-  // Never null.
-  private boolean prefsMightHaveChanged = true;
-  private File wordList;
+  EditText searchText;
+  Button langButton;
+  int lastSelectedRow = 0;
 
+  private boolean prefsMightHaveChanged = true;
+
+  // Never null.
+  private File wordList;
   private RandomAccessFile dictRaf = null;
   private Dictionary dictionary = null;
 
   // Visible for testing.
   LanguageListAdapter languageList = null;
-
   private SearchOperation searchOperation = null;
-
-  private int selectedRowIndex;
-  private int selectedTokenRowIndex;
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Log.d(LOG, "onCreate");
+    Log.d(LOG, "onCreate:" + this);
 
     if (Language.EN.sortCollator.compare("pre-print", "preppy") >= 0) {
       Log
@@ -103,9 +103,20 @@ public class DictionaryActivity extends ListActivity {
 
     setContentView(R.layout.main);
     searchText = (EditText) findViewById(R.id.SearchText);
-
+    langButton = (Button) findViewById(R.id.LangButton);
+    
     Log.d(LOG, "adding text changed listener");
     searchText.addTextChangedListener(new SearchTextWatcher());
+    
+    getListView().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+      public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+          long arg3) {
+        lastSelectedRow = arg2;
+        updateSearchText();
+      }
+      public void onNothingSelected(AdapterView<?> arg0) {
+      }
+    });
 
     // Language button.
     final Button langButton = (Button) findViewById(R.id.LangButton);
@@ -132,7 +143,7 @@ public class DictionaryActivity extends ListActivity {
 
     updateLangButton();
   }
-
+  
   private void initDictionaryAndPrefs() {
     if (!prefsMightHaveChanged) {
       return;
@@ -158,7 +169,8 @@ public class DictionaryActivity extends ListActivity {
       dictRaf = new RandomAccessFile(dictFile, "r");
       dictionary = new Dictionary(dictRaf);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      Log.e(LOG, "Couldn't open dictionary.", e);
+      return;
     }
 
     final byte lang = prefs.getInt(PREF_DICT_ACTIVE_LANG, Entry.LANG1) == Entry.LANG1 ? Entry.LANG1
@@ -172,10 +184,9 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public void onResume() {
     super.onResume();
-    
-    if (prefsMightHaveChanged) {
-      
-    }
+    Log.d(LOG, "onResume:" + this);
+
+    initDictionaryAndPrefs();
     
     final SharedPreferences prefs = PreferenceManager
         .getDefaultSharedPreferences(this);
@@ -183,11 +194,13 @@ public class DictionaryActivity extends ListActivity {
         .getString(PREF_ACTIVE_SEARCH_TEXT, "");
     searchText.setText(searchTextString);
     onSearchTextChange(searchTextString);
+    getListView().requestFocus();
   }
 
   @Override
   public void onPause() {
     super.onPause();
+    Log.d(LOG, "onPause:" + this);
     final Editor prefs = PreferenceManager.getDefaultSharedPreferences(this)
         .edit();
     prefs.putInt(PREF_DICT_ACTIVE_LANG, languageList.languageData.lang);
@@ -198,17 +211,16 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public void onStop() {
     super.onStop();
+    Log.d(LOG, "onStop:" + this);
     if (isFinishing()) {
+      Log.i(LOG, "isFinishing()==true, closing dictionary.");
       closeCurrentDictionary();
     }
   }
 
   private void closeCurrentDictionary() {
     Log.i(LOG, "closeCurrentDictionary");
-    if (searchOperation != null) {
-      searchOperation.stopAndWait();
-      searchOperation = null;
-    }
+    waitForSearchEnd();
     languageList = null;
     setListAdapter(null);
     dictionary = null;
@@ -223,7 +235,7 @@ public class DictionaryActivity extends ListActivity {
   }
 
   public String getSelectedRowRawText() {
-    final int row = getSelectedItemPosition();
+    final int row = getSelectedRow();
     return row < 0 ? "" : languageList.languageData
         .rowToString(languageList.languageData.rows.get(row));
   }
@@ -297,14 +309,13 @@ public class DictionaryActivity extends ListActivity {
 
   @Override
   public boolean onPrepareOptionsMenu(final Menu menu) {
-    switchLanguageMenuItem.setTitle(String.format(
-        getString(R.string.switchToLanguage), dictionary.languageDatas[Entry
+    switchLanguageMenuItem.setTitle(getString(R.string.switchToLanguage,
+        dictionary.languageDatas[Entry
             .otherLang(languageList.languageData.lang)].language.symbol));
     return super.onPrepareOptionsMenu(menu);
   }
   
   void updateLangButton() {
-    final Button langButton = (Button) findViewById(R.id.LangButton);
     langButton.setText(languageList.languageData.language.symbol);
   }
 
@@ -313,6 +324,7 @@ public class DictionaryActivity extends ListActivity {
   // ----------------------------------------------------------------
   
   void onLanguageButton() {
+    waitForSearchEnd();
     languageList = new LanguageListAdapter(
         dictionary.languageDatas[(languageList.languageData == dictionary.languageDatas[0]) ? 1
             : 0]);
@@ -323,41 +335,19 @@ public class DictionaryActivity extends ListActivity {
   }
 
   void onUpButton() {
-    final int destRowIndex;
-    final Row tokenRow = languageList.languageData.rows
-        .get(selectedTokenRowIndex);
-    assert tokenRow.isToken();
-    final int prevTokenIndex = tokenRow.getIndex() - 1;
-    if (selectedRowIndex == selectedTokenRowIndex && selectedRowIndex > 0) {
-      destRowIndex = languageList.languageData.sortedIndex
-          .get(prevTokenIndex).startRow;
-      Log.d(LOG, "onUpButton, jumping back a word, destRowIndex=" + destRowIndex);
-    } else {
-      destRowIndex = selectedTokenRowIndex;
-      Log.d(LOG, "onUpButton, jumping to top of word, destRowIndex=" + destRowIndex);
-    }
+    final int destRowIndex = languageList.languageData.getPrevTokenRow(lastSelectedRow);
+    Log.d(LOG, "onUpButton, destRowIndex=" + destRowIndex);
     jumpToRow(languageList, destRowIndex);
   }
 
   void onDownButton() {
-    final Row tokenRow = languageList.languageData.rows
-        .get(selectedTokenRowIndex);
-    assert tokenRow.isToken();
-    final int nextTokenIndex = tokenRow.getIndex() + 1;
-    final int destRowIndex;
-    if (nextTokenIndex < languageList.languageData.sortedIndex.size()) {
-      destRowIndex = languageList.languageData.sortedIndex
-          .get(nextTokenIndex).startRow;
-      Log.d(LOG, "onDownButton, jumping down a word, destRowIndex=" + destRowIndex);
-    } else {
-      destRowIndex = languageList.languageData.rows.size() - 1;
-      Log.d(LOG, "onDownButton, jumping to end of dict, destRowIndex=" + destRowIndex);
-    }
+    final int destRowIndex = languageList.languageData.getNextTokenRow(lastSelectedRow);
+    Log.d(LOG, "onDownButton, destRowIndex=" + destRowIndex);
     jumpToRow(languageList, destRowIndex);
   }
 
   void onAppendToWordList() {
-    final int row = getSelectedItemPosition();
+    final int row = getSelectedRow();
     if (row < 0) {
       return;
     }
@@ -377,21 +367,17 @@ public class DictionaryActivity extends ListActivity {
       out.close();
     } catch (IOException e) {
       Log.e(LOG, "Unable to append to " + wordList.getAbsolutePath(), e);
-      final AlertDialog alert = new AlertDialog.Builder(
-          DictionaryActivity.this).create();
-      alert.setMessage("Failed to append to file: "
-          + wordList.getAbsolutePath());
-      alert.show();
+      Toast.makeText(this, getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()), Toast.LENGTH_LONG);
     }
     return;
   }
 
   void onCopy() {
-    final int row = getSelectedItemPosition();
+    final int row = getSelectedRow();
     if (row < 0) {
       return;
     }
-    Log.d(LOG, "Copy." + DictionaryActivity.this.getSelectedItemPosition());
+    Log.d(LOG, "Copy." + DictionaryActivity.this.getSelectedRow());
     final StringBuilder result = new StringBuilder();
     result.append(getSelectedRowRawText());
     final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -420,9 +406,13 @@ public class DictionaryActivity extends ListActivity {
 
   void onSearchTextChange(final String searchText) {
     Log.d(LOG, "onSearchTextChange: " + searchText);
-    searchOperation = new SearchOperation(languageList, searchText, searchOperation);
-    searchExecutor.execute(searchOperation);
+    synchronized (this) {
+      searchOperation = new SearchOperation(languageList, searchText, searchOperation);
+      searchExecutor.execute(searchOperation);
+    }
   }
+
+  
 
   // ----------------------------------------------------------------
   // ContextMenu
@@ -431,13 +421,12 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v,
       ContextMenuInfo menuInfo) {
-    final int row = getSelectedItemPosition();
+    final int row = getSelectedRow();
     if (row < 0) {
       return;
     }
 
-    final MenuItem addToWordlist = menu.add(String.format(
-        getString(R.string.addToWordList), wordList.getName()));
+    final MenuItem addToWordlist = menu.add(getString(R.string.addToWordList, wordList.getName()));
     addToWordlist.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(MenuItem item) {
         onAppendToWordList();
@@ -462,21 +451,30 @@ public class DictionaryActivity extends ListActivity {
       Log.w(LOG, "skipping jumpToRow for old list adapter: " + rowIndex);
       return;
     }
-    // selectedTokenRowIndex =
-    // languageList.languageData.getIndexEntryForRow(rowIndex).startRow;
     setSelection(rowIndex);
-    getListView().setSelected(true); // TODO: is this doing anything?
+    lastSelectedRow = rowIndex;  // TODO: find a way to delete this.
     updateSearchText();
+    getListView().setSelected(true);
+  }
+  
+  // TODO: delete me somehow.
+  private int getSelectedRow() {
+    return lastSelectedRow;
   }
 
   private void updateSearchText() {
     Log.d(LOG, "updateSearchText");
+    final int selectedRowIndex = getSelectedRow();
     if (!searchText.hasFocus()) {
-      final String word = languageList.languageData
-          .getIndexEntryForRow(selectedRowIndex).word;
-      if (!word.equals(searchText.getText().toString())) {
-        Log.d(LOG, "updateSearchText: setText: " + word);
-        searchText.setText(word);
+      if (selectedRowIndex >= 0) {
+        final String word = languageList.languageData
+            .getIndexEntryForRow(selectedRowIndex).word;
+        if (!word.equals(searchText.getText().toString())) {
+          Log.d(LOG, "updateSearchText: setText: " + word);
+          searchText.setText(word);
+        }
+      } else {
+        Log.w(LOG, "updateSearchText: nothing selected.");
       }
     }
   }
@@ -601,7 +599,7 @@ public class DictionaryActivity extends ListActivity {
     final LanguageData languageData;
     final String searchText;
     final AtomicBoolean interrupted = new AtomicBoolean(false);
-    boolean finished = false;
+    boolean searchFinished = false;
 
     SearchOperation(final LanguageListAdapter listAdapter,
         final String searchText, final SearchOperation previousSearchOperation) {
@@ -619,32 +617,34 @@ public class DictionaryActivity extends ListActivity {
       
       Log.d(LOG, "SearchOperation: " + searchText);
       final int indexLocation = languageData.lookup(searchText, interrupted);
-      if (interrupted.get()) {
-        return;
-      }
-      final IndexEntry indexEntry = languageData.sortedIndex.get(indexLocation);
-      
-      Log.d(LOG, "SearchOperation completed: " + indexEntry.toString());
-      uiHandler.post(new Runnable() {
-        public void run() {
-          // Check is just a performance operation.
-          if (!interrupted.get()) {
-            // This is safe, because it checks that the listAdapter hasn't changed.
-            jumpToRow(listAdapter, indexEntry.startRow);
+      if (!interrupted.get()) {
+        final IndexEntry indexEntry = languageData.sortedIndex.get(indexLocation);
+        
+        Log.d(LOG, "SearchOperation completed: " + indexEntry.toString());
+        uiHandler.post(new Runnable() {
+          public void run() {
+            // Check is just a performance operation.
+            if (!interrupted.get()) {
+              // This is safe, because it checks that the listAdapter hasn't changed.
+              jumpToRow(listAdapter, indexEntry.startRow);
+            }
+            synchronized (DictionaryActivity.this) {
+              searchOperation = null;
+              DictionaryActivity.this.notifyAll();
+            }
           }
-        }
-      });
-      
+        });
+      }      
       synchronized (this) {
-        finished = true;
+        searchFinished = true;
         this.notifyAll();
       }
     }
     
-    public void stopAndWait() {
+    private void stopAndWait() {
       interrupted.set(true);
       synchronized (this) {
-        while (!finished) {
+        while (!searchFinished) {
           Log.d(LOG, "stopAndWait: " + searchText);
           try {
             this.wait();
@@ -654,8 +654,18 @@ public class DictionaryActivity extends ListActivity {
         }
       }
     }
+  }  // SearchOperation
 
-
+  void waitForSearchEnd() {
+    synchronized (this) {
+      while (searchOperation != null) {
+        try {
+          this.wait();
+        } catch (InterruptedException e) {
+          Log.e(LOG, "Interrupted.", e);
+        }
+      }
+    }
   }
 
   private class SearchTextWatcher implements TextWatcher {

@@ -6,12 +6,12 @@
 	
 	<!-- Main -->
 	<string name="searchText">Stichwort</string>
-	<string name="unableToReadDictionaryFile">Wörterbuch Datei existiert nicht: %s</string>
 	<string name="downloadDictionary">Wörterbuch herunterladen...</string>
 	<string name="switchToLanguage">Switch to %s</string>
 	<string name="preferences">Einstellungen...</string>
 	<string name="about">Über QuickDic...</string>
 	<string name="addToWordList">Zu Wortliste hinzufugen: %s</string>
+  <string name="failedAddingToWordList">Fehler bei Wortliste hinzufugen: %s</string>
 
 	<!-- About. -->
 	<string name="titleWithVersion">QuickDic 1.2</string>
@@ -25,6 +25,11 @@
 	<string name="downloading">%d Bytes heruntergeladen...</string>
 	<string name="downloadFinished">Herunterladen fertig, %d Bytes heruntergeladen.</string>
 	<string name="errorDownloadingFile">"Fehler während des Herunterladens: \n%s"</string>
+
+  <!-- NoDictionary. -->
+  <string name="unableToReadDictionaryFile">Wörterbuch Datei existiert nicht: %s</string>
+  <string name="DictionaryFileExists">Wörterbuch Datei existiert: %s</string>
+  <string name="launchDict">"Launch dictionary."</string>
 
 	<!-- Preferences -->
 	<string name="wordListFileKey">wordListFile</string>

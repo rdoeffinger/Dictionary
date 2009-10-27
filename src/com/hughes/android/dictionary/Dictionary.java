@@ -123,6 +123,28 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
       }
       return Math.min(sortedIndex.size() - 1, start);
     }
+    
+    public int getPrevTokenRow(final int rowIndex) {
+      final IndexEntry indexEntry = getIndexEntryForRow(rowIndex);
+      final Row tokenRow = rows.get(indexEntry.startRow);
+      assert tokenRow.isToken();
+      final int prevTokenIndex = tokenRow.getIndex() - 1;
+      if (indexEntry.startRow == rowIndex && prevTokenIndex >= 0) {
+        return sortedIndex.get(prevTokenIndex).startRow;
+      }
+      return indexEntry.startRow;
+    }
+
+    public int getNextTokenRow(final int rowIndex) {
+      final IndexEntry indexEntry = getIndexEntryForRow(rowIndex);
+      final Row tokenRow = rows.get(indexEntry.startRow);
+      assert tokenRow.isToken();
+      final int nextTokenIndex = tokenRow.getIndex() + 1;
+      if (nextTokenIndex < sortedIndex.size()) {
+        return sortedIndex.get(nextTokenIndex).startRow;
+      }
+      return rows.size() - 1;
+    }
 
     public IndexEntry getIndexEntryForRow(final int rowIndex) {
       // TODO: this kinda blows.

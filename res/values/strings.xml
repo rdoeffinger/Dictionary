@@ -6,12 +6,12 @@
 	
 	<!-- Main -->
 	<string name="searchText">Search Text</string>
-	<string name="unableToReadDictionaryFile">Unable to read dictionary file: %s</string>
 	<string name="downloadDictionary">Download dictionary...</string>
 	<string name="switchToLanguage">Switch to %s</string>
 	<string name="preferences">Preferences...</string>
 	<string name="about">About...</string>
 	<string name="addToWordList">Add to word list: %s</string>
+  <string name="failedAddingToWordList">Failure adding to word list: %s</string>
 
 	<!-- About. -->
 	<string name="titleWithVersion">QuickDic 1.2</string>
@@ -25,6 +25,11 @@
 	<string name="downloading">Downloading, %d bytes so far</string>
 	<string name="downloadFinished">Download finished, %d bytes downloaded.</string>
 	<string name="errorDownloadingFile">"Error downloading file: \n%s"</string>
+
+  <!-- NoDictionary. -->
+  <string name="unableToReadDictionaryFile">Unable to read dictionary file: %s</string>
+  <string name="dictionaryFileExists">Dictionary file exists: %s</string>
+  <string name="launchDict">Launch dictionary.</string>
 
 	<!-- Preferences -->
 	<string name="wordListFileKey">wordListFile</string>
