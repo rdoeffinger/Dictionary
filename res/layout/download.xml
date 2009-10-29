@@ -4,30 +4,31 @@
 	android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Downloading..."></TextView>
+		android:layout_height="wrap_content" android:text="Downloading..."/>
 
 	<LinearLayout android:id="@+id/sourceLayout"
 		android:orientation="horizontal" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
 		<TextView android:id="@+id/sourceTitle" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="Source: "></TextView>
+			android:layout_height="wrap_content" android:text="Source: "/>
 		<TextView android:id="@+id/source" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="source"></TextView>
+			android:layout_height="wrap_content" android:text="source"/>
 	</LinearLayout>
 
 	<LinearLayout android:id="@+id/destLayout"
 		android:orientation="horizontal" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
 		<TextView android:id="@+id/destTitle" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="Destination: "></TextView>
+			android:layout_height="wrap_content" android:text="Destination: "/>
 		<TextView android:id="@+id/dest" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="dest"></TextView>
+			android:layout_height="wrap_content" android:text="dest"/>
 	</LinearLayout>
 
-	<ProgressBar android:id="@+id/downloadProgressBar"
-		android:layout_width="wrap_content" android:layout_height="wrap_content" android:indeterminate="false"></ProgressBar>
+	<ProgressBar android:id="@+id/downloadProgressBar" style="?android:attr/progressBarStyleHorizontal"
+    android:max="100" android:progress="50"
+		android:layout_width="fill_parent" android:layout_height="wrap_content" android:indeterminate="false"/>
 
 	<TextView android:id="@+id/downloadStatus" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:visibility="visible" android:text="Download status."></TextView>
+		android:layout_height="wrap_content" android:visibility="visible" android:text="Download status."/>
 
 </LinearLayout>

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,6 +25,8 @@ public class DownloadActivity extends Activity {
 
   String source;
   String dest;
+  long bytesDownloaded = 0;
+  long contentLength = -1;
 
   private final Executor downloadExecutor = Executors.newSingleThreadExecutor();
   private final Handler uiHandler = new Handler();
@@ -61,7 +64,9 @@ public class DownloadActivity extends Activity {
       destTmpFile = File.createTempFile("dictionaryDownload", "tmp", destFile
           .getParentFile());
       final URL uri = new URL(source);
-      in = uri.openStream();
+      final URLConnection connection = uri.openConnection();
+      contentLength = connection.getContentLength();
+      in = connection.getInputStream();
       out = new FileOutputStream(destTmpFile);
     } catch (Exception e) {
       Log.e("THAD", "Error downloading file", e);
@@ -72,16 +77,16 @@ public class DownloadActivity extends Activity {
     final Runnable runnable = new Runnable() {
       public void run() {
         try {
-          long byteCount = 0;
+          bytesDownloaded = 0;
           int bytesRead;
           final byte[] bytes = new byte[1024 * 8];
           int count = 0;
           while ((bytesRead = in.read(bytes)) != -1 && !stop.get()) {
             out.write(bytes, 0, bytesRead);
-            byteCount += bytesRead;
+            bytesDownloaded += bytesRead;
             if (count++ % 20 == 0) {
-              setDownloadStatus(String.format(getString(R.string.downloading),
-                  byteCount));
+              setDownloadStatus(getString(R.string.downloading,
+                  bytesDownloaded, contentLength));
             }
           }
           in.close();
@@ -90,10 +95,10 @@ public class DownloadActivity extends Activity {
             destFile.delete();
             destTmpFile.renameTo(destFile);
           } else {
-            Log.d("THAD", "Stopped downloading file.");
+           Log.d("THAD", "Stopped downloading file.");
           }
           setDownloadStatus(String.format(getString(R.string.downloadFinished),
-              byteCount));
+              bytesDownloaded));
         } catch (IOException e) {
           Log.e("THAD", "Error downloading file", e);
           setDownloadStatus(String.format(getString(R.string.errorDownloadingFile), e.getLocalizedMessage()));
@@ -111,10 +116,14 @@ public class DownloadActivity extends Activity {
   }
 
   private void setDownloadStatus(final String status) {
-    final TextView downloadStatus = (TextView) findViewById(R.id.downloadStatus);
-//    final ProgressBar progressBar = (ProgressBar) findViewById(R.id.downloadProgressBar);
     uiHandler.post(new Runnable() {
       public void run() {
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.downloadProgressBar);
+        if (contentLength > 0) {
+          progressBar.setProgress((int) (bytesDownloaded * 100 / contentLength));
+        }
+        
+        final TextView downloadStatus = (TextView) findViewById(R.id.downloadStatus);
         downloadStatus.setText(status);
       }
     });

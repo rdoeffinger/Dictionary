@@ -1,27 +1,43 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<EditTextPreference
-	    android:key="@string/wordListFileKey"
-		android:title="@string/wordListFileTitle" 
-		android:summary="@string/wordListFileSummary"
+	  android:key="@string/wordListFileKey"
+    android:title="@string/wordListFileTitle" 
+    android:summary="@string/wordListFileSummary"
 		android:defaultValue="@string/wordListFileDefault"
-		android:persistent="true"
+    android:persistent="true"
 	/>
-		
+
+  <CheckBoxPreference 
+    android:key="@string/saveOnlyFirstSubentryKey"
+    android:title="@string/saveOnlyFirstSubentryTitle"
+    android:summary="@string/saveOnlyFirstSubentrySummary"
+    android:defaultValue="false"
+    android:persistent="true"
+  />
+
+  <CheckBoxPreference 
+    android:key="@string/showClearSearchTextButtonKey"
+    android:title="@string/showClearSearchTextButtonTitle"
+    android:summary="@string/showClearSearchTextButtonSummary"
+    android:defaultValue="true"
+    android:persistent="true"
+  />
+
 	<EditTextPreference 
-		android:key="@string/dictFileKey"
-		android:title="@string/dictFileTitle"
-		android:summary="@string/dictFileSummary"
-		android:defaultValue="@string/dictFileDefault"
-		android:persistent="true" 
-		/>
-		
+    android:key="@string/dictFileKey"
+    android:title="@string/dictFileTitle"
+    android:summary="@string/dictFileSummary"
+    android:defaultValue="@string/dictFileDefault"
+    android:persistent="true" 
+    />
+    
 	<EditTextPreference 
-	    android:key="@string/dictFetchUrlKey"
-	    android:title="@string/dictFetchUrlTitle"
-		android:summary="@string/dictFetchUrlSummary"
-		android:defaultValue="@string/dictFetchUrlDefault"
-		android:persistent="true"
+	  android:key="@string/dictFetchUrlKey"
+	  android:title="@string/dictFetchUrlTitle"
+    android:summary="@string/dictFetchUrlSummary"
+    android:defaultValue="@string/dictFetchUrlDefault"
+    android:persistent="true"
 	/>
 
 </PreferenceScreen>  

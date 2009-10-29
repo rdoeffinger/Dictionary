@@ -14,20 +14,30 @@
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
 
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 1.2</string>
+	<string name="titleWithVersion">QuickDic 1.6</string>
 	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">If you're using QuickDic, I'd love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
 	<string name="myEmail">thad.hughes+quickdic@gmail.com</string>
 	<string name="currentDictInfo">Current dictionary info:</string>
 	<string name="noDictLoaded">No dictionary loaded.</string>
+  <string name="aboutText"><![CDATA[%s\n
+\n
+Entry count: %d\n
+%s:\n
+  Unique token count: %d\n
+  Row count: %d\n
+%s:\n
+  Unique token count: %d\n
+  Row count: %d\n
+]]></string>
 	
 	<!-- Download. -->
-	<string name="downloading">Downloading, %d bytes so far</string>
+	<string name="downloading">Downloading, %d of %d bytes.</string>
 	<string name="downloadFinished">Download finished, %d bytes downloaded.</string>
 	<string name="errorDownloadingFile">"Error downloading file: \n%s"</string>
 
   <!-- NoDictionary. -->
-  <string name="unableToReadDictionaryFile">Unable to read dictionary file: %s</string>
+  <string name="unableToReadDictionaryFile">Unable to read dictionary file (or version is old, try downloading again): %s</string>
   <string name="dictionaryFileExists">Dictionary file exists: %s</string>
   <string name="launchDict">Launch dictionary.</string>
 
@@ -37,6 +47,14 @@
 	<string name="wordListFileSummary">The local file where the word list will be appended.</string>
 	<string name="wordListFileDefault">/sdcard/wordList.txt</string>
 
+  <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
+  <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
+  <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
+
+  <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
+  <string name="showClearSearchTextButtonTitle">Show 'clear search text' button</string>
+  <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
+  
 	<string name="dictFileKey">dictFile</string>
 	<string name="dictFileTitle">Dictionary file</string>
 	<string name="dictFileSummary">The local filename where the dictionary is stored (and downloaded to).</string>
@@ -46,5 +64,5 @@
 	<string name="dictFetchUrlTitle">Dictionary fetch URL</string>
 	<string name="dictFetchUrlSummary">URL to use to download the dictionary from the Internet.</string>
 	<string name="dictFetchUrlDefault">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
-	
+
 </resources>

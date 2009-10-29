@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.hughes.android.dictionary" android:versionName="1.2" android:versionCode="5">
+	package="com.hughes.android.dictionary" android:versionName="1.6" android:versionCode="6">
 
 	<uses-sdk android:minSdkVersion="2" />
 	<uses-permission android:name="android.permission.INTERNET"/>

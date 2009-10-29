@@ -15,6 +15,8 @@ import com.hughes.util.raf.RAFSerializer;
 import com.hughes.util.raf.UniformFileList;
 
 public final class Dictionary implements RAFSerializable<Dictionary> {
+  
+  private static final String VERSION_CODE = "DictionaryVersion=1.5";
 
   static final RAFSerializer<Entry> ENTRY_SERIALIZER = new RAFSerializableSerializer<Entry>(
       Entry.RAF_FACTORY);
@@ -40,6 +42,9 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
         .getFilePointer()), 10000);
     languageDatas[0] = new LanguageData(this, raf, Entry.LANG1);
     languageDatas[1] = new LanguageData(this, raf, Entry.LANG2);
+    if (!VERSION_CODE.equals(raf.readUTF())) {
+      throw new IOException("Invalid dictionary version, expected: " + VERSION_CODE);
+    }
   }
 
   public void write(RandomAccessFile raf) throws IOException {
@@ -47,6 +52,7 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
     FileList.write(raf, entries, ENTRY_SERIALIZER);
     languageDatas[0].write(raf);
     languageDatas[1].write(raf);
+    raf.writeUTF(VERSION_CODE);
   }
 
   final class LanguageData implements RAFSerializable<LanguageData> {
@@ -83,9 +89,9 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
       FileList.write(raf, sortedIndex, INDEX_ENTRY_SERIALIZER);
     }
 
-    String rowToString(final Row row) {
+    String rowToString(final Row row, final boolean onlyFirstSubentry) {
       return row.isToken() ? sortedIndex.get(row.getIndex()).word : entries
-          .get(row.getIndex()).toString();
+          .get(row.getIndex()).getRawText(onlyFirstSubentry);
     }
 
     int lookup(String word, final AtomicBoolean interrupted) {

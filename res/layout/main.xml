@@ -18,6 +18,14 @@
 				android:inputType="text" 
 				android:layout_weight="1.0"/>
 				
+      <Button 
+        android:id="@+id/ClearSearchTextButton"
+        android:text="&lt;x"
+        android:minWidth="50dip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
 			<Button 
 				android:id="@+id/LangButton"
 				android:text="LANG"

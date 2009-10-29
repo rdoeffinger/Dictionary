@@ -72,7 +72,7 @@ public final class Entry implements RAFSerializable<Entry> {
 
   @Override
   public String toString() {
-    return getRawText();
+    return getRawText(false);
   }
 
   public int getRowCount() {
@@ -88,13 +88,13 @@ public final class Entry implements RAFSerializable<Entry> {
     return lang2;
   }
   
-  String getRawText() {
+  String getRawText(boolean onlyFirstSubentry) {
     final StringBuilder result = new StringBuilder();
-    for (int i = 0; i < lang1.length; ++i) {
+    for (int i = 0; i < (onlyFirstSubentry ? 1 : lang1.length); ++i) {
       result.append(i == 0 ? "" : " | ").append(lang1[i]);
     }
     result.append("\t");
-    for (int i = 0; i < lang2.length; ++i) {
+    for (int i = 0; i < (onlyFirstSubentry ? 1 : lang2.length); ++i) {
       result.append(i == 0 ? "" : " | ").append(lang2[i]);
     }
     return result.toString();

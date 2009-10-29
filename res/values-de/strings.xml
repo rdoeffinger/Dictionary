@@ -14,20 +14,30 @@
   <string name="failedAddingToWordList">Fehler bei Wortliste hinzufugen: %s</string>
 
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 1.2</string>
+	<string name="titleWithVersion">QuickDic 1.6</string>
 	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">Wenn QuickDic dir gefällt, würde ich gern von dir hören.  Bitte schicke Bemerkungen, Aufforderungen, oder Programmfehler an:</string>
 	<string name="myEmail">thad.hughes+quickdic@gmail.com</string>
 	<string name="currentDictInfo">Wörterbuch Info:</string>
 	<string name="noDictLoaded">Kein Wörterbuch geöffnet.</string>
+  <string name="aboutText"><![CDATA[%s\n
+\n
+Einträgezahl: %d\n
+%s:\n
+  Wörterzahl: %d\n
+  Reihezahl: %d\n
+%s:\n
+  Wörterzahl: %d\n
+  Reihezahl: %d\n
+]]></string>
 	
 	<!-- Download. -->
-	<string name="downloading">%d Bytes heruntergeladen...</string>
+	<string name="downloading">%d von %d Bytes heruntergeladen...</string>
 	<string name="downloadFinished">Herunterladen fertig, %d Bytes heruntergeladen.</string>
 	<string name="errorDownloadingFile">"Fehler während des Herunterladens: \n%s"</string>
 
   <!-- NoDictionary. -->
-  <string name="unableToReadDictionaryFile">Wörterbuch Datei existiert nicht: %s</string>
+  <string name="unableToReadDictionaryFile">Wörterbuch Datei existiert nicht (oder ist eine alte Version): %s</string>
   <string name="DictionaryFileExists">Wörterbuch Datei existiert: %s</string>
   <string name="launchDict">"Launch dictionary."</string>
 
@@ -37,6 +47,14 @@
 	<string name="wordListFileSummary">Die Datei, in der neue Worte hinzugefügt werden.</string>
 	<string name="wordListFileDefault">/sdcard/wordList.txt</string>
 
+  <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
+  <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
+  <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
+
+  <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
+  <string name="showClearSearchTextButtonTitle">Show 'clear search text' button</string>
+  <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
+  
 	<string name="dictFileKey">dictFile</string>
 	<string name="dictFileTitle">Wörterbuch Datei</string>
 	<string name="dictFileSummary">Die Datei, die das Wörterbuch enthält (und worein das Wörterbuch heruntergeladen wird).</string>
