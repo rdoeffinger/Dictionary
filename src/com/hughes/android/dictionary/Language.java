@@ -12,31 +12,25 @@ public class Language {
   final String symbol;
   final Locale locale;
 
-  final Collator sortCollator;
+  private Collator sortCollator;
   final Comparator<String> sortComparator;
 
-  final Collator findCollator;
+  private Collator findCollator;
   final Comparator<String> findComparator;
 
   public Language(final String symbol, final Locale locale) {
     this.symbol = symbol;
     this.locale = locale;
 
-    this.sortCollator = Collator.getInstance(locale);
-    this.sortCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
-    this.sortCollator.setStrength(Collator.IDENTICAL);
     this.sortComparator = new Comparator<String>() {
       public int compare(final String s1, final String s2) {
-        return sortCollator.compare(textNorm(s1), textNorm(s2));
+        return getSortCollator().compare(textNorm(s1), textNorm(s2));
       }
     };
 
-    this.findCollator = Collator.getInstance(locale);
-    this.findCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
-    this.findCollator.setStrength(Collator.SECONDARY);
     this.findComparator = new Comparator<String>() {
       public int compare(final String s1, final String s2) {
-        return findCollator.compare(textNorm(s1), textNorm(s2));
+        return getFindCollator().compare(textNorm(s1), textNorm(s2));
       }
     };
 
@@ -49,6 +43,24 @@ public class Language {
   @Override
   public String toString() {
     return symbol;
+  }
+  
+  synchronized Collator getFindCollator() {
+    if (findCollator == null) {
+      findCollator = Collator.getInstance(locale);
+      findCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
+      findCollator.setStrength(Collator.SECONDARY);
+    }
+    return findCollator;
+  }
+
+  synchronized Collator getSortCollator() {
+    if (sortCollator == null) {
+      sortCollator = Collator.getInstance(locale);
+      sortCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
+      sortCollator.setStrength(Collator.IDENTICAL);
+    }
+    return sortCollator;
   }
 
   // ----------------------------------------------------------------

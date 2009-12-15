@@ -49,9 +49,9 @@ public class NoDictionaryActivity extends Activity {
 
     final TextView statusText = (TextView) findViewById(R.id.statusTextId);
     if (!canReadDict) {
-      statusText.setText(String.format(getString(R.string.unableToReadDictionaryFile), dictFile));
+      statusText.setText(getString(R.string.unableToReadDictionaryFile, dictFile));
     } else {
-      statusText.setText(String.format(getString(R.string.unableToReadDictionaryFile), dictFile));
+      statusText.setText(getString(R.string.dictionaryFileExists));
     }
 
     final Button launchButton = (Button) findViewById(R.id.launchDict);

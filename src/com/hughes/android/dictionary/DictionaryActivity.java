@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -48,6 +49,7 @@ import android.widget.Toast;
 import com.hughes.android.dictionary.Dictionary.IndexEntry;
 import com.hughes.android.dictionary.Dictionary.LanguageData;
 import com.hughes.android.dictionary.Dictionary.Row;
+import com.ibm.icu.text.Collator;
 
 public class DictionaryActivity extends ListActivity {
   
@@ -82,18 +84,30 @@ public class DictionaryActivity extends ListActivity {
   // Visible for testing.
   LanguageListAdapter languageList = null;
   private SearchOperation searchOperation = null;
+  
+  public DictionaryActivity() {
+
+    searchExecutor.execute(new Runnable() {
+      public void run() {
+        final long startMillis = System.currentTimeMillis();
+        for (final String lang : Arrays.asList("EN", "DE")) {
+          Language.lookup(lang).getFindCollator(); 
+          final Collator c = Language.lookup(lang).getSortCollator(); 
+          if (c.compare("pre-print", "preppy") >= 0) {
+            Log.e(LOG, c.getClass() + " is buggy, lookups may not work properly.");
+          }
+        }
+        Log.d(LOG, "Loading collators took:" + (System.currentTimeMillis() - startMillis));
+      }
+    });
+
+  }
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.d(LOG, "onCreate:" + this);
-
-    if (Language.EN.sortCollator.compare("pre-print", "preppy") >= 0) {
-      Log
-          .e(LOG,
-              Language.EN.sortCollator.getClass() + " is buggy, lookups may not work properly.");
-    }
 
     try {
       initDictionaryAndPrefs();
@@ -184,12 +198,14 @@ public class DictionaryActivity extends ListActivity {
     Log.d(LOG, "dictFile=" + dictFile);
     
     try {
-    if (!dictFile.canRead()) {
-      throw new IOException("Unable to read dictionary file.");
-    }
-    
-    dictRaf = new RandomAccessFile(dictFile, "r");
-    dictionary = new Dictionary(dictRaf);
+      if (!dictFile.canRead()) {
+        throw new IOException("Unable to read dictionary file.");
+      }
+      
+      dictRaf = new RandomAccessFile(dictFile, "r");
+      final long startMillis = System.currentTimeMillis();
+      dictionary = new Dictionary(dictRaf);
+      Log.d(LOG, "Read dictionary millis: " + (System.currentTimeMillis() - startMillis));
     } catch (IOException e) {
       Log.e(LOG, "Couldn't open dictionary.", e);
       this.startActivity(new Intent(this, NoDictionaryActivity.class));
@@ -248,9 +264,13 @@ public class DictionaryActivity extends ListActivity {
 
   private void closeCurrentDictionary() {
     Log.i(LOG, "closeCurrentDictionary");
+    if (dictionary == null) {
+      return;
+    }
     waitForSearchEnd();
     languageList = null;
     setListAdapter(null);
+    Log.d(LOG, "setListAdapter finished.");
     dictionary = null;
     try {
       if (dictRaf != null) {
@@ -684,6 +704,7 @@ public class DictionaryActivity extends ListActivity {
   void waitForSearchEnd() {
     synchronized (this) {
       while (searchOperation != null) {
+        Log.d(LOG, "waitForSearchEnd");
         try {
           this.wait();
         } catch (InterruptedException e) {
