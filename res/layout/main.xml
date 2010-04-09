@@ -15,9 +15,8 @@
 				android:hint="@string/searchText"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" 
-				android:inputType="text|textNoSuggestions" 
 				android:imeOptions="actionSearch|flagNoEnterAction|flagNoExtractUi"
-				android:layout_weight="1.0"/>
+				android:layout_weight="1.0" android:inputType="text"/>
 				
       <Button 
         android:id="@+id/ClearSearchTextButton"

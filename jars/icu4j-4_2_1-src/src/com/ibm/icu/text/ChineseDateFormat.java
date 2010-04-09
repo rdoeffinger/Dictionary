@@ -1,4 +1,4 @@
-//##header
+//##header J2SE15
 /*********************************************************************
  * Copyright (C) 2000-2009, International Business Machines Corporation and
  * others. All Rights Reserved.

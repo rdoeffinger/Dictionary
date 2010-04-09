@@ -1,35 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.hughes.android.dictionary" android:versionName="1.8" android:versionCode="8">
 
-	<uses-sdk android:minSdkVersion="4" />
-	<uses-permission android:name="android.permission.INTERNET"/>
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<manifest 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hughes.android.dictionary" 
+    android:versionCode="1"
+    android:versionName="1.0">
 
-	<application android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name=".DictionaryActivity" 
-		    android:label="@string/app_name"
-		    android:windowSoftInputMode="stateVisible|adjustResize">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-			
-		</activity>
-
-		<activity android:name="AboutActivity"/>
-		<activity android:name="PreferenceActivity"/>
-		<activity android:name="DownloadActivity"/>
-    <activity android:name="NoDictionaryActivity"/>
-
-    <uses-library android:name="android.test.runner" />
-
-	</application>
-
-	<instrumentation android:name="android.test.InstrumentationTestRunner"
-	    android:targetPackage="com.hughes.android.dictionary"
-	    android:label="DictionaryActivityTest" />
-	    
-</manifest>
+ <application android:icon="@drawable/icon" android:label="@string/app_name">
  
+  <activity android:name=".DictionaryActivity" android:label="@string/app_name">
+   <intent-filter>
+    <action android:name="android.intent.action.MAIN" />
+    <category android:name="android.intent.category.LAUNCHER" />
+   </intent-filter>
+  </activity>
+
+ </application>
+
+</manifest> 

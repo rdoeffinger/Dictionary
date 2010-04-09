@@ -24,4 +24,4 @@ rm -rf ./safe
 
 ant moduleJar
 
-ls -l $DIR/icu4j.jar
+ls -l icu4j.jar
