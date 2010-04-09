@@ -14,9 +14,9 @@
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
 
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 1.6</string>
+	<string name="titleWithVersion">QuickDic 1.8</string>
 	<string name="thadHughes">Thad Hughes</string>
-	<string name="contactMe">If you're using QuickDic, I'd love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
+	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
 	<string name="myEmail">thad.hughes+quickdic@gmail.com</string>
 	<string name="currentDictInfo">Current dictionary info:</string>
 	<string name="noDictLoaded">No dictionary loaded.</string>
@@ -52,7 +52,7 @@ Entry count: %d\n
   <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
 
   <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
-  <string name="showClearSearchTextButtonTitle">Show 'clear search text' button</string>
+  <string name="showClearSearchTextButtonTitle">Show \'clear search text\' button</string>
   <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
   
 	<string name="dictFileKey">dictFile</string>

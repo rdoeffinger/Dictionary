@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -53,7 +54,7 @@ import com.ibm.icu.text.Collator;
 
 public class DictionaryActivity extends ListActivity {
   
-  // TODO:
+  // TO DO:
   // * Download latest dicts.
   //   * http://ftp.tu-chemnitz.de/pub/Local/urz/ding/de-en-devel/
   //   * http://www1.dict.cc/translation_file_request.php?l=e
@@ -144,9 +145,7 @@ public class DictionaryActivity extends ListActivity {
     final Button clearSearchTextButton = (Button) findViewById(R.id.ClearSearchTextButton);
     clearSearchTextButton.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
-        clearSearchTextButton.requestFocus();
-        searchText.setText("");
-        searchText.requestFocus();
+        onClearSearchTextButton(clearSearchTextButton);
       }
     });
     clearSearchTextButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
@@ -448,12 +447,19 @@ public class DictionaryActivity extends ListActivity {
   void onSearchTextChange(final String searchText) {
     Log.d(LOG, "onSearchTextChange: " + searchText);
     synchronized (this) {
-      searchOperation = new SearchOperation(languageList, searchText, searchOperation);
+      searchOperation = new SearchOperation(languageList, searchText.trim(), searchOperation);
       searchExecutor.execute(searchOperation);
     }
   }
 
-  
+  private void onClearSearchTextButton(final Button clearSearchTextButton) {
+    clearSearchTextButton.requestFocus();
+    searchText.setText("");
+    searchText.requestFocus();
+    Log.d(LOG, "Trying to show soft keyboard.");
+    final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
+  }
 
   // ----------------------------------------------------------------
   // ContextMenu

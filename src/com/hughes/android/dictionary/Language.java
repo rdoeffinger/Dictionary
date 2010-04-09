@@ -12,7 +12,7 @@ public class Language {
   final String symbol;
   final Locale locale;
 
-  private Collator sortCollator;
+  Collator sortCollator;
   final Comparator<String> sortComparator;
 
   private Collator findCollator;
