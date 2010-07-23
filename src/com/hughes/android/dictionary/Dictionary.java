@@ -16,39 +16,44 @@ import com.hughes.util.raf.UniformFileList;
 
 public final class Dictionary implements RAFSerializable<Dictionary> {
   
-  private static final String VERSION_CODE = "DictionaryVersion=1.5";
+  private static final String VERSION_CODE = "DictionaryVersion=2.0";
 
-  static final RAFSerializer<Entry> ENTRY_SERIALIZER = new RAFSerializableSerializer<Entry>(
-      Entry.RAF_FACTORY);
+  static final RAFSerializer<SimpleEntry> ENTRY_SERIALIZER = new RAFSerializableSerializer<SimpleEntry>(
+      SimpleEntry.RAF_FACTORY);
   static final RAFSerializer<Row> ROW_SERIALIZER = new RAFSerializableSerializer<Row>(
       Row.RAF_FACTORY);
   static final RAFSerializer<IndexEntry> INDEX_ENTRY_SERIALIZER = new RAFSerializableSerializer<IndexEntry>(
       IndexEntry.RAF_FACTORY);
 
   final String dictionaryInfo;
+  final List<String> sources;
   final List<Entry> entries;
   final LanguageData[] languageDatas = new LanguageData[2];
 
   public Dictionary(final String dictionaryInfo, final Language language0, final Language language1) {
     this.dictionaryInfo = dictionaryInfo;
-    languageDatas[0] = new LanguageData(this, language0, Entry.LANG1);
-    languageDatas[1] = new LanguageData(this, language1, Entry.LANG2);
+    sources = new ArrayList<String>();
+    languageDatas[0] = new LanguageData(this, language0, SimpleEntry.LANG1);
+    languageDatas[1] = new LanguageData(this, language1, SimpleEntry.LANG2);
     entries = new ArrayList<Entry>();
   }
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
     dictionaryInfo = raf.readUTF();
+    sources = new ArrayList<String>(FileList.create(raf, RAFSerializer.STRING, raf.getFilePointer()));
     entries = CachingList.create(FileList.create(raf, ENTRY_SERIALIZER, raf
         .getFilePointer()), 10000);
-    languageDatas[0] = new LanguageData(this, raf, Entry.LANG1);
-    languageDatas[1] = new LanguageData(this, raf, Entry.LANG2);
-    if (!VERSION_CODE.equals(raf.readUTF())) {
-      throw new IOException("Invalid dictionary version, expected: " + VERSION_CODE);
+    languageDatas[0] = new LanguageData(this, raf, SimpleEntry.LANG1);
+    languageDatas[1] = new LanguageData(this, raf, SimpleEntry.LANG2);
+    final String version = raf.readUTF();
+    if (!VERSION_CODE.equals(version)) {
+      throw new IOException("Invalid dictionary version, found " + version + ", expected: " + VERSION_CODE);
     }
   }
 
   public void write(RandomAccessFile raf) throws IOException {
     raf.writeUTF(dictionaryInfo);
+    FileList.write(raf, sources, RAFSerializer.STRING);
     FileList.write(raf, entries, ENTRY_SERIALIZER);
     languageDatas[0].write(raf);
     languageDatas[1].write(raf);

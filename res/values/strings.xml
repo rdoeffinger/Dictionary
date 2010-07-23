@@ -14,10 +14,10 @@
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
 
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 1.8</string>
+	<string name="titleWithVersion">QuickDic 2.0</string>
 	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
-	<string name="myEmail">thad.hughes+quickdic@gmail.com</string>
+	<string name="myEmail">thad.hughes\+quickdic@gmail.com</string>
 	<string name="currentDictInfo">Current dictionary info:</string>
 	<string name="noDictLoaded">No dictionary loaded.</string>
   <string name="aboutText"><![CDATA[%s\n

@@ -43,10 +43,10 @@ public class DictionaryActivityTest extends ActivityInstrumentationTestCase2<Dic
   public void resetDictionary() throws Exception {
     final DictionaryActivity dict = getActivity();
     
-    if (dict.languageList.languageData.language == Language.EN) {
+    if (dict.languageList.languageData.language == Language.en) {
       postAndWait(switchLangRunnable());
     }
-    assertEquals(Language.DE, dict.languageList.languageData.language);
+    assertEquals(Language.de, dict.languageList.languageData.language);
 
     postAndWait(new NotifyRunnable() {
       protected void run2() {
@@ -63,11 +63,11 @@ public class DictionaryActivityTest extends ActivityInstrumentationTestCase2<Dic
     final NotifyRunnable switchLang = switchLangRunnable();
 
     postAndWait(switchLang);
-    assertEquals(Language.EN, dict.languageList.languageData.language);
+    assertEquals(Language.en, dict.languageList.languageData.language);
     assertEquals("EN", dict.langButton.getText().toString());
 
     postAndWait(switchLang);
-    assertEquals(Language.DE, dict.languageList.languageData.language);
+    assertEquals(Language.de, dict.languageList.languageData.language);
     assertEquals("DE", dict.langButton.getText().toString());
     
     dict.finish();

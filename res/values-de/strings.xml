@@ -14,9 +14,7 @@
   <string name="failedAddingToWordList">Fehler bei Wortliste hinzufugen: %s</string>
 
 	<!-- About. -->
-	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">Wenn QuickDic dir gefällt, würde ich gern von dir hören.  Bitte schicke Bemerkungen, Aufforderungen, oder Programmfehler an:</string>
-	<string name="myEmail">thad.hughes+quickdic@gmail.com</string>
 	<string name="currentDictInfo">Wörterbuch Info:</string>
 	<string name="noDictLoaded">Kein Wörterbuch geöffnet.</string>
   <string name="aboutText"><![CDATA[%s\n
@@ -44,7 +42,7 @@ Einträgezahl: %d\n
 	<string name="wordListFileKey">wordListFile</string>
 	<string name="wordListFileTitle">Wortliste Datei</string>
 	<string name="wordListFileSummary">Die Datei, in der neue Worte hinzugefügt werden.</string>
-	<string name="wordListFileDefault">/sdcard/wordList.txt</string>
+	<string name="wordListFileDefault">/sdcard/quickdic/wordList.txt</string>
 
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
   <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
@@ -57,11 +55,11 @@ Einträgezahl: %d\n
 	<string name="dictFileKey">dictFile</string>
 	<string name="dictFileTitle">Wörterbuch Datei</string>
 	<string name="dictFileSummary">Die Datei, die das Wörterbuch enthält (und worein das Wörterbuch heruntergeladen wird).</string>
-	<string name="dictFileDefault">/sdcard/de-en.dict</string>
+	<string name="dictFileDefault">/sdcard/quickdic/de-en.dict</string>
 
 	<string name="dictFetchUrlKey">dictFetchUrl</string>
 	<string name="dictFetchUrlTitle">Wörterbuch URL</string>
 	<string name="dictFetchUrlSummary">Das URL, wovon das Wörterbuch heruntergeladen wird.</string>
-	<string name="dictFetchUrlDefault">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
+	<string name="dictFetchUrlDefault">http://www.stanford.edu/~egirard/dict/de-en_2.0.dict</string>
 	
 </resources>

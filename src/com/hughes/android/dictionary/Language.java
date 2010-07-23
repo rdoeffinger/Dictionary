@@ -9,6 +9,9 @@ import com.ibm.icu.text.Collator;
 
 public class Language {
 
+  static final Map<String, Language> symbolToLangauge = new LinkedHashMap<String, Language>();
+
+  
   final String symbol;
   final Locale locale;
 
@@ -18,8 +21,8 @@ public class Language {
   private Collator findCollator;
   final Comparator<String> findComparator;
 
-  public Language(final String symbol, final Locale locale) {
-    this.symbol = symbol;
+  public Language(final Locale locale) {
+    this.symbol = locale.getLanguage();
     this.locale = locale;
 
     this.sortComparator = new Comparator<String>() {
@@ -33,7 +36,8 @@ public class Language {
         return getFindCollator().compare(textNorm(s1), textNorm(s2));
       }
     };
-
+    
+    symbolToLangauge.put(symbol.toLowerCase(), this);
   }
 
   public String textNorm(final String s) {
@@ -42,6 +46,10 @@ public class Language {
 
   @Override
   public String toString() {
+    return locale.toString();
+  }
+  
+  public String getSymbol() {
     return symbol;
   }
   
@@ -65,9 +73,11 @@ public class Language {
 
   // ----------------------------------------------------------------
 
-  public static final Language EN = new Language("EN", Locale.ENGLISH);
+  public static final Language en = new Language(Locale.ENGLISH);
+  public static final Language fr = new Language(Locale.FRENCH);
+  public static final Language it = new Language(Locale.ITALIAN);
 
-  public static final Language DE = new Language("DE", Locale.GERMAN) {
+  public static final Language de = new Language(Locale.GERMAN) {
     @Override
     public String textNorm(String token) {
       boolean sub = false;
@@ -82,28 +92,29 @@ public class Language {
       if (!sub) {
         return token;
       }
-      token = token.replaceAll("ae", "ä");
-      token = token.replaceAll("oe", "ö");
-      token = token.replaceAll("ue", "ü");
+      token = token.replaceAll("ae", "Ã¤");
+      token = token.replaceAll("oe", "Ã¶");
+      token = token.replaceAll("ue", "Ã¼");
 
-      token = token.replaceAll("Ae", "Ä");
-      token = token.replaceAll("Oe", "Ö");
-      token = token.replaceAll("Ue", "Ü");
-      return token;
+      token = token.replaceAll("Ae", "Ã„");
+      token = token.replaceAll("Oe", "Ã–");
+      token = token.replaceAll("Ue", "Ãœ");
+      return token;   
     }
   };
+  
+  static {
+    for (final String lang : Locale.getISOLanguages()) {
+      if (lookup(lang) == null) {
+        new Language(new Locale(lang));
+      }
+    }
+  }
 
   // ----------------------------------------------------------------
 
-  private static final Map<String, Language> symbolToLangauge = new LinkedHashMap<String, Language>();
-
-  static {
-    symbolToLangauge.put(EN.symbol, EN);
-    symbolToLangauge.put(DE.symbol, DE);
-  }
-
   static Language lookup(final String symbol) {
-    return symbolToLangauge.get(symbol);
+    return symbolToLangauge.get(symbol.toLowerCase());
   }
 
 }

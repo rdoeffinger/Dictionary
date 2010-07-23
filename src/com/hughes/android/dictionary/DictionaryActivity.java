@@ -212,8 +212,8 @@ public class DictionaryActivity extends ListActivity {
       throw new Exception(e);
     }
     
-    final byte lang = prefs.getInt(PREF_DICT_ACTIVE_LANG, Entry.LANG1) == Entry.LANG1 ? Entry.LANG1
-        : Entry.LANG2;
+    final byte lang = prefs.getInt(PREF_DICT_ACTIVE_LANG, SimpleEntry.LANG1) == SimpleEntry.LANG1 ? SimpleEntry.LANG1
+        : SimpleEntry.LANG2;
     
     languageList = new LanguageListAdapter(dictionary.languageDatas[lang]);
     setListAdapter(languageList);
@@ -350,7 +350,7 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public boolean onPrepareOptionsMenu(final Menu menu) {
     switchLanguageMenuItem.setTitle(getString(R.string.switchToLanguage,
-        dictionary.languageDatas[Entry
+        dictionary.languageDatas[SimpleEntry
             .otherLang(languageList.languageData.lang)].language.symbol));
     return super.onPrepareOptionsMenu(menu);
   }
@@ -592,7 +592,7 @@ public class DictionaryActivity extends ListActivity {
       // Entry row(s).
       final TableLayout result = new TableLayout(parent.getContext());
 
-      final Entry entry = dictionary.entries.get(row.getIndex());
+      final SimpleEntry entry = dictionary.entries.get(row.getIndex());
       final int rowCount = entry.getRowCount();
       for (int r = 0; r < rowCount; ++r) {
         final TableRow tableRow = new TableRow(result.getContext());
@@ -604,13 +604,13 @@ public class DictionaryActivity extends ListActivity {
 
         if (r > 0) {
           final TextView spacer = new TextView(tableRow.getContext());
-          spacer.setText(r == 0 ? "• " : " • ");
+          spacer.setText(r == 0 ? "ï¿½ " : " ï¿½ ");
           tableRow.addView(spacer);
         }
         tableRow.addView(column1, layoutParams);
         if (r > 0) {
           final TextView spacer = new TextView(tableRow.getContext());
-          spacer.setText(r == 0 ? "• " : " • ");
+          spacer.setText(r == 0 ? "ï¿½ " : " ï¿½ ");
           tableRow.addView(spacer);
         }
         tableRow.addView(column2, layoutParams);
@@ -632,7 +632,7 @@ public class DictionaryActivity extends ListActivity {
         }
 
         column2.setText(
-            entry.getAllText(Entry.otherLang(languageData.lang))[r],
+            entry.getAllText(SimpleEntry.otherLang(languageData.lang))[r],
             TextView.BufferType.NORMAL);
 
         result.addView(tableRow);
