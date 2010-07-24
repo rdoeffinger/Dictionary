@@ -15,6 +15,8 @@ public interface Row {
   public TokenRow getTokenRow(final boolean search);
   
   public void setTokenRow(final TokenRow tokenRow);
+  
+  public Object draw(final String searchText);
 
 
   // Row must manage "disk-based" polymorphism.  All other polymorphism is
@@ -45,6 +47,7 @@ public interface Row {
       } else if (t instanceof TokenRow) {
         raf.writeByte(1);
       }
+      t.write(raf);
     }
   };
 }
