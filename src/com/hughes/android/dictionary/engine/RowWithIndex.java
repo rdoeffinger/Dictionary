@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public abstract class RowWithIndex implements Row {
-  final Dictionary.Index index;
+  final Index index;
   int thisRowIndex;
   int referenceIndex;
 
   TokenRow tokenRow = null;
   
-  RowWithIndex(final RandomAccessFile raf, final int thisRowIndex, final Dictionary.Index index) throws IOException {
+  RowWithIndex(final RandomAccessFile raf, final int thisRowIndex, final Index index) throws IOException {
     this.index = index;
-    this.thisRowIndex = thisRowIndex;
-    this.referenceIndex = raf.readInt();
+    this.thisRowIndex = thisRowIndex;  // where this was inside the list.
+    this.referenceIndex = raf.readInt();  // what this points to.
   }
 
   @Override

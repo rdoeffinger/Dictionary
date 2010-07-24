@@ -18,11 +18,12 @@ public class PairEntry extends Entry {
 
   
   public static class Row extends RowWithIndex {
-    Row(final RandomAccessFile raf, final int thisRowIndex, final Dictionary.Index index) throws IOException {
+    Row(final RandomAccessFile raf, final int thisRowIndex,
+        final Index index) throws IOException {
       super(raf, thisRowIndex, index);
     }
     public PairEntry getEntry() {
-      return index.getDict().pairEntries.get(referenceIndex);
+      return index.dict.pairEntries.get(referenceIndex);
     }
   }
 

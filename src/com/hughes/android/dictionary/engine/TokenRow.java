@@ -5,7 +5,7 @@ import java.io.RandomAccessFile;
 
 public class TokenRow extends RowWithIndex {
   
-  TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Dictionary.Index index) throws IOException {
+  TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Index index) throws IOException {
     super(raf, thisRowIndex, index);
   }
 

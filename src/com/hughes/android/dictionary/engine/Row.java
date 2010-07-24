@@ -21,9 +21,9 @@ public interface Row {
   // dealt with in the normal manner.
   static class Serializer implements RAFListSerializer<Row> {
     
-    final Dictionary.Index index;
+    final Index index;
     
-    Serializer(final Dictionary.Index index) {
+    Serializer(final Index index) {
       this.index = index;
     }
 
