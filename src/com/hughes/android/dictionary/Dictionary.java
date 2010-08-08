@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.hughes.util.CachingList;
-import com.hughes.util.raf.FileList;
+import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFFactory;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializableSerializer;
 import com.hughes.util.raf.RAFSerializer;
-import com.hughes.util.raf.UniformFileList;
+import com.hughes.util.raf.UniformRAFList;
 
 public final class Dictionary implements RAFSerializable<Dictionary> {
   
@@ -40,8 +40,8 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
     dictionaryInfo = raf.readUTF();
-    sources = new ArrayList<String>(FileList.create(raf, RAFSerializer.STRING, raf.getFilePointer()));
-    entries = CachingList.create(FileList.create(raf, ENTRY_SERIALIZER, raf
+    sources = new ArrayList<String>(RAFList.create(raf, RAFSerializer.STRING, raf.getFilePointer()));
+    entries = CachingList.create(RAFList.create(raf, ENTRY_SERIALIZER, raf
         .getFilePointer()), 10000);
     languageDatas[0] = new LanguageData(this, raf, SimpleEntry.LANG1);
     languageDatas[1] = new LanguageData(this, raf, SimpleEntry.LANG2);
@@ -53,8 +53,8 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
 
   public void write(RandomAccessFile raf) throws IOException {
     raf.writeUTF(dictionaryInfo);
-    FileList.write(raf, sources, RAFSerializer.STRING);
-    FileList.write(raf, entries, ENTRY_SERIALIZER);
+    RAFList.write(raf, sources, RAFSerializer.STRING);
+    RAFList.write(raf, entries, ENTRY_SERIALIZER);
     languageDatas[0].write(raf);
     languageDatas[1].write(raf);
     raf.writeUTF(VERSION_CODE);
@@ -82,16 +82,16 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
         throw new RuntimeException("Unknown language.");
       }
       this.lang = lang;
-      rows = CachingList.create(UniformFileList.create(raf, ROW_SERIALIZER, raf
+      rows = CachingList.create(UniformRAFList.create(raf, ROW_SERIALIZER, raf
           .getFilePointer()), 10000);
-      sortedIndex = CachingList.create(FileList.create(raf,
+      sortedIndex = CachingList.create(RAFList.create(raf,
           INDEX_ENTRY_SERIALIZER, raf.getFilePointer()), 10000);
     }
 
     public void write(final RandomAccessFile raf) throws IOException {
       raf.writeUTF(language.symbol);
-      UniformFileList.write(raf, rows, ROW_SERIALIZER, 4);
-      FileList.write(raf, sortedIndex, INDEX_ENTRY_SERIALIZER);
+      UniformRAFList.write(raf, rows, ROW_SERIALIZER, 4);
+      RAFList.write(raf, sortedIndex, INDEX_ENTRY_SERIALIZER);
     }
 
     String rowToString(final Row row, final boolean onlyFirstSubentry) {
