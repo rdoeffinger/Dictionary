@@ -1,20 +1,17 @@
 package com.hughes.android.dictionary.engine;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 
+import com.hughes.util.IndexedObject;
 import com.hughes.util.raf.RAFListSerializer;
 
-public abstract class RowBase {
+public abstract class RowBase extends IndexedObject {
   /**
    * the Index owning this RowBase.
    */
   final Index index;
-  
-  /**
-   * Where this row lives within the list of Rows.
-   */
-  int thisRowIndex;
   
   /**
    * Where this RowBase points to.
@@ -27,26 +24,28 @@ public abstract class RowBase {
   TokenRow tokenRow = null;
   
   RowBase(final RandomAccessFile raf, final int thisRowIndex, final Index index) throws IOException {
+    super(thisRowIndex);
     this.index = index;
-    this.thisRowIndex = thisRowIndex;  // where this was inside the list.
     this.referenceIndex = raf.readInt();  // what this points to.
   }
 
-  public void write(RandomAccessFile raf) throws IOException {
-    raf.writeInt(referenceIndex);
+  public RowBase(final int referenceIndex, final int thisRowIndex, final Index index) {
+    super(thisRowIndex);
+    this.index = index;
+    this.referenceIndex = referenceIndex;
   }
-  
+
   /**
    * @return the TokenRow that this row is "filed under".
    */
   public TokenRow getTokenRow(final boolean search) {
     if (tokenRow == null && search) {
-      int r = thisRowIndex - 1;
+      int r = index() - 1;
       while (r >= 0) {
         final RowBase row = index.rows.get(r);
         final TokenRow candidate = row.getTokenRow(false);
         if (candidate != null) {
-          for (++r; r <= thisRowIndex; ++r) {
+          for (++r; r <= index(); ++r) {
             index.rows.get(r).setTokenRow(candidate);
           }
         }
@@ -62,6 +61,8 @@ public abstract class RowBase {
     this.tokenRow = tokenRow;
   }
 
+
+  public abstract void print(PrintStream out);
   
   public abstract Object draw(final String searchText);
 
@@ -94,9 +95,9 @@ public abstract class RowBase {
       } else if (t instanceof TokenRow) {
         raf.writeByte(1);
       }
-      t.write(raf);
+      raf.writeInt(t.referenceIndex);
     }
-  };
+  }
 
 
 }

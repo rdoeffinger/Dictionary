@@ -55,6 +55,7 @@ import com.ibm.icu.text.Collator;
 public class DictionaryActivity extends ListActivity {
   
   // TO DO:
+  // * Easy reverse lookup.
   // * Download latest dicts.
   //   * http://ftp.tu-chemnitz.de/pub/Local/urz/ding/de-en-devel/
   //   * http://www1.dict.cc/translation_file_request.php?l=e
@@ -118,7 +119,7 @@ public class DictionaryActivity extends ListActivity {
 
     // UI init.
 
-    setContentView(R.layout.main);
+    setContentView(R.layout.dictionary_activity);
     searchText = (EditText) findViewById(R.id.SearchText);
     langButton = (Button) findViewById(R.id.LangButton);
     
@@ -592,7 +593,7 @@ public class DictionaryActivity extends ListActivity {
       // Entry row(s).
       final TableLayout result = new TableLayout(parent.getContext());
 
-      final SimpleEntry entry = dictionary.entries.get(row.getIndex());
+      final SimpleEntry entry = new SimpleEntry(null, null);//.entries.get(row.getIndex());
       final int rowCount = entry.getRowCount();
       for (int r = 0; r < rowCount; ++r) {
         final TableRow tableRow = new TableRow(result.getContext());

@@ -6,7 +6,7 @@ import java.io.RandomAccessFile;
 import com.hughes.util.raf.RAFFactory;
 import com.hughes.util.raf.RAFSerializable;
 
-public abstract class Entry implements RAFSerializable<Entry> {
+public interface Entry extends RAFSerializable<Entry> {
   
   public static final RAFFactory<Entry> RAF_FACTORY = new RAFFactory<Entry>() {
     public Entry create(RandomAccessFile raf) throws IOException {

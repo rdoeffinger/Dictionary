@@ -18,8 +18,7 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
   
   private static final String VERSION_CODE = "DictionaryVersion=2.0";
 
-  static final RAFSerializer<SimpleEntry> ENTRY_SERIALIZER = new RAFSerializableSerializer<SimpleEntry>(
-      SimpleEntry.RAF_FACTORY);
+  static final RAFSerializer<SimpleEntry> ENTRY_SERIALIZER = null;
   static final RAFSerializer<Row> ROW_SERIALIZER = new RAFSerializableSerializer<Row>(
       Row.RAF_FACTORY);
   static final RAFSerializer<IndexEntry> INDEX_ENTRY_SERIALIZER = new RAFSerializableSerializer<IndexEntry>(
@@ -41,8 +40,7 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
   public Dictionary(final RandomAccessFile raf) throws IOException {
     dictionaryInfo = raf.readUTF();
     sources = new ArrayList<String>(RAFList.create(raf, RAFSerializer.STRING, raf.getFilePointer()));
-    entries = CachingList.create(RAFList.create(raf, ENTRY_SERIALIZER, raf
-        .getFilePointer()), 10000);
+    entries = null;
     languageDatas[0] = new LanguageData(this, raf, SimpleEntry.LANG1);
     languageDatas[1] = new LanguageData(this, raf, SimpleEntry.LANG2);
     final String version = raf.readUTF();
@@ -54,7 +52,7 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
   public void write(RandomAccessFile raf) throws IOException {
     raf.writeUTF(dictionaryInfo);
     RAFList.write(raf, sources, RAFSerializer.STRING);
-    RAFList.write(raf, entries, ENTRY_SERIALIZER);
+    //RAFList.write(raf, entries, ENTRY_SERIALIZER);
     languageDatas[0].write(raf);
     languageDatas[1].write(raf);
     raf.writeUTF(VERSION_CODE);
@@ -95,8 +93,9 @@ public final class Dictionary implements RAFSerializable<Dictionary> {
     }
 
     String rowToString(final Row row, final boolean onlyFirstSubentry) {
-      return row.isToken() ? sortedIndex.get(row.getIndex()).word : entries
-          .get(row.getIndex()).getRawText(onlyFirstSubentry);
+      return null;
+      //return row.isToken() ? sortedIndex.get(row.getIndex()).word : entries
+      //    .get(row.getIndex()).getRawText(onlyFirstSubentry);
     }
 
     int lookup(String word, final AtomicBoolean interrupted) {

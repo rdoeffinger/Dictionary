@@ -11,7 +11,6 @@ public class Language {
 
   static final Map<String, Language> symbolToLangauge = new LinkedHashMap<String, Language>();
 
-  
   final String symbol;
   final Locale locale;
 
@@ -53,7 +52,7 @@ public class Language {
     return symbol;
   }
   
-  synchronized Collator getFindCollator() {
+  public synchronized Collator getFindCollator() {
     if (findCollator == null) {
       findCollator = Collator.getInstance(locale);
       findCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
@@ -62,7 +61,7 @@ public class Language {
     return findCollator;
   }
 
-  synchronized Collator getSortCollator() {
+  public synchronized Collator getSortCollator() {
     if (sortCollator == null) {
       sortCollator = Collator.getInstance(locale);
       sortCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
@@ -113,7 +112,7 @@ public class Language {
 
   // ----------------------------------------------------------------
 
-  static Language lookup(final String symbol) {
+  public static Language lookup(final String symbol) {
     return symbolToLangauge.get(symbol.toLowerCase());
   }
 

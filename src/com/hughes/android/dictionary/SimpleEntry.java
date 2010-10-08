@@ -2,18 +2,15 @@ package com.hughes.android.dictionary;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.hughes.util.raf.RAFFactory;
-import com.hughes.util.raf.RAFSerializable;
 
 public final class SimpleEntry implements Entry {
 
@@ -177,7 +174,7 @@ Zp  Separator, Paragraph
   // This used to be called WHITESPACE.
   static final Pattern NON_TOKEN_CHAR = Pattern.compile("\\s+");
   
-  public Map<String,Integer> getIndexableTokens(final byte lang) {
+  public Set<String> getIndexableTokens(final byte lang) {
     final Set<String> result = new LinkedHashSet<String>();
     String text = " ";
     for (final String subentry : getAllText(lang)) {

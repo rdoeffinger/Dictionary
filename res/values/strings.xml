@@ -3,7 +3,22 @@
 
 	<string name="app_name">QuickDic</string>
 	<string name="about_text">QuickDic\nby Thad Hughes</string>
-	
+ 
+  <!-- DictionaryListActivity -->
+  <string name="selectADictionary"><![CDATA[Select a dictionary.
+\nLong-press to edit the dictionary. Press "menu" to add a new dictionary.]]></string>
+  <string name="addDictionary">Add dictionary</string>
+  <string name="editDictionary">Edit dictionary config</string>
+  <string name="deleteDictionary">Delete dictionary</string>
+  <string name="moveUp">Move up</string>
+  <string name="newDictionary">New Dictionary</string>
+ 
+  <!-- DictionaryEditActivity -->
+  <string name="dictionaryName">Dictionary name</string>
+  <string name="downloadUrl">Dictionary download URL</string>
+  <string name="localFile">Dictionary file</string>
+  <string name="wordListFile">Word list file</string>
+ 
 	<!-- Main -->
 	<string name="searchText">Search Text</string>
 	<string name="downloadDictionary">Download dictionary...</string>

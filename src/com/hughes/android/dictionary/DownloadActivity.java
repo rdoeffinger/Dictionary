@@ -43,7 +43,7 @@ public class DownloadActivity extends Activity {
     if (source == null || dest == null) {
       throw new RuntimeException("null source or dest.");
     }
-    setContentView(R.layout.download);
+    setContentView(R.layout.download_activity);
 
     final TextView sourceTextView = (TextView) findViewById(R.id.source);
     sourceTextView.setText(source);

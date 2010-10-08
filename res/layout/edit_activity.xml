@@ -1,0 +1,71 @@
+<ScrollView android:id="@+id/ScrollView01"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content">
+	
+<LinearLayout 
+	android:id="@+id/LinearLayout01"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	>
+
+<!--     android:textAppearance="?android:attr/textAppearanceLarge"  -->
+
+  <!-- Name. --> 
+  <TextView 
+    android:id="@+id/dictionaryNameTitle" 
+    android:text="@string/dictionaryName"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content" />
+  <EditText 
+    android:id="@+id/dictionaryName" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" />
+
+  <!-- Local file. --> 
+  <TextView 
+    android:id="@+id/localFileTitle" 
+    android:text="@string/localFile"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:paddingTop="5dip" />
+  <EditText 
+    android:id="@+id/localFile" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" />
+
+  <!-- Local file. --> 
+  <TextView 
+    android:id="@+id/wordListFileTitle" 
+    android:text="@string/wordListFile"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:paddingTop="5dip" />
+  <EditText 
+    android:id="@+id/wordListFile" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" />
+
+  <!-- Download URL. --> 
+  <TextView 
+    android:id="@+id/downloadUrlTitle" 
+    android:text="@string/downloadUrl"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:paddingTop="5dip" />
+  <EditText 
+    android:id="@+id/downloadUrl" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" />
+
+
+  String localFile = "";
+  String wordList = "";
+  
+  int openIndex = 0;
+  String openWord = "";
+ 
+</LinearLayout>
+
+</ScrollView>
