@@ -1,0 +1,15 @@
+* wiktionary
+* multi word search
+* source in context menu
+* quiz
+* link to leo, dict.cc
+* colorize things
+* better Row/Entry classes?
+* better tokenization?
+* test email
+* dict manager
+* publish 2.0 dictionary
+
+
+done:
+* sorting of entries
