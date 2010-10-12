@@ -18,7 +18,6 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;

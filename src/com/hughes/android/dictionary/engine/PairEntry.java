@@ -17,7 +17,7 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
       this.lang2 = lang2;
     }
     public String toString() {
-      return lang1 + "\t" + lang2;
+      return lang1 + " :: " + lang2;
     }
   }
   
@@ -35,7 +35,7 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
   }
   @Override
   public void write(RandomAccessFile raf) throws IOException {
-    // TODO: this couls be a short.
+    // TODO: this could be a short.
     raf.writeInt(pairs.length);
     for (int i = 0; i < pairs.length; ++i) {
       raf.writeUTF(pairs[i].lang1);
@@ -82,7 +82,8 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
     public void print(PrintStream out) {
       final PairEntry pairEntry = getEntry();
       for (int i = 0; i < pairEntry.pairs.length; ++i) {
-        out.println((i == 0 ? "  " : "    ") + pairEntry.pairs[i]);
+        out.print((i == 0 ? "  " : "    ") + pairEntry.pairs[i]);
+        out.println();
       }
     }
   }

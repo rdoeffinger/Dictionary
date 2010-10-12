@@ -14,6 +14,8 @@ import com.hughes.util.raf.RAFSerializable;
 
 public class Dictionary implements RAFSerializable<Dictionary> {
   
+  static final int CACHE_SIZE = 5000;
+  
   // persisted
   final String dictInfo;
   final List<PairEntry> pairEntries;
@@ -31,17 +33,10 @@ public class Dictionary implements RAFSerializable<Dictionary> {
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
     dictInfo = raf.readUTF();
-
-    sources = RAFList.create(raf, EntrySource.SERIALIZER, raf.getFilePointer());
-
-    // TODO: caching
-    pairEntries = RAFList.create(raf, PairEntry.SERIALIZER, raf.getFilePointer());
-
-    // TODO: caching
-    textEntries = RAFList.create(raf, TextEntry.SERIALIZER, raf.getFilePointer());
-
-    final List<Index> rawIndices = RAFList.create(raf, indexSerializer, raf.getFilePointer());
-    indices = CachingList.create(rawIndices, rawIndices.size());
+    sources = CachingList.createFullyCached(RAFList.create(raf, EntrySource.SERIALIZER, raf.getFilePointer()));
+    pairEntries = CachingList.create(RAFList.create(raf, PairEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
+    textEntries = CachingList.create(RAFList.create(raf, TextEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
+    indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer, raf.getFilePointer()));
   }
   
   public void print(final PrintStream out) {

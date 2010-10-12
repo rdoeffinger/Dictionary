@@ -13,6 +13,10 @@ public class TokenRow extends RowBase {
   TokenRow(final int referenceIndex, final int thisRowIndex, final Index index) {
     super(referenceIndex, thisRowIndex, index);
   }
+  
+  public String toString() {
+    return getToken() + "@" + referenceIndex;
+  }
 
   @Override
   public TokenRow getTokenRow(final boolean search) {

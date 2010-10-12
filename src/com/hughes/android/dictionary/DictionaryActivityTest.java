@@ -1,5 +1,7 @@
 package com.hughes.android.dictionary;
 
+import com.hughes.android.dictionary.engine.Language;
+
 import android.test.ActivityInstrumentationTestCase2;
 
 public class DictionaryActivityTest extends ActivityInstrumentationTestCase2<DictionaryActivity> {

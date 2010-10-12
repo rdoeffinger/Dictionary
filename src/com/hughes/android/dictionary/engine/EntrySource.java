@@ -18,6 +18,12 @@ public class EntrySource extends IndexedObject implements Serializable {
     this.name = name;
   }
   
+  @Override
+  public String toString() {
+    return name;
+  }
+
+
   public static RAFListSerializer<EntrySource> SERIALIZER = new RAFListSerializer<EntrySource>() {
 
     @Override
@@ -30,8 +36,7 @@ public class EntrySource extends IndexedObject implements Serializable {
     @Override
     public void write(RandomAccessFile raf, EntrySource t) throws IOException {
       raf.writeUTF(t.name);
-    }
-    
+    }    
   };
   
 }

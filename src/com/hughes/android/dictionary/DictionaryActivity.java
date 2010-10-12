@@ -50,6 +50,7 @@ import android.widget.Toast;
 import com.hughes.android.dictionary.Dictionary.IndexEntry;
 import com.hughes.android.dictionary.Dictionary.LanguageData;
 import com.hughes.android.dictionary.Dictionary.Row;
+import com.hughes.android.dictionary.engine.Language;
 import com.ibm.icu.text.Collator;
 
 public class DictionaryActivity extends ListActivity {

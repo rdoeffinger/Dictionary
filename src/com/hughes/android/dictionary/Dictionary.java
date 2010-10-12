@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.hughes.android.dictionary.engine.Language;
 import com.hughes.util.CachingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFFactory;

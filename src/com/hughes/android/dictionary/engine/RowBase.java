@@ -48,7 +48,9 @@ public abstract class RowBase extends IndexedObject {
           for (++r; r <= index(); ++r) {
             index.rows.get(r).setTokenRow(candidate);
           }
+          break;
         }
+        --r;
       }
       assert tokenRow != null;
     }

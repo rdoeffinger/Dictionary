@@ -1,4 +1,4 @@
-package com.hughes.android.dictionary;
+package com.hughes.android.dictionary.engine;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -26,21 +26,21 @@ public class Language {
 
     this.sortComparator = new Comparator<String>() {
       public int compare(final String s1, final String s2) {
-        return getSortCollator().compare(textNorm(s1), textNorm(s2));
+        return getSortCollator().compare(textNorm(s1, false), textNorm(s2, false));
       }
     };
 
     this.findComparator = new Comparator<String>() {
       public int compare(final String s1, final String s2) {
-        return getFindCollator().compare(textNorm(s1), textNorm(s2));
+        return getFindCollator().compare(textNorm(s1, false), textNorm(s2, false));
       }
     };
     
     symbolToLangauge.put(symbol.toLowerCase(), this);
   }
 
-  public String textNorm(final String s) {
-    return s;
+  public String textNorm(final String s, final boolean toLower) {
+    return toLower ? s.toLowerCase() : s;
   }
 
   @Override
@@ -78,8 +78,12 @@ public class Language {
 
   public static final Language de = new Language(Locale.GERMAN) {
     @Override
-    public String textNorm(String token) {
+    public String textNorm(String token, final boolean toLower) {
+      if (toLower) {
+        token = token.toLowerCase();
+      }
       boolean sub = false;
+      // This is meant to be fast: occurrences of ae, oe, ue are probably rare.
       for (int ePos = token.indexOf('e', 1); ePos != -1; ePos = token.indexOf(
           'e', ePos + 1)) {
         final char pre = Character.toLowerCase(token.charAt(ePos - 1));
@@ -91,6 +95,7 @@ public class Language {
       if (!sub) {
         return token;
       }
+      
       token = token.replaceAll("ae", "ä");
       token = token.replaceAll("oe", "ö");
       token = token.replaceAll("ue", "ü");
@@ -98,6 +103,11 @@ public class Language {
       token = token.replaceAll("Ae", "Ä");
       token = token.replaceAll("Oe", "Ö");
       token = token.replaceAll("Ue", "Ü");
+
+      token = token.replaceAll("AE", "Ä");
+      token = token.replaceAll("OE", "Ö");
+      token = token.replaceAll("UE", "Ü");
+      
       return token;   
     }
   };
