@@ -33,7 +33,6 @@
   <activity android:name="AboutActivity" />
   <activity android:name="PreferenceActivity" />
   <activity android:name="DownloadActivity" />
-  <activity android:name="NoDictionaryActivity" />
 
  </application>
 

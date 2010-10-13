@@ -63,6 +63,7 @@ public class DownloadActivity extends Activity {
     try {
       destTmpFile = File.createTempFile("dictionaryDownload", "tmp", destFile
           .getParentFile());
+      destTmpFile.deleteOnExit();
       final URL uri = new URL(source);
       final URLConnection connection = uri.openConnection();
       contentLength = connection.getContentLength();

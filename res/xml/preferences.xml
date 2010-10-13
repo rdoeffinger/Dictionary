@@ -24,20 +24,4 @@
     android:persistent="true"
   />
 
-	<EditTextPreference 
-    android:key="@string/dictFileKey"
-    android:title="@string/dictFileTitle"
-    android:summary="@string/dictFileSummary"
-    android:defaultValue="@string/dictFileDefault"
-    android:persistent="true" 
-    />
-    
-	<EditTextPreference 
-	  android:key="@string/dictFetchUrlKey"
-	  android:title="@string/dictFetchUrlTitle"
-    android:summary="@string/dictFetchUrlSummary"
-    android:defaultValue="@string/dictFetchUrlDefault"
-    android:persistent="true"
-	/>
-
 </PreferenceScreen>  

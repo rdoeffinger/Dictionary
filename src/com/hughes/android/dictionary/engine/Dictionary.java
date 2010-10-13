@@ -16,7 +16,10 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   static final int CACHE_SIZE = 5000;
   
+  static final String END_OF_DICTIONARY = "END OF DICTIONARY";
+  
   // persisted
+  final int dictFileVersion;
   final String dictInfo;
   final List<PairEntry> pairEntries;
   final List<TextEntry> textEntries;
@@ -24,6 +27,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   final List<Index> indices;
   
   public Dictionary(final String dictInfo) {
+    this.dictFileVersion = 0;
     this.dictInfo = dictInfo;
     pairEntries = new ArrayList<PairEntry>();
     textEntries = new ArrayList<TextEntry>();
@@ -32,28 +36,30 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   }
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
+    dictFileVersion = raf.readInt();
+    if (dictFileVersion != 0) {
+      throw new IOException("Invalid dictionary version: " + dictFileVersion);
+    }
     dictInfo = raf.readUTF();
     sources = CachingList.createFullyCached(RAFList.create(raf, EntrySource.SERIALIZER, raf.getFilePointer()));
     pairEntries = CachingList.create(RAFList.create(raf, PairEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
     textEntries = CachingList.create(RAFList.create(raf, TextEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
     indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer, raf.getFilePointer()));
-  }
-  
-  public void print(final PrintStream out) {
-    out.println("dictInfo=" + dictInfo);
-    for (final Index index : indices) {
-      index.print(out);
-      out.println();
+    final String end = raf.readUTF(); 
+    if (!end.equals(END_OF_DICTIONARY)) {
+      throw new IOException("Dictionary seems corrupt: " + end);
     }
   }
-
+  
   @Override
   public void write(RandomAccessFile raf) throws IOException {
+    raf.writeInt(dictFileVersion);
     raf.writeUTF(dictInfo);
     RAFList.write(raf, sources, EntrySource.SERIALIZER);
     RAFList.write(raf, pairEntries, PairEntry.SERIALIZER);
     RAFList.write(raf, textEntries, TextEntry.SERIALIZER);
     RAFList.write(raf, indices, indexSerializer);
+    raf.writeUTF(END_OF_DICTIONARY);
   }
 
   private final RAFListSerializer<Index> indexSerializer = new RAFListSerializer<Index>() {
@@ -65,5 +71,14 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     public void write(RandomAccessFile raf, Index t) throws IOException {
       t.write(raf);
     }};
+    
+    public void print(final PrintStream out) {
+      out.println("dictInfo=" + dictInfo);
+      for (final Index index : indices) {
+        index.print(out);
+        out.println();
+      }
+    }
+
 
 }
