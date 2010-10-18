@@ -16,27 +16,31 @@ public class PersistentObjectCache {
   private final File dir;
   private final Map<String, Object> objects = new LinkedHashMap<String, Object>();
   
-  public synchronized Object read(final String filename) {
-    Object object = (objects.get(filename));
-    if (object != null) {
-      return object;
-    }
-    Log.d(getClass().getSimpleName(), "Cache miss.");
-    final File src = new File(dir, filename);
-    if (!src.canRead()) {
-      Log.d(getClass().getSimpleName(), "File empty: " + src);
-      return null;
-    }
+  public synchronized <T> T read(final String filename, final Class<T> resultClass) {
     try {
-      final ObjectInputStream in = new ObjectInputStream(new FileInputStream(src));
-      object = in.readObject();
-      in.close();
-    } catch (Exception e) {
-      Log.e(getClass().getSimpleName(), "Deserialization failed: " + src, e);
+      Object object = (objects.get(filename));
+      if (object != null) {
+        return resultClass.cast(object);
+      }
+      Log.d(getClass().getSimpleName(), "Cache miss.");
+      final File src = new File(dir, filename);
+      if (!src.canRead()) {
+        Log.d(getClass().getSimpleName(), "File empty: " + src);
+        return null;
+      }
+      try {
+        final ObjectInputStream in = new ObjectInputStream(new FileInputStream(src));
+        object = in.readObject();
+        in.close();
+      } catch (Exception e) {
+        Log.e(getClass().getSimpleName(), "Deserialization failed: " + src, e);
+        return null;
+      }
+      objects.put(filename, object);
+      return resultClass.cast(object);
+    } catch (ClassCastException e) {
       return null;
     }
-    objects.put(filename, object);
-    return object;
   }
   
   public synchronized void write(final String filename, final Object object) {

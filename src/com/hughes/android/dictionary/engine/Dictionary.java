@@ -20,11 +20,11 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   // persisted
   final int dictFileVersion;
-  final String dictInfo;
-  final List<PairEntry> pairEntries;
-  final List<TextEntry> textEntries;
-  final List<EntrySource> sources;
-  final List<Index> indices;
+  public final String dictInfo;
+  public final List<PairEntry> pairEntries;
+  public final List<TextEntry> textEntries;
+  public final List<EntrySource> sources;
+  public final List<Index> indices;
   
   public Dictionary(final String dictInfo) {
     this.dictFileVersion = 0;

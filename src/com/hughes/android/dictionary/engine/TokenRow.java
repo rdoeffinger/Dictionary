@@ -33,12 +33,6 @@ public class TokenRow extends RowBase {
   }
 
   @Override
-  public Object draw(String searchText) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public void print(final PrintStream out) {
     out.println(getToken());
   }

@@ -10,18 +10,21 @@ import com.hughes.util.raf.RAFSerializer;
 public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
   
   public static final class Pair {
-    final String lang1;
-    final String lang2;
+    
+    public final String lang1;
+    public final String lang2;
+    
     public Pair(final String lang1, final String lang2) {
       this.lang1 = lang1;
       this.lang2 = lang2;
     }
+    
     public String toString() {
       return lang1 + " :: " + lang2;
     }
   }
   
-  final Pair[] pairs;
+  public final Pair[] pairs;
   
   public PairEntry(final Pair[] pairs) {
     this.pairs = pairs;
@@ -72,12 +75,6 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
       return index.dict.pairEntries.get(referenceIndex);
     }
     
-    @Override
-    public Object draw(String searchText) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
     @Override
     public void print(PrintStream out) {
       final PairEntry pairEntry = getEntry();

@@ -24,27 +24,30 @@ public final class Index implements RAFSerializable<Index> {
   
   final Dictionary dict;
   
-  final String shortName;
-  final String longName;
+  public final String shortName;
+  public final String longName;
   
   // persisted: tells how the entries are sorted.
-  final Language sortLanguage;
+  public final Language sortLanguage;
     
   // persisted
-  final List<IndexEntry> sortedIndexEntries;
+  public final List<IndexEntry> sortedIndexEntries;
 
   // One big list!
   // Various sub-types.
   // persisted
-  final List<RowBase> rows;
+  public final List<RowBase> rows;
+  
+  public final boolean swapPairEntries;
   
   // --------------------------------------------------------------------------
   
-  public Index(final Dictionary dict, final String shortName, final String longName, final Language sortLanguage) {
+  public Index(final Dictionary dict, final String shortName, final String longName, final Language sortLanguage, final boolean swapPairEntries) {
     this.dict = dict;
     this.shortName = shortName;
     this.longName = longName;
     this.sortLanguage = sortLanguage;
+    this.swapPairEntries = swapPairEntries;
     sortedIndexEntries = new ArrayList<IndexEntry>();
     rows = new ArrayList<RowBase>();
   }
@@ -55,6 +58,7 @@ public final class Index implements RAFSerializable<Index> {
     longName = raf.readUTF();
     final String languageCode = raf.readUTF();
     sortLanguage = Language.lookup(languageCode);
+    swapPairEntries = raf.readBoolean();
     if (sortLanguage == null) {
       throw new IOException("Unsupported language: " + languageCode);
     }
@@ -62,21 +66,21 @@ public final class Index implements RAFSerializable<Index> {
     rows = CachingList.create(UniformRAFList.create(raf, new RowBase.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
   }
   
-  public void print(final PrintStream out) {
-    for (final RowBase row : rows) {
-      row.print(out);
-    }
-  }
-  
   @Override
   public void write(final RandomAccessFile raf) throws IOException {
     raf.writeUTF(shortName);
     raf.writeUTF(longName);
     raf.writeUTF(sortLanguage.getSymbol());
+    raf.writeBoolean(swapPairEntries);
     RAFList.write(raf, sortedIndexEntries, IndexEntry.SERIALIZER);
     UniformRAFList.write(raf, (Collection<RowBase>) rows, new RowBase.Serializer(this), 5);
   }
 
+  public void print(final PrintStream out) {
+    for (final RowBase row : rows) {
+      row.print(out);
+    }
+  }
   
   static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
     String token;
@@ -112,15 +116,9 @@ public final class Index implements RAFSerializable<Index> {
     public String toString() {
       return token + "@" + startRow;
     }
-}
-  
-
-  private TokenRow sortedIndexToToken(final int sortedIndex) {
-    final IndexEntry indexEntry = sortedIndexEntries.get(sortedIndex);
-    return (TokenRow) rows.get(indexEntry.startRow);
   }
-
-  public TokenRow find(String token, final AtomicBoolean interrupted) {
+  
+  public IndexEntry findInsertionPoint(String token, final AtomicBoolean interrupted) {
     token = sortLanguage.textNorm(token, true);
 
     int start = 0;
@@ -130,14 +128,14 @@ public final class Index implements RAFSerializable<Index> {
     while (start < end) {
       final int mid = (start + end) / 2;
       if (interrupted.get()) {
-        return sortedIndexToToken(mid);
+        return null;
       }
       final IndexEntry midEntry = sortedIndexEntries.get(mid);
 
       final int comp = sortCollator.compare(token, sortLanguage.textNorm(midEntry.token, true));
       if (comp == 0) {
-        final int result = windBack(token, mid, sortCollator, interrupted);
-        return sortedIndexToToken(result);
+        final int result = windBackCase(token, mid, sortCollator, interrupted);
+        return sortedIndexEntries.get(result);
       } else if (comp < 0) {
 //        Log.d("THAD", "Upper bound: " + midEntry);
         end = mid;
@@ -146,15 +144,46 @@ public final class Index implements RAFSerializable<Index> {
         start = mid + 1;
       }
     }
+
+    // If we search for a substring of a string that's in there, return that.
     int result = Math.min(start, sortedIndexEntries.size() - 1);
-    result = windBack(token, result, sortCollator, interrupted);
-    if (result > 0 && sortCollator.compare(sortLanguage.textNorm(sortedIndexEntries.get(result).token, true), token) > 0) {
-      result = windBack(sortLanguage.textNorm(sortedIndexEntries.get(result - 1).token, true), result, sortCollator, interrupted);
-    }
-    return sortedIndexToToken(result);
+    result = windBackCase(sortLanguage.textNorm(sortedIndexEntries.get(result).token, true), result, sortCollator, interrupted);
+    return sortedIndexEntries.get(result);
   }
   
-  private final int windBack(final String token, int result, final Collator sortCollator, final AtomicBoolean interrupted) {
+  public static final class SearchResult {
+    final IndexEntry insertionPoint;
+    final IndexEntry longestPrefix;
+    final String longestPrefixString;
+    
+    public SearchResult(IndexEntry insertionPoint, IndexEntry longestPrefix,
+        String longestPrefixString) {
+      this.insertionPoint = insertionPoint;
+      this.longestPrefix = longestPrefix;
+      this.longestPrefixString = longestPrefixString;
+    }
+  }
+  
+  public SearchResult findLongestSubstring(String token, final AtomicBoolean interrupted) {
+    IndexEntry insertionPoint = null;
+    IndexEntry result = null;
+    while (!interrupted.get() && token.length() > 0) {
+      result = findInsertionPoint(token, interrupted);
+      if (result == null) {
+        return null;
+      }
+      if (insertionPoint == null) {
+        insertionPoint = result;
+      }
+      if (sortLanguage.textNorm(result.token, true).startsWith(sortLanguage.textNorm(token, true))) {
+        return new SearchResult(insertionPoint, result, token);
+      }
+      token = token.substring(0, token.length() - 1);      
+    }
+    return new SearchResult(insertionPoint, sortedIndexEntries.get(0), "");
+  }
+  
+  private final int windBackCase(final String token, int result, final Collator sortCollator, final AtomicBoolean interrupted) {
     while (result > 0 && sortCollator.compare(sortLanguage.textNorm(sortedIndexEntries.get(result - 1).token, true), token) >= 0) {
       --result;
       if (interrupted.get()) {
@@ -163,5 +192,6 @@ public final class Index implements RAFSerializable<Index> {
     }
     return result;
   }
+
 
 }

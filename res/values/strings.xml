@@ -16,8 +16,14 @@
   <!-- DictionaryEditActivity -->
   <string name="dictionaryName">Dictionary name</string>
   <string name="downloadUrl">Dictionary download URL</string>
+  <string name="dictionaryInfo">Dictionary info:</string>
   <string name="localFile">Dictionary file</string>
   <string name="wordListFile">Word list file</string>
+  <string name="fileNotFound">File not found: '%s'</string>
+  <string name="invalidDictionary">Invalid dictionary: file=%s, error=%s</string>
+  <string name="numPairEntries">Entries: %d</string>
+  <string name="numTokens">Tokens: %d</string>
+  <string name="numRows">Rows: %d</string>
  
 	<!-- Main -->
 	<string name="searchText">Search Text</string>
@@ -33,18 +39,6 @@
 	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
 	<string name="myEmail">thad.hughes\+quickdic@gmail.com</string>
-	<string name="currentDictInfo">Current dictionary info:</string>
-	<string name="noDictLoaded">No dictionary loaded.</string>
-  <string name="aboutText"><![CDATA[%s\n
-\n
-Entry count: %d\n
-%s:\n
-  Unique token count: %d\n
-  Row count: %d\n
-%s:\n
-  Unique token count: %d\n
-  Row count: %d\n
-]]></string>
 	
 	<!-- Download. -->
 	<string name="downloading">Downloading, %d of %d bytes.</string>

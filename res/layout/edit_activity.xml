@@ -59,13 +59,19 @@
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" />
 
+  <TextView 
+    android:id="@+id/dictionaryInfoTitle" 
+    android:text="@string/dictionaryInfo"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:paddingTop="5dip" />
+  <TextView 
+    android:id="@+id/dictionaryInfo" 
+    android:text=""
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:paddingTop="20dip" />
 
-  String localFile = "";
-  String wordList = "";
-  
-  int openIndex = 0;
-  String openWord = "";
- 
 </LinearLayout>
 
 </ScrollView>

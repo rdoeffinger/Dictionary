@@ -1,8 +1,5 @@
 package com.hughes.android.dictionary;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,13 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.hughes.android.util.PersistentObjectCache;
 
@@ -28,9 +24,8 @@ public class DictionaryListActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
   
-  static final String DICTIONARY_CONFIGS = "dictionaryConfigs";
+  QuickDicConfig quickDicConfig = new QuickDicConfig();
   
-  List<DictionaryConfig> dictionaries = new ArrayList<DictionaryConfig>();
   
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -38,33 +33,42 @@ public class DictionaryListActivity extends ListActivity {
 
     // UI init.
     setContentView(R.layout.list_activity);
-    
+
+    /*
     getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
       public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int row,
           long arg3) {
         return false;
       }
     });
-    
+    */
+
+    getListView().setOnItemClickListener(new OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> arg0, View arg1, int index,
+          long id) {
+        onClick(index);
+      }
+    });
+
     // ContextMenu.
     registerForContextMenu(getListView());
     
-    getListView().setItemsCanFocus(true);
   }
   
-  @SuppressWarnings("unchecked")
+  private void onClick(int dictIndex) {
+    final Intent intent = DictionaryActivity.getIntent(dictIndex, 0, "");
+    startActivity(intent);
+  }
+  
   @Override
   protected void onResume() {
     super.onResume();
 
-    dictionaries = (List<DictionaryConfig>) PersistentObjectCache.init(this).read(DICTIONARY_CONFIGS);
-    if (dictionaries == null) {
-      dictionaries = new ArrayList<DictionaryConfig>();
-    }
-    if (dictionaries.size() == 0) {
-      final DictionaryConfig dictionaryConfig = DictionaryConfig.defaultConfig();
-      dictionaries.add(dictionaryConfig);
-      PersistentObjectCache.getInstance().write(DICTIONARY_CONFIGS, dictionaries);
+    quickDicConfig = PersistentObjectCache.init(this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
+    if (quickDicConfig == null) {
+      quickDicConfig = new QuickDicConfig();
+      PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, quickDicConfig);
     }
 
     setListAdapter(new Adapter());
@@ -76,7 +80,7 @@ public class DictionaryListActivity extends ListActivity {
           public boolean onMenuItemClick(final MenuItem menuItem) {
             final DictionaryConfig dictionaryConfig = new DictionaryConfig();
             dictionaryConfig.name = getString(R.string.newDictionary);
-            dictionaries.add(0, dictionaryConfig);
+            quickDicConfig.dictionaryConfigs.add(0, dictionaryConfig);
             dictionaryConfigsChanged();
             return false;
           }
@@ -97,9 +101,7 @@ public class DictionaryListActivity extends ListActivity {
     editMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
-        final Intent intent = new Intent(DictionaryListActivity.this, DictionaryEditActivity.class);
-        intent.putExtra(DictionaryEditActivity.DICT_INDEX, adapterContextMenuInfo.position);
-        startActivity(intent);
+        startActivity(DictionaryEditActivity.getIntent(adapterContextMenuInfo.position));
         return true;
       }
     });
@@ -109,8 +111,8 @@ public class DictionaryListActivity extends ListActivity {
       moveUpMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-          final DictionaryConfig dictionaryConfig = dictionaries.remove(adapterContextMenuInfo.position);
-          dictionaries.add(adapterContextMenuInfo.position - 1, dictionaryConfig);
+          final DictionaryConfig dictionaryConfig = quickDicConfig.dictionaryConfigs.remove(adapterContextMenuInfo.position);
+          quickDicConfig.dictionaryConfigs.add(adapterContextMenuInfo.position - 1, dictionaryConfig);
           dictionaryConfigsChanged();
           return true;
         }
@@ -121,7 +123,7 @@ public class DictionaryListActivity extends ListActivity {
     deleteMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
-        dictionaries.remove(adapterContextMenuInfo.position);
+        quickDicConfig.dictionaryConfigs.remove(adapterContextMenuInfo.position);
         dictionaryConfigsChanged();
         return true;
       }
@@ -130,33 +132,20 @@ public class DictionaryListActivity extends ListActivity {
   }
 
   private void dictionaryConfigsChanged() {
-    PersistentObjectCache.getInstance().write(DICTIONARY_CONFIGS, dictionaries);
+    PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, quickDicConfig);
     setListAdapter(getListAdapter());
   }
-
-  static final OnFocusChangeListener focusListener = new OnFocusChangeListener() {
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-      final TextView textView = (TextView) v;
-      if (hasFocus) {
-        textView.setTextAppearance(v.getContext(), R.style.Theme_QuickDic);
-      } else {
-        //textView.setTextAppearance(v.getContext(), android.R.style.TextAppearance_Medium);
-      }
-    }
-  };
-
 
   class Adapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-      return dictionaries.size();
+      return quickDicConfig.dictionaryConfigs.size();
     }
 
     @Override
     public DictionaryConfig getItem(int position) {
-      return dictionaries.get(position);
+      return quickDicConfig.dictionaryConfigs.get(position);
     }
 
     @Override
@@ -172,15 +161,7 @@ public class DictionaryListActivity extends ListActivity {
 
       view.setText(dictionaryConfig.name);
       view.setTextSize(20);
-      view.setFocusable(true);
-      view.setOnFocusChangeListener(focusListener);
       tableLayout.addView(view);
-
-      final EditText view2 = new EditText(parent.getContext());
-      view2.setText(dictionaryConfig.name + "2");
-      view2.setFocusable(true);
-      view2.setOnFocusChangeListener(focusListener);
-      tableLayout.addView(view2);
 
       return tableLayout;
     }

@@ -63,12 +63,8 @@ public abstract class RowBase extends IndexedObject {
     this.tokenRow = tokenRow;
   }
 
-
   public abstract void print(PrintStream out);
   
-  public abstract Object draw(final String searchText);
-
-
   // RowBase must manage "disk-based" polymorphism.  All other polymorphism is
   // dealt with in the normal manner.
   static class Serializer implements RAFListSerializer<RowBase> {
@@ -100,6 +96,5 @@ public abstract class RowBase extends IndexedObject {
       raf.writeInt(t.referenceIndex);
     }
   }
-
 
 }

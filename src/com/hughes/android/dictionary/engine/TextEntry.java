@@ -44,12 +44,6 @@ public class TextEntry extends Entry implements RAFSerializable<TextEntry> {
     }
     
     @Override
-    public Object draw(String searchText) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
     public void print(PrintStream out) {
       out.println("  " + getEntry().text);
     }

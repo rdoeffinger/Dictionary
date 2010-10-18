@@ -64,19 +64,6 @@
 		android:layout_gravity="left"
 		android:paddingBottom="10dip"/>
 
-	<TextView 
-		android:id="@+id/currentDictInfoTitle"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:text="@string/currentDictInfo"/>
-
-	<TextView 
-		android:id="@+id/currentDictInfo"
-		android:text="@string/noDictLoaded" 
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"/>
-
 </LinearLayout>
 
 </ScrollView>
