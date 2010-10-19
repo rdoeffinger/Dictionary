@@ -11,17 +11,17 @@ public abstract class RowBase extends IndexedObject {
   /**
    * the Index owning this RowBase.
    */
-  final Index index;
+  public final Index index;
   
   /**
    * Where this RowBase points to.
    */
-  int referenceIndex;
+  public final int referenceIndex;
 
   /**
    * the TokenRow above this RowBase, populated on demand.
    */
-  TokenRow tokenRow = null;
+  private TokenRow tokenRow = null;
   
   RowBase(final RandomAccessFile raf, final int thisRowIndex, final Index index) throws IOException {
     super(thisRowIndex);

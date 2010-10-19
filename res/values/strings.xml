@@ -19,7 +19,7 @@
   <string name="dictionaryInfo">Dictionary info:</string>
   <string name="localFile">Dictionary file</string>
   <string name="wordListFile">Word list file</string>
-  <string name="fileNotFound">File not found: '%s'</string>
+  <string name="fileNotFound">File not found: \'%s\'</string>
   <string name="invalidDictionary">Invalid dictionary: file=%s, error=%s</string>
   <string name="numPairEntries">Entries: %d</string>
   <string name="numTokens">Tokens: %d</string>
@@ -73,5 +73,9 @@
 	<string name="dictFetchUrlTitle">Dictionary fetch URL</string>
 	<string name="dictFetchUrlSummary">URL to use to download the dictionary from the Internet.</string>
 	<string name="dictFetchUrlDefault">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
+
+  <string name="vibrateOnFailedSearchKey">vibrateOnFailedSearch</string>
+  <string name="vibrateOnFailedSearchTitle">Vibrate on failed search.</string>
+  <string name="vibrateOnFailedSearchSummary">Vibrate the phone when invalid search text is entered.</string>
 
 </resources>

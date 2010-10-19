@@ -82,9 +82,9 @@ public final class Index implements RAFSerializable<Index> {
     }
   }
   
-  static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
-    String token;
-    int startRow;
+  public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
+    public final String token;
+    public final int startRow;
     
     static final RAFSerializer<IndexEntry> SERIALIZER = new RAFSerializer<IndexEntry> () {
       @Override
@@ -152,35 +152,42 @@ public final class Index implements RAFSerializable<Index> {
   }
   
   public static final class SearchResult {
-    final IndexEntry insertionPoint;
-    final IndexEntry longestPrefix;
-    final String longestPrefixString;
+    public final IndexEntry insertionPoint;
+    public final IndexEntry longestPrefix;
+    public final String longestPrefixString;
+    public final boolean success;
     
     public SearchResult(IndexEntry insertionPoint, IndexEntry longestPrefix,
-        String longestPrefixString) {
+        String longestPrefixString, boolean success) {
       this.insertionPoint = insertionPoint;
       this.longestPrefix = longestPrefix;
       this.longestPrefixString = longestPrefixString;
+      this.success = success;
     }
   }
   
   public SearchResult findLongestSubstring(String token, final AtomicBoolean interrupted) {
+    if (token.length() == 0) {
+      return new SearchResult(sortedIndexEntries.get(0), sortedIndexEntries.get(0), "", true);
+    }
     IndexEntry insertionPoint = null;
     IndexEntry result = null;
+    boolean unmodified = true;
     while (!interrupted.get() && token.length() > 0) {
       result = findInsertionPoint(token, interrupted);
       if (result == null) {
         return null;
       }
-      if (insertionPoint == null) {
+      if (unmodified) {
         insertionPoint = result;
       }
       if (sortLanguage.textNorm(result.token, true).startsWith(sortLanguage.textNorm(token, true))) {
-        return new SearchResult(insertionPoint, result, token);
+        return new SearchResult(insertionPoint, result, token, unmodified);
       }
+      unmodified = false;
       token = token.substring(0, token.length() - 1);      
     }
-    return new SearchResult(insertionPoint, sortedIndexEntries.get(0), "");
+    return new SearchResult(insertionPoint, sortedIndexEntries.get(0), "", false);
   }
   
   private final int windBackCase(final String token, int result, final Collator sortCollator, final AtomicBoolean interrupted) {
