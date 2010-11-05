@@ -64,7 +64,9 @@ public abstract class RowBase extends IndexedObject {
   }
 
   public abstract void print(PrintStream out);
-  
+
+  public abstract String getRawText(final boolean compact);
+
   // RowBase must manage "disk-based" polymorphism.  All other polymorphism is
   // dealt with in the normal manner.
   static class Serializer implements RAFListSerializer<RowBase> {

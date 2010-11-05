@@ -5,6 +5,7 @@
 	<string name="about_text">QuickDic\nby Thad Hughes</string>
  
   <!-- DictionaryListActivity -->
+  <string name="dictionaryList">Dictionary list</string>
   <string name="selectADictionary"><![CDATA[Select a dictionary.
 \nLong-press to edit the dictionary. Press "menu" to add a new dictionary.]]></string>
   <string name="addDictionary">Add dictionary</string>
@@ -12,8 +13,25 @@
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="moveUp">Move up</string>
   <string name="newDictionary">New Dictionary</string>
+
+  <string name="thanksForUpdating"><![CDATA[
+<html>
+<body>
+  Thanks for updating QuickDic.
+  <p> New features:
+  <ul>
+    <li> Easily work with multiple dictionaries.
+    <li> Wiktionary-based dictionaries for French, Italian, German, Spanish, Swedish.
+    <li> Create your own dictionaries.  Look in Menu...About for details.
+  </ul>
+  <p>The new version requires you to re-download any dictionaries you want.<br/>
+</body>
+</html>
+]]>
+  </string>
  
   <!-- DictionaryEditActivity -->
+  <string name="dictionaryEdit">Edit dictionary config</string>
   <string name="dictionaryName">Dictionary name</string>
   <string name="downloadUrl">Dictionary download URL</string>
   <string name="dictionaryInfo">Dictionary info:</string>
@@ -24,6 +42,7 @@
   <string name="numPairEntries">Entries: %d</string>
   <string name="numTokens">Tokens: %d</string>
   <string name="numRows">Rows: %d</string>
+
  
 	<!-- Main -->
 	<string name="searchText">Search Text</string>
@@ -39,7 +58,9 @@
 	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
 	<string name="myEmail">thad.hughes\+quickdic@gmail.com</string>
-	
+  <string name="webPage">For more information, including how to make your own QuickDic dictionaries, see:</string>
+  <string name="webPageUrl">http://sites.google.com/site/quickdic/home</string>
+ 
 	<!-- Download. -->
 	<string name="downloading">Downloading, %d of %d bytes.</string>
 	<string name="downloadFinished">Download finished, %d bytes downloaded.</string>
@@ -54,7 +75,7 @@
 	<string name="wordListFileKey">wordListFile</string>
 	<string name="wordListFileTitle">Word list file</string>
 	<string name="wordListFileSummary">The local file where the word list will be appended.</string>
-	<string name="wordListFileDefault">/sdcard/wordList.txt</string>
+	<string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
 
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
   <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
@@ -64,16 +85,6 @@
   <string name="showClearSearchTextButtonTitle">Show \'clear search text\' button</string>
   <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
   
-	<string name="dictFileKey">dictFile</string>
-	<string name="dictFileTitle">Dictionary file</string>
-	<string name="dictFileSummary">The local filename where the dictionary is stored (and downloaded to).</string>
-	<string name="dictFileDefault">/sdcard/de-en.dict</string>
-
-	<string name="dictFetchUrlKey">dictFetchUrl</string>
-	<string name="dictFetchUrlTitle">Dictionary fetch URL</string>
-	<string name="dictFetchUrlSummary">URL to use to download the dictionary from the Internet.</string>
-	<string name="dictFetchUrlDefault">http://www.stanford.edu/~egirard/dict/de-en.dict</string>
-
   <string name="vibrateOnFailedSearchKey">vibrateOnFailedSearch</string>
   <string name="vibrateOnFailedSearchTitle">Vibrate on failed search.</string>
   <string name="vibrateOnFailedSearchSummary">Vibrate the phone when invalid search text is entered.</string>

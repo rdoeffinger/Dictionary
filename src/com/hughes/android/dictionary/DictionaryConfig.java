@@ -8,7 +8,6 @@ public class DictionaryConfig implements Serializable {
 
   String name = "";
   String localFile = "/sdcard/quickDic/";
-  String wordList = "/sdcard/quickDic/";
   String downloadUrl = "http://";
   
   int openIndex = 0;
@@ -19,7 +18,6 @@ public class DictionaryConfig implements Serializable {
     result.name = "DE<->EN";
     result.downloadUrl = "http://www.stanford.edu/~egirard/dict/de-en.2.dict";
     result.localFile = "/sdcard/quickDic/de-en.dict";
-    result.wordList = "/sdcard/quickDict/wordlist_de-en.txt";
     return result;
   }
   

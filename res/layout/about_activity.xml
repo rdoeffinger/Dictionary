@@ -63,6 +63,23 @@
 		android:clickable="true" 
 		android:layout_gravity="left"
 		android:paddingBottom="10dip"/>
+  
+    <TextView 
+    android:id="@+id/webPage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:text="@string/webPage"/>
+
+  <TextView 
+    android:id="@+id/webPageUrl" 
+    android:text="@string/webPageUrl"
+    android:autoLink="web"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:clickable="true" 
+    android:layout_gravity="left"
+    android:paddingBottom="10dip"/>
+  
 
 </LinearLayout>
 

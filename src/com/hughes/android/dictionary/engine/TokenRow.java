@@ -37,5 +37,10 @@ public class TokenRow extends RowBase {
     out.println(getToken());
   }
 
+  @Override
+  public String getRawText(boolean compact) {
+    return getToken();
+  }
+
 
 }

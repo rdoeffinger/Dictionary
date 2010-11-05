@@ -47,6 +47,11 @@ public class TextEntry extends Entry implements RAFSerializable<TextEntry> {
     public void print(PrintStream out) {
       out.println("  " + getEntry().text);
     }
+
+    @Override
+    public String getRawText(boolean compact) {
+      return getEntry().text;
+    }
   }
 
 

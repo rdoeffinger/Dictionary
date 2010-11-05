@@ -85,6 +85,7 @@ public final class Index implements RAFSerializable<Index> {
   public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
     public final String token;
     public final int startRow;
+    public final int numRows;
     
     static final RAFSerializer<IndexEntry> SERIALIZER = new RAFSerializer<IndexEntry> () {
       @Override
@@ -96,25 +97,28 @@ public final class Index implements RAFSerializable<Index> {
         t.write(raf);
       }};
       
-    public IndexEntry(final String token, final int startRow) {
+    public IndexEntry(final String token, final int startRow, final int numRows) {
       assert token.equals(token.trim());
       assert token.length() > 0;
       this.token = token;
       this.startRow = startRow;
+      this.numRows = numRows;
     }
     
     public IndexEntry(final RandomAccessFile raf) throws IOException {
       token = raf.readUTF();
       startRow = raf.readInt();
+      numRows = raf.readInt();
     }
     
     public void write(RandomAccessFile raf) throws IOException {
       raf.writeUTF(token);
       raf.writeInt(startRow);
+      raf.writeInt(numRows);
     }
 
     public String toString() {
-      return token + "@" + startRow;
+      return String.format("%s@%d(%d)", token, startRow, numRows);
     }
   }
   
@@ -163,6 +167,11 @@ public final class Index implements RAFSerializable<Index> {
       this.longestPrefix = longestPrefix;
       this.longestPrefixString = longestPrefixString;
       this.success = success;
+    }
+    
+    @Override
+    public String toString() {
+      return String.format("inerstionPoint=%s,longestPrefix=%s,longestPrefixString=%s,success=%b", insertionPoint.toString(), longestPrefix.toString(), longestPrefixString, success);
     }
   }
   

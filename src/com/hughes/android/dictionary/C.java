@@ -8,5 +8,7 @@ public class C {
   static final String INDEX_INDEX = "indexIndex";
   static final String SEARCH_TOKEN = "searchToken";
 
+  public static final String INTRO_MESSAGE_SHOWN = "introMessageShown";
+
 
 }

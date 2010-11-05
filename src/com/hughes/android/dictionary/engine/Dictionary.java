@@ -20,6 +20,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   // persisted
   final int dictFileVersion;
+  final long creationMillis;
   public final String dictInfo;
   public final List<PairEntry> pairEntries;
   public final List<TextEntry> textEntries;
@@ -28,6 +29,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   public Dictionary(final String dictInfo) {
     this.dictFileVersion = 0;
+    this.creationMillis = System.currentTimeMillis();
     this.dictInfo = dictInfo;
     pairEntries = new ArrayList<PairEntry>();
     textEntries = new ArrayList<TextEntry>();
@@ -40,6 +42,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     if (dictFileVersion != 0) {
       throw new IOException("Invalid dictionary version: " + dictFileVersion);
     }
+    creationMillis = raf.readLong();
     dictInfo = raf.readUTF();
     sources = CachingList.createFullyCached(RAFList.create(raf, EntrySource.SERIALIZER, raf.getFilePointer()));
     pairEntries = CachingList.create(RAFList.create(raf, PairEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
@@ -54,6 +57,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   @Override
   public void write(RandomAccessFile raf) throws IOException {
     raf.writeInt(dictFileVersion);
+    raf.writeLong(creationMillis);
     raf.writeUTF(dictInfo);
     RAFList.write(raf, sources, EntrySource.SERIALIZER);
     RAFList.write(raf, pairEntries, PairEntry.SERIALIZER);

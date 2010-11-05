@@ -22,6 +22,11 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
     public String toString() {
       return lang1 + " :: " + lang2;
     }
+
+    public String toStringTab() {
+      return lang1 + "\t" + lang2;
+    }
+
   }
   
   public final Pair[] pairs;
@@ -82,6 +87,29 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
         out.print((i == 0 ? "  " : "    ") + pairEntry.pairs[i]);
         out.println();
       }
+    }
+
+    @Override
+    public String getRawText(boolean compact) {
+      final PairEntry pairEntry = getEntry();
+      if (compact) {
+        return pairEntry.pairs[0].toStringTab();
+      }
+      final StringBuilder builder = new StringBuilder();
+      for (int i = 0; i < pairEntry.pairs.length; ++i) {
+        if (i > 0) {
+          builder.append(" | ");
+        }
+        builder.append(pairEntry.pairs[i].lang1);
+      }
+      builder.append("\t");
+      for (int i = 0; i < pairEntry.pairs.length; ++i) {
+        if (i > 0) {
+          builder.append(" | ");
+        }
+        builder.append(pairEntry.pairs[i].lang2);
+      }
+      return builder.toString();
     }
   }
 
