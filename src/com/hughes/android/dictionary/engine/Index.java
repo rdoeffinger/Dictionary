@@ -17,6 +17,7 @@ import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
 import com.hughes.util.raf.UniformRAFList;
 import com.ibm.icu.text.Collator;
+import com.ibm.icu.text.Transliterator;
 
 public final class Index implements RAFSerializable<Index> {
   
@@ -29,6 +30,10 @@ public final class Index implements RAFSerializable<Index> {
   
   // persisted: tells how the entries are sorted.
   public final Language sortLanguage;
+  final String normalizerRules;
+  
+  // Built from the two above.
+  final Transliterator normalizer;
     
   // persisted
   public final List<IndexEntry> sortedIndexEntries;
@@ -42,14 +47,17 @@ public final class Index implements RAFSerializable<Index> {
   
   // --------------------------------------------------------------------------
   
-  public Index(final Dictionary dict, final String shortName, final String longName, final Language sortLanguage, final boolean swapPairEntries) {
+  public Index(final Dictionary dict, final String shortName, final String longName, final Language sortLanguage, final String normalizerRules, final boolean swapPairEntries) {
     this.dict = dict;
     this.shortName = shortName;
     this.longName = longName;
     this.sortLanguage = sortLanguage;
+    this.normalizerRules = normalizerRules;
     this.swapPairEntries = swapPairEntries;
     sortedIndexEntries = new ArrayList<IndexEntry>();
     rows = new ArrayList<RowBase>();
+    
+    normalizer = Transliterator.createFromRules("", normalizerRules, Transliterator.FORWARD);
   }
   
   public Index(final Dictionary dict, final RandomAccessFile raf) throws IOException {
@@ -58,12 +66,15 @@ public final class Index implements RAFSerializable<Index> {
     longName = raf.readUTF();
     final String languageCode = raf.readUTF();
     sortLanguage = Language.lookup(languageCode);
+    normalizerRules = raf.readUTF();
     swapPairEntries = raf.readBoolean();
     if (sortLanguage == null) {
       throw new IOException("Unsupported language: " + languageCode);
     }
     sortedIndexEntries = CachingList.create(RAFList.create(raf, IndexEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
     rows = CachingList.create(UniformRAFList.create(raf, new RowBase.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
+
+    normalizer = Transliterator.createFromRules("", normalizerRules, Transliterator.FORWARD);
   }
   
   @Override
@@ -71,6 +82,7 @@ public final class Index implements RAFSerializable<Index> {
     raf.writeUTF(shortName);
     raf.writeUTF(longName);
     raf.writeUTF(sortLanguage.getSymbol());
+    raf.writeUTF(normalizerRules);
     raf.writeBoolean(swapPairEntries);
     RAFList.write(raf, sortedIndexEntries, IndexEntry.SERIALIZER);
     UniformRAFList.write(raf, (Collection<RowBase>) rows, new RowBase.Serializer(this), 5);
@@ -86,6 +98,8 @@ public final class Index implements RAFSerializable<Index> {
     public final String token;
     public final int startRow;
     public final int numRows;
+    
+    private String normalizedToken;
     
     static final RAFSerializer<IndexEntry> SERIALIZER = new RAFSerializer<IndexEntry> () {
       @Override
@@ -120,15 +134,22 @@ public final class Index implements RAFSerializable<Index> {
     public String toString() {
       return String.format("%s@%d(%d)", token, startRow, numRows);
     }
+
+    public synchronized String normalizedToken(final Transliterator normalizer) {
+      if (normalizedToken == null) {
+        normalizedToken = normalizer.transform(token);
+      }
+      return normalizedToken;
+    }
   }
   
   public IndexEntry findInsertionPoint(String token, final AtomicBoolean interrupted) {
-    token = sortLanguage.textNorm(token, true);
+    token = normalizer.transliterate(token);
 
     int start = 0;
     int end = sortedIndexEntries.size();
     
-    final Collator sortCollator = sortLanguage.getSortCollator();
+    final Collator sortCollator = sortLanguage.getCollator();
     while (start < end) {
       final int mid = (start + end) / 2;
       if (interrupted.get()) {
@@ -136,22 +157,22 @@ public final class Index implements RAFSerializable<Index> {
       }
       final IndexEntry midEntry = sortedIndexEntries.get(mid);
 
-      final int comp = sortCollator.compare(token, sortLanguage.textNorm(midEntry.token, true));
+      final int comp = sortCollator.compare(token, midEntry.normalizedToken(normalizer));
       if (comp == 0) {
-        final int result = windBackCase(token, mid, sortCollator, interrupted);
+        final int result = windBackCase(token, mid, interrupted);
         return sortedIndexEntries.get(result);
       } else if (comp < 0) {
-//        Log.d("THAD", "Upper bound: " + midEntry);
+        System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken(normalizer) + ", mid=" + mid);
         end = mid;
       } else {
-//        Log.d("THAD", "Lower bound: " + midEntry);
+        System.out.println("Lower bound: " + midEntry + ", norm=" + midEntry.normalizedToken(normalizer) + ", mid=" + mid);
         start = mid + 1;
       }
     }
 
     // If we search for a substring of a string that's in there, return that.
     int result = Math.min(start, sortedIndexEntries.size() - 1);
-    result = windBackCase(sortLanguage.textNorm(sortedIndexEntries.get(result).token, true), result, sortCollator, interrupted);
+    result = windBackCase(sortedIndexEntries.get(result).normalizedToken(normalizer), result, interrupted);
     return sortedIndexEntries.get(result);
   }
   
@@ -175,32 +196,33 @@ public final class Index implements RAFSerializable<Index> {
     }
   }
   
-  public SearchResult findLongestSubstring(String token, final AtomicBoolean interrupted) {
-    if (token.length() == 0) {
-      return new SearchResult(sortedIndexEntries.get(0), sortedIndexEntries.get(0), "", true);
-    }
-    IndexEntry insertionPoint = null;
-    IndexEntry result = null;
-    boolean unmodified = true;
-    while (!interrupted.get() && token.length() > 0) {
-      result = findInsertionPoint(token, interrupted);
-      if (result == null) {
-        return null;
-      }
-      if (unmodified) {
-        insertionPoint = result;
-      }
-      if (sortLanguage.textNorm(result.token, true).startsWith(sortLanguage.textNorm(token, true))) {
-        return new SearchResult(insertionPoint, result, token, unmodified);
-      }
-      unmodified = false;
-      token = token.substring(0, token.length() - 1);      
-    }
-    return new SearchResult(insertionPoint, sortedIndexEntries.get(0), "", false);
-  }
+//  public SearchResult findLongestSubstring(String token, final AtomicBoolean interrupted) {
+//    token = normalizer.transliterate(token);
+//    if (token.length() == 0) {
+//      return new SearchResult(sortedIndexEntries.get(0), sortedIndexEntries.get(0), "", true);
+//    }
+//    IndexEntry insertionPoint = null;
+//    IndexEntry result = null;
+//    boolean unmodified = true;
+//    while (!interrupted.get() && token.length() > 0) {
+//      result = findInsertionPoint(token, interrupted);
+//      if (result == null) {
+//        return null;
+//      }
+//      if (unmodified) {
+//        insertionPoint = result;
+//      }
+//      if (result.normalizedToken(normalizer).startsWith(token)) {
+//        return new SearchResult(insertionPoint, result, token, unmodified);
+//      }
+//      unmodified = false;
+//      token = token.substring(0, token.length() - 1);      
+//    }
+//    return new SearchResult(insertionPoint, sortedIndexEntries.get(0), "", false);
+//  }
   
-  private final int windBackCase(final String token, int result, final Collator sortCollator, final AtomicBoolean interrupted) {
-    while (result > 0 && sortCollator.compare(sortLanguage.textNorm(sortedIndexEntries.get(result - 1).token, true), token) >= 0) {
+  private final int windBackCase(final String token, int result, final AtomicBoolean interrupted) {
+    while (result > 0 && sortedIndexEntries.get(result - 1).normalizedToken(normalizer).equals(token)) {
       --result;
       if (interrupted.get()) {
         return result;

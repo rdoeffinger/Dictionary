@@ -139,9 +139,7 @@ public class DictionaryActivity extends ListActivity {
       public void run() {
         final long startMillis = System.currentTimeMillis();
         for (final Index index : dictionary.indices) {
-          index.sortLanguage.getFindCollator();
-          final com.ibm.icu.text.Collator c = index.sortLanguage
-              .getSortCollator();
+          final com.ibm.icu.text.Collator c = index.sortLanguage.getCollator();
           if (c.compare("pre-print", "preppy") >= 0) {
             Log.e(LOG, c.getClass()
                 + " is buggy, lookups may not work properly.");
@@ -438,19 +436,19 @@ public class DictionaryActivity extends ListActivity {
       return;
     }
     
-    final Index.SearchResult searchResult = searchOperation.searchResult;
+    final Index.IndexEntry searchResult = searchOperation.searchResult;
     Log.d(LOG, "searchFinished: " + searchOperation + ", searchResult=" + searchResult);
 
     jumpToRow(searchResult.longestPrefix.startRow);
     
-    if (!searchResult.success) {
-      if (vibrator != null) {
-        vibrator.vibrate(VIBRATE_MILLIS);
-      }
-      searchText.setText(searchResult.longestPrefixString);
-      searchText.setSelection(searchResult.longestPrefixString.length());
-      return;
-    }
+//    if (!searchResult.success) {
+//      if (vibrator != null) {
+//        vibrator.vibrate(VIBRATE_MILLIS);
+//      }
+//      searchText.setText(searchResult.longestPrefixString);
+//      searchText.setSelection(searchResult.longestPrefixString.length());
+//      return;
+//    }
   }
   
   private final void jumpToRow(final int row) {
@@ -466,7 +464,7 @@ public class DictionaryActivity extends ListActivity {
     
     long searchStartMillis;
 
-    Index.SearchResult searchResult;
+    Index.IndexEntry searchResult;
     
     SearchOperation(final String searchText, final Index index) {
       this.searchText = searchText.trim();
@@ -480,7 +478,7 @@ public class DictionaryActivity extends ListActivity {
     @Override
     public void run() {
       searchStartMillis = System.currentTimeMillis();
-      searchResult = index.findLongestSubstring(searchText, interrupted);
+      searchResult = index.findInsertionPoint(searchText, interrupted);
       Log.d(LOG, "searchText=" + searchText + ", searchDuration="
           + (System.currentTimeMillis() - searchStartMillis) + ", interrupted="
           + interrupted.get());

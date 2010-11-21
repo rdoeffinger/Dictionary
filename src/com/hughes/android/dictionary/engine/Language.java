@@ -1,6 +1,5 @@
 package com.hughes.android.dictionary.engine;
 
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -13,34 +12,16 @@ public class Language {
 
   final String symbol;
   final Locale locale;
-
-  Collator sortCollator;
-  final Comparator<String> sortComparator;
-
-  private Collator findCollator;
-  final Comparator<String> findComparator;
+  
+  final Collator collator;
 
   public Language(final Locale locale) {
     this.symbol = locale.getLanguage();
     this.locale = locale;
+    this.collator = Collator.getInstance(locale);
+    this.collator.setStrength(Collator.IDENTICAL);
 
-    this.sortComparator = new Comparator<String>() {
-      public int compare(final String s1, final String s2) {
-        return getSortCollator().compare(textNorm(s1, false), textNorm(s2, false));
-      }
-    };
-
-    this.findComparator = new Comparator<String>() {
-      public int compare(final String s1, final String s2) {
-        return getFindCollator().compare(textNorm(s1, false), textNorm(s2, false));
-      }
-    };
-    
     symbolToLangauge.put(symbol.toLowerCase(), this);
-  }
-
-  public String textNorm(final String s, final boolean toLower) {
-    return toLower ? s.toLowerCase() : s;
   }
 
   @Override
@@ -52,24 +33,13 @@ public class Language {
     return symbol;
   }
   
-  public synchronized Collator getFindCollator() {
-    if (findCollator == null) {
-      findCollator = Collator.getInstance(locale);
-      findCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
-      findCollator.setStrength(Collator.SECONDARY);
-    }
-    return findCollator;
+  public Collator getCollator() {
+    return collator;
   }
-
-  public synchronized Collator getSortCollator() {
-    if (sortCollator == null) {
-      sortCollator = Collator.getInstance(locale);
-      sortCollator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
-      sortCollator.setStrength(Collator.IDENTICAL);
-    }
-    return sortCollator;
+  
+  public String getDefaultNormalizerRules() {
+    return ":: Any-Latin; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;";
   }
-
   // ----------------------------------------------------------------
 
   public static final Language en = new Language(Locale.ENGLISH);
@@ -78,37 +48,8 @@ public class Language {
 
   public static final Language de = new Language(Locale.GERMAN) {
     @Override
-    public String textNorm(String token, final boolean toLower) {
-      if (toLower) {
-        token = token.toLowerCase();
-      }
-      boolean sub = false;
-      // This is meant to be fast: occurrences of ae, oe, ue are probably rare.
-      for (int ePos = token.indexOf('e', 1); ePos != -1; ePos = token.indexOf(
-          'e', ePos + 1)) {
-        final char pre = Character.toLowerCase(token.charAt(ePos - 1));
-        if (pre == 'a' || pre == 'o' || pre == 'u') {
-          sub = true;
-          break;
-        }
-      }
-      if (!sub) {
-        return token;
-      }
-      
-      token = token.replaceAll("ae", "ä");
-      token = token.replaceAll("oe", "ö");
-      token = token.replaceAll("ue", "ü");
-
-      token = token.replaceAll("Ae", "Ä");
-      token = token.replaceAll("Oe", "Ö");
-      token = token.replaceAll("Ue", "Ü");
-
-      token = token.replaceAll("AE", "Ä");
-      token = token.replaceAll("OE", "Ö");
-      token = token.replaceAll("UE", "Ü");
-      
-      return token;   
+    public String getDefaultNormalizerRules() {
+      return ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; ";
     }
   };
   
