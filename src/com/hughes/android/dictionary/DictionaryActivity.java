@@ -18,7 +18,6 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.text.Editable;
@@ -27,16 +26,17 @@ import android.text.TextWatcher;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,7 +46,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Index;
@@ -82,7 +81,7 @@ public class DictionaryActivity extends ListActivity {
   // Visible for testing.
   ListAdapter indexAdapter = null;
 
-  private Vibrator vibrator = null;
+  //private Vibrator vibrator = null;
   
   public DictionaryActivity() {
   }
@@ -219,7 +218,7 @@ public class DictionaryActivity extends ListActivity {
         getString(R.string.wordListFileDefault)));
     saveOnlyFirstSubentry = prefs.getBoolean(getString(R.string.saveOnlyFirstSubentryKey), false);
     if (prefs.getBoolean(getString(R.string.vibrateOnFailedSearchKey), true)) {
-      vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+      // vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
     Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
   }
@@ -439,7 +438,7 @@ public class DictionaryActivity extends ListActivity {
     final Index.IndexEntry searchResult = searchOperation.searchResult;
     Log.d(LOG, "searchFinished: " + searchOperation + ", searchResult=" + searchResult);
 
-    jumpToRow(searchResult.longestPrefix.startRow);
+    jumpToRow(searchResult.startRow);
     
 //    if (!searchResult.success) {
 //      if (vibrator != null) {
