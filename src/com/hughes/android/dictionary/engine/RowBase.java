@@ -41,6 +41,7 @@ public abstract class RowBase extends IndexedObject {
   public TokenRow getTokenRow(final boolean search) {
     if (tokenRow == null && search) {
       int r = index() - 1;
+      int rUp = index() + 1;
       while (r >= 0) {
         final RowBase row = index.rows.get(r);
         final TokenRow candidate = row.getTokenRow(false);
@@ -49,6 +50,17 @@ public abstract class RowBase extends IndexedObject {
             index.rows.get(r).setTokenRow(candidate);
           }
           break;
+        }
+        if (rUp < index.rows.size()) {
+          final RowBase rowUp = index.rows.get(rUp);
+          final TokenRow candidateUp = rowUp.getTokenRow(false);
+          if (candidateUp != null) {
+            for (--rUp; rUp >= index(); --rUp) {
+              index.rows.get(rUp).setTokenRow(candidateUp);
+            }
+            break;
+          }
+          rUp++;
         }
         --r;
       }

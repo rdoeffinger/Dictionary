@@ -79,6 +79,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     public void print(final PrintStream out) {
       out.println("dictInfo=" + dictInfo);
       for (final Index index : indices) {
+        out.printf("Index: %s %s\n", index.shortName, index.longName);
         index.print(out);
         out.println();
       }

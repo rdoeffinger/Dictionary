@@ -80,6 +80,8 @@ public class DictionaryActivity extends ListActivity {
 
   // Visible for testing.
   ListAdapter indexAdapter = null;
+  
+  final SearchTextWatcher searchTextWatcher = new SearchTextWatcher();
 
   //private Vibrator vibrator = null;
   
@@ -127,6 +129,14 @@ public class DictionaryActivity extends ListActivity {
       dictionary = new Dictionary(dictRaf); 
     } catch (Exception e) {
       Log.e(LOG, "Unable to load dictionary.", e);
+      if (dictRaf != null) {
+        try {
+          dictRaf.close();
+        } catch (IOException e1) {
+          Log.e(LOG, "Unable to close dictRaf.", e1);
+        }
+        dictRaf = null;
+      }
       Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()), Toast.LENGTH_LONG);
       startActivity(DictionaryEditActivity.getIntent(dictIndex));
       finish();
@@ -137,7 +147,9 @@ public class DictionaryActivity extends ListActivity {
     searchExecutor.execute(new Runnable() {
       public void run() {
         final long startMillis = System.currentTimeMillis();
+        Log.d(LOG, "Constructing index for lang=" + index.sortLanguage.getSymbol());
         for (final Index index : dictionary.indices) {
+          Log.d(LOG, "Starting collator load for lang=" + index.sortLanguage.getSymbol());
           final com.ibm.icu.text.Collator c = index.sortLanguage.getCollator();
           if (c.compare("pre-print", "preppy") >= 0) {
             Log.e(LOG, c.getClass()
@@ -158,7 +170,7 @@ public class DictionaryActivity extends ListActivity {
     langButton = (Button) findViewById(R.id.LangButton);
     
     searchText.requestFocus();
-    searchText.addTextChangedListener(new SearchTextWatcher());
+    searchText.addTextChangedListener(searchTextWatcher);
     searchText.setText(prefs.getString(C.SEARCH_TOKEN, ""));
     Log.d(LOG, "Trying to restore searchText=" + searchText.getText());
     
@@ -237,6 +249,9 @@ public class DictionaryActivity extends ListActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    if (dictRaf == null) {
+      return;
+    }
     setDictionaryPrefs(this, dictIndex, indexIndex, searchText.getText().toString());
     try {
       dictRaf.close();
@@ -292,11 +307,12 @@ public class DictionaryActivity extends ListActivity {
       // Down
       destIndexEntry = Math.min(tokenRow.referenceIndex + 1, index.sortedIndexEntries.size());
     }
-    
     final Index.IndexEntry dest = index.sortedIndexEntries.get(destIndexEntry);
-    searchText.setText(dest.token);
     Log.d(LOG, "onUpDownButton, destIndexEntry=" + dest.token);
-    //jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
+    searchText.removeTextChangedListener(searchTextWatcher);
+    searchText.setText(dest.token);
+    jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
+    searchText.removeTextChangedListener(searchTextWatcher);
   }
 
   // --------------------------------------------------------------------------
@@ -597,6 +613,7 @@ public class DictionaryActivity extends ListActivity {
 
   void onSearchTextChange(final String text) {
     if (!searchText.isFocused()) {
+      Log.d(LOG, "searchText changed without focus, doing nothing.");
       return;
     }
     Log.d(LOG, "onSearchTextChange: " + text);    

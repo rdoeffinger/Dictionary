@@ -7,7 +7,7 @@ import java.io.RandomAccessFile;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
 
-public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
+public class PairEntry extends Entry implements RAFSerializable<PairEntry>, Comparable<PairEntry> {
   
   public static final class Pair {
     
@@ -18,7 +18,11 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
       this.lang1 = lang1;
       this.lang2 = lang2;
     }
-    
+
+    public Pair(final String lang1, final String lang2, final boolean swap) {
+      this(swap ? lang2 : lang1, swap ? lang1 : lang2);
+    }
+
     public String toString() {
       return lang1 + " :: " + lang2;
     }
@@ -27,12 +31,25 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
       return lang1 + "\t" + lang2;
     }
 
+    public String get(int i) {
+      if (i == 0) {
+        return lang1;
+      } else if (i == 1) {
+        return lang2;
+      }
+      throw new IllegalArgumentException();
+    }
+
   }
   
   public final Pair[] pairs;
   
   public PairEntry(final Pair[] pairs) {
     this.pairs = pairs;
+  }
+  
+  public PairEntry(final String lang1, final String lang2) {
+    this.pairs = new Pair[] { new Pair(lang1, lang2) };
   }
   
   public PairEntry(final RandomAccessFile raf) throws IOException {
@@ -92,27 +109,41 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry> {
     @Override
     public String getRawText(boolean compact) {
       final PairEntry pairEntry = getEntry();
-      if (compact) {
-        return pairEntry.pairs[0].toStringTab();
-      }
-      final StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < pairEntry.pairs.length; ++i) {
-        if (i > 0) {
-          builder.append(" | ");
-        }
-        builder.append(pairEntry.pairs[i].lang1);
-      }
-      builder.append("\t");
-      for (int i = 0; i < pairEntry.pairs.length; ++i) {
-        if (i > 0) {
-          builder.append(" | ");
-        }
-        builder.append(pairEntry.pairs[i].lang2);
-      }
-      return builder.toString();
+      return pairEntry.getRawText(compact);
     }
+  
   }
 
+  public String getRawText(final boolean compact) {
+    if (compact) {
+      return this.pairs[0].toStringTab();
+    }
+    final StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < this.pairs.length; ++i) {
+      if (i > 0) {
+        builder.append(" | ");
+      }
+      builder.append(this.pairs[i].lang1);
+    }
+    builder.append("\t");
+    for (int i = 0; i < this.pairs.length; ++i) {
+      if (i > 0) {
+        builder.append(" | ");
+      }
+      builder.append(this.pairs[i].lang2);
+    }
+    return builder.toString();
+  }
 
+  @Override
+  public int compareTo(final PairEntry that) {
+    return this.getRawText(false).compareTo(that.getRawText(false));
+  }
+  
+  @Override
+  public String toString() {
+    return getRawText(false);
+  }
+  
 
 }

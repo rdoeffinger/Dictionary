@@ -231,5 +231,19 @@ public final class Index implements RAFSerializable<Index> {
     return result;
   }
 
+  /*
+  public int tokenRowBinarySearch(final int rowIndex) {
+    int start = 0;
+    int end = sortedIndexEntries.size();
+    while (start < end) {
+      final int mid = (start + end) / 2;
+      final int midRowIndex = sortedIndexEntries.get(mid).startRow;
+      if (midRowIndex == rowIndex) {
+        return mid;
+      }
+      if ()
+    }
+  }
+  */
 
 }
