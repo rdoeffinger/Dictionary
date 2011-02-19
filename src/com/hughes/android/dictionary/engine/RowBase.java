@@ -53,8 +53,13 @@ public abstract class RowBase extends IndexedObject {
         }
         if (rUp < index.rows.size()) {
           final RowBase rowUp = index.rows.get(rUp);
-          final TokenRow candidateUp = rowUp.getTokenRow(false);
+          TokenRow candidateUp = rowUp.getTokenRow(false);
           if (candidateUp != null) {
+            // Did we hit the next set of TokenRows?
+            if (candidateUp.index() > this.index()) {  
+              final int tokenIndex = index.sortedIndexEntries.get(candidateUp.referenceIndex - 1).startRow;
+              candidateUp = (TokenRow) index.rows.get(tokenIndex);
+            }
             for (--rUp; rUp >= index(); --rUp) {
               index.rows.get(rUp).setTokenRow(candidateUp);
             }

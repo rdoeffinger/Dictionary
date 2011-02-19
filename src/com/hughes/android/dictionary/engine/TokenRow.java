@@ -34,7 +34,7 @@ public class TokenRow extends RowBase {
 
   @Override
   public void print(final PrintStream out) {
-    out.println(getToken());
+    out.println("===" + getToken() + "===");
   }
 
   @Override

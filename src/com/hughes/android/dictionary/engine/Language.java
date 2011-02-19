@@ -13,13 +13,11 @@ public class Language {
   final String symbol;
   final Locale locale;
   
-  final Collator collator;
+  private Collator collator;
 
   public Language(final Locale locale) {
     this.symbol = locale.getLanguage();
     this.locale = locale;
-    this.collator = Collator.getInstance(locale);
-    this.collator.setStrength(Collator.IDENTICAL);
 
     symbolToLangauge.put(symbol.toLowerCase(), this);
   }
@@ -33,7 +31,11 @@ public class Language {
     return symbol;
   }
   
-  public Collator getCollator() {
+  public synchronized Collator getCollator() {
+    if (collator == null) {
+      this.collator = Collator.getInstance(locale);
+      this.collator.setStrength(Collator.IDENTICAL);
+    }
     return collator;
   }
   
@@ -53,18 +55,14 @@ public class Language {
     }
   };
   
-  static {
-    for (final String lang : Locale.getISOLanguages()) {
-      if (lookup(lang) == null) {
-        new Language(new Locale(lang));
-      }
-    }
-  }
-
   // ----------------------------------------------------------------
 
-  public static Language lookup(final String symbol) {
-    return symbolToLangauge.get(symbol.toLowerCase());
+  public static synchronized Language lookup(final String symbol) {
+    Language lang = symbolToLangauge.get(symbol.toLowerCase());
+    if (lang == null) {
+      lang = new Language(new Locale(symbol));
+    }
+    return lang;
   }
 
 }

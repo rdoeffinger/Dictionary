@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.ListActivity;
@@ -50,8 +51,10 @@ import android.widget.Toast;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Index;
 import com.hughes.android.dictionary.engine.PairEntry;
+import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
 import com.hughes.android.dictionary.engine.TokenRow;
+import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
 
 public class DictionaryActivity extends ListActivity {
@@ -68,7 +71,12 @@ public class DictionaryActivity extends ListActivity {
   
   // package for test.
   final Handler uiHandler = new Handler();
-  private final Executor searchExecutor = Executors.newSingleThreadExecutor();
+  private final Executor searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+    @Override
+    public Thread newThread(Runnable r) {
+      return new Thread(r, "searchExecutor");
+    }
+  });
   private SearchOperation currentSearchOperation = null;
 
   EditText searchText;
@@ -116,6 +124,7 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Log.d(LOG, "onCreate:" + this);
     
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     
@@ -143,14 +152,32 @@ public class DictionaryActivity extends ListActivity {
       return;
     }
 
+    indexIndex = prefs.getInt(C.INDEX_INDEX, 0) % dictionary.indices.size();
+    Log.d(LOG, "Loading index.");
+    index = dictionary.indices.get(indexIndex);
+    setListAdapter(new IndexAdapter(index));
+
     // Pre-load the collators.
     searchExecutor.execute(new Runnable() {
       public void run() {
         final long startMillis = System.currentTimeMillis();
-        Log.d(LOG, "Constructing index for lang=" + index.sortLanguage.getSymbol());
+        
+        TransliteratorManager.init(new TransliteratorManager.Callback() {
+          @Override
+          public void onTransliteratorReady() {
+            uiHandler.post(new Runnable() {
+              @Override
+              public void run() {
+                onSearchTextChange(searchText.getText().toString());
+              }
+            });
+          }
+        });
+        
         for (final Index index : dictionary.indices) {
           Log.d(LOG, "Starting collator load for lang=" + index.sortLanguage.getSymbol());
-          final com.ibm.icu.text.Collator c = index.sortLanguage.getCollator();
+          
+          final com.ibm.icu.text.Collator c = index.sortLanguage.getCollator();          
           if (c.compare("pre-print", "preppy") >= 0) {
             Log.e(LOG, c.getClass()
                 + " is buggy, lookups may not work properly.");
@@ -161,10 +188,7 @@ public class DictionaryActivity extends ListActivity {
       }
     });
     
-    indexIndex = prefs.getInt(C.INDEX_INDEX, 0) % dictionary.indices.size();
-    index = dictionary.indices.get(indexIndex);
-    setListAdapter(new IndexAdapter(index));
-    
+
     setContentView(R.layout.dictionary_activity);
     searchText = (EditText) findViewById(R.id.SearchText);
     langButton = (Button) findViewById(R.id.LangButton);
@@ -212,6 +236,7 @@ public class DictionaryActivity extends ListActivity {
         if (!searchText.isFocused()) {
           // TODO: don't do this if multi words are entered.
           final RowBase row = (RowBase) getListAdapter().getItem(position);
+          Log.d(LOG, "onItemSelected: " + row.index());
           final TokenRow tokenRow = row.getTokenRow(true);
           searchText.setText(tokenRow.getToken());
         }
@@ -312,7 +337,7 @@ public class DictionaryActivity extends ListActivity {
     searchText.removeTextChangedListener(searchTextWatcher);
     searchText.setText(dest.token);
     jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
-    searchText.removeTextChangedListener(searchTextWatcher);
+    searchText.addTextChangedListener(searchTextWatcher);
   }
 
   // --------------------------------------------------------------------------
@@ -454,7 +479,18 @@ public class DictionaryActivity extends ListActivity {
     final Index.IndexEntry searchResult = searchOperation.searchResult;
     Log.d(LOG, "searchFinished: " + searchOperation + ", searchResult=" + searchResult);
 
-    jumpToRow(searchResult.startRow);
+    currentSearchOperation = null;
+
+    uiHandler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        if (currentSearchOperation == null) {
+          jumpToRow(searchResult.startRow);
+        } else {
+          Log.d(LOG, "More coming, waiting for currentSearchOperation.");
+        }
+      }
+    }, 50);
     
 //    if (!searchResult.success) {
 //      if (vibrator != null) {
@@ -464,6 +500,7 @@ public class DictionaryActivity extends ListActivity {
 //      searchText.setSelection(searchResult.longestPrefixString.length());
 //      return;
 //    }
+    
   }
   
   private final void jumpToRow(final int row) {
@@ -551,7 +588,7 @@ public class DictionaryActivity extends ListActivity {
     private View getView(PairEntry.Row row, ViewGroup parent) {
       final TableLayout result = new TableLayout(parent.getContext());
       final PairEntry entry = row.getEntry();
-      final int rowCount = entry.pairs.length;
+      final int rowCount = entry.pairs.size();
       for (int r = 0; r < rowCount; ++r) {
         final TableRow tableRow = new TableRow(result.getContext());
 
@@ -577,7 +614,8 @@ public class DictionaryActivity extends ListActivity {
         column2.setWidth(1);
 
         // TODO: color words by gender
-        final String col1Text = index.swapPairEntries ? entry.pairs[r].lang2 : entry.pairs[r].lang1;
+        final Pair pair = entry.pairs.get(r);
+        final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
         column1.setText(col1Text, TextView.BufferType.SPANNABLE);
         final Spannable col1Spannable = (Spannable) column1.getText();
         
@@ -589,7 +627,7 @@ public class DictionaryActivity extends ListActivity {
           startPos += token.length();
         }
 
-        final String col2Text = index.swapPairEntries ? entry.pairs[r].lang1 : entry.pairs[r].lang2;
+        final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
         column2.setText(col2Text, TextView.BufferType.NORMAL);
 
         result.addView(tableRow);

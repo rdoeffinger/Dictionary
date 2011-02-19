@@ -17,19 +17,9 @@
 	<string name="contactMe">Wenn QuickDic dir gefällt, würde ich gern von dir hören.  Bitte schicke Bemerkungen, Aufforderungen, oder Programmfehler an:</string>
 	<string name="currentDictInfo">Wörterbuch Info:</string>
 	<string name="noDictLoaded">Kein Wörterbuch geöffnet.</string>
-  <string name="aboutText"><![CDATA[%s\n
-\n
-Einträgezahl: %d\n
-%s:\n
-  Wörterzahl: %d\n
-  Reihezahl: %d\n
-%s:\n
-  Wörterzahl: %d\n
-  Reihezahl: %d\n
-]]></string>
 	
 	<!-- Download. -->
-	<string name="downloading">%d von %d Bytes heruntergeladen...</string>
+	<string name="downloading">%1$d von %2$d Bytes heruntergeladen...</string>
 	<string name="downloadFinished">Herunterladen fertig, %d Bytes heruntergeladen.</string>
 	<string name="errorDownloadingFile">"Fehler während des Herunterladens: \n%s"</string>
 

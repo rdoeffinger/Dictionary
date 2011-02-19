@@ -38,7 +38,7 @@
   <string name="localFile">Dictionary file</string>
   <string name="wordListFile">Word list file</string>
   <string name="fileNotFound">File not found: \'%s\'</string>
-  <string name="invalidDictionary">Invalid dictionary: file=%s, error=%s</string>
+  <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
   <string name="numPairEntries">Entries: %d</string>
   <string name="numTokens">Tokens: %d</string>
   <string name="numRows">Rows: %d</string>
@@ -62,7 +62,7 @@
   <string name="webPageUrl">http://sites.google.com/site/quickdic/home</string>
  
 	<!-- Download. -->
-	<string name="downloading">Downloading, %d of %d bytes.</string>
+	<string name="downloading">Downloading, %1$d of %2$d bytes.</string>
 	<string name="downloadFinished">Download finished, %d bytes downloaded.</string>
 	<string name="errorDownloadingFile">"Error downloading file: \n%s"</string>
 

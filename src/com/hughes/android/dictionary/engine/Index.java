@@ -33,7 +33,7 @@ public final class Index implements RAFSerializable<Index> {
   final String normalizerRules;
   
   // Built from the two above.
-  final Transliterator normalizer;
+  private Transliterator normalizer;
     
   // persisted
   public final List<IndexEntry> sortedIndexEntries;
@@ -57,7 +57,14 @@ public final class Index implements RAFSerializable<Index> {
     sortedIndexEntries = new ArrayList<IndexEntry>();
     rows = new ArrayList<RowBase>();
     
-    normalizer = Transliterator.createFromRules("", normalizerRules, Transliterator.FORWARD);
+    normalizer = null;
+  }
+  
+  public synchronized Transliterator normalizer() {
+    if (normalizer == null) {
+      normalizer = Transliterator.createFromRules("", normalizerRules, Transliterator.FORWARD);
+    }
+    return normalizer;
   }
   
   public Index(final Dictionary dict, final RandomAccessFile raf) throws IOException {
@@ -73,8 +80,6 @@ public final class Index implements RAFSerializable<Index> {
     }
     sortedIndexEntries = CachingList.create(RAFList.create(raf, IndexEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
     rows = CachingList.create(UniformRAFList.create(raf, new RowBase.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
-
-    normalizer = Transliterator.createFromRules("", normalizerRules, Transliterator.FORWARD);
   }
   
   @Override
@@ -96,10 +101,10 @@ public final class Index implements RAFSerializable<Index> {
   
   public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
     public final String token;
+    private final String normalizedToken;
     public final int startRow;
     public final int numRows;
     
-    private String normalizedToken;
     
     static final RAFSerializer<IndexEntry> SERIALIZER = new RAFSerializer<IndexEntry> () {
       @Override
@@ -111,10 +116,11 @@ public final class Index implements RAFSerializable<Index> {
         t.write(raf);
       }};
       
-    public IndexEntry(final String token, final int startRow, final int numRows) {
+    public IndexEntry(final String token, final String normalizedToken, final int startRow, final int numRows) {
       assert token.equals(token.trim());
       assert token.length() > 0;
       this.token = token;
+      this.normalizedToken = normalizedToken;
       this.startRow = startRow;
       this.numRows = numRows;
     }
@@ -123,28 +129,35 @@ public final class Index implements RAFSerializable<Index> {
       token = raf.readUTF();
       startRow = raf.readInt();
       numRows = raf.readInt();
+      final boolean hasNormalizedForm = raf.readBoolean();
+      normalizedToken = hasNormalizedForm ? raf.readUTF() : token;
     }
     
     public void write(RandomAccessFile raf) throws IOException {
       raf.writeUTF(token);
       raf.writeInt(startRow);
       raf.writeInt(numRows);
+      final boolean hasNormalizedForm = !token.equals(normalizedToken);
+      raf.writeBoolean(hasNormalizedForm);
+      if (hasNormalizedForm) {
+        raf.writeUTF(normalizedToken);
+      }
     }
 
     public String toString() {
       return String.format("%s@%d(%d)", token, startRow, numRows);
     }
 
-    public synchronized String normalizedToken(final Transliterator normalizer) {
-      if (normalizedToken == null) {
-        normalizedToken = normalizer.transform(token);
-      }
+    public String normalizedToken() {
       return normalizedToken;
     }
   }
   
   public IndexEntry findInsertionPoint(String token, final AtomicBoolean interrupted) {
-    token = normalizer.transliterate(token);
+    final Transliterator normalizer = normalizer();
+    if (TransliteratorManager.init(null)) {
+      token = normalizer.transliterate(token);
+    }
 
     int start = 0;
     int end = sortedIndexEntries.size();
@@ -157,22 +170,22 @@ public final class Index implements RAFSerializable<Index> {
       }
       final IndexEntry midEntry = sortedIndexEntries.get(mid);
 
-      final int comp = sortCollator.compare(token, midEntry.normalizedToken(normalizer));
+      final int comp = sortCollator.compare(token, midEntry.normalizedToken());
       if (comp == 0) {
         final int result = windBackCase(token, mid, interrupted);
         return sortedIndexEntries.get(result);
       } else if (comp < 0) {
-        System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken(normalizer) + ", mid=" + mid);
+        //System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
         end = mid;
       } else {
-        System.out.println("Lower bound: " + midEntry + ", norm=" + midEntry.normalizedToken(normalizer) + ", mid=" + mid);
+        //System.out.println("Lower bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
         start = mid + 1;
       }
     }
 
     // If we search for a substring of a string that's in there, return that.
     int result = Math.min(start, sortedIndexEntries.size() - 1);
-    result = windBackCase(sortedIndexEntries.get(result).normalizedToken(normalizer), result, interrupted);
+    result = windBackCase(sortedIndexEntries.get(result).normalizedToken(), result, interrupted);
     return sortedIndexEntries.get(result);
   }
   
@@ -222,7 +235,7 @@ public final class Index implements RAFSerializable<Index> {
 //  }
   
   private final int windBackCase(final String token, int result, final AtomicBoolean interrupted) {
-    while (result > 0 && sortedIndexEntries.get(result - 1).normalizedToken(normalizer).equals(token)) {
+    while (result > 0 && sortedIndexEntries.get(result - 1).normalizedToken().equals(token)) {
       --result;
       if (interrupted.get()) {
         return result;
