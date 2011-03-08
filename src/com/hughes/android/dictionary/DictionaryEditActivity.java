@@ -8,12 +8,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -27,6 +32,8 @@ public class DictionaryEditActivity extends Activity {
 
   QuickDicConfig quickDicConfig;
   private DictionaryConfig dictionaryConfig;
+  
+  final Handler uiHandler = new Handler();
 
   public static Intent getIntent(final int dictIndex) {
     final Intent intent = new Intent();
@@ -39,17 +46,20 @@ public class DictionaryEditActivity extends Activity {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(final Bundle savedInstanceState) {
+    ((DictionaryApplication)getApplication()).applyTheme(this);
+
     super.onCreate(savedInstanceState);
     setContentView(R.layout.edit_activity);
 
     final Intent intent = getIntent();
 
+    final int dictIndex = intent.getIntExtra(C.DICT_INDEX, 0);
+      
     PersistentObjectCache.init(this);
     try {
       quickDicConfig = PersistentObjectCache.init(this).read(
           C.DICTIONARY_CONFIGS, QuickDicConfig.class);
-      dictionaryConfig = quickDicConfig.dictionaryConfigs.get(intent
-          .getIntExtra(C.DICT_INDEX, 0));
+      dictionaryConfig = quickDicConfig.dictionaryConfigs.get(dictIndex);
     } catch (Exception e) {
       Log.e(LOG, "Failed to read QuickDicConfig.", e);
       quickDicConfig = new QuickDicConfig();
@@ -62,28 +72,54 @@ public class DictionaryEditActivity extends Activity {
         .setText(dictionaryConfig.name);
     ((EditText) findViewById(R.id.localFile))
         .setText(dictionaryConfig.localFile);
-    ((EditText) findViewById(R.id.downloadUrl))
-        .setText(dictionaryConfig.downloadUrl);
 
+    final TextWatcher textWatcher = new TextWatcher() {
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before,
+          int count) {
+      }
+
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count,
+          int after) {
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {
+        updateDictInfo();
+      }
+    };
+
+    ((EditText) findViewById(R.id.localFile)).addTextChangedListener(textWatcher);
+
+    final EditText downloadUrl = (EditText) findViewById(R.id.downloadUrl);
+    downloadUrl.setText(dictionaryConfig.downloadUrl);
+    downloadUrl.addTextChangedListener(textWatcher);
+    
+    final Button downloadButton = (Button) findViewById(R.id.downloadButton);
+    downloadButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        startDownloadDictActivity(DictionaryEditActivity.this,
+            dictionaryConfig);
+      }
+    });
+
+    final Button openButton = (Button) findViewById(R.id.openButton);
+    openButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        final Intent intent = DictionaryActivity.getIntent(DictionaryEditActivity.this, dictIndex, 0, "");
+        startActivity(intent);
+      }
+    });
+
+  }
+  
+  protected void onResume() {
+    super.onResume();
+    
     updateDictInfo();
-    ((EditText) findViewById(R.id.localFile))
-        .addTextChangedListener(new TextWatcher() {
-          @Override
-          public void onTextChanged(CharSequence s, int start, int before,
-              int count) {
-          }
-
-          @Override
-          public void beforeTextChanged(CharSequence s, int start, int count,
-              int after) {
-          }
-
-          @Override
-          public void afterTextChanged(Editable s) {
-            updateDictInfo();
-          }
-        });
-
   }
 
   @Override
@@ -105,23 +141,39 @@ public class DictionaryEditActivity extends Activity {
   public boolean onCreateOptionsMenu(final Menu menu) {
     final MenuItem newDictionaryMenuItem = menu
         .add(R.string.downloadDictionary);
-    newDictionaryMenuItem
-        .setOnMenuItemClickListener(new OnMenuItemClickListener() {
+    newDictionaryMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
           public boolean onMenuItemClick(final MenuItem menuItem) {
             startDownloadDictActivity(DictionaryEditActivity.this,
                 dictionaryConfig);
             return false;
           }
         });
+    
+    final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryList));
+    dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        startActivity(DictionaryListActivity.getIntent(DictionaryEditActivity.this));
+        return false;
+      }
+    });
+
 
     return true;
   }
 
   void updateDictInfo() {
-    final TextView dictInfo = (TextView) findViewById(R.id.dictionaryInfo);
+    final String downloadUrl = ((EditText) findViewById(R.id.downloadUrl))
+        .getText().toString();
     final String localFile = ((EditText) findViewById(R.id.localFile))
         .getText().toString();
 
+    final Button downloadButton = (Button) findViewById(R.id.downloadButton);
+    downloadButton.setEnabled(downloadUrl.length() > 0 && localFile.length() > 0);
+
+    final Button openButton = (Button) findViewById(R.id.openButton);
+    openButton.setEnabled(false);
+
+    final TextView dictInfo = (TextView) findViewById(R.id.dictionaryInfo);
     if (!new File(localFile).canRead()) {
       dictInfo.setText(getString(R.string.fileNotFound, localFile));
       return;
@@ -146,6 +198,8 @@ public class DictionaryEditActivity extends Activity {
       }
       raf.close();
       dictInfo.setText(builder.toString());
+      openButton.setEnabled(true);
+      
     } catch (IOException e) {
       dictInfo.setText(getString(R.string.invalidDictionary, localFile, e
           .toString()));
@@ -156,8 +210,17 @@ public class DictionaryEditActivity extends Activity {
       final DictionaryConfig dictionaryConfig) {
     final Intent intent = new Intent(context, DownloadActivity.class);
     intent.putExtra(DownloadActivity.SOURCE, dictionaryConfig.downloadUrl);
-    intent.putExtra(DownloadActivity.DEST, dictionaryConfig.localFile);
+    intent.putExtra(DownloadActivity.DEST, dictionaryConfig.localFile + ".zip");
     context.startActivity(intent);
+  }
+  
+  @Override
+  public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      Log.d(LOG, "Clearing dictionary prefs.");
+      DictionaryActivity.clearDictionaryPrefs(this);
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
 }

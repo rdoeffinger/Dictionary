@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
- <style name="Theme.QuickDic" parent="@android:style/Theme.Light">
+ <style name="Theme.Light" parent="@android:style/Theme.Light">
+<!-- 
   <item name="android:layout_width">fill_parent</item>
   <item name="android:layout_height">wrap_content</item>
   
@@ -8,6 +9,7 @@
   <item name="android:colorBackground">#FFFFFF</item>
 
   <item name="android:textColorPrimary">#000000</item>
-
+ -->
+ 
  </style>
 </resources>

@@ -34,6 +34,8 @@ public class DictionaryListActivity extends ListActivity {
   
   
   public void onCreate(Bundle savedInstanceState) {
+    ((DictionaryApplication)getApplication()).applyTheme(this);
+
     super.onCreate(savedInstanceState);
     Log.d(LOG, "onCreate:" + this);
 
@@ -52,7 +54,7 @@ public class DictionaryListActivity extends ListActivity {
     registerForContextMenu(getListView());
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    final int introMessageId = 0;
+    final int introMessageId = -1;
     if (prefs.getInt(C.INTRO_MESSAGE_SHOWN, 0) < introMessageId) {
       final AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setCancelable(false);
@@ -81,8 +83,9 @@ public class DictionaryListActivity extends ListActivity {
     
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if (prefs.contains(C.DICT_INDEX) && prefs.contains(C.INDEX_INDEX)) {
+      Log.d(LOG, "Skipping Dictionary List, going straight to dictionary.");
       startActivity(DictionaryActivity.getIntent(this, prefs.getInt(C.DICT_INDEX, 0), prefs.getInt(C.INDEX_INDEX, 0), prefs.getString(C.SEARCH_TOKEN, "")));
-      finish();
+      //finish();
       return;
     }
 
@@ -90,6 +93,11 @@ public class DictionaryListActivity extends ListActivity {
     if (quickDicConfig == null) {
       quickDicConfig = new QuickDicConfig();
       PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, quickDicConfig);
+    }
+    if (quickDicConfig.currentVersion < QuickDicConfig.LATEST_VERSION) {
+      Log.d(LOG, "Dictionary list is old, updating it.");
+      quickDicConfig.addDefaultDictionaries();
+      quickDicConfig.currentVersion = QuickDicConfig.LATEST_VERSION;
     }
 
     setListAdapter(new Adapter());
@@ -107,6 +115,34 @@ public class DictionaryListActivity extends ListActivity {
             return false;
           }
         });
+
+    final MenuItem addDefaultDictionariesMenuItem = menu.add(R.string.addDefaultDictionaries);
+    addDefaultDictionariesMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+          public boolean onMenuItemClick(final MenuItem menuItem) {
+            quickDicConfig.addDefaultDictionaries();
+            dictionaryConfigsChanged();
+            return false;
+          }
+        });
+
+    final MenuItem about = menu.add(getString(R.string.about));
+    about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        final Intent intent = new Intent().setClassName(AboutActivity.class
+            .getPackage().getName(), AboutActivity.class.getCanonicalName());
+        startActivity(intent);
+        return false;
+      }
+    });
+    
+    final MenuItem preferences = menu.add(getString(R.string.preferences));
+    preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        startActivity(new Intent(DictionaryListActivity.this,
+            PreferenceActivity.class));
+        return false;
+      }
+    });
     
     return true;
   }

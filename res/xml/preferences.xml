@@ -24,4 +24,14 @@
     android:persistent="true"
   />
 
+  <ListPreference 
+    android:key="@string/themeKey"
+    android:title="@string/themeTitle"
+    android:summary="@string/themeSummary"
+    android:persistent="true"
+    android:defaultValue=""
+    android:entries="@array/themes"
+    android:entryValues="@array/themeKeys"
+  />
+
 </PreferenceScreen>  

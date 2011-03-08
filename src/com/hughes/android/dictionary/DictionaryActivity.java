@@ -119,10 +119,13 @@ public class DictionaryActivity extends ListActivity {
     prefs.remove(C.INDEX_INDEX);
     prefs.remove(C.SEARCH_TOKEN);
     prefs.commit();
+    Log.d(LOG, "Removed default dictionary prefs.");
   }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    ((DictionaryApplication)getApplication()).applyTheme(this);
+    
     super.onCreate(savedInstanceState);
     Log.d(LOG, "onCreate:" + this);
     
@@ -195,8 +198,10 @@ public class DictionaryActivity extends ListActivity {
     
     searchText.requestFocus();
     searchText.addTextChangedListener(searchTextWatcher);
-    searchText.setText(prefs.getString(C.SEARCH_TOKEN, ""));
-    Log.d(LOG, "Trying to restore searchText=" + searchText.getText());
+    final String search = prefs.getString(C.SEARCH_TOKEN, "");
+    searchText.setText(search);
+    searchText.setSelection(0, search.length());
+    Log.d(LOG, "Trying to restore searchText=" + search);
     
     final Button clearSearchTextButton = (Button) findViewById(R.id.ClearSearchTextButton);
     clearSearchTextButton.setOnClickListener(new OnClickListener() {
@@ -254,18 +259,17 @@ public class DictionaryActivity extends ListActivity {
     wordList = new File(prefs.getString(getString(R.string.wordListFileKey),
         getString(R.string.wordListFileDefault)));
     saveOnlyFirstSubentry = prefs.getBoolean(getString(R.string.saveOnlyFirstSubentryKey), false);
-    if (prefs.getBoolean(getString(R.string.vibrateOnFailedSearchKey), true)) {
+    //if (prefs.getBoolean(getString(R.string.vibrateOnFailedSearchKey), true)) {
       // vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-    }
+    //}
     Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
   }
-  
   
   @Override
   protected void onResume() {
     super.onResume();
   }
-
+  
   @Override
   protected void onPause() {
     super.onPause();
@@ -278,11 +282,31 @@ public class DictionaryActivity extends ListActivity {
       return;
     }
     setDictionaryPrefs(this, dictIndex, indexIndex, searchText.getText().toString());
+    
+    // Before we close the RAF, we have to wind the current search down.
+    if (currentSearchOperation != null) {
+      Log.d(LOG, "Interrupting search to shut down.");
+      final SearchOperation searchOperation = currentSearchOperation;
+      currentSearchOperation = null;
+      searchOperation.interrupted.set(true);
+      synchronized (searchOperation) {
+        while (!searchOperation.done) {
+          try {
+            searchOperation.wait();
+          } catch (InterruptedException e) {
+            Log.d(LOG, "Interrupted.", e);
+          }
+        }
+      }
+    }
+    
     try {
+      Log.d(LOG, "Closing RAF.");
       dictRaf.close();
     } catch (IOException e) {
       Log.e(LOG, "Failed to close dictionary", e);
     }
+    dictRaf = null;
   }
 
   // --------------------------------------------------------------------------
@@ -348,37 +372,37 @@ public class DictionaryActivity extends ListActivity {
   public boolean onCreateOptionsMenu(final Menu menu) {
     
     {
-    final MenuItem preferences = menu.add(getString(R.string.preferences));
-    preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-      public boolean onMenuItemClick(final MenuItem menuItem) {
-        startActivity(new Intent(DictionaryActivity.this,
-            PreferenceActivity.class));
-        return false;
-      }
-    });
+      final MenuItem preferences = menu.add(getString(R.string.preferences));
+      preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        public boolean onMenuItemClick(final MenuItem menuItem) {
+          startActivity(new Intent(DictionaryActivity.this,
+              PreferenceActivity.class));
+          return false;
+        }
+      });
     }
 
     {
-    final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryList));
-    dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-      public boolean onMenuItemClick(final MenuItem menuItem) {
-        startActivity(DictionaryListActivity.getIntent(DictionaryActivity.this));
-        startActivity(DictionaryListActivity.getIntent(DictionaryActivity.this));
-        return false;
-      }
-    });
-    }
-
-    {
-      final MenuItem dictionaryList = menu.add(getString(R.string.editDictionary));
+      final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryList));
       dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        public boolean onMenuItemClick(final MenuItem menuItem) {
+          startActivity(DictionaryListActivity.getIntent(DictionaryActivity.this));
+          finish();
+          return false;
+        }
+      });
+    }
+
+    {
+      final MenuItem dictionaryEdit = menu.add(getString(R.string.editDictionary));
+      dictionaryEdit.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         public boolean onMenuItemClick(final MenuItem menuItem) {
           final Intent intent = DictionaryEditActivity.getIntent(dictIndex);
           startActivity(intent);
           return false;
         }
       });
-      }
+    }
 
     return true;
   }
@@ -458,6 +482,10 @@ public class DictionaryActivity extends ListActivity {
       }
       return true;
     }
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      Log.d(LOG, "Clearing dictionary prefs.");
+      DictionaryActivity.clearDictionaryPrefs(this);
+    }
     return super.onKeyDown(keyCode, event);
   }
 
@@ -518,6 +546,8 @@ public class DictionaryActivity extends ListActivity {
 
     Index.IndexEntry searchResult;
     
+    boolean done = false;
+    
     SearchOperation(final String searchText, final Index index) {
       this.searchText = searchText.trim();
       this.index = index;
@@ -529,18 +559,25 @@ public class DictionaryActivity extends ListActivity {
 
     @Override
     public void run() {
-      searchStartMillis = System.currentTimeMillis();
-      searchResult = index.findInsertionPoint(searchText, interrupted);
-      Log.d(LOG, "searchText=" + searchText + ", searchDuration="
-          + (System.currentTimeMillis() - searchStartMillis) + ", interrupted="
-          + interrupted.get());
-      if (!interrupted.get()) {
-        uiHandler.post(new Runnable() {
-          @Override
-          public void run() {            
-            searchFinished(SearchOperation.this);
-          }
-        });
+      try {
+        searchStartMillis = System.currentTimeMillis();
+        searchResult = index.findInsertionPoint(searchText, interrupted);
+        Log.d(LOG, "searchText=" + searchText + ", searchDuration="
+            + (System.currentTimeMillis() - searchStartMillis) + ", interrupted="
+            + interrupted.get());
+        if (!interrupted.get()) {
+          uiHandler.post(new Runnable() {
+            @Override
+            public void run() {            
+              searchFinished(SearchOperation.this);
+            }
+          });
+        }
+      } finally {
+        synchronized (this) {
+          done = true;
+          this.notifyAll();
+        }
       }
     }
   }
@@ -650,6 +687,10 @@ public class DictionaryActivity extends ListActivity {
   // --------------------------------------------------------------------------
 
   void onSearchTextChange(final String text) {
+    if (dictRaf == null) {
+      Log.d(LOG, "searchText changed during shutdown, doing nothing.");
+      return;
+    }
     if (!searchText.isFocused()) {
       Log.d(LOG, "searchText changed without focus, doing nothing.");
       return;

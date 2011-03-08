@@ -13,12 +13,4 @@ public class DictionaryConfig implements Serializable {
   int openIndex = 0;
   String openWord = "";
   
-  static DictionaryConfig defaultConfig() {
-    final DictionaryConfig result = new DictionaryConfig();
-    result.name = "DE<->EN";
-    result.downloadUrl = "http://www.stanford.edu/~egirard/dict/de-en.2.dict";
-    result.localFile = "/sdcard/quickDic/de-en.dict";
-    return result;
-  }
-  
 }

@@ -3,8 +3,6 @@ package com.hughes.android.dictionary.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
 import com.ibm.icu.text.Transliterator;
 
 public class TransliteratorManager {

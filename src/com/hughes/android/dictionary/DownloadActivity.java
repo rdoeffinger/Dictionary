@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,7 +28,7 @@ public class DownloadActivity extends Activity {
 
   String source;
   String dest;
-  long bytesDownloaded = 0;
+  long bytesProcessed = 0;
   long contentLength = -1;
 
   private final Executor downloadExecutor = Executors.newSingleThreadExecutor();
@@ -36,6 +39,8 @@ public class DownloadActivity extends Activity {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(final Bundle savedInstanceState) {
+    ((DictionaryApplication)getApplication()).applyTheme(this);
+
     super.onCreate(savedInstanceState);
     final Intent intent = getIntent();
     source = intent.getStringExtra(SOURCE);
@@ -54,56 +59,74 @@ public class DownloadActivity extends Activity {
     final ProgressBar progressBar = (ProgressBar) findViewById(R.id.downloadProgressBar);
     progressBar.setIndeterminate(false);
     progressBar.setMax(100);
-
-    final InputStream in;
-    final FileOutputStream out;
-
-    final File destFile = new File(dest);
-    final File destTmpFile;
-    try {
-      destTmpFile = File.createTempFile("dictionaryDownload", "tmp", destFile
-          .getParentFile());
-      destTmpFile.deleteOnExit();
-      final URL uri = new URL(source);
-      final URLConnection connection = uri.openConnection();
-      contentLength = connection.getContentLength();
-      in = connection.getInputStream();
-      out = new FileOutputStream(destTmpFile);
-    } catch (Exception e) {
-      Log.e("THAD", "Error downloading file", e);
-      setDownloadStatus(String.format(getString(R.string.errorDownloadingFile), e.getLocalizedMessage()));
-      return;
-    }
+    
+    bytesProcessed = 0;
+    contentLength = 100;
+    setDownloadStatus(getString(R.string.openingConnection));
 
     final Runnable runnable = new Runnable() {
       public void run() {
+
         try {
-          bytesDownloaded = 0;
-          int bytesRead;
-          final byte[] bytes = new byte[1024 * 8];
-          int count = 0;
-          while ((bytesRead = in.read(bytes)) != -1 && !stop.get()) {
-            out.write(bytes, 0, bytesRead);
-            bytesDownloaded += bytesRead;
-            if (count++ % 20 == 0) {
-              setDownloadStatus(getString(R.string.downloading,
-                  bytesDownloaded, contentLength));
-            }
-          }
-          in.close();
-          out.close();
+          final File destFile = new File(dest);
+          destFile.getParentFile().mkdirs();
+
+          final File destTmpFile = File.createTempFile("dictionaryDownload", "tmp", destFile
+              .getParentFile());
+          destTmpFile.deleteOnExit();
+
+          final URL uri = new URL(source);
+          final URLConnection connection = uri.openConnection();
+          contentLength = connection.getContentLength();
+          final InputStream in = connection.getInputStream();
+          final FileOutputStream out = new FileOutputStream(destTmpFile); 
+          int bytesRead = copyStream(in, out, R.string.downloading);
+          
           if (bytesRead == -1 && !stop.get()) {
             destFile.delete();
             destTmpFile.renameTo(destFile);
           } else {
            Log.d("THAD", "Stopped downloading file.");
           }
+          
+          if (dest.toLowerCase().endsWith(".zip")) {
+            final ZipFile zipFile = new ZipFile(destFile);
+            final File destUnzipped = new File(dest.substring(0, dest.length() - 4));
+            final ZipEntry zipEntry = zipFile.getEntry(destUnzipped.getName());
+            if (zipEntry != null) {
+              destUnzipped.delete();
+              Log.d("THAD", "Unzipping entry: " + zipEntry.getName() + " to " + destUnzipped);
+              final InputStream zipIn = zipFile.getInputStream(zipEntry);
+              final OutputStream zipOut = new FileOutputStream(destUnzipped);
+              contentLength = zipEntry.getSize();
+              bytesRead = copyStream(zipIn, zipOut, R.string.unzipping);
+            }
+          }
+          
           setDownloadStatus(String.format(getString(R.string.downloadFinished),
-              bytesDownloaded));
+              bytesProcessed));
         } catch (IOException e) {
           Log.e("THAD", "Error downloading file", e);
           setDownloadStatus(String.format(getString(R.string.errorDownloadingFile), e.getLocalizedMessage()));
         }
+      }
+
+      private int copyStream(final InputStream in, final OutputStream out, final int messageId)
+          throws IOException {
+        bytesProcessed = 0;
+        int bytesRead;
+        final byte[] bytes = new byte[1024 * 16];
+        int count = 0;
+        while ((bytesRead = in.read(bytes)) != -1 && !stop.get()) {
+          out.write(bytes, 0, bytesRead);
+          bytesProcessed += bytesRead;
+          if (count++ % 20 == 0) {
+            setDownloadStatus(getString(messageId, bytesProcessed, contentLength));
+          }
+        }
+        in.close();
+        out.close();
+        return bytesRead;
       }
     };
 
@@ -121,7 +144,7 @@ public class DownloadActivity extends Activity {
       public void run() {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.downloadProgressBar);
         if (contentLength > 0) {
-          progressBar.setProgress((int) (bytesDownloaded * 100 / contentLength));
+          progressBar.setProgress((int) (bytesProcessed * 100 / contentLength));
         }
         
         final TextView downloadStatus = (TextView) findViewById(R.id.downloadStatus);

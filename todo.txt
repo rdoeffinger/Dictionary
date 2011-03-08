@@ -1,10 +1,11 @@
+new version requires re-download of ~25MB dictionary file.
+
 * wiktionary
 * multi word search
 * source in context menu
 * quiz
 * link to leo, dict.cc
 * colorize things
-* better Row/Entry classes?
 * better tokenization?
 * test email
 * dict manager
@@ -13,3 +14,4 @@
 
 done:
 * sorting of entries
+* better Row/Entry classes?

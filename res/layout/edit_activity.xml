@@ -47,6 +47,27 @@
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" />
 
+ <LinearLayout 
+   android:id="@+id/LinearLayout03"
+   android:orientation="horizontal"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   >
+
+  <Button
+    android:id="@+id/downloadButton"
+    android:text="@string/downloadButton"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+   />
+  <Button
+    android:id="@+id/openButton"
+    android:text="@string/openButton"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+   />
+ </LinearLayout>
+
   <TextView 
     android:id="@+id/dictionaryInfoTitle" 
     android:text="@string/dictionaryInfo"

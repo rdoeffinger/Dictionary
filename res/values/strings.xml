@@ -7,8 +7,9 @@
   <!-- DictionaryListActivity -->
   <string name="dictionaryList">Dictionary list</string>
   <string name="selectADictionary"><![CDATA[Select a dictionary.
-\nLong-press to edit the dictionary. Press "menu" to add a new dictionary.]]></string>
+\nLong-press to edit the dictionary config. Press "menu" to add a new dictionary.]]></string>
   <string name="addDictionary">Add dictionary</string>
+  <string name="addDefaultDictionaries">Add default dictionaries</string>
   <string name="editDictionary">Edit dictionary config</string>
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="moveUp">Move up</string>
@@ -21,10 +22,8 @@
   <p> New features:
   <ul>
     <li> Easily work with multiple dictionaries.
-    <li> Wiktionary-based dictionaries for French, Italian, German, Spanish, Swedish.
-    <li> Create your own dictionaries.  Look in Menu...About for details.
   </ul>
-  <p>The new version requires you to re-download any dictionaries you want.<br/>
+  <p>The new version requires you to re-download dictionaries you want to use.<br/>
 </body>
 </html>
 ]]>
@@ -34,14 +33,16 @@
   <string name="dictionaryEdit">Edit dictionary config</string>
   <string name="dictionaryName">Dictionary name</string>
   <string name="downloadUrl">Dictionary download URL</string>
+  <string name="downloadButton">Download</string>
+  <string name="openButton">Open</string>
   <string name="dictionaryInfo">Dictionary info:</string>
   <string name="localFile">Dictionary file</string>
   <string name="wordListFile">Word list file</string>
   <string name="fileNotFound">File not found: \'%s\'</string>
   <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
-  <string name="numPairEntries">Entries: %d</string>
-  <string name="numTokens">Tokens: %d</string>
-  <string name="numRows">Rows: %d</string>
+  <string name="numPairEntries">Entries: %,d</string>
+  <string name="numTokens">Tokens: %,d</string>
+  <string name="numRows">Rows: %,d</string>
 
  
 	<!-- Main -->
@@ -52,18 +53,22 @@
 	<string name="about">About...</string>
 	<string name="addToWordList">Add to word list: %s</string>
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
+  <string name="unzippingDictionary">Unzipping dictionary...</string>
+  <string name="failedToUnzipDictionary">Failed to unzip dictionary...</string>
 
 	<!-- About. -->
 	<string name="titleWithVersion">QuickDic 2.0</string>
 	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
-	<string name="myEmail">thad.hughes\+quickdic@gmail.com</string>
-  <string name="webPage">For more information, including how to make your own QuickDic dictionaries, see:</string>
+	<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+  <string name="webPage">For more information, see:</string>
   <string name="webPageUrl">http://sites.google.com/site/quickdic/home</string>
  
 	<!-- Download. -->
-	<string name="downloading">Downloading, %1$d of %2$d bytes.</string>
-	<string name="downloadFinished">Download finished, %d bytes downloaded.</string>
+  <string name="openingConnection">Opening connection...</string>
+	<string name="downloading">Downloading: %1$,d of %2$,d bytes.</string>
+  <string name="unzipping">Unzipping: %1$,d of %2$,d bytes.</string>
+	<string name="downloadFinished">Finished: %,d bytes.</string>
 	<string name="errorDownloadingFile">"Error downloading file: \n%s"</string>
 
   <!-- NoDictionary. -->
@@ -84,9 +89,9 @@
   <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
   <string name="showClearSearchTextButtonTitle">Show \'clear search text\' button</string>
   <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
-  
-  <string name="vibrateOnFailedSearchKey">vibrateOnFailedSearch</string>
-  <string name="vibrateOnFailedSearchTitle">Vibrate on failed search.</string>
-  <string name="vibrateOnFailedSearchSummary">Vibrate the phone when invalid search text is entered.</string>
 
+  <string name="themeKey">theme</string>
+  <string name="themeTitle">UI theme</string>
+  <string name="themeSummary">User-interface color theme (restart required).</string>
+  
 </resources>

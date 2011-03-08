@@ -4,40 +4,43 @@
  
  package="com.hughes.android.dictionary"
  
- android:versionCode="9"
- android:versionName="2.0"
+ android:versionCode="13"
+ android:versionName="2.0.4"
  android:installLocation="auto">
 
  <uses-sdk android:minSdkVersion="4" />
 
  <uses-permission android:name="android.permission.INTERNET" />
- <uses-permission android:name="android.permission.VIBRATE" />
  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
  <application 
   android:icon="@drawable/icon"
   android:label="@string/app_name"
-  android:backupAgent="DictionaryBackupAgent"
-  android:theme="@style/Theme.QuickDic">
+  android:theme="@style/Theme.Light"
+  android:name=".DictionaryApplication" >
+  
+<!--   
+  android:backupAgent="DictionaryBackupAgent" -->
 
   <meta-data android:name="com.google.android.backup.api_key"
    android:value="AEdPqrEAAAAIUa0cU0ZHbBpYXJqm0vVUP5IAjr5D4iUeX7UwiQ" />
 
   <activity android:name=".DictionaryListActivity"
    android:label="@string/app_name">
-   
-   <intent-filter>
-    <action android:name="android.intent.action.MAIN" />
-    <category android:name="android.intent.category.LAUNCHER" />
-   </intent-filter>
+
+    <intent-filter>
+      <action android:name="android.intent.action.MAIN" />
+      <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
   </activity>
 
-  <activity android:name="DictionaryActivity" />
-  <activity android:name="DictionaryEditActivity" />
-  <activity android:name="AboutActivity" />
-  <activity android:name="PreferenceActivity" />
-  <activity android:name="DownloadActivity" />
+  <activity android:name=".DictionaryActivity" />
+  <activity android:name=".DictionaryEditActivity" />
+  <activity android:name=".AboutActivity" />
+  <activity android:name=".PreferenceActivity" />
+  <activity android:name=".DownloadActivity"
+      android:configChanges="keyboardHidden|orientation"/>
 
  </application>
 

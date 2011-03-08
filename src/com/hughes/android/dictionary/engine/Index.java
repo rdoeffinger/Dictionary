@@ -157,6 +157,9 @@ public final class Index implements RAFSerializable<Index> {
     final Transliterator normalizer = normalizer();
     if (TransliteratorManager.init(null)) {
       token = normalizer.transliterate(token);
+    } else {
+      // Do our best since the Transliterators aren't up yet.
+      token = token.toLowerCase();
     }
 
     int start = 0;
