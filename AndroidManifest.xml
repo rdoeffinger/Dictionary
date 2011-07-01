@@ -21,7 +21,8 @@
   android:name=".DictionaryApplication" >
   
 <!--   
-  android:backupAgent="DictionaryBackupAgent" -->
+  android:backupAgent="DictionaryBackupAgent"
+  -->
 
   <meta-data android:name="com.google.android.backup.api_key"
    android:value="AEdPqrEAAAAIUa0cU0ZHbBpYXJqm0vVUP5IAjr5D4iUeX7UwiQ" />

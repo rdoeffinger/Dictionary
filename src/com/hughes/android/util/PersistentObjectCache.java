@@ -57,6 +57,9 @@ public class PersistentObjectCache {
 
   private PersistentObjectCache(final Context context) {
     dir = context.getFilesDir();
+    if (dir == null) {
+      throw new RuntimeException("context.getFilesDir() == null");
+    }
   }
   
   public static synchronized PersistentObjectCache getInstance() {

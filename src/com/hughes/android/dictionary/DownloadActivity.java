@@ -79,6 +79,9 @@ public class DownloadActivity extends Activity {
           final URLConnection connection = uri.openConnection();
           contentLength = connection.getContentLength();
           final InputStream in = connection.getInputStream();
+          if (in == null) {
+            throw new IOException("Unable to open InputStream from source: " + source);
+          }
           final FileOutputStream out = new FileOutputStream(destTmpFile); 
           int bytesRead = copyStream(in, out, R.string.downloading);
           
