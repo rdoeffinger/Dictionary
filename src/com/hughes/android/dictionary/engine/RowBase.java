@@ -101,6 +101,8 @@ public abstract class RowBase extends IndexedObject {
         return new PairEntry.Row(raf, listIndex, index);
       } else if (rowType == 1) {
         return new TokenRow(raf, listIndex, index);
+      } else if (rowType == 2) {
+        return new TextEntry.Row(raf, listIndex, index);
       }
       throw new RuntimeException("Invalid rowType:" + rowType);
     }
@@ -111,6 +113,8 @@ public abstract class RowBase extends IndexedObject {
         raf.writeByte(0);
       } else if (t instanceof TokenRow) {
         raf.writeByte(1);
+      } else if (t instanceof TextEntry.Row) {
+        raf.writeByte(2);
       }
       raf.writeInt(t.referenceIndex);
     }
