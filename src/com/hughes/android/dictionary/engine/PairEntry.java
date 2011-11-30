@@ -9,7 +9,7 @@ import java.util.List;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
 
-public class PairEntry extends Entry implements RAFSerializable<PairEntry>, Comparable<PairEntry> {
+public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntry>, Comparable<PairEntry> {
   
   public final List<Pair> pairs;
 
@@ -50,6 +50,15 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry>, Comp
       t.write(raf);
     }
   };
+  
+  @Override
+  public int addToDictionary(final Dictionary dictionary) {
+    dictionary.pairEntries.add(this);
+    return dictionary.pairEntries.size() - 1;
+  }
+  
+
+  // --------------------------------------------------------------------
   
 
   public static class Row extends RowBase {
@@ -126,7 +135,11 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry>, Comp
     public Pair(final String lang1, final String lang2) {
       this.lang1 = lang1;
       this.lang2 = lang2;
-      //assert lang1.trim().length() > 0 || lang2.trim().length() > 0 : "Empty pair!!!";
+      if (!(lang1.trim().length() > 0 && lang2.trim().length() > 0)) {
+        System.err.println("poop");
+      }
+      assert lang1.trim().length() > 0 || lang2.trim().length() > 0 : "Empty pair!!!";
+      assert lang1.trim().length() > 0 && lang2.trim().length() > 0 : "Empty pair!!!";
     }
 
     public Pair(final String lang1, final String lang2, final boolean swap) {
@@ -151,6 +164,4 @@ public class PairEntry extends Entry implements RAFSerializable<PairEntry>, Comp
     }
 
   }
-  
-
 }

@@ -7,7 +7,7 @@ import java.io.RandomAccessFile;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
 
-public class TextEntry extends Entry implements RAFSerializable<TextEntry> {
+public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntry> {
   
   final String text;
   
@@ -31,6 +31,11 @@ public class TextEntry extends Entry implements RAFSerializable<TextEntry> {
     }
   };
   
+  @Override
+  public int addToDictionary(final Dictionary dictionary) {
+    dictionary.textEntries.add(this);
+    return dictionary.textEntries.size() - 1;
+  }
 
   public static class Row extends RowBase {
     
