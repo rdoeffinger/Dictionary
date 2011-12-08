@@ -35,7 +35,7 @@
 
 	<TextView 
 		android:id="@+id/copyright"
-		android:text="(c) 2009" 
+		android:text="Copyright 2009-2011 Google Inc." 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"/>
@@ -80,7 +80,14 @@
     android:layout_gravity="left"
     android:paddingBottom="10dip"/>
   
-
+  <TextView
+    android:id="@+id/copying" 
+    android:text="@string/COPYING"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:layout_gravity="left"
+    android:paddingBottom="10dip"/>
+  
 </LinearLayout>
 
 </ScrollView>
