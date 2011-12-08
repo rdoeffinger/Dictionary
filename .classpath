@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Util"/>
-	<classpathentry exported="true" kind="lib" path="jars/icu4j-4_4_2-src/out/module/lib/icu4j-module.jar"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="jars/icu4j-module.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
