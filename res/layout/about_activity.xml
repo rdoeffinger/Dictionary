@@ -83,6 +83,7 @@
   <TextView
     android:id="@+id/copying" 
     android:text="@string/COPYING"
+    android:autoLink="web"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" 
     android:layout_gravity="left"
