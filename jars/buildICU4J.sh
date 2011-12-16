@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-DIR=`dirname $0`/icu4j-4_2_1-src
+DIR=`dirname $0`/icu4j-4_8_1_1
 
 cd $DIR
 ant clean

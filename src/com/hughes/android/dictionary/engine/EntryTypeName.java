@@ -21,29 +21,24 @@ public enum EntryTypeName {
 //  WIKTIONARY_MEANING_ONE_WORD(0),
 //  WIKTIONARY_TRANSLATION_ONE_WORD(0),
 
-  WIKTIONARY_TITLE_SINGLE(0),
-  WIKTIONARY_FORM_SINGLE(0),
+  WIKTIONARY_TITLE_SINGLE(0, true),
+  WIKTIONARY_FORM_SINGLE(0, true),
 
   NOUN(0),
   VERB(0),
   ADJ(0),
   ADV(0),
-  ONE_WORD(0),
-  MULTIROW_HEAD_ONE_WORD(0),
-  MULTIROW_TAIL_ONE_WORD(0),
+  ONE_WORD(0, true),
+  MULTIROW_HEAD_ONE_WORD(0, true),
+  MULTIROW_TAIL_ONE_WORD(0, true),
 
-  WIKTIONARY_TITLE_MULTI(0),
-  WIKTIONARY_FORM_MULTI(0),
+  WIKTIONARY_TITLE_MULTI(0, true),
+  WIKTIONARY_FORM_MULTI(0, true),
   WIKTIONARY_TRANSLATION_SENSE(0),
   WIKTIONARY_ENGLISH_DEF_WIKI_LINK(0),
   WIKTIONARY_ENGLISH_DEF_OTHER_LANG(0),
   WIKTIONARY_ENGLISH_DEF(0),
 
-//  WIKTIONARY_TITLE_MULTI_WORD(0),
-//  WIKTIONARY_PRONUNCIATION(0),
-//  WIKTIONARY_MEANING_MULTI_WORD(0),
-//  WIKTIONARY_FORM_OF(0),
-//  WIKTIONARY_EXAMPLE_HEADWORDS(0),
   TWO_WORDS(0),
   THREE_WORDS(0),
   FOUR_WORDS(0),
@@ -58,13 +53,19 @@ public enum EntryTypeName {
   BRACKETED(0),
   PARENTHESIZED(0),
   SEE_ALSO(0), 
-  WIKTIONARY_TRANSLITERATION(0),   
+  WIKTIONARY_TRANSLITERATION(0),
   ;
 
   final int nameResId;
+  final boolean overridesStopList;
   
   private EntryTypeName(final int nameResId) {
+    this(nameResId, false);
+  }
+
+  private EntryTypeName(final int nameResId, final boolean overridesStopList) {
     this.nameResId = nameResId;
+    this.overridesStopList = overridesStopList;
   }
 
 }
