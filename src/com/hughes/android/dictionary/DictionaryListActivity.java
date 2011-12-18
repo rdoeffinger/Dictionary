@@ -139,6 +139,15 @@ public class DictionaryListActivity extends ListActivity {
           }
         });
 
+    final MenuItem removeAllDictionariesMenuItem = menu.add(R.string.removeAllDictionaries);
+    removeAllDictionariesMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+          public boolean onMenuItemClick(final MenuItem menuItem) {
+            quickDicConfig.dictionaryConfigs.clear();
+            dictionaryConfigsChanged();
+            return false;
+          }
+        });
+
     final MenuItem about = menu.add(getString(R.string.about));
     about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {

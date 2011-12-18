@@ -18,11 +18,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hughes.android.dictionary.engine.Language;
+
 public final class QuickDicConfig implements Serializable {
   
   private static final long serialVersionUID = 6711617368780900979L;
   
-  static final int LATEST_VERSION = 1;
+  // Just increment this to have them all update...
+  static final int LATEST_VERSION = 3;
   
   final List<DictionaryConfig> dictionaryConfigs = new ArrayList<DictionaryConfig>();
   int currentVersion = LATEST_VERSION;
@@ -33,20 +36,24 @@ public final class QuickDicConfig implements Serializable {
 
   public void addDefaultDictionaries() {
     {
-      final DictionaryConfig de_en_chemnitz = new DictionaryConfig();
-      de_en_chemnitz.name = "DE<->EN (Chemnitz)";
-      de_en_chemnitz.downloadUrl = "https://sites.google.com/site/quickdic/dictionaries-1/DE-EN_chemnitz.quickdic.zip?attredirects=0&d=1";
-      de_en_chemnitz.localFile = "/sdcard/quickDic/DE-EN_chemnitz.quickdic";
-      addOrReplace(de_en_chemnitz);
+      final DictionaryConfig config = new DictionaryConfig();
+      config.name = "German<->English";
+      config.downloadUrl = "https://sites.google.com/site/quickdic/dictionaries-1/DE-EN_chemnitz_enwiktionary.quickdic.zip?attredirects=0&d=1";
+      config.localFile = "/sdcard/quickDic/DE-EN_chemnitz_enwiktionary.quickdic";
+      addOrReplace(config);
+    }
+    
+    for (final String iso : Language.isoCodeToWikiName.keySet()) {
+      if (iso.equals("EN") || iso.equals("DE")) {
+        continue;
+      }
+      final DictionaryConfig config = new DictionaryConfig();
+      config.name = String.format("EN<->%s English<->%s (Wiktionary)", iso, Language.isoCodeToWikiName.get(iso));
+      config.downloadUrl = String.format("https://sites.google.com/site/quickdic/dictionaries-1/EN-%s_enwiktionary.quickdic.zip?attredirects=0&d=1", iso);
+      config.localFile = String.format("/sdcard/quickDic/EN-%s_enwiktionary.quickdic", iso);
+      addOrReplace(config);
     }
 
-    {
-      final DictionaryConfig en_it_wiktionary = new DictionaryConfig();
-      en_it_wiktionary.name = "EN<->IT (EN Wiktionary)";
-      en_it_wiktionary.downloadUrl = "https://sites.google.com/site/quickdic/dictionaries-1/EN-IT_enwiktionary.quickdic.zip?attredirects=0&d=1";
-      en_it_wiktionary.localFile = "/sdcard/quickDic/EN-IT_enwiktionary.quickdic";
-      addOrReplace(en_it_wiktionary);
-    }
   }
 
   private void addOrReplace(final DictionaryConfig dictionaryConfig) {

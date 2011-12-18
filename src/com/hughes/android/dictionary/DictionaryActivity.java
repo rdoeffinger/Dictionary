@@ -151,6 +151,7 @@ public class DictionaryActivity extends ListActivity {
           this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
       dictIndex = prefs.getInt(C.DICT_INDEX, 0) ;
       final DictionaryConfig dictionaryConfig = quickDicConfig.dictionaryConfigs.get(dictIndex);
+      this.setTitle("QuickDic: " + dictionaryConfig.name);
       dictRaf = new RandomAccessFile(dictionaryConfig.localFile, "r");
       dictionary = new Dictionary(dictRaf); 
     } catch (Exception e) {

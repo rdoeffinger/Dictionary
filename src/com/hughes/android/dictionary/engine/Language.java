@@ -14,13 +14,84 @@
 
 package com.hughes.android.dictionary.engine;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import com.ibm.icu.text.Collator;
 
 public class Language {
+
+  public static final Map<String,String> isoCodeToWikiName = new LinkedHashMap<String,String>();
+  static {
+//    Albanian
+//    Armenian
+//    Belarusian
+//    Bengali
+//    Bosnian
+//    Bulgarian
+//    Catalan
+//    Esperanto
+//    Estonian
+//    Hungarian
+//    Indonesian
+//    Kurdish
+//    Latin
+//    Lithuanian
+//    Nepali
+//    Punjabi
+//    Swahili
+    isoCodeToWikiName.put("AF", "Afrikaans");
+    isoCodeToWikiName.put("AR", "Arabic");
+    isoCodeToWikiName.put("HY", "Armenian");
+    isoCodeToWikiName.put("HR", "Croation");
+    isoCodeToWikiName.put("CS", "Czech");
+    isoCodeToWikiName.put("ZH", "Chinese|Mandarin|Cantonese");
+    isoCodeToWikiName.put("DA", "Danish");
+    isoCodeToWikiName.put("NL", "Dutch");
+    isoCodeToWikiName.put("EN", "English");
+    isoCodeToWikiName.put("FI", "Finish");
+    isoCodeToWikiName.put("FR", "French");
+    isoCodeToWikiName.put("DE", "German");
+    isoCodeToWikiName.put("EL", "Greek");
+    isoCodeToWikiName.put("haw", "Hawaiian");
+    isoCodeToWikiName.put("HE", "Hewbrew");
+    isoCodeToWikiName.put("HI", "Hindi");
+    isoCodeToWikiName.put("IS", "Icelandic");
+    isoCodeToWikiName.put("GA", "Irish");
+    isoCodeToWikiName.put("IT", "Italian");
+    isoCodeToWikiName.put("LT", "Lithuanian");
+    isoCodeToWikiName.put("JA", "Japanese");
+    isoCodeToWikiName.put("KO", "Korean");
+    isoCodeToWikiName.put("KU", "Kurdish");
+    isoCodeToWikiName.put("MS", "Malay");
+    isoCodeToWikiName.put("MI", "Maori");
+    isoCodeToWikiName.put("MN", "Mongolian");
+    isoCodeToWikiName.put("NO", "Norwegian");
+    isoCodeToWikiName.put("FA", "Persian");
+    isoCodeToWikiName.put("PT", "Portuguese");
+    isoCodeToWikiName.put("RO", "Romanian");
+    isoCodeToWikiName.put("RU", "Russian");
+    isoCodeToWikiName.put("SA", "Sanskrit");
+    isoCodeToWikiName.put("SR", "Serbian");
+    isoCodeToWikiName.put("SO", "Somali");
+    isoCodeToWikiName.put("ES", "Spanish");
+    isoCodeToWikiName.put("SU", "Sudanese");
+    isoCodeToWikiName.put("SV", "Swedish");
+    isoCodeToWikiName.put("TG", "Tajik");
+    isoCodeToWikiName.put("TH", "Thai");
+    isoCodeToWikiName.put("BO", "Tibetan");
+    isoCodeToWikiName.put("TR", "Turkish");
+    isoCodeToWikiName.put("UK", "Ukranian");
+    isoCodeToWikiName.put("VI", "Vietnamese");
+    isoCodeToWikiName.put("CI", "Welsh");
+    isoCodeToWikiName.put("YI", "Yiddish");
+    isoCodeToWikiName.put("ZU", "Zulu");
+  }
+
+  static final List<String> ISO_CODES_WITH_DICTS = Arrays.asList();
 
   static final Map<String, Language> symbolToLangauge = new LinkedHashMap<String, Language>();
 

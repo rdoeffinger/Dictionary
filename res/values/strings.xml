@@ -10,6 +10,7 @@
 \nLong-press to edit the dictionary config. Press "menu" to add a new dictionary.]]></string>
   <string name="addDictionary">Add dictionary</string>
   <string name="addDefaultDictionaries">Add default dictionaries</string>
+  <string name="removeAllDictionaries">Remove all dictionaries</string>
   <string name="editDictionary">Edit dictionary config</string>
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="moveUp">Move up</string>
