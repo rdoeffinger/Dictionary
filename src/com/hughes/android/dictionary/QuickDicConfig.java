@@ -33,12 +33,14 @@ public final class QuickDicConfig implements Serializable {
   public QuickDicConfig() {
     addDefaultDictionaries();
   }
+  
+  static final String BASE_URL = "http://dictionarydata.quickdic-dictionary.googlecode.com/git/outputs/";
 
   public void addDefaultDictionaries() {
     {
       final DictionaryConfig config = new DictionaryConfig();
       config.name = "German<->English";
-      config.downloadUrl = "https://sites.google.com/site/quickdic/dictionaries-1/DE-EN_chemnitz_enwiktionary.quickdic.zip?attredirects=0&d=1";
+      config.downloadUrl = BASE_URL + "DE-EN_chemnitz_enwiktionary.quickdic.zip";
       config.localFile = "/sdcard/quickDic/DE-EN_chemnitz_enwiktionary.quickdic";
       addOrReplace(config);
     }
@@ -48,8 +50,8 @@ public final class QuickDicConfig implements Serializable {
         continue;
       }
       final DictionaryConfig config = new DictionaryConfig();
-      config.name = String.format("EN<->%s English<->%s (Wiktionary)", iso, Language.isoCodeToWikiName.get(iso));
-      config.downloadUrl = String.format("https://sites.google.com/site/quickdic/dictionaries-1/EN-%s_enwiktionary.quickdic.zip?attredirects=0&d=1", iso);
+      config.name = String.format("English<->%s", Language.isoCodeToWikiName.get(iso));
+      config.downloadUrl = String.format("%sEN-%s_enwiktionary.quickdic.zip", BASE_URL, iso);
       config.localFile = String.format("/sdcard/quickDic/EN-%s_enwiktionary.quickdic", iso);
       addOrReplace(config);
     }

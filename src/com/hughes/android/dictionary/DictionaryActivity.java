@@ -209,6 +209,8 @@ public class DictionaryActivity extends ListActivity {
 
     setContentView(R.layout.dictionary_activity);
     searchText = (EditText) findViewById(R.id.SearchText);
+    searchText.set
+    
     langButton = (Button) findViewById(R.id.LangButton);
     
     searchText.requestFocus();
@@ -334,7 +336,7 @@ public class DictionaryActivity extends ListActivity {
     searchText.requestFocus();
     Log.d(LOG, "Trying to show soft keyboard.");
     final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
+    manager.showSoftInput(searchText, InputMethodManager.SHOW_FORCED);
   }
   
   void updateLangButton() {
@@ -419,6 +421,18 @@ public class DictionaryActivity extends ListActivity {
       });
     }
 
+    {
+      final MenuItem about = menu.add(getString(R.string.about));
+      about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        public boolean onMenuItemClick(final MenuItem menuItem) {
+          final Intent intent = new Intent().setClassName(AboutActivity.class
+              .getPackage().getName(), AboutActivity.class.getCanonicalName());
+          startActivity(intent);
+          return false;
+        }
+      });
+    }
+
     return true;
   }
 
@@ -465,6 +479,10 @@ public class DictionaryActivity extends ListActivity {
     rawText.append(row.getTokenRow(true).getToken()).append("\t");
     rawText.append(row.getRawText(saveOnlyFirstSubentry));
     Log.d(LOG, "Writing : " + rawText);
+
+    // Request focus so that if we start typing again, it clears the text input.
+    getListView().requestFocus();
+
     try {
       wordList.getParentFile().mkdirs();
       final PrintWriter out = new PrintWriter(
@@ -500,6 +518,12 @@ public class DictionaryActivity extends ListActivity {
     if (keyCode == KeyEvent.KEYCODE_BACK) {
       Log.d(LOG, "Clearing dictionary prefs.");
       DictionaryActivity.clearDictionaryPrefs(this);
+    }
+    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+      Log.d(LOG, "Trying to hide soft keyboard.");
+      final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      manager.hideSoftInputFromWindow(searchText, InputMethodManager.SHOW_FORCED);
+
     }
     return super.onKeyDown(keyCode, event);
   }

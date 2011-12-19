@@ -81,8 +81,16 @@
     android:paddingBottom="10dip"/>
   
   <TextView
-    android:id="@+id/copying" 
-    android:text="@string/COPYING"
+    android:id="@+id/license" 
+    android:text="@string/license"
+    android:autoLink="web"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:layout_gravity="left"/>
+
+  <TextView
+    android:id="@+id/licenseUrl" 
+    android:text="@string/licenseUrl"
     android:autoLink="web"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" 

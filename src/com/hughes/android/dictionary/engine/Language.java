@@ -57,7 +57,7 @@ public class Language {
     isoCodeToWikiName.put("DE", "German");
     isoCodeToWikiName.put("EL", "Greek");
     isoCodeToWikiName.put("haw", "Hawaiian");
-    isoCodeToWikiName.put("HE", "Hewbrew");
+    isoCodeToWikiName.put("HE", "Hebrew");
     isoCodeToWikiName.put("HI", "Hindi");
     isoCodeToWikiName.put("IS", "Icelandic");
     isoCodeToWikiName.put("GA", "Irish");

@@ -14,6 +14,8 @@
 
 package com.hughes.android.dictionary;
 
+import java.io.File;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -188,12 +190,12 @@ public class DictionaryListActivity extends ListActivity {
     });
 
     if (adapterContextMenuInfo.position > 0) {
-      final MenuItem moveUpMenuItem = menu.add(R.string.moveUp);
-      moveUpMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      final MenuItem moveToTopMenuItem = menu.add(R.string.moveToTop);
+      moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
           final DictionaryConfig dictionaryConfig = quickDicConfig.dictionaryConfigs.remove(adapterContextMenuInfo.position);
-          quickDicConfig.dictionaryConfigs.add(adapterContextMenuInfo.position - 1, dictionaryConfig);
+          quickDicConfig.dictionaryConfigs.add(0, dictionaryConfig);
           dictionaryConfigsChanged();
           return true;
         }
@@ -239,8 +241,13 @@ public class DictionaryListActivity extends ListActivity {
       final DictionaryConfig dictionaryConfig = getItem(position);
       final TableLayout tableLayout = new TableLayout(parent.getContext());
       final TextView view = new TextView(parent.getContext());
+      
+      String name = dictionaryConfig.name;
+      if (!new File(dictionaryConfig.localFile).canRead()) {
+        name = getString(R.string.notOnDevice, dictionaryConfig.name);
+      }
 
-      view.setText(dictionaryConfig.name);
+      view.setText(name);
       view.setTextSize(20);
       tableLayout.addView(view);
 

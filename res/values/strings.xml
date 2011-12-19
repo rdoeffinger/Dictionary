@@ -13,8 +13,9 @@
   <string name="removeAllDictionaries">Remove all dictionaries</string>
   <string name="editDictionary">Edit dictionary config</string>
   <string name="deleteDictionary">Delete dictionary</string>
-  <string name="moveUp">Move up</string>
-  <string name="newDictionary">New Dictionary</string>
+  <string name="moveToTop">Move to top</string>
+  <string name="newDictionary">New dictionary</string>
+  <string name="notOnDevice">%s (not on device)</string>
 
   <string name="thanksForUpdating"><![CDATA[
 <html>
@@ -22,9 +23,8 @@
   Thanks for updating QuickDic.
   <p> New features:
   <ul>
-    <li> Easily work with multiple dictionaries.
+    <li> Many more dictionaries based on enwiktionary.com data.
   </ul>
-  <p>The new version requires you to re-download dictionaries you want to use.<br/>
 </body>
 </html>
 ]]>
@@ -58,14 +58,15 @@
   <string name="failedToUnzipDictionary">Failed to unzip dictionary...</string>
 
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 2.0</string>
+	<string name="titleWithVersion">QuickDic 3.0</string>
 	<string name="thadHughes">Thad Hughes</string>
-	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
+	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Unfortunately, I cannot take responsibility for dictionary content, as it is generated from other sources. Please send comments, suggestions, bug reports, or just a quick hello to:</string>
 	<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
   <string name="webPage">For more information, see:</string>
   <string name="webPageUrl">http://sites.google.com/site/quickdic/home</string>
   
-  <string name="COPYING">http://www.apache.org/licenses/LICENSE-2.0</string>
+  <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
+  <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
  
 	<!-- Download. -->
   <string name="openingConnection">Opening connection...</string>
