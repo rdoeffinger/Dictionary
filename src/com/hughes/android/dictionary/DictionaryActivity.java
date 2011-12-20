@@ -209,7 +209,6 @@ public class DictionaryActivity extends ListActivity {
 
     setContentView(R.layout.dictionary_activity);
     searchText = (EditText) findViewById(R.id.SearchText);
-    searchText.set
     
     langButton = (Button) findViewById(R.id.LangButton);
     
@@ -520,9 +519,9 @@ public class DictionaryActivity extends ListActivity {
       DictionaryActivity.clearDictionaryPrefs(this);
     }
     if (keyCode == KeyEvent.KEYCODE_ENTER) {
-      Log.d(LOG, "Trying to hide soft keyboard.");
-      final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-      manager.hideSoftInputFromWindow(searchText, InputMethodManager.SHOW_FORCED);
+//      Log.d(LOG, "Trying to hide soft keyboard.");
+//      final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//      manager.hideSoftInputFromWindow(searchText, InputMethodManager.SHOW_FORCED);
 
     }
     return super.onKeyDown(keyCode, event);
