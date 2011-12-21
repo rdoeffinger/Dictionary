@@ -34,7 +34,7 @@ public final class QuickDicConfig implements Serializable {
     addDefaultDictionaries();
   }
   
-  static final String BASE_URL = "http://dictionarydata.quickdic-dictionary.googlecode.com/git/outputs/";
+  static final String BASE_URL = "http://quickdic-dictionary.googlecode.com/files/";
 
   public void addDefaultDictionaries() {
     {

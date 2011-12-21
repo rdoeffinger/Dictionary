@@ -1,17 +1,15 @@
-new version requires re-download of ~25MB dictionary file.
-
-* wiktionary
 * multi word search
+* link to leo, dict.cc
 * source in context menu
 * quiz
-* link to leo, dict.cc
 * colorize things
-* better tokenization?
-* test email
-* dict manager
-* publish 2.0 dictionary
 
 
 done:
 * sorting of entries
 * better Row/Entry classes?
+* wiktionary
+* better tokenization?
+* publish 2.0 dictionary
+* test email
+* dict manager

@@ -4,31 +4,45 @@
  
  package="com.hughes.android.dictionary"
  
- android:versionCode="13"
- android:versionName="2.0.4"
- android:installLocation="auto">
+ android:versionCode="14"
+ android:versionName="3.0.0"
+ android:installLocation="preferExternal">
 
  <uses-sdk android:minSdkVersion="4" />
+ 
+   <!--
+    Because android:minSdkVersion is 3, these parameters default to
+    false, but we need them to be true.
+    See:
+    http://developer.android.com/guide/topics/manifest/supports-screens-element.html
+    -->
+  <supports-screens
+      android:resizeable="true"
+      android:anyDensity="true"
+      android:largeScreens="true"
+      />
+      
+   <!--   android:xlargeScreens="true" />  --> 
 
- <uses-permission android:name="android.permission.INTERNET" />
- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
- <application 
-  android:icon="@drawable/icon"
-  android:label="@string/app_name"
-  android:theme="@style/Theme.Light"
-  android:name=".DictionaryApplication" >
+  <application 
+      android:icon="@drawable/icon"
+      android:label="@string/app_name"
+      android:theme="@style/Theme.Light"
+      android:name=".DictionaryApplication" >
   
 <!--   
   android:backupAgent="DictionaryBackupAgent"
   -->
 
   <meta-data android:name="com.google.android.backup.api_key"
-   android:value="AEdPqrEAAAAIUa0cU0ZHbBpYXJqm0vVUP5IAjr5D4iUeX7UwiQ" />
+      android:value="AEdPqrEAAAAIUa0cU0ZHbBpYXJqm0vVUP5IAjr5D4iUeX7UwiQ" />
 
   <activity android:name=".DictionaryListActivity"
-   android:label="@string/app_name">
+      android:label="@string/app_name">
 
     <intent-filter>
       <action android:name="android.intent.action.MAIN" />

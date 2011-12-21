@@ -496,6 +496,9 @@ public class DictionaryActivity extends ListActivity {
   }
 
   void onCopy(final RowBase row) {
+    // Request focus so that if we start typing again, it clears the text input.
+    getListView().requestFocus();
+
     Log.d(LOG, "Copy, row=" + row);
     final StringBuilder result = new StringBuilder();
     result.append(row.getRawText(false));

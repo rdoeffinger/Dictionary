@@ -51,7 +51,7 @@
 	<string name="downloadDictionary">Download dictionary...</string>
 	<string name="switchToLanguage">Switch to %s</string>
 	<string name="preferences">Preferences...</string>
-	<string name="about">About...</string>
+	<string name="about">About QuickDic...</string>
 	<string name="addToWordList">Add to word list: %s</string>
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
   <string name="unzippingDictionary">Unzipping dictionary...</string>
