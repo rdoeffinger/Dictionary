@@ -71,6 +71,7 @@ public class Language {
     isoCodeToWikiName.put("MN", "Mongolian");
     isoCodeToWikiName.put("NO", "Norwegian");
     isoCodeToWikiName.put("FA", "Persian");
+    isoCodeToWikiName.put("PL", "Polish");
     isoCodeToWikiName.put("PT", "Portuguese");
     isoCodeToWikiName.put("RO", "Romanian");
     isoCodeToWikiName.put("RU", "Russian");

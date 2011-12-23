@@ -248,7 +248,7 @@ public class DictionaryListActivity extends ListActivity {
       }
 
       view.setText(name);
-      view.setTextSize(20);
+      view.setTextSize(22);
       tableLayout.addView(view);
 
       return tableLayout;

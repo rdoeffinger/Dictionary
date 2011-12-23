@@ -122,6 +122,15 @@ public class DownloadActivity extends Activity {
           
           setDownloadStatus(String.format(getString(R.string.downloadFinished),
               bytesProcessed));
+          
+          // If all went well, we can exit this activity.
+          uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+              finish();
+            }
+          });
+          
         } catch (IOException e) {
           Log.e("THAD", "Error downloading file", e);
           setDownloadStatus(String.format(getString(R.string.errorDownloadingFile), e.getLocalizedMessage()));

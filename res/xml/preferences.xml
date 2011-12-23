@@ -17,6 +17,14 @@
   />
 
   <CheckBoxPreference 
+    android:key="@string/clickOpensContextMenuKey"
+    android:title="@string/clickOpensContextMenuTitle"
+    android:summary="@string/clickOpensContextMenuSummary"
+    android:defaultValue="false"
+    android:persistent="true"
+  />
+
+  <CheckBoxPreference 
     android:key="@string/showClearSearchTextButtonKey"
     android:title="@string/showClearSearchTextButtonTitle"
     android:summary="@string/showClearSearchTextButtonSummary"

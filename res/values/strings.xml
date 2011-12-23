@@ -60,10 +60,10 @@
 	<!-- About. -->
 	<string name="titleWithVersion">QuickDic 3.0</string>
 	<string name="thadHughes">Thad Hughes</string>
-	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Unfortunately, I cannot take responsibility for dictionary content, as it is generated from other sources. Please send comments, suggestions, bug reports, or just a quick hello to:</string>
+	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources. Please send comments, suggestions, bug reports, or just a quick hello to:</string>
 	<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
   <string name="webPage">For more information, see:</string>
-  <string name="webPageUrl">http://sites.google.com/site/quickdic/home</string>
+  <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
   
   <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
   <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
@@ -89,6 +89,10 @@
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
   <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
   <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
+
+  <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
+  <string name="clickOpensContextMenuTitle">Click opens context menu</string>
+  <string name="clickOpensContextMenuSummary">Open context menu for clicks on entries (long-click will always open-context menu).</string>
 
   <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
   <string name="showClearSearchTextButtonTitle">Show \'clear search text\' button</string>

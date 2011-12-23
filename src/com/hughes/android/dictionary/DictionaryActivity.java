@@ -99,6 +99,7 @@ public class DictionaryActivity extends ListActivity {
   // Never null.
   private File wordList = null;
   private boolean saveOnlyFirstSubentry = false;
+  private boolean clickOpensContextMenu = false;
 
   // Visible for testing.
   ListAdapter indexAdapter = null;
@@ -275,6 +276,7 @@ public class DictionaryActivity extends ListActivity {
     wordList = new File(prefs.getString(getString(R.string.wordListFileKey),
         getString(R.string.wordListFileDefault)));
     saveOnlyFirstSubentry = prefs.getBoolean(getString(R.string.saveOnlyFirstSubentryKey), false);
+    clickOpensContextMenu = prefs.getBoolean(getString(R.string.clickOpensContextMenuKey), false);
     //if (prefs.getBoolean(getString(R.string.vibrateOnFailedSearchKey), true)) {
       // vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     //}
@@ -466,7 +468,9 @@ public class DictionaryActivity extends ListActivity {
   
   @Override
   protected void onListItemClick(ListView l, View v, int row, long id) {
-    openContextMenu(v);
+    if (clickOpensContextMenu) {
+      openContextMenu(v);
+    }
   }
   
   void onAppendToWordList(final RowBase row) {

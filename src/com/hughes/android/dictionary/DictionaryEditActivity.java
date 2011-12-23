@@ -132,8 +132,12 @@ public class DictionaryEditActivity extends Activity {
   
   protected void onResume() {
     super.onResume();
-    
+
     updateDictInfo();
+
+    // Focus the download button so the keyboard doesn't pop up.
+    final Button downloadButton = (Button) findViewById(R.id.downloadButton);
+    downloadButton.requestFocus();
   }
 
   @Override
