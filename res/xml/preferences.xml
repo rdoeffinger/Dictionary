@@ -45,7 +45,7 @@
     android:title="@string/themeTitle"
     android:summary="@string/themeSummary"
     android:persistent="true"
-    android:defaultValue=""
+    android:defaultValue="themeLight"
     android:entries="@array/themes"
     android:entryValues="@array/themeKeys"
   />

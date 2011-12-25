@@ -25,7 +25,7 @@ public final class QuickDicConfig implements Serializable {
   private static final long serialVersionUID = 6711617368780900979L;
   
   // Just increment this to have them all update...
-  static final int LATEST_VERSION = 3;
+  static final int LATEST_VERSION = 4;
   
   final List<DictionaryConfig> dictionaryConfigs = new ArrayList<DictionaryConfig>();
   int currentVersion = LATEST_VERSION;
@@ -39,7 +39,7 @@ public final class QuickDicConfig implements Serializable {
   public void addDefaultDictionaries() {
     {
       final DictionaryConfig config = new DictionaryConfig();
-      config.name = "German<->English";
+      config.name = "German-English";
       config.downloadUrl = BASE_URL + "DE-EN_chemnitz_enwiktionary.quickdic.zip";
       config.localFile = "/sdcard/quickDic/DE-EN_chemnitz_enwiktionary.quickdic";
       addOrReplace(config);
@@ -50,7 +50,7 @@ public final class QuickDicConfig implements Serializable {
         continue;
       }
       final DictionaryConfig config = new DictionaryConfig();
-      config.name = String.format("English<->%s", Language.isoCodeToWikiName.get(iso));
+      config.name = String.format("English-%s", Language.isoCodeToWikiName.get(iso));
       config.downloadUrl = String.format("%sEN-%s_enwiktionary.quickdic.zip", BASE_URL, iso);
       config.localFile = String.format("/sdcard/quickDic/EN-%s_enwiktionary.quickdic", iso);
       addOrReplace(config);

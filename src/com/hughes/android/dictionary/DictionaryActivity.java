@@ -221,7 +221,6 @@ public class DictionaryActivity extends ListActivity {
     searchText.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
     
     langButton = (Button) findViewById(R.id.LangButton);
-    langButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
     
     searchText.requestFocus();
     searchText.addTextChangedListener(searchTextWatcher);
@@ -734,7 +733,7 @@ public class DictionaryActivity extends ListActivity {
     private View getView(TokenRow row, ViewGroup parent) {
       final TextView textView = new TextView(parent.getContext());
       textView.setText(row.getToken());
-      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 6 * fontSizeSp / 5);
+      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 5 * fontSizeSp / 4);
       return textView;
     }
     

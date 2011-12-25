@@ -88,7 +88,7 @@
 
   <string name="fontSizeKey">fontSize</string>
   <string name="fontSizeTitle">Font size</string>
-  <string name="fontSizeSummary">The size of the font for dictionary rows.</string>
+  <string name="fontSizeSummary">The size of the font for dictionary rows (restart required).</string>
 
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
   <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>

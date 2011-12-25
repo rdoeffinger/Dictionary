@@ -113,6 +113,13 @@ public class DictionaryListActivity extends ListActivity {
     }
     if (quickDicConfig.currentVersion < QuickDicConfig.LATEST_VERSION) {
       Log.d(LOG, "Dictionary list is old, updating it.");
+      
+      // Replace <-> with -
+      if (quickDicConfig.currentVersion == 3) {
+        for (final DictionaryConfig config : quickDicConfig.dictionaryConfigs) {
+          config.name = config.name.replace("<->", "-");
+        }
+      }
       quickDicConfig.addDefaultDictionaries();
       quickDicConfig.currentVersion = QuickDicConfig.LATEST_VERSION;
     }
