@@ -86,6 +86,10 @@
 	<string name="wordListFileSummary">The local file where the word list will be appended.</string>
 	<string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
 
+  <string name="fontSizeKey">fontSize</string>
+  <string name="fontSizeTitle">Font size</string>
+  <string name="fontSizeSummary">The size of the font for dictionary rows.</string>
+
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
   <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
   <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>

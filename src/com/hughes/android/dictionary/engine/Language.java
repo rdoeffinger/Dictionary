@@ -14,9 +14,7 @@
 
 package com.hughes.android.dictionary.engine;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -90,8 +88,6 @@ public class Language {
     isoCodeToWikiName.put("YI", "Yiddish");
     isoCodeToWikiName.put("ZU", "Zulu");
   }
-
-  static final List<String> ISO_CODES_WITH_DICTS = Arrays.asList();
 
   static final Map<String, Language> symbolToLangauge = new LinkedHashMap<String, Language>();
 

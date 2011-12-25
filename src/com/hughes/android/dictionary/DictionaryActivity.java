@@ -40,6 +40,7 @@ import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -93,6 +94,7 @@ public class DictionaryActivity extends ListActivity {
   });
   private SearchOperation currentSearchOperation = null;
 
+  int fontSizeSp;
   EditText searchText;
   Button langButton;
 
@@ -207,11 +209,19 @@ public class DictionaryActivity extends ListActivity {
       }
     });
     
+    final String fontSize = prefs.getString(getString(R.string.fontSizeKey), "12");
+    try {
+      fontSizeSp = Integer.parseInt(fontSize);
+    } catch (NumberFormatException e) {
+      fontSizeSp = 12;
+    }
 
     setContentView(R.layout.dictionary_activity);
     searchText = (EditText) findViewById(R.id.SearchText);
+    searchText.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
     
     langButton = (Button) findViewById(R.id.LangButton);
+    langButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
     
     searchText.requestFocus();
     searchText.addTextChangedListener(searchTextWatcher);
@@ -632,7 +642,7 @@ public class DictionaryActivity extends ListActivity {
   // IndexAdapter
   // --------------------------------------------------------------------------
 
-  static final class IndexAdapter extends BaseAdapter {
+  final class IndexAdapter extends BaseAdapter {
     
     final Index index;
 
@@ -711,6 +721,9 @@ public class DictionaryActivity extends ListActivity {
 
         final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
         column2.setText(col2Text, TextView.BufferType.NORMAL);
+        
+        column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+        column2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
 
         result.addView(tableRow);
       }
@@ -721,7 +734,7 @@ public class DictionaryActivity extends ListActivity {
     private View getView(TokenRow row, ViewGroup parent) {
       final TextView textView = new TextView(parent.getContext());
       textView.setText(row.getToken());
-      textView.setTextSize(20);
+      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 6 * fontSizeSp / 5);
       return textView;
     }
     

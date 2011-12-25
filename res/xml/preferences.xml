@@ -8,6 +8,14 @@
     android:persistent="true"
 	/>
 
+  <EditTextPreference
+    android:key="@string/fontSizeKey"
+    android:title="@string/fontSizeTitle" 
+    android:summary="@string/fontSizeSummary"
+    android:defaultValue="12"
+    android:persistent="true"
+  />
+
   <CheckBoxPreference 
     android:key="@string/saveOnlyFirstSubentryKey"
     android:title="@string/saveOnlyFirstSubentryTitle"

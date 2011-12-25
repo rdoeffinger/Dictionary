@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -248,7 +249,7 @@ public class DictionaryListActivity extends ListActivity {
       }
 
       view.setText(name);
-      view.setTextSize(22);
+      view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
       tableLayout.addView(view);
 
       return tableLayout;
