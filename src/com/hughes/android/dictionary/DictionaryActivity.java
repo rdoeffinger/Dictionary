@@ -477,7 +477,7 @@ public class DictionaryActivity extends ListActivity {
   
   @Override
   protected void onListItemClick(ListView l, View v, int row, long id) {
-    if (clickOpensContextMenu) {
+    if (clickOpensContextMenu && dictRaf != null) {
       openContextMenu(v);
     }
   }
