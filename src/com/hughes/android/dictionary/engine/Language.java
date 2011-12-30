@@ -50,6 +50,7 @@ public class Language {
     isoCodeToWikiName.put("DA", "Danish");
     isoCodeToWikiName.put("NL", "Dutch");
     isoCodeToWikiName.put("EN", "English");
+    isoCodeToWikiName.put("EO", "Esperanto");
     isoCodeToWikiName.put("FI", "Finnish");
     isoCodeToWikiName.put("FR", "French");
     isoCodeToWikiName.put("DE", "German");
@@ -121,7 +122,7 @@ public class Language {
   }
   
   public String getDefaultNormalizerRules() {
-    return ":: Any-Latin; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;";
+    return ":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;";
   }
   // ----------------------------------------------------------------
 
