@@ -24,26 +24,15 @@ public class Language {
 
   public static final Map<String,String> isoCodeToWikiName = new LinkedHashMap<String,String>();
   static {
-//    Albanian
-//    Armenian
-//    Belarusian
-//    Bengali
-//    Bosnian
-//    Bulgarian
-//    Catalan
-//    Esperanto
-//    Estonian
-//    Hungarian
-//    Indonesian
-//    Kurdish
-//    Latin
-//    Lithuanian
-//    Nepali
-//    Punjabi
-//    Swahili
     isoCodeToWikiName.put("AF", "Afrikaans");
+    isoCodeToWikiName.put("SQ", "Albanian");
     isoCodeToWikiName.put("AR", "Arabic");
     isoCodeToWikiName.put("HY", "Armenian");
+    isoCodeToWikiName.put("BE", "Belarusian");
+    isoCodeToWikiName.put("BN", "Bengali");
+    isoCodeToWikiName.put("BS", "Bosnian");
+    isoCodeToWikiName.put("BG", "Bulgarian");
+    isoCodeToWikiName.put("CA", "Catalan");
     isoCodeToWikiName.put("HR", "Croatian");
     isoCodeToWikiName.put("CS", "Czech");
     isoCodeToWikiName.put("ZH", "Chinese|Mandarin|Cantonese");
@@ -51,6 +40,7 @@ public class Language {
     isoCodeToWikiName.put("NL", "Dutch");
     isoCodeToWikiName.put("EN", "English");
     isoCodeToWikiName.put("EO", "Esperanto");
+    isoCodeToWikiName.put("ET", "Estonian");
     isoCodeToWikiName.put("FI", "Finnish");
     isoCodeToWikiName.put("FR", "French");
     isoCodeToWikiName.put("DE", "German");
@@ -58,9 +48,13 @@ public class Language {
     isoCodeToWikiName.put("haw", "Hawaiian");
     isoCodeToWikiName.put("HE", "Hebrew");
     isoCodeToWikiName.put("HI", "Hindi");
+    isoCodeToWikiName.put("HU", "Hungarian");
     isoCodeToWikiName.put("IS", "Icelandic");
+    isoCodeToWikiName.put("ID", "Indonesian");
     isoCodeToWikiName.put("GA", "Irish");
     isoCodeToWikiName.put("IT", "Italian");
+    isoCodeToWikiName.put("LA", "Latin");
+    isoCodeToWikiName.put("LV", "Latvian");
     isoCodeToWikiName.put("LT", "Lithuanian");
     isoCodeToWikiName.put("JA", "Japanese");
     isoCodeToWikiName.put("KO", "Korean");
@@ -68,16 +62,19 @@ public class Language {
     isoCodeToWikiName.put("MS", "Malay");
     isoCodeToWikiName.put("MI", "Maori");
     isoCodeToWikiName.put("MN", "Mongolian");
+    isoCodeToWikiName.put("NE", "Nepali");
     isoCodeToWikiName.put("NO", "Norwegian");
     isoCodeToWikiName.put("FA", "Persian");
     isoCodeToWikiName.put("PL", "Polish");
     isoCodeToWikiName.put("PT", "Portuguese");
+    isoCodeToWikiName.put("PA", "Punjabi");
     isoCodeToWikiName.put("RO", "Romanian");
     isoCodeToWikiName.put("RU", "Russian");
     isoCodeToWikiName.put("SA", "Sanskrit");
     isoCodeToWikiName.put("SR", "Serbian");
     isoCodeToWikiName.put("SO", "Somali");
     isoCodeToWikiName.put("ES", "Spanish");
+    isoCodeToWikiName.put("SW", "Swahili");
     isoCodeToWikiName.put("SV", "Swedish");
     isoCodeToWikiName.put("TG", "Tajik");
     isoCodeToWikiName.put("TH", "Thai");
