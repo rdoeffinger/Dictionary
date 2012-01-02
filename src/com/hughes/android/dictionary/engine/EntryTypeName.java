@@ -17,59 +17,50 @@ package com.hughes.android.dictionary.engine;
 
 public enum EntryTypeName {
 
-//  WIKTIONARY_TITLE_ONE_WORD(0),
-//  WIKTIONARY_MEANING_ONE_WORD(0),
-//  WIKTIONARY_TRANSLATION_ONE_WORD(0),
-
-  WIKTIONARY_TITLE_SINGLE(0, true),
-  WIKTIONARY_INFLECTD_FORM_SINGLE(0, true),
+  WIKTIONARY_TITLE_SINGLE(true, null),
+  WIKTIONARY_INFLECTD_FORM_SINGLE(true, null),
 
 
-  NOUN(0),
-  VERB(0),
-  ADJ(0),
-  ADV(0),
-  ONE_WORD(0, true),
-  MULTIROW_HEAD_ONE_WORD(0, true),
-  MULTIROW_TAIL_ONE_WORD(0, true),
+  ONE_WORD(true, null),
+  MULTIROW_HEAD_ONE_WORD(true, null),
+  MULTIROW_TAIL_ONE_WORD(true, null),
 
-  WIKTIONARY_TITLE_MULTI(0, true),
-  WIKTIONARY_TRANSLITERATION(0),
-  WIKTIONARY_INFLECTED_FORM_MULTI(0, true),
-  WIKTIONARY_ENGLISH_DEF_WIKI_LINK(0),
-  WIKTIONARY_ENGLISH_DEF_OTHER_LANG(0),
-  WIKTIONARY_ENGLISH_DEF(0),
+  WIKTIONARY_TITLE_MULTI(true, WIKTIONARY_TITLE_SINGLE),
+  WIKTIONARY_TRANSLITERATION(),
+  WIKTIONARY_INFLECTED_FORM_MULTI(true, WIKTIONARY_INFLECTD_FORM_SINGLE),
+  WIKTIONARY_ENGLISH_DEF_WIKI_LINK(),
+  WIKTIONARY_ENGLISH_DEF_OTHER_LANG(),
+  WIKTIONARY_ENGLISH_DEF(),
 
-  TWO_WORDS(0),
-  THREE_WORDS(0),
-  FOUR_WORDS(0),
-  FIVE_OR_MORE_WORDS(0),
-  WIKTIONARY_TRANSLATION_WIKI_TEXT(0),
-  WIKTIONARY_TRANSLATION_OTHER_TEXT(0),
-//  WIKTIONARY_EXAMPLE_OTHER_WORDS(0),
+  TWO_WORDS(),
+  THREE_WORDS(),
+  FOUR_WORDS(),
+  FIVE_OR_MORE_WORDS(),
+  WIKTIONARY_TRANSLATION_WIKI_TEXT(),
+  WIKTIONARY_TRANSLATION_OTHER_TEXT(),
   
-  MULTIROW_HEAD_MANY_WORDS(0),
-  MULTIROW_TAIL_MANY_WORDS(0),
-  WIKTIONARY_EXAMPLE(0),
-  WIKTIONARY_BASE_FORM_SINGLE(0),  // These two should be eligible for removal if the links are otherwise present.
-  WIKTIONARY_BASE_FORM_MULTI(0),
-  PART_OF_HYPHENATED(0),
-  BRACKETED(0),
-  PARENTHESIZED(0),
-  WIKTIONARY_TRANSLATION_SENSE(0),
-  SEE_ALSO(0), 
+  MULTIROW_HEAD_MANY_WORDS(),
+  MULTIROW_TAIL_MANY_WORDS(),
+  WIKTIONARY_EXAMPLE(),
+  WIKTIONARY_BASE_FORM_SINGLE(),  // These two should be eligible for removal if the links are otherwise present.
+  WIKTIONARY_BASE_FORM_MULTI(false, WIKTIONARY_BASE_FORM_SINGLE),
+  PART_OF_HYPHENATED(),
+  BRACKETED(),
+  PARENTHESIZED(),
+  WIKTIONARY_TRANSLATION_SENSE(),
+  SEE_ALSO(), 
   ;
 
-  final int nameResId;
   final boolean overridesStopList;
+  final EntryTypeName singleWordInstance;
   
-  private EntryTypeName(final int nameResId) {
-    this(nameResId, false);
+  private EntryTypeName() {
+    this(false, null);
   }
 
-  private EntryTypeName(final int nameResId, final boolean overridesStopList) {
-    this.nameResId = nameResId;
+  private EntryTypeName(final boolean overridesStopList, final EntryTypeName singleWordInstance) {
     this.overridesStopList = overridesStopList;
+    this.singleWordInstance = singleWordInstance == null ? this : singleWordInstance;
   }
 
 }
