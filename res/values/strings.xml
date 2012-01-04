@@ -2,7 +2,6 @@
 <resources>
 
 	<string name="app_name">QuickDic</string>
-	<string name="about_text">QuickDic\nby Thad Hughes</string>
  
   <!-- DictionaryListActivity -->
   <string name="dictionaryList">Dictionary list</string>
@@ -17,6 +16,8 @@
   <string name="newDictionary">New dictionary</string>
   <string name="notOnDevice">%s (not on device)</string>
 
+  <string name="thanksForUpdatingVersion">3.0.1h</string>
+  <!-- Don't use links in the text below, it crashes the app. -->
   <string name="thanksForUpdating"><![CDATA[
 <html>
 <body>
@@ -24,18 +25,20 @@
   <p> New features:
   <ul>
     <li> QuickDic is open-source!
-    <li> Adjustable font size.
-    <li> Changeable click behavior.
-    <li> Several new dictionaries: Polish, Esperanto, Latin, Indonesian, many others... (based on enwiktionary.com data).
-    <li> All dictionaries updated (mostly with better formatting), and can be redownloaded at your leisure.
+    <li> New preferences:
+    <ul>
+      <li> Dictionary font size is adjustable.
+      <li> Short clicks on dictionary entries no longer open context menu by default.
+    </ul>
+    <li> 17 new English dictionaries: Albanian, Armenian, Belarusian, Bengali, Bosnian, Bulgarian, Catalan, Esperanto, Estonian, Hungarian, Indonesian, Latin, Latvian, Polish, Punjabi, Slovak, Swahili. (based on enwiktionary.com data).
+    <li> All dictionaries updated (mostly with better formatting), and can be re-downloaded at your leisure (previously downloaded dictionaries will still work).
   </ul>
 </body>
-</html>
+</html> 
 ]]>
   </string>
  
   <!-- DictionaryEditActivity -->
-  <string name="dictionaryEdit">Edit dictionary config</string>
   <string name="dictionaryName">Dictionary name</string>
   <string name="downloadUrl">Dictionary download URL</string>
   <string name="downloadButton">Download</string>
@@ -78,11 +81,6 @@
   <string name="unzipping">Unzipping: %1$,d of %2$,d bytes.</string>
 	<string name="downloadFinished">Finished: %,d bytes.</string>
 	<string name="errorDownloadingFile">"Error downloading file: \n%s"</string>
-
-  <!-- NoDictionary. -->
-  <string name="unableToReadDictionaryFile">Unable to read dictionary file (or version is old, try downloading again): %s</string>
-  <string name="dictionaryFileExists">Dictionary file exists: %s</string>
-  <string name="launchDict">Launch dictionary.</string>
 
 	<!-- Preferences -->
 	<string name="wordListFileKey">wordListFile</string>

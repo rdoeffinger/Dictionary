@@ -22,7 +22,8 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal"
-			android:background="@drawable/icon"/>
+			android:background="@drawable/icon" 
+      android:contentDescription="icon"/>
 
 		<TextView 
 			android:id="@+id/title" 

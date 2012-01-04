@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -71,8 +72,8 @@ public class DictionaryListActivity extends ListActivity {
     registerForContextMenu(getListView());
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    final int introMessageId = 100;
-    if (prefs.getInt(C.INTRO_MESSAGE_SHOWN, 0) < introMessageId) {
+    final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
+    if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(thanksForUpdatingLatestVersion)) {
       final AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setCancelable(false);
       final WebView webView = new WebView(getApplicationContext());
@@ -84,8 +85,13 @@ public class DictionaryListActivity extends ListActivity {
           }
       });
       final AlertDialog alert = builder.create();
+      WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+      layoutParams.copyFrom(alert.getWindow().getAttributes());
+      layoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
+      layoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
       alert.show();
-      prefs.edit().putInt(C.INTRO_MESSAGE_SHOWN, introMessageId).commit();
+      alert.getWindow().setAttributes(layoutParams);
+      prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion).commit();
     }
   }
   

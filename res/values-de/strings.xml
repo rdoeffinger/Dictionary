@@ -2,51 +2,117 @@
 <resources>
 
 	<string name="app_name">QuickDic</string>
-	<string name="about_text">QuickDic\nvon Thad Hughes</string>
-	
+ 
+  <!-- DictionaryListActivity -->
+  <string name="dictionaryList">Wörterbuch-Liste</string>
+  <string name="selectADictionary"><![CDATA[Wählen Sie ein Wörterbuch.\n
+Long-drücken, um das Wörterbuch Konfiguration zu bearbeiten. Drücken Sie "Menü", um ein neues Wörterbuch hinzufügen.]]></string>
+  <string name="addDictionary">Wörterbuch hinzufügen</string>
+  <string name="addDefaultDictionaries">Default Wörterbücher hinzufügen</string>
+  <string name="removeAllDictionaries">Alle Wörterbücher entfernen</string>
+  <string name="editDictionary">Wörterbuch Config bearbeiten</string>
+  <string name="deleteDictionary">Wörterbuch entfernen</string>
+  <string name="newDictionary">Neues Wörterbuch</string>
+  <string name="moveToTop">Nach Anfang ziehen</string>
+  <string name="notOnDevice">%s (nicht auf dem Gerät)</string>
+
+  <string name="thanksForUpdatingVersion">3.0.1k</string>
+  <!-- Don't use links in the text below, it crashes the app. -->
+  <string name="thanksForUpdating"><![CDATA[
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+</head>
+<body>
+  Danke, da&szlig; Sie QuickDic 3.0.1 heruntergeladen haben.
+  <p> neue Funktionen:
+  <ul>
+    <li> QuickDic ist Open-Source!
+    <li> Neue Einstellungen:
+    <ul>
+      <li> W&ouml;rterbuch Schriftgr&ouml;&szlig;e ist einstellbar.
+      <li> Kurze Klicks auf W&ouml;rterbucheintr&auml;ge &ouml;ffnen Kontextmen&uuml; nicht mehr standardm&auml;&szlig;ig.
+    </ul>
+    <li> 17 neue Englische W&ouml;rterb&uuml;cher: Albanian, Armenian, Belarusian, Bengali, Bosnian, Bulgarian, Catalan, Esperanto, Estonian, Hungarian, Indonesian, Latin, Latvian, Polish, Punjabi, Slovak, Swahili. (von enwiktionary.com).
+    <li> Alle W&ouml;rterb&uuml;cher sind updated (meist mit besseren Formatierung) und k&ouml;nnen wiederheruntergeladen werden (zuvor heruntergeladene W&ouml;rterb&uuml;cher wird immer noch funktionieren).
+  </ul>
+</body>
+</html> 
+]]>
+  </string>
+ 
+  <!-- DictionaryEditActivity -->
+  <string name="dictionaryName">Wörterbuch Name</string>
+  <string name="downloadUrl">Wörterbuch URL</string>
+  <string name="downloadButton">Herunterladen</string>
+  <string name="openButton">Öffnen</string>
+  <string name="dictionaryInfo">Wörterbuch Info:</string>
+  <string name="localFile">Wörterbuch Datei</string>
+  <string name="wordListFile">Wortliste-Datei</string>
+  <string name="fileNotFound">Datei nicht gefunden: \'%s\'</string>
+  <string name="invalidDictionary">Ungültige Wörterbuch: file=%1$s, error=%2$s</string>
+  <string name="numPairEntries">Einträge: %,d</string>
+  <string name="numTokens">Tokens: %,d</string>
+  <string name="numRows">Reihe: %,d</string>
+
+ 
 	<!-- Main -->
-	<string name="searchText">Stichwort</string>
-	<string name="downloadDictionary">Wörterbuch herunterladen...</string>
-	<string name="switchToLanguage">Switch to %s</string>
-	<string name="preferences">Einstellungen...</string>
-	<string name="about">Über QuickDic...</string>
-	<string name="addToWordList">Zu Wortliste hinzufugen: %s</string>
-  <string name="failedAddingToWordList">Fehler bei Wortliste hinzufugen: %s</string>
+	<string name="searchText">Suchtext</string>
+	<string name="downloadDictionary">Wörterbuch herunterladen…</string>
+	<string name="switchToLanguage">Zu %s wechseln</string>
+	<string name="preferences">Einstellungen…</string>
+	<string name="about">Über QuickDic…</string>
+	<string name="addToWordList">Zum Wortliste hinzufügen: %s</string>
+  <string name="failedAddingToWordList">Fehler beim Hinzufügen zur Wortliste: %s</string>
+  <string name="unzippingDictionary">Wörterbuch entpacken…</string>
+  <string name="failedToUnzipDictionary">Fehler beim Entpackung der Wörterbuch…</string>
 
 	<!-- About. -->
-	<string name="contactMe">Wenn QuickDic dir gefällt, würde ich gern von dir hören.  Bitte schicke Bemerkungen, Aufforderungen, oder Programmfehler an:</string>
-	<string name="currentDictInfo">Wörterbuch Info:</string>
-	<string name="noDictLoaded">Kein Wörterbuch geöffnet.</string>
-	
+	<string name="titleWithVersion">QuickDic 3.0.1</string>
+	<string name="thadHughes">Thad Hughes</string>
+	<string name="contactMe">
+     Wenn Sie QuickDic benutzen, würde ich gerne von Ihnen hören.
+     Leider kann ich keine Verantwortung für die Wörterbücher (außer Formatierung) nehmen, weil sie aus anderen Quellen erzeugt werden.
+     Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein schnelles Hallo an:
+  </string>
+	<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+  <string name="webPage">Weitere Informationen finden Sie unter:</string>
+  <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
+  
+  <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
+  <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
+ 
 	<!-- Download. -->
-	<string name="downloading">%1$d von %2$d Bytes heruntergeladen...</string>
-	<string name="downloadFinished">Herunterladen fertig, %d Bytes heruntergeladen.</string>
-	<string name="errorDownloadingFile">"Fehler während des Herunterladens: \n%s"</string>
-
-  <!-- NoDictionary. -->
-  <string name="unableToReadDictionaryFile">Wörterbuch Datei existiert nicht (oder ist eine alte Version): %s</string>
-  <string name="DictionaryFileExists">Wörterbuch Datei existiert: %s</string>
-  <string name="launchDict">"Launch dictionary."</string>
+  <string name="openingConnection">Verbindungsaufbau…</string>
+	<string name="downloading">Herunterladen: %1$,d von %2$,d Bytes.</string>
+  <string name="unzipping">Entpackung: %1$,d von %2$,d Bytes.</string>
+	<string name="downloadFinished">Fertig: %,d Bytes.</string>
+	<string name="errorDownloadingFile">"Fehler beim Herunterladen: \n%s"</string>
 
 	<!-- Preferences -->
 	<string name="wordListFileKey">wordListFile</string>
-	<string name="wordListFileTitle">Wortliste Datei</string>
-	<string name="wordListFileSummary">Die Datei, in der neue Worte hinzugefügt werden.</string>
-	<string name="wordListFileDefault">/sdcard/quickdic/wordList.txt</string>
+	<string name="wordListFileTitle">Wortlist Datei</string>
+	<string name="wordListFileSummary">Die lokale Datei, wo das Wortliste hinzugefügt wird.</string>
+	<string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
+
+  <string name="fontSizeKey">fontSize</string>
+  <string name="fontSizeTitle">Schriftgröße</string>
+  <string name="fontSizeSummary">Die Größe der Schriftart für die Wörterbuch-Reihen (Neustart erforderlich).</string>
 
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
-  <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
-  <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
+  <string name="saveOnlyFirstSubentryTitle">Speichern nur erste Sub-Eintrag</string>
+  <string name="saveOnlyFirstSubentrySummary">Bei Einträgen mit mehreren Sub-Einträge werden nur die ersten auf die Wortliste hinzugefügt.</string>
+
+  <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
+  <string name="clickOpensContextMenuTitle">Klick öffnet Kontextmenü</string>
+  <string name="clickOpensContextMenuSummary">Das Kontextmenü öffnet mit Klicks auf Einträge (long-Klicks öffnen immer das Kontextmenü).</string>
 
   <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
-  <string name="showClearSearchTextButtonTitle">Show \'clear search text\' button</string>
-  <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
-  
-	<string name="dictFileKey">dictFile</string>
-	<string name="dictFileTitle">Wörterbuch Datei</string>
-	<string name="dictFileSummary">Die Datei, die das Wörterbuch enthält (und worein das Wörterbuch heruntergeladen wird).</string>
+  <string name="showClearSearchTextButtonTitle">Zeige \'Suchtext entfernen\' Button</string>
+  <string name="showClearSearchTextButtonSummary">Zeigen die Button, um die Suchtext zu löschen. Sie können auch einfach weg von Suchtext konzentrieren und anfangen zu schreiben.</string>
 
-	<string name="dictFetchUrlTitle">Wörterbuch URL</string>
-	<string name="dictFetchUrlSummary">Das URL, wovon das Wörterbuch heruntergeladen wird.</string>
-	
+  <string name="themeKey">theme</string>
+  <string name="themeTitle">UI Theme</string>
+  <string name="themeSummary">User-Interface Farbschema (Neustart erforderlich).</string>
+  
 </resources>

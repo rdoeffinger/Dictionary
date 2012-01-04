@@ -19,7 +19,8 @@
     android:layout_width="wrap_content" 
     android:layout_height="wrap_content" />
   <EditText 
-    android:id="@+id/dictionaryName" 
+    android:id="@+id/dictionaryName"
+    android:inputType="textNoSuggestions" 
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" />
 
@@ -31,7 +32,8 @@
     android:layout_height="wrap_content"
     android:paddingTop="5dip" />
   <EditText 
-    android:id="@+id/localFile" 
+    android:id="@+id/localFile"
+    android:inputType="textUri"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" />
 
@@ -44,6 +46,7 @@
     android:paddingTop="5dip" />
   <EditText 
     android:id="@+id/downloadUrl" 
+    android:inputType="textUri"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" />
 
