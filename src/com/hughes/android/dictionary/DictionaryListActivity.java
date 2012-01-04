@@ -71,7 +71,7 @@ public class DictionaryListActivity extends ListActivity {
     registerForContextMenu(getListView());
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    final int introMessageId = -1;
+    final int introMessageId = 100;
     if (prefs.getInt(C.INTRO_MESSAGE_SHOWN, 0) < introMessageId) {
       final AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setCancelable(false);
@@ -115,13 +115,14 @@ public class DictionaryListActivity extends ListActivity {
       Log.d(LOG, "Dictionary list is old, updating it.");
       
       // Replace <-> with -
-      if (quickDicConfig.currentVersion == 3) {
+      if (quickDicConfig.currentVersion < 5) {
         for (final DictionaryConfig config : quickDicConfig.dictionaryConfigs) {
           config.name = config.name.replace("<->", "-");
         }
       }
       quickDicConfig.addDefaultDictionaries();
       quickDicConfig.currentVersion = QuickDicConfig.LATEST_VERSION;
+      PersistentObjectCache.init(this).write(C.DICTIONARY_CONFIGS, quickDicConfig);
     }
 
     setListAdapter(new Adapter());
