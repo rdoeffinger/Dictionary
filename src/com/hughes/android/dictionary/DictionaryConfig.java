@@ -27,4 +27,10 @@ public class DictionaryConfig implements Serializable {
   int openIndex = 0;
   String openWord = "";
   
+  @Override
+  public String toString() {
+    return name;
+  }
+  
+  
 }

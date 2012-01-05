@@ -130,9 +130,10 @@ public class DictionaryListActivity extends ListActivity {
       quickDicConfig.currentVersion = QuickDicConfig.LATEST_VERSION;
       PersistentObjectCache.init(this).write(C.DICTIONARY_CONFIGS, quickDicConfig);
     }
+    
+    Log.d(LOG, "DictionaryList: " + quickDicConfig.dictionaryConfigs);
 
     setListAdapter(new Adapter());
-    
   }
 
   public boolean onCreateOptionsMenu(final Menu menu) {

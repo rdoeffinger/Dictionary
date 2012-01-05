@@ -36,6 +36,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.style.StyleSpan;
@@ -141,10 +142,9 @@ public class DictionaryActivity extends ListActivity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    ((DictionaryApplication)getApplication()).applyTheme(this);
-    
-    super.onCreate(savedInstanceState);
     Log.d(LOG, "onCreate:" + this);
+    ((DictionaryApplication)getApplication()).applyTheme(this);
+    super.onCreate(savedInstanceState);
     
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     
@@ -477,12 +477,16 @@ public class DictionaryActivity extends ListActivity {
   
   @Override
   protected void onListItemClick(ListView l, View v, int row, long id) {
+    defocusSearchText();
+    
     if (clickOpensContextMenu && dictRaf != null) {
       openContextMenu(v);
     }
   }
   
   void onAppendToWordList(final RowBase row) {
+    defocusSearchText();
+    
     final StringBuilder rawText = new StringBuilder();
     rawText.append(
         new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date()))
@@ -491,9 +495,6 @@ public class DictionaryActivity extends ListActivity {
     rawText.append(row.getTokenRow(true).getToken()).append("\t");
     rawText.append(row.getRawText(saveOnlyFirstSubentry));
     Log.d(LOG, "Writing : " + rawText);
-
-    // Request focus so that if we start typing again, it clears the text input.
-    getListView().requestFocus();
 
     try {
       wordList.getParentFile().mkdirs();
@@ -507,10 +508,22 @@ public class DictionaryActivity extends ListActivity {
     }
     return;
   }
-
-  void onCopy(final RowBase row) {
+  
+  /**
+   * Called when user clicks outside of search text, so that they can start
+   * typing again immediately.
+   */
+  void defocusSearchText() {
+    //Log.d(LOG, "defocusSearchText");
     // Request focus so that if we start typing again, it clears the text input.
     getListView().requestFocus();
+    
+    // Visual indication that a new keystroke will clear the search text.
+    searchText.selectAll();
+  }
+
+  void onCopy(final RowBase row) {
+    defocusSearchText();
 
     Log.d(LOG, "Copy, row=" + row);
     final StringBuilder result = new StringBuilder();
@@ -527,6 +540,7 @@ public class DictionaryActivity extends ListActivity {
         searchText.setText("" + (char) event.getUnicodeChar());
         onSearchTextChange(searchText.getText().toString());
         searchText.requestFocus();
+        Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
       }
       return true;
     }

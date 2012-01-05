@@ -25,7 +25,7 @@ public final class QuickDicConfig implements Serializable {
   private static final long serialVersionUID = 6711617368780900979L;
   
   // Just increment this to have them all update...
-  static final int LATEST_VERSION = 5;
+  static final int LATEST_VERSION = 6;
   
   final List<DictionaryConfig> dictionaryConfigs = new ArrayList<DictionaryConfig>();
   int currentVersion = LATEST_VERSION;
@@ -35,12 +35,13 @@ public final class QuickDicConfig implements Serializable {
   }
   
   static final String BASE_URL = "http://quickdic-dictionary.googlecode.com/files/";
+  static final String VERSION_SUFFIX = "v002";
 
   public void addDefaultDictionaries() {
     {
       final DictionaryConfig config = new DictionaryConfig();
       config.name = "German-English";
-      config.downloadUrl = BASE_URL + "DE-EN_chemnitz_enwiktionary.quickdic.zip";
+      config.downloadUrl = String.format("%sDE-EN_chemnitz_enwiktionary.quickdic.%s.zip", BASE_URL, VERSION_SUFFIX);
       config.localFile = "/sdcard/quickDic/DE-EN_chemnitz_enwiktionary.quickdic";
       addOrReplace(config);
     }
@@ -51,11 +52,10 @@ public final class QuickDicConfig implements Serializable {
       }
       final DictionaryConfig config = new DictionaryConfig();
       config.name = String.format("English-%s", Language.isoCodeToWikiName.get(iso));
-      config.downloadUrl = String.format("%sEN-%s_enwiktionary.v002.quickdic.zip", BASE_URL, iso);
+      config.downloadUrl = String.format("%sEN-%s_enwiktionary.quickdic.%s.zip", BASE_URL, iso, VERSION_SUFFIX);
       config.localFile = String.format("/sdcard/quickDic/EN-%s_enwiktionary.quickdic", iso);
       addOrReplace(config);
     }
-
   }
 
   private void addOrReplace(final DictionaryConfig dictionaryConfig) {
