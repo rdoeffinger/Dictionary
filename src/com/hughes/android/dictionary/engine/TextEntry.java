@@ -25,18 +25,27 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
   
   final String text;
   
-  public TextEntry(final RandomAccessFile raf) throws IOException {
+  public TextEntry(final Dictionary dictionary, final RandomAccessFile raf) throws IOException {
+    super(dictionary, raf);
     text = raf.readUTF();
   }
   @Override
   public void write(RandomAccessFile raf) throws IOException {
+    super.write(raf);
     raf.writeUTF(text);
   }
   
-  static final RAFSerializer<TextEntry> SERIALIZER = new RAFSerializer<TextEntry>() {
+  static final class Serializer implements RAFSerializer<TextEntry> {
+    
+    final Dictionary dictionary;
+    
+    Serializer(Dictionary dictionary) {
+      this.dictionary = dictionary;
+    }
+
     @Override
     public TextEntry read(RandomAccessFile raf) throws IOException {
-      return new TextEntry(raf);
+      return new TextEntry(dictionary, raf);
     }
 
     @Override
@@ -44,6 +53,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
       t.write(raf);
     }
   };
+
   
   @Override
   public int addToDictionary(final Dictionary dictionary) {

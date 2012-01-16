@@ -26,12 +26,10 @@ public class EntrySource extends IndexedObject implements Serializable {
   private static final long serialVersionUID = -1323165134846120269L;
   
   final String name;
-  final int pairEntryStart;
   
-  public EntrySource(final int index, final String name, final int pairEntryStart) {
+  public EntrySource(final int index, final String name) {
     super(index);
     this.name = name;
-    this.pairEntryStart = pairEntryStart;
   }
   
   @Override
@@ -46,14 +44,12 @@ public class EntrySource extends IndexedObject implements Serializable {
     public EntrySource read(RandomAccessFile raf, int readIndex)
         throws IOException {
       final String name = raf.readUTF();
-      final int pairEntryStart = raf.readInt();
-      return new EntrySource(readIndex, name, pairEntryStart);
+      return new EntrySource(readIndex, name);
     }
 
     @Override
     public void write(RandomAccessFile raf, EntrySource t) throws IOException {
       raf.writeUTF(t.name);
-      raf.writeInt(t.pairEntryStart);
     }    
   };
   

@@ -170,7 +170,7 @@ public class DictionaryEditActivity extends Activity {
           }
         });
     
-    final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryList));
+    final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
     dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
         startActivity(DictionaryManagerActivity.getIntent(DictionaryEditActivity.this));

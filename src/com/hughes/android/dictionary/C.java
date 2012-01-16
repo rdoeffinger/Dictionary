@@ -15,7 +15,7 @@
 package com.hughes.android.dictionary;
 
 public class C {
-  
+
   static final String DICTIONARY_CONFIGS = "dictionaryConfigs";
 
   static final String DICT_INDEX = "dictIndex";
@@ -23,15 +23,21 @@ public class C {
   static final String SEARCH_TOKEN = "searchToken";
 
   public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
-  
+
   enum Theme {
-    DEFAULT(R.style.Theme_Default, R.style.Theme_Light_TokenRow_Fg, R.drawable.theme_default_token_row_main_bg, R.drawable.theme_default_token_row_other_bg, R.drawable.theme_default_other_lang_bg),
-    LIGHT(R.style.Theme_Light, R.style.Theme_Default_TokenRow_Fg, R.drawable.theme_light_token_row_main_bg, R.drawable.theme_light_token_row_other_bg, R.drawable.theme_light_other_lang_bg);
-    
-    private Theme(final int themeId, 
-        final int tokenRowFg,
-        final int tokenRowMainBg,
-        final int tokenRowOtherBg,
+    DEFAULT(R.style.Theme_Default, R.style.Theme_Light_TokenRow_Fg,
+        R.drawable.theme_default_token_row_main_bg,
+        R.drawable.theme_default_token_row_other_bg,
+        R.drawable.theme_default_other_lang_bg),
+        
+        LIGHT(R.style.Theme_Light,
+        R.style.Theme_Light_TokenRow_Fg,
+        R.drawable.theme_light_token_row_main_bg,
+        R.drawable.theme_light_token_row_other_bg,
+        R.drawable.theme_light_other_lang_bg);
+
+    private Theme(final int themeId, final int tokenRowFg,
+        final int tokenRowMainBg, final int tokenRowOtherBg,
         final int otherLangBg) {
       this.themeId = themeId;
       this.tokenRowFg = tokenRowFg;
@@ -39,13 +45,12 @@ public class C {
       this.tokenRowOtherBg = tokenRowOtherBg;
       this.otherLangBg = otherLangBg;
     }
-    
+
     final int themeId;
     final int tokenRowFg;
     final int tokenRowMainBg;
     final int tokenRowOtherBg;
     final int otherLangBg;
   }
-
 
 }

@@ -3,12 +3,13 @@
 
 	<string name="app_name">QuickDic</string>
  
-  <!-- DictionaryListActivity -->
+  <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
   <string name="selectADictionary"><![CDATA[Select a dictionary.
 \nLong-press to edit the dictionary config. Press "menu" to add a new dictionary.]]></string>
   <string name="dictionaryConfig">Dictionary config</string>
   <string name="moveToTop">Move to top</string>
+  <string name="deleteDictionary">Delete dictionary</string>
   <string name="notOnDevice">%s (not on device)</string>
 
   <string name="thanksForUpdatingVersion">3.0.1h</string>

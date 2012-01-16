@@ -52,6 +52,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
@@ -425,22 +426,11 @@ public class DictionaryActivity extends ListActivity {
     }
 
     {
-      final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryList));
+      final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
       dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         public boolean onMenuItemClick(final MenuItem menuItem) {
           startActivity(DictionaryManagerActivity.getIntent(DictionaryActivity.this));
           finish();
-          return false;
-        }
-      });
-    }
-
-    {
-      final MenuItem dictionaryEdit = menu.add(getString(R.string.editDictionary));
-      dictionaryEdit.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-        public boolean onMenuItemClick(final MenuItem menuItem) {
-          final Intent intent = DictionaryEditActivity.getIntent(dictIndex);
-          startActivity(intent);
           return false;
         }
       });
@@ -560,6 +550,8 @@ public class DictionaryActivity extends ListActivity {
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_BACK) {
+      Log.d(LOG, "Clearing dictionary prefs.");
+      DictionaryActivity.clearDictionaryPrefs(this);
     }
     if (keyCode == KeyEvent.KEYCODE_ENTER) {
       Log.d(LOG, "Trying to hide soft keyboard.");
@@ -704,67 +696,46 @@ public class DictionaryActivity extends ListActivity {
     }
 
     private View getView(PairEntry.Row row, ViewGroup parent) {
-      final TableLayout result = new TableLayout(parent.getContext());
+      final WebView result = new WebView(parent.getContext());
       final PairEntry entry = row.getEntry();
       final int rowCount = entry.pairs.size();
+      final StringBuilder html = new StringBuilder();
+      html.append("<html><table width=\"100%\">");
       for (int r = 0; r < rowCount; ++r) {
-        final TableRow tableRow = new TableRow(result.getContext());
+        html.append("<tr>");
 
-        final EditText column1 = new EditText(tableRow.getContext());
-        final EditText column2 = new EditText(tableRow.getContext());
-        final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
-        layoutParams.weight = 0.5f;
-
-        if (r > 0) {
-          final TextView spacer = new TextView(tableRow.getContext());
-          spacer.setText(" • ");
-          tableRow.addView(spacer);
-        }
-        tableRow.addView(column1, layoutParams);
-        if (r > 0) {
-          final TextView spacer = new TextView(tableRow.getContext());
-          spacer.setText(" • ");
-          tableRow.addView(spacer);
-        }
-        tableRow.addView(column2, layoutParams);
-
-        column1.setWidth(1);
-        column2.setWidth(1);
-
-        // TODO: color words by gender
         final Pair pair = entry.pairs.get(r);
-        final String col1Text = Language.fixBidiText(index.swapPairEntries ? pair.lang2 : pair.lang1);
-        column1.setText(col1Text, TextView.BufferType.SPANNABLE);
-        final Spannable col1Spannable = (Spannable) column1.getText();
-        
-        int startPos = 0;
+        // TODO: escape both the token and the text.
         final String token = row.getTokenRow(true).getToken();
-        while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
-          col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos,
-              startPos + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-          startPos += token.length();
+        final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
+        final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
+        
+        col1Text.replaceAll(token, String.format("<b>%s</b", token));
+
+        // Column1
+        html.append("<td width=\"50%\">");
+        if (r > 0) {
+          html.append("<li>");
         }
+        html.append(col1Text);
+        html.append("</td>");
 
-        String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
-        col2Text = Language.fixBidiText(col2Text);
-        column2.setText(col2Text, TextView.BufferType.NORMAL);
-        
-        column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-        column2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-        column2.setBackgroundResource(theme.otherLangBg);
-        
-        column2.setOnLongClickListener(new EditText.OnLongClickListener() {
-          @Override
-          public boolean onLongClick(View v) {
-            final int start = column2.getSelectionStart();
-            final int end = column2.getSelectionStart();
-            Log.i(LOG, "Long click on: " + column2.getText().toString().substring(start, end));
-            return false;
-          }
-        });
+        // Column2
+        html.append("<td width=\"50%\">");
+        if (r > 0) {
+          html.append("<li>");
+        }
+        html.append(col2Text);
+        html.append("</td>");
 
-        result.addView(tableRow);
+//        column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+//        column2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+
+        html.append("</tr>");
       }
+      html.append("</html></table>");
+      
+      result.loadData(html.toString(), "text/html", null);
 
       return result;
     }

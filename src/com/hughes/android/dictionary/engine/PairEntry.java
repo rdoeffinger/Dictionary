@@ -27,16 +27,18 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
   
   public final List<Pair> pairs;
 
-  public PairEntry() {
-    pairs = new ArrayList<Pair>(1);
+  public PairEntry(final EntrySource entrySource) {
+    super(entrySource);
+    pairs = new ArrayList<Pair>(1);    
   }
 
-  public PairEntry(final String lang1, final String lang2) {
-    pairs = new ArrayList<Pair>(1);
+  public PairEntry(final EntrySource entrySource, final String lang1, final String lang2) {
+    this(entrySource);
     this.pairs.add(new Pair(lang1, lang2));
   }
   
-  public PairEntry(final RandomAccessFile raf) throws IOException {
+  public PairEntry(final Dictionary dictionary, final RandomAccessFile raf) throws IOException {
+    super(dictionary, raf);
     final int size = raf.readInt();
     pairs = new ArrayList<PairEntry.Pair>(size);
     for (int i = 0; i < size; ++i) {
@@ -45,18 +47,27 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
   }
   @Override
   public void write(RandomAccessFile raf) throws IOException {
+    super.write(raf);
     // TODO: this could be a short.
     raf.writeInt(pairs.size());
     for (int i = 0; i < pairs.size(); ++i) {
+      assert pairs.get(i).lang1.length() > 0;
       raf.writeUTF(pairs.get(i).lang1);
       raf.writeUTF(pairs.get(i).lang2);
     }
   }
   
-  static final RAFSerializer<PairEntry> SERIALIZER = new RAFSerializer<PairEntry>() {
+  static final class Serializer implements RAFSerializer<PairEntry> {
+    
+    final Dictionary dictionary;
+    
+    Serializer(Dictionary dictionary) {
+      this.dictionary = dictionary;
+    }
+
     @Override
     public PairEntry read(RandomAccessFile raf) throws IOException {
-      return new PairEntry(raf);
+      return new PairEntry(dictionary, raf);
     }
 
     @Override

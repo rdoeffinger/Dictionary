@@ -54,13 +54,13 @@ public final class QuickDicConfig implements Serializable {
     
     final BufferedReader reader = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(R.raw.dictionary_info)));
     String line;
-    String name = "";
     try {
       while ((line = reader.readLine()) != null) {
         if (line.startsWith("#") || line.length() == 0) {
           continue;
         }
         final DictionaryInfo dictionaryInfo = new DictionaryInfo(line);
+        String name = "";
         for (int i = 0; i < dictionaryInfo.langIsos.length; ++i) {
           final Integer langCode = Language.isoCodeToResourceId.get(dictionaryInfo.langIsos[i]);
           final String lang = langCode != null ? context.getString(langCode) : dictionaryInfo.langIsos[i];

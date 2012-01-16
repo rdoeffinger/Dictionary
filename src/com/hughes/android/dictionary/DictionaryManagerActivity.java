@@ -162,15 +162,6 @@ public class DictionaryManagerActivity extends ListActivity {
     
     final AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo) menuInfo;
     
-    final MenuItem editMenuItem = menu.add(R.string.editDictionary);
-    editMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-      @Override
-      public boolean onMenuItemClick(MenuItem item) {
-        startActivity(DictionaryEditActivity.getIntent(adapterContextMenuInfo.position));
-        return true;
-      }
-    });
-
     if (adapterContextMenuInfo.position > 0) {
       final MenuItem moveToTopMenuItem = menu.add(R.string.moveToTop);
       moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {

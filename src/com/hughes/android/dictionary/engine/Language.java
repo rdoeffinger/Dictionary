@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary.engine;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -88,6 +89,11 @@ public class Language {
     isoCodeToResourceId.put("CI", R.string.CI);
     isoCodeToResourceId.put("YI", R.string.YI);
     isoCodeToResourceId.put("ZU", R.string.ZU);
+    
+    // Hack to allow lower-case ISO codes to work:
+    for (final String isoCode : new ArrayList<String>(isoCodeToResourceId.keySet())) {
+      isoCodeToResourceId.put(isoCode.toLowerCase(), isoCodeToResourceId.get(isoCode));
+    }
   }
 
 
@@ -133,10 +139,11 @@ public class Language {
    */
   private static final String rtlChars =
       "\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC";
-  private static final Pattern RTL_TOKEN = Pattern.compile("[" + rtlChars + "]+");
+  private static final Pattern RTL_TOKEN = Pattern.compile("[" + rtlChars + "]");
   
   public static String fixBidiText(final String text) {
-    return RTL_TOKEN.matcher(text).replaceAll("\u200e $0 \u200e");
+    // TODO: fix me!, use me!
+    return text;
   }
   
   // ----------------------------------------------------------------

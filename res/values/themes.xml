@@ -9,7 +9,6 @@
     <item name="android:textColor">#FFFFFF</item>
   </style>
   
-  <color name="theme_default_token_row_fg">#FFFFFF</color>
   <color name="theme_default_token_row_main_bg">#0000FF</color>
   <color name="theme_default_token_row_other_bg">#888888</color>
   <color name="theme_default_other_lang_bg">#222222</color>

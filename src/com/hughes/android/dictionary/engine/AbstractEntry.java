@@ -14,9 +14,31 @@
 
 package com.hughes.android.dictionary.engine;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
 
 public abstract class AbstractEntry {
+  
+  final EntrySource entrySource;
+  
+  protected AbstractEntry(EntrySource entrySource) {
+    this.entrySource = entrySource;
+  }
+
+  public AbstractEntry(Dictionary dictionary, RandomAccessFile raf) throws IOException {
+    if (dictionary.dictFileVersion >= 1) {
+      final int entrySouceIdx = raf.readShort();
+      this.entrySource = dictionary.sources.get(entrySouceIdx);
+    } else {
+      this.entrySource = null;
+    }
+  }
+
+  public void write(RandomAccessFile raf) throws IOException {
+    raf.writeShort(entrySource.index());
+  }
 
   public abstract int addToDictionary(final Dictionary dictionary);
-  
+
 }

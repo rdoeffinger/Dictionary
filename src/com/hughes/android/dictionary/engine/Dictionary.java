@@ -41,8 +41,14 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   public final List<EntrySource> sources;
   public final List<Index> indices;
   
+  /**
+   * dictFileVersion 1 adds:
+   * <li> counts of tokens in indices.
+   * <li> links to sources?
+   */
+  
   public Dictionary(final String dictInfo) {
-    this.dictFileVersion = 0;
+    this.dictFileVersion = 1;
     this.creationMillis = System.currentTimeMillis();
     this.dictInfo = dictInfo;
     pairEntries = new ArrayList<PairEntry>();
@@ -53,14 +59,19 @@ public class Dictionary implements RAFSerializable<Dictionary> {
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
     dictFileVersion = raf.readInt();
-    if (dictFileVersion != 0) {
+    if (dictFileVersion < 0 || dictFileVersion > 1) {
       throw new IOException("Invalid dictionary version: " + dictFileVersion);
     }
     creationMillis = raf.readLong();
     dictInfo = raf.readUTF();
-    sources = CachingList.createFullyCached(RAFList.create(raf, EntrySource.SERIALIZER, raf.getFilePointer()));
-    pairEntries = CachingList.create(RAFList.create(raf, PairEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
-    textEntries = CachingList.create(RAFList.create(raf, TextEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
+    
+    // Load the sources, then seek past them, because reading them later disrupts the offset.
+    final RAFList<EntrySource> rafSources = RAFList.create(raf, EntrySource.SERIALIZER, raf.getFilePointer());
+    sources = new ArrayList<EntrySource>(rafSources);
+    raf.seek(rafSources.getEndOffset());
+    
+    pairEntries = CachingList.create(RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
+    textEntries = CachingList.create(RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
     indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer, raf.getFilePointer()));
     final String end = raf.readUTF(); 
     if (!end.equals(END_OF_DICTIONARY)) {
@@ -74,8 +85,8 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     raf.writeLong(creationMillis);
     raf.writeUTF(dictInfo);
     RAFList.write(raf, sources, EntrySource.SERIALIZER);
-    RAFList.write(raf, pairEntries, PairEntry.SERIALIZER);
-    RAFList.write(raf, textEntries, TextEntry.SERIALIZER);
+    RAFList.write(raf, pairEntries, new PairEntry.Serializer(this));
+    RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
     RAFList.write(raf, indices, indexSerializer);
     raf.writeUTF(END_OF_DICTIONARY);
   }
