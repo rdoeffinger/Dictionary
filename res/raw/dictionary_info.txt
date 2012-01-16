@@ -1,62 +1,62 @@
-# LANG_1	%LANG_2	FILENAME	FILESIZE	NUM_MAIN_WORDS_1	NUM_MAIN_WORDS_2	NUM_ALL_WORDS_1	NUM_ALL_WORDS_2
-DE	EN	DE-EN_chemnitz_enwiktionary.quickdic	50207808	262726	119111	262726	119111
-EN	af	EN-AF_enwiktionary.quickdic	524028	4864	2757	4864	2757
-EN	ar	EN-AR_enwiktionary.quickdic	4012835	16522	23357	16522	23357
-EN	be	EN-BE_enwiktionary.quickdic	711212	4481	5325	4481	5325
-EN	bg	EN-BG_enwiktionary.quickdic	12913407	19530	54724	19530	54724
-EN	bn	EN-BN_enwiktionary.quickdic	709473	4479	1867	4479	1867
-EN	bo	EN-BO_enwiktionary.quickdic	82371	767	424	767	424
-EN	bs	EN-BS_enwiktionary.quickdic	532886	5031	2947	5031	2947
-EN	ca	EN-CA_enwiktionary.quickdic	8983841	16662	50054	16662	50054
-EN	ci	EN-CI_enwiktionary.quickdic	749721	5884	3779	5884	3779
-EN	cs	EN-CS_enwiktionary.quickdic	5819580	24351	23142	24351	23142
-EN	da	EN-DA_enwiktionary.quickdic	5279379	17460	30597	17460	30597
-EN	el	EN-EL_enwiktionary.quickdic	12106155	24424	48789	24424	48789
-EN	eo	EN-EO_enwiktionary.quickdic	11600016	16907	100765	16907	100765
-EN	es	EN-ES_enwiktionary.quickdic	66315884	37676	240847	37676	240847
-EN	et	EN-ET_enwiktionary.quickdic	1447664	9818	7697	9818	7697
-EN	fa	EN-FA_enwiktionary.quickdic	2266032	11292	11565	11292	11565
-EN	fi	EN-FI_enwiktionary.quickdic	24362077	51150	126697	51150	126697
-EN	FR	EN-FR_enwiktionary.quickdic	37999114	44540	208469	44540	208469
-EN	ga	EN-GA_enwiktionary.quickdic	2146063	11870	8649	11870	8649
-EN	iw	EN-HE_enwiktionary.quickdic	3655803	15703	18853	15703	18853
-EN	hi	EN-HI_enwiktionary.quickdic	1578419	8494	5673	8494	5673
-EN	hr	EN-HR_enwiktionary.quickdic	11994054	21291	45181	21291	45181
-EN	hu	EN-HU_enwiktionary.quickdic	6648136	22700	36369	22700	36369
-EN	hy	EN-HY_enwiktionary.quickdic	4635747	16697	20671	16697	20671
-EN	in	EN-ID_enwiktionary.quickdic	855320	6919	4384	6919	4384
-EN	is	EN-IS_enwiktionary.quickdic	3539828	16781	16584	16781	16584
-EN	IT	EN-IT_enwiktionary.quickdic	66258996	82955	458534	82955	458534
-EN	ja	EN-JA_enwiktionary.quickdic	14160233	32116	74666	32116	74666
-EN	ko	EN-KO_enwiktionary.quickdic	3798948	18780	24154	18780	24154
-EN	ku	EN-KU_enwiktionary.quickdic	950213	5853	5266	5853	5266
-EN	la	EN-LA_enwiktionary.quickdic	97577095	22517	515727	22517	515727
-EN	lt	EN-LT_enwiktionary.quickdic	2947045	7970	18146	7970	18146
-EN	lv	EN-LV_enwiktionary.quickdic	895714	6533	4709	6533	4709
-EN	mi	EN-MI_enwiktionary.quickdic	122547	1316	637	1316	637
-EN	mn	EN-MN_enwiktionary.quickdic	299861	2238	2295	2238	2295
-EN	ms	EN-MS_enwiktionary.quickdic	664757	5026	3483	5026	3483
-EN	ne	EN-NE_enwiktionary.quickdic	55115	494	305	494	305
-EN	nl	EN-NL_enwiktionary.quickdic	12882227	32296	65344	32296	65344
-EN	no	EN-NO_enwiktionary.quickdic	3793263	16740	19398	16740	19398
-EN	pa	EN-PA_enwiktionary.quickdic	79473	721	418	721	418
-EN	pl	EN-PL_enwiktionary.quickdic	8265972	22429	42112	22429	42112
-EN	pt	EN-PT_enwiktionary.quickdic	10595199	21951	49188	21951	49188
-EN	ro	EN-RO_enwiktionary.quickdic	4100603	17827	18709	17827	18709
-EN	ru	EN-RU_enwiktionary.quickdic	13197074	37230	70018	37230	70018
-EN	sa	EN-SA_enwiktionary.quickdic	1514085	7958	3667	7958	3667
-EN	sk	EN-SK_enwiktionary.quickdic	1022589	7895	5040	7895	5040
-EN	so	EN-SO_enwiktionary.quickdic	29794	326	169	326	169
-EN	sq	EN-SQ_enwiktionary.quickdic	820891	6153	4112	6153	4112
-EN	sr	EN-SR_enwiktionary.quickdic	1363176	8002	9261	8002	9261
-EN	sv	EN-SV_enwiktionary.quickdic	15275508	26455	98329	26455	98329
-EN	sw	EN-SW_enwiktionary.quickdic	1192717	7864	3526	7864	3526
-EN	tg	EN-TG_enwiktionary.quickdic	326521	2034	1788	2034	1788
-EN	th	EN-TH_enwiktionary.quickdic	1394582	7647	8766	7647	8766
-EN	tr	EN-TR_enwiktionary.quickdic	3420079	15760	17996	15760	17996
-EN	uk	EN-UK_enwiktionary.quickdic	1332001	7512	9448	7512	9448
-EN	vi	EN-VI_enwiktionary.quickdic	1225627	9074	4767	9074	4767
-EN	ji	EN-YI_enwiktionary.quickdic	421569	2955	2807	2955	2807
-EN	zh	EN-ZH_enwiktionary.quickdic	13270167	28253	73329	28253	73329
-EN	zu	EN-ZU_enwiktionary.quickdic	41213	484	224	484	224
-EN	haw	EN-haw_enwiktionary.quickdic	228760	1791	961	1791	961
+# LANG_1	%LANG_2	FILENAME	VERSION_CODE	FILESIZE	NUM_MAIN_WORDS_1	NUM_MAIN_WORDS_2	NUM_ALL_WORDS_1	NUM_ALL_WORDS_2
+DE	EN	DE-EN_chemnitz_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/DE-EN_chemnitz_enwiktionary.quickdic.v002.zip	1325718937635	50207808	262726	119111	262726	119111
+EN	af	EN-AF_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-AF_enwiktionary.quickdic.v002.zip	1325712733982	524028	4864	2757	4864	2757
+EN	ar	EN-AR_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-AR_enwiktionary.quickdic.v002.zip	1325712841396	4012835	16522	23357	16522	23357
+EN	be	EN-BE_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-BE_enwiktionary.quickdic.v002.zip	1325712970257	711212	4481	5325	4481	5325
+EN	bg	EN-BG_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-BG_enwiktionary.quickdic.v002.zip	1325713095884	12913407	19530	54724	19530	54724
+EN	bn	EN-BN_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-BN_enwiktionary.quickdic.v002.zip	1325713012961	709473	4479	1867	4479	1867
+EN	bo	EN-BO_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-BO_enwiktionary.quickdic.v002.zip	1325718531368	82371	767	424	767	424
+EN	bs	EN-BS_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-BS_enwiktionary.quickdic.v002.zip	1325713055033	532886	5031	2947	5031	2947
+EN	ca	EN-CA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-CA_enwiktionary.quickdic.v002.zip	1325713195193	8983841	16662	50054	16662	50054
+EN	ci	EN-CI_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-CI_enwiktionary.quickdic.v002.zip	1325718772713	749721	5884	3779	5884	3779
+EN	cs	EN-CS_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-CS_enwiktionary.quickdic.v002.zip	1325713364344	5819580	24351	23142	24351	23142
+EN	da	EN-DA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-DA_enwiktionary.quickdic.v002.zip	1325713904724	5279379	17460	30597	17460	30597
+EN	el	EN-EL_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-EL_enwiktionary.quickdic.v002.zip	1325714653501	12106155	24424	48789	24424	48789
+EN	eo	EN-EO_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-EO_enwiktionary.quickdic.v002.zip	1325714080644	11600016	16907	100765	16907	100765
+EN	es	EN-ES_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-ES_enwiktionary.quickdic.v002.zip	1325717968191	66315884	37676	240847	37676	240847
+EN	et	EN-ET_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-ET_enwiktionary.quickdic.v002.zip	1325714178084	1447664	9818	7697	9818	7697
+EN	fa	EN-FA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-FA_enwiktionary.quickdic.v002.zip	1325717278473	2266032	11292	11565	11292	11565
+EN	fi	EN-FI_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-FI_enwiktionary.quickdic.v002.zip	1325714229267	24362077	51150	126697	51150	126697
+EN	FR	EN-FR_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-FR_enwiktionary.quickdic.v002.zip	1325714408840	37999114	44540	208469	44540	208469
+EN	ga	EN-GA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-GA_enwiktionary.quickdic.v002.zip	1325715169455	2146063	11870	8649	11870	8649
+EN	iw	EN-HE_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-HE_enwiktionary.quickdic.v002.zip	1325714833383	3655803	15703	18853	15703	18853
+EN	hi	EN-HI_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-HI_enwiktionary.quickdic.v002.zip	1325714905043	1578419	8494	5673	8494	5673
+EN	hr	EN-HR_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-HR_enwiktionary.quickdic.v002.zip	1325713272596	11994054	21291	45181	21291	45181
+EN	hu	EN-HU_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-HU_enwiktionary.quickdic.v002.zip	1325714960592	6648136	22700	36369	22700	36369
+EN	hy	EN-HY_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-HY_enwiktionary.quickdic.v002.zip	1325712904604	4635747	16697	20671	16697	20671
+EN	in	EN-ID_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-ID_enwiktionary.quickdic.v002.zip	1325715115290	855320	6919	4384	6919	4384
+EN	is	EN-IS_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-IS_enwiktionary.quickdic.v002.zip	1325715046977	3539828	16781	16584	16781	16584
+EN	IT	EN-IT_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-IT_enwiktionary.quickdic.v002.zip	1325715229113	66258996	82955	458534	82955	458534
+EN	ja	EN-JA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-JA_enwiktionary.quickdic.v002.zip	1325716403718	14160233	32116	74666	32116	74666
+EN	ko	EN-KO_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-KO_enwiktionary.quickdic.v002.zip	1325716785161	3798948	18780	24154	18780	24154
+EN	ku	EN-KU_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-KU_enwiktionary.quickdic.v002.zip	1325716890843	950213	5853	5266	5853	5266
+EN	la	EN-LA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-LA_enwiktionary.quickdic.v002.zip	1325715727850	97577095	22517	515727	22517	515727
+EN	lt	EN-LT_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-LT_enwiktionary.quickdic.v002.zip	1325716333304	2947045	7970	18146	7970	18146
+EN	lv	EN-LV_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-LV_enwiktionary.quickdic.v002.zip	1325716269485	895714	6533	4709	6533	4709
+EN	mi	EN-MI_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-MI_enwiktionary.quickdic.v002.zip	1325717028331	122547	1316	637	1316	637
+EN	mn	EN-MN_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-MN_enwiktionary.quickdic.v002.zip	1325717086266	299861	2238	2295	2238	2295
+EN	ms	EN-MS_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-MS_enwiktionary.quickdic.v002.zip	1325716951272	664757	5026	3483	5026	3483
+EN	ne	EN-NE_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-NE_enwiktionary.quickdic.v002.zip	1325717144745	55115	494	305	494	305
+EN	nl	EN-NL_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-NL_enwiktionary.quickdic.v002.zip	1325713973178	12882227	32296	65344	32296	65344
+EN	no	EN-NO_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-NO_enwiktionary.quickdic.v002.zip	1325717213298	3793263	16740	19398	16740	19398
+EN	pa	EN-PA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-PA_enwiktionary.quickdic.v002.zip	1325717504467	79473	721	418	721	418
+EN	pl	EN-PL_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-PL_enwiktionary.quickdic.v002.zip	1325717332279	8265972	22429	42112	22429	42112
+EN	pt	EN-PT_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-PT_enwiktionary.quickdic.v002.zip	1325717419094	10595199	21951	49188	21951	49188
+EN	ro	EN-RO_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-RO_enwiktionary.quickdic.v002.zip	1325717544968	4100603	17827	18709	17827	18709
+EN	ru	EN-RU_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-RU_enwiktionary.quickdic.v002.zip	1325717611144	13197074	37230	70018	37230	70018
+EN	sa	EN-SA_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-SA_enwiktionary.quickdic.v002.zip	1325717759825	1514085	7958	3667	7958	3667
+EN	sk	EN-SK_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-SK_enwiktionary.quickdic.v002.zip	1325717868836	1022589	7895	5040	7895	5040
+EN	so	EN-SO_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-SO_enwiktionary.quickdic.v002.zip	1325717922498	29794	326	169	326	169
+EN	sq	EN-SQ_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-SQ_enwiktionary.quickdic.v002.zip	1325712783651	820891	6153	4112	6153	4112
+EN	sr	EN-SR_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-SR_enwiktionary.quickdic.v002.zip	1325717816595	1363176	8002	9261	8002	9261
+EN	sv	EN-SV_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-SV_enwiktionary.quickdic.v002.zip	1325718302104	15275508	26455	98329	26455	98329
+EN	sw	EN-SW_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-SW_enwiktionary.quickdic.v002.zip	1325718250792	1192717	7864	3526	7864	3526
+EN	tg	EN-TG_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-TG_enwiktionary.quickdic.v002.zip	1325718422864	326521	2034	1788	2034	1788
+EN	th	EN-TH_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-TH_enwiktionary.quickdic.v002.zip	1325718472256	1394582	7647	8766	7647	8766
+EN	tr	EN-TR_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-TR_enwiktionary.quickdic.v002.zip	1325718581691	3420079	15760	17996	15760	17996
+EN	uk	EN-UK_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-UK_enwiktionary.quickdic.v002.zip	1325718652467	1332001	7512	9448	7512	9448
+EN	vi	EN-VI_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-VI_enwiktionary.quickdic.v002.zip	1325718710893	1225627	9074	4767	9074	4767
+EN	ji	EN-YI_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-YI_enwiktionary.quickdic.v002.zip	1325718829219	421569	2955	2807	2955	2807
+EN	zh	EN-ZH_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-ZH_enwiktionary.quickdic.v002.zip	1325713436840	13270167	28253	73329	28253	73329
+EN	zu	EN-ZU_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-ZU_enwiktionary.quickdic.v002.zip	1325718884550	41213	484	224	484	224
+EN	haw	EN-haw_enwiktionary.quickdic	http://quickdic-dictionary.googlecode.com/files/EN-haw_enwiktionary.quickdic.v002.zip	1325714784762	228760	1791	961	1791	961

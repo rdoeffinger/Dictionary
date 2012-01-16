@@ -78,8 +78,6 @@ public class DictionaryActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
   
-  static final int VIBRATE_MILLIS = 100;
-
   int dictIndex = 0;
   RandomAccessFile dictRaf = null;
   Dictionary dictionary = null;
@@ -96,6 +94,7 @@ public class DictionaryActivity extends ListActivity {
   });
   private SearchOperation currentSearchOperation = null;
 
+  C.Theme theme = C.Theme.LIGHT;
   int fontSizeSp;
   EditText searchText;
   Button langButton;
@@ -153,7 +152,7 @@ public class DictionaryActivity extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     Log.d(LOG, "onCreate:" + this);
-    ((DictionaryApplication)getApplication()).applyTheme(this);
+    theme = ((DictionaryApplication)getApplication()).getSelectedTheme();
     super.onCreate(savedInstanceState);
     
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -163,7 +162,7 @@ public class DictionaryActivity extends ListActivity {
       QuickDicConfig quickDicConfig = PersistentObjectCache.init(
           this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
       dictIndex = prefs.getInt(C.DICT_INDEX, 0) ;
-      final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryConfigs.get(dictIndex);
+      final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryInfos.get(dictIndex);
       this.setTitle("QuickDic: " + dictionaryConfig.name);
       dictRaf = new RandomAccessFile(dictionaryConfig.localFile, "r");
       dictionary = new Dictionary(dictRaf); 
@@ -711,8 +710,8 @@ public class DictionaryActivity extends ListActivity {
       for (int r = 0; r < rowCount; ++r) {
         final TableRow tableRow = new TableRow(result.getContext());
 
-        TextView column1 = new TextView(tableRow.getContext());
-        TextView column2 = new TextView(tableRow.getContext());
+        final EditText column1 = new EditText(tableRow.getContext());
+        final EditText column2 = new EditText(tableRow.getContext());
         final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
         layoutParams.weight = 0.5f;
 
@@ -752,6 +751,17 @@ public class DictionaryActivity extends ListActivity {
         
         column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
         column2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+        column2.setBackgroundResource(theme.otherLangBg);
+        
+        column2.setOnLongClickListener(new EditText.OnLongClickListener() {
+          @Override
+          public boolean onLongClick(View v) {
+            final int start = column2.getSelectionStart();
+            final int end = column2.getSelectionStart();
+            Log.i(LOG, "Long click on: " + column2.getText().toString().substring(start, end));
+            return false;
+          }
+        });
 
         result.addView(tableRow);
       }
@@ -763,10 +773,10 @@ public class DictionaryActivity extends ListActivity {
       final Context context = parent.getContext();
       final TextView textView = new TextView(context);
       textView.setText(row.getToken());
-      textView.setBackgroundResource(R.drawable.token_row_drawable);
+      textView.setBackgroundResource(row.hasMainEntry ? theme.tokenRowMainBg : theme.tokenRowOtherBg);
       // Doesn't work:
       //textView.setTextColor(android.R.color.secondary_text_light);
-      textView.setTextAppearance(context, R.style.Theme_Light_Token);
+      textView.setTextAppearance(context, theme.tokenRowFg);
       textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 5 * fontSizeSp / 4);
       return textView;
     }

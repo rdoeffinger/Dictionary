@@ -20,7 +20,7 @@ import java.io.RandomAccessFile;
 
 public class TokenRow extends RowBase {
   
-  final boolean hasMainEntry;
+  public final boolean hasMainEntry;
   
   TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Index index, final boolean hasMainEntry) throws IOException {
     super(raf, thisRowIndex, index);
@@ -52,7 +52,8 @@ public class TokenRow extends RowBase {
 
   @Override
   public void print(final PrintStream out) {
-    out.println("===" + getToken() + "===");
+    final String surrounder = hasMainEntry ? "***" : "===";
+    out.println(surrounder + getToken() + surrounder);
   }
 
   @Override

@@ -26,11 +26,10 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -61,7 +60,7 @@ public class DictionaryEditActivity extends Activity {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(final Bundle savedInstanceState) {
-    ((DictionaryApplication)getApplication()).applyTheme(this);
+    //((DictionaryApplication)getApplication()).applyTheme(this);
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.edit_activity);
@@ -74,11 +73,11 @@ public class DictionaryEditActivity extends Activity {
     try {
       quickDicConfig = PersistentObjectCache.init(this).read(
           C.DICTIONARY_CONFIGS, QuickDicConfig.class);
-      dictionaryConfig = quickDicConfig.dictionaryConfigs.get(dictIndex);
+      dictionaryConfig = quickDicConfig.dictionaryInfos.get(dictIndex);
     } catch (Exception e) {
       Log.e(LOG, "Failed to read QuickDicConfig.", e);
-      quickDicConfig = new QuickDicConfig();
-      dictionaryConfig = quickDicConfig.dictionaryConfigs.get(0);
+      quickDicConfig = new QuickDicConfig(this);
+      dictionaryConfig = quickDicConfig.dictionaryInfos.get(0);
     }
     
     // Write stuff from object into fields.

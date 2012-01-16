@@ -14,14 +14,13 @@
 
 package com.hughes.android.dictionary;
 
-import com.hughes.android.dictionary.engine.TransliteratorManager;
-
-import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.hughes.android.dictionary.engine.TransliteratorManager;
 
 public class DictionaryApplication extends Application {
   
@@ -31,24 +30,30 @@ public class DictionaryApplication extends Application {
     Log.d("QuickDic", "Application: onCreate");
     TransliteratorManager.init(null);
     
+    setTheme(getSelectedTheme().themeId);
+
+    
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     prefs.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
       @Override
       public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
           String key) {
         Log.d("THAD", "prefs changed: " + key);
+        
+        if (key.equals(getString(R.string.themeKey))) {
+          setTheme(getSelectedTheme().themeId);
+        }
       }
     });
   }
   
-  public void applyTheme(final Activity activity) {
+  public C.Theme getSelectedTheme() {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final String theme = prefs.getString(getString(R.string.themeKey), "themeLight");
-    Log.d("QuickDic", "Setting theme to: " + theme);
     if (theme.equals("themeLight")) {
-      activity.setTheme(R.style.Theme_Light);
+      return C.Theme.LIGHT;
     } else {
-      activity.setTheme(R.style.Theme_Default);      
+      return C.Theme.DEFAULT;
     }
   }
 }

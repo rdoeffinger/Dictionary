@@ -14,10 +14,16 @@
 
 package com.hughes.android.dictionary;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import android.content.Context;
 import android.os.Environment;
 
 import com.hughes.android.dictionary.engine.Language;
@@ -25,50 +31,64 @@ import com.hughes.android.dictionary.engine.Language;
 public final class QuickDicConfig implements Serializable {
   
   private static final long serialVersionUID = 6711617368780900979L;
+
+  final List<DictionaryInfo> dictionaryInfos = new ArrayList<DictionaryInfo>();
   
-  // Just increment this to have them all update...
-  static final int LATEST_VERSION = 6;
-  
-  final List<DictionaryInfo> dictionaryConfigs = new ArrayList<DictionaryInfo>();
-  int currentVersion = LATEST_VERSION;
-  
-  public QuickDicConfig() {
-    addDefaultDictionaries();
+  public QuickDicConfig(final Context context) {
+    addDefaultDictionaries(context);
   }
   
-  static final String BASE_URL = "http://quickdic-dictionary.googlecode.com/files/";
-
-  // TODO: read this from a resource file....
+  public void addDefaultDictionaries(final Context context) {
+    for (final DictionaryInfo dictionaryInfo : getDefaultDictionaries(context).values()) {
+      addOrReplace(dictionaryInfo);
+    }
+  }
   
-  public void addDefaultDictionaries() {
-    {
-      final DictionaryInfo config = new DictionaryInfo();
-      config.name = "German-English";
-      config.downloadUrl = String.format("%sDE-EN_chemnitz_enwiktionary.quickdic.%s.zip", BASE_URL, VERSION_SUFFIX);
-      config.localFile = String.format("%s/quickDic/DE-EN_chemnitz_enwiktionary.quickdic", Environment.getExternalStorageDirectory());
-      addOrReplace(config);
+  private static Map<String,DictionaryInfo> defaultDictionaries = null;
+  public synchronized static Map<String,DictionaryInfo> getDefaultDictionaries(final Context context) {
+    if (defaultDictionaries != null) {
+      return defaultDictionaries;
     }
     
-    for (final String iso : Language.isoCodeToResourceName.keySet()) {
-      if (iso.equals("EN") || iso.equals("DE")) {
-        continue;
+    defaultDictionaries = new LinkedHashMap<String, DictionaryInfo>();
+    
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(R.raw.dictionary_info)));
+    String line;
+    String name = "";
+    try {
+      while ((line = reader.readLine()) != null) {
+        if (line.startsWith("#") || line.length() == 0) {
+          continue;
+        }
+        final DictionaryInfo dictionaryInfo = new DictionaryInfo(line);
+        for (int i = 0; i < dictionaryInfo.langIsos.length; ++i) {
+          final Integer langCode = Language.isoCodeToResourceId.get(dictionaryInfo.langIsos[i]);
+          final String lang = langCode != null ? context.getString(langCode) : dictionaryInfo.langIsos[i];
+          if (i > 0) {
+            name += "-";
+          }
+          name += lang;
+        }
+        dictionaryInfo.name = name;
+        dictionaryInfo.localFile = Environment.getExternalStorageDirectory().getName() + "/quickdic/" + dictionaryInfo.uncompressedFilename; 
+        defaultDictionaries.put(dictionaryInfo.localFile, dictionaryInfo);
       }
-      final DictionaryInfo config = new DictionaryInfo();
-      config.name = String.format("English-%s", Language.isoCodeToWikiName.get(iso));
-      config.downloadUrl = String.format("%sEN-%s_enwiktionary.quickdic.%s.zip", BASE_URL, iso, VERSION_SUFFIX);
-      config.localFile = String.format("%s/quickDic/EN-%s_enwiktionary.quickdic", Environment.getExternalStorageDirectory(), iso);
-      addOrReplace(config);
+    } catch (IOException e) {
+      defaultDictionaries = null;
+      return new LinkedHashMap<String, DictionaryInfo>();
     }
+    
+    return defaultDictionaries;
   }
 
   private void addOrReplace(final DictionaryInfo dictionaryConfig) {
-    for (int i = 0; i < dictionaryConfigs.size(); ++i) {
-      if (dictionaryConfigs.get(i).name.equals(dictionaryConfig.name)) {
-        dictionaryConfigs.set(i, dictionaryConfig);
+    for (int i = 0; i < dictionaryInfos.size(); ++i) {
+      if (dictionaryInfos.get(i).uncompressedFilename.equals(dictionaryConfig.uncompressedFilename)) {
+        dictionaryInfos.set(i, dictionaryConfig);
         return;
       }
     }
-    dictionaryConfigs.add(dictionaryConfig);
+    dictionaryInfos.add(dictionaryConfig);
   }
 
 }

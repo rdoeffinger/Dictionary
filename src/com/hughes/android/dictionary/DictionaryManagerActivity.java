@@ -48,11 +48,11 @@ public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
   
-  QuickDicConfig quickDicConfig = new QuickDicConfig();
+  QuickDicConfig quickDicConfig;
   
   
   public void onCreate(Bundle savedInstanceState) {
-    ((DictionaryApplication)getApplication()).applyTheme(this);
+    //((DictionaryApplication)getApplication()).applyTheme(this);
 
     super.onCreate(savedInstanceState);
     Log.d(LOG, "onCreate:" + this);
@@ -120,58 +120,17 @@ public class DictionaryManagerActivity extends ListActivity {
 
     quickDicConfig = PersistentObjectCache.init(this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
     if (quickDicConfig == null) {
-      quickDicConfig = new QuickDicConfig();
-      PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, quickDicConfig);
+      quickDicConfig = new QuickDicConfig(this);
+    } else {
+      quickDicConfig.addDefaultDictionaries(this);
     }
-    if (quickDicConfig.currentVersion < QuickDicConfig.LATEST_VERSION) {
-      Log.d(LOG, "Dictionary list is old, updating it.");
-      
-      // Replace <-> with -
-      if (quickDicConfig.currentVersion < 5) {
-        for (final DictionaryInfo config : quickDicConfig.dictionaryConfigs) {
-          config.name = config.name.replace("<->", "-");
-        }
-      }
-      quickDicConfig.addDefaultDictionaries();
-      quickDicConfig.currentVersion = QuickDicConfig.LATEST_VERSION;
-      PersistentObjectCache.init(this).write(C.DICTIONARY_CONFIGS, quickDicConfig);
-    }
-    
-    Log.d(LOG, "DictionaryList: " + quickDicConfig.dictionaryConfigs);
+    PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, quickDicConfig);
 
+    Log.d(LOG, "DictionaryList: " + quickDicConfig.dictionaryInfos);
     setListAdapter(new Adapter());
   }
 
   public boolean onCreateOptionsMenu(final Menu menu) {
-    final MenuItem newDictionaryMenuItem = menu.add(R.string.addDictionary);
-    newDictionaryMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-          public boolean onMenuItemClick(final MenuItem menuItem) {
-            final DictionaryInfo dictionaryConfig = new DictionaryInfo();
-            dictionaryConfig.name = getString(R.string.newDictionary);
-            quickDicConfig.dictionaryConfigs.add(0, dictionaryConfig);
-            dictionaryConfigsChanged();
-            return false;
-          }
-        });
-
-    final MenuItem addDefaultDictionariesMenuItem = menu.add(R.string.addDefaultDictionaries);
-    addDefaultDictionariesMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-          public boolean onMenuItemClick(final MenuItem menuItem) {
-            quickDicConfig.addDefaultDictionaries();
-            dictionaryConfigsChanged();
-            return false;
-          }
-        });
-
-    final MenuItem removeAllDictionariesMenuItem = menu.add(R.string.removeAllDictionaries);
-    removeAllDictionariesMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-          public boolean onMenuItemClick(final MenuItem menuItem) {
-            quickDicConfig.dictionaryConfigs.clear();
-            dictionaryConfigsChanged();
-            return false;
-          }
-        });
-
     final MenuItem about = menu.add(getString(R.string.about));
     about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
@@ -217,8 +176,8 @@ public class DictionaryManagerActivity extends ListActivity {
       moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-          final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryConfigs.remove(adapterContextMenuInfo.position);
-          quickDicConfig.dictionaryConfigs.add(0, dictionaryConfig);
+          final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryInfos.remove(adapterContextMenuInfo.position);
+          quickDicConfig.dictionaryInfos.add(0, dictionaryConfig);
           dictionaryConfigsChanged();
           return true;
         }
@@ -229,7 +188,7 @@ public class DictionaryManagerActivity extends ListActivity {
     deleteMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
-        quickDicConfig.dictionaryConfigs.remove(adapterContextMenuInfo.position);
+        quickDicConfig.dictionaryInfos.remove(adapterContextMenuInfo.position);
         dictionaryConfigsChanged();
         return true;
       }
@@ -246,12 +205,12 @@ public class DictionaryManagerActivity extends ListActivity {
 
     @Override
     public int getCount() {
-      return quickDicConfig.dictionaryConfigs.size();
+      return quickDicConfig.dictionaryInfos.size();
     }
 
     @Override
     public DictionaryInfo getItem(int position) {
-      return quickDicConfig.dictionaryConfigs.get(position);
+      return quickDicConfig.dictionaryInfos.get(position);
     }
 
     @Override
