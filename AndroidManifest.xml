@@ -43,7 +43,7 @@
   <meta-data android:name="com.google.android.backup.api_key"
       android:value="AEdPqrEAAAAIUa0cU0ZHbBpYXJqm0vVUP5IAjr5D4iUeX7UwiQ" />
 
-  <activity android:name=".DictionaryListActivity"
+  <activity android:name=".DictionaryManagerActivity"
       android:label="@string/app_name">
 
     <intent-filter>

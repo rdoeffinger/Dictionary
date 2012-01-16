@@ -44,7 +44,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.hughes.android.util.PersistentObjectCache;
 
-public class DictionaryListActivity extends ListActivity {
+public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
   
@@ -104,6 +104,12 @@ public class DictionaryListActivity extends ListActivity {
   protected void onResume() {
     super.onResume();
     
+    if (PreferenceActivity.prefsMightHaveChanged) {
+      PreferenceActivity.prefsMightHaveChanged = false;
+      finish();
+      startActivity(getIntent());
+    }
+    
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if (prefs.contains(C.DICT_INDEX) && prefs.contains(C.INDEX_INDEX)) {
       Log.d(LOG, "Skipping Dictionary List, going straight to dictionary.");
@@ -122,7 +128,7 @@ public class DictionaryListActivity extends ListActivity {
       
       // Replace <-> with -
       if (quickDicConfig.currentVersion < 5) {
-        for (final DictionaryConfig config : quickDicConfig.dictionaryConfigs) {
+        for (final DictionaryInfo config : quickDicConfig.dictionaryConfigs) {
           config.name = config.name.replace("<->", "-");
         }
       }
@@ -140,7 +146,7 @@ public class DictionaryListActivity extends ListActivity {
     final MenuItem newDictionaryMenuItem = menu.add(R.string.addDictionary);
     newDictionaryMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
           public boolean onMenuItemClick(final MenuItem menuItem) {
-            final DictionaryConfig dictionaryConfig = new DictionaryConfig();
+            final DictionaryInfo dictionaryConfig = new DictionaryInfo();
             dictionaryConfig.name = getString(R.string.newDictionary);
             quickDicConfig.dictionaryConfigs.add(0, dictionaryConfig);
             dictionaryConfigsChanged();
@@ -179,7 +185,8 @@ public class DictionaryListActivity extends ListActivity {
     final MenuItem preferences = menu.add(getString(R.string.preferences));
     preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
-        startActivity(new Intent(DictionaryListActivity.this,
+        PreferenceActivity.prefsMightHaveChanged = true;
+        startActivity(new Intent(DictionaryManagerActivity.this,
             PreferenceActivity.class));
         return false;
       }
@@ -210,7 +217,7 @@ public class DictionaryListActivity extends ListActivity {
       moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-          final DictionaryConfig dictionaryConfig = quickDicConfig.dictionaryConfigs.remove(adapterContextMenuInfo.position);
+          final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryConfigs.remove(adapterContextMenuInfo.position);
           quickDicConfig.dictionaryConfigs.add(0, dictionaryConfig);
           dictionaryConfigsChanged();
           return true;
@@ -243,7 +250,7 @@ public class DictionaryListActivity extends ListActivity {
     }
 
     @Override
-    public DictionaryConfig getItem(int position) {
+    public DictionaryInfo getItem(int position) {
       return quickDicConfig.dictionaryConfigs.get(position);
     }
 
@@ -254,7 +261,7 @@ public class DictionaryListActivity extends ListActivity {
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      final DictionaryConfig dictionaryConfig = getItem(position);
+      final DictionaryInfo dictionaryConfig = getItem(position);
       final TableLayout tableLayout = new TableLayout(parent.getContext());
       final TextView view = new TextView(parent.getContext());
       
@@ -275,8 +282,8 @@ public class DictionaryListActivity extends ListActivity {
   public static Intent getIntent(final Context context) {
     DictionaryActivity.clearDictionaryPrefs(context);
     final Intent intent = new Intent();
-    intent.setClassName(DictionaryListActivity.class.getPackage().getName(),
-        DictionaryListActivity.class.getName());
+    intent.setClassName(DictionaryManagerActivity.class.getPackage().getName(),
+        DictionaryManagerActivity.class.getName());
     return intent;
   }
 

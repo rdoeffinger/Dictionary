@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -45,7 +46,7 @@ public class DictionaryEditActivity extends Activity {
   static final String LOG = "QuickDic";
 
   QuickDicConfig quickDicConfig;
-  private DictionaryConfig dictionaryConfig;
+  private DictionaryInfo dictionaryConfig;
   
   final Handler uiHandler = new Handler();
 
@@ -127,6 +128,9 @@ public class DictionaryEditActivity extends Activity {
         startActivity(intent);
       }
     });
+    
+    // Don't show the keyboard when this opens up:
+    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
   }
   
@@ -170,7 +174,7 @@ public class DictionaryEditActivity extends Activity {
     final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryList));
     dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
-        startActivity(DictionaryListActivity.getIntent(DictionaryEditActivity.this));
+        startActivity(DictionaryManagerActivity.getIntent(DictionaryEditActivity.this));
         return false;
       }
     });
@@ -225,20 +229,11 @@ public class DictionaryEditActivity extends Activity {
   }
 
   static void startDownloadDictActivity(final Context context,
-      final DictionaryConfig dictionaryConfig) {
+      final DictionaryInfo dictionaryConfig) {
     final Intent intent = new Intent(context, DownloadActivity.class);
     intent.putExtra(DownloadActivity.SOURCE, dictionaryConfig.downloadUrl);
     intent.putExtra(DownloadActivity.DEST, dictionaryConfig.localFile + ".zip");
     context.startActivity(intent);
   }
   
-  @Override
-  public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK) {
-      Log.d(LOG, "Clearing dictionary prefs.");
-      DictionaryActivity.clearDictionaryPrefs(this);
-    }
-    return super.onKeyDown(keyCode, event);
-  }
-
 }

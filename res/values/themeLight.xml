@@ -9,7 +9,13 @@
   <item name="android:colorBackground">#FFFFFF</item>
 
   <item name="android:textColorPrimary">#000000</item>
+  
  -->
  
  </style>
+
+ <style name="Theme.Light.Token" parent="@style/Theme.Light">
+  <item name="android:textColor">@android:color/primary_text_dark</item>
+</style>
+ 
 </resources>

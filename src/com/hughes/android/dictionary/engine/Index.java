@@ -100,7 +100,7 @@ public final class Index implements RAFSerializable<Index> {
   public void write(final RandomAccessFile raf) throws IOException {
     raf.writeUTF(shortName);
     raf.writeUTF(longName);
-    raf.writeUTF(sortLanguage.getSymbol());
+    raf.writeUTF(sortLanguage.getIsoCode());
     raf.writeUTF(normalizerRules);
     raf.writeBoolean(swapPairEntries);
     RAFList.write(raf, sortedIndexEntries, IndexEntry.SERIALIZER);
@@ -205,52 +205,7 @@ public final class Index implements RAFSerializable<Index> {
     result = windBackCase(sortedIndexEntries.get(result).normalizedToken(), result, interrupted);
     return sortedIndexEntries.get(result);
   }
-  
-  public static final class SearchResult {
-    public final IndexEntry insertionPoint;
-    public final IndexEntry longestPrefix;
-    public final String longestPrefixString;
-    public final boolean success;
     
-    public SearchResult(IndexEntry insertionPoint, IndexEntry longestPrefix,
-        String longestPrefixString, boolean success) {
-      this.insertionPoint = insertionPoint;
-      this.longestPrefix = longestPrefix;
-      this.longestPrefixString = longestPrefixString;
-      this.success = success;
-    }
-    
-    @Override
-    public String toString() {
-      return String.format("inerstionPoint=%s,longestPrefix=%s,longestPrefixString=%s,success=%b", insertionPoint.toString(), longestPrefix.toString(), longestPrefixString, success);
-    }
-  }
-  
-//  public SearchResult findLongestSubstring(String token, final AtomicBoolean interrupted) {
-//    token = normalizer.transliterate(token);
-//    if (token.length() == 0) {
-//      return new SearchResult(sortedIndexEntries.get(0), sortedIndexEntries.get(0), "", true);
-//    }
-//    IndexEntry insertionPoint = null;
-//    IndexEntry result = null;
-//    boolean unmodified = true;
-//    while (!interrupted.get() && token.length() > 0) {
-//      result = findInsertionPoint(token, interrupted);
-//      if (result == null) {
-//        return null;
-//      }
-//      if (unmodified) {
-//        insertionPoint = result;
-//      }
-//      if (result.normalizedToken(normalizer).startsWith(token)) {
-//        return new SearchResult(insertionPoint, result, token, unmodified);
-//      }
-//      unmodified = false;
-//      token = token.substring(0, token.length() - 1);      
-//    }
-//    return new SearchResult(insertionPoint, sortedIndexEntries.get(0), "", false);
-//  }
-  
   private final int windBackCase(final String token, int result, final AtomicBoolean interrupted) {
     while (result > 0 && sortedIndexEntries.get(result - 1).normalizedToken().equals(token)) {
       --result;
@@ -260,20 +215,5 @@ public final class Index implements RAFSerializable<Index> {
     }
     return result;
   }
-
-  /*
-  public int tokenRowBinarySearch(final int rowIndex) {
-    int start = 0;
-    int end = sortedIndexEntries.size();
-    while (start < end) {
-      final int mid = (start + end) / 2;
-      final int midRowIndex = sortedIndexEntries.get(mid).startRow;
-      if (midRowIndex == rowIndex) {
-        return mid;
-      }
-      if ()
-    }
-  }
-  */
 
 }

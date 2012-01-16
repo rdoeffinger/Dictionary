@@ -20,12 +20,16 @@ import java.io.RandomAccessFile;
 
 public class TokenRow extends RowBase {
   
-  TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Index index) throws IOException {
+  final boolean hasMainEntry;
+  
+  TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Index index, final boolean hasMainEntry) throws IOException {
     super(raf, thisRowIndex, index);
+    this.hasMainEntry = hasMainEntry;
   }
 
-  TokenRow(final int referenceIndex, final int thisRowIndex, final Index index) {
+  TokenRow(final int referenceIndex, final int thisRowIndex, final Index index, final boolean hasMainEntry) {
     super(referenceIndex, thisRowIndex, index);
+    this.hasMainEntry = hasMainEntry;
   }
   
   public String toString() {

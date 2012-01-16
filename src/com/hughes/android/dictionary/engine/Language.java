@@ -17,89 +17,92 @@ package com.hughes.android.dictionary.engine;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import com.hughes.android.dictionary.R;
 import com.ibm.icu.text.Collator;
 
 public class Language {
 
-  public static final Map<String,String> isoCodeToWikiName = new LinkedHashMap<String,String>();
+  public static final Map<String,Integer> isoCodeToResourceId = new LinkedHashMap<String,Integer>();
   static {
-    isoCodeToWikiName.put("AF", "Afrikaans");
-    isoCodeToWikiName.put("SQ", "Albanian");
-    isoCodeToWikiName.put("AR", "Arabic");
-    isoCodeToWikiName.put("HY", "Armenian");
-    isoCodeToWikiName.put("BE", "Belarusian");
-    isoCodeToWikiName.put("BN", "Bengali");
-    isoCodeToWikiName.put("BS", "Bosnian");
-    isoCodeToWikiName.put("BG", "Bulgarian");
-    isoCodeToWikiName.put("CA", "Catalan");
-    isoCodeToWikiName.put("HR", "Croatian");
-    isoCodeToWikiName.put("CS", "Czech");
-    isoCodeToWikiName.put("ZH", "Chinese|Mandarin|Cantonese");
-    isoCodeToWikiName.put("DA", "Danish");
-    isoCodeToWikiName.put("NL", "Dutch");
-    isoCodeToWikiName.put("EN", "English");
-    isoCodeToWikiName.put("EO", "Esperanto");
-    isoCodeToWikiName.put("ET", "Estonian");
-    isoCodeToWikiName.put("FI", "Finnish");
-    isoCodeToWikiName.put("FR", "French");
-    isoCodeToWikiName.put("DE", "German");
-    isoCodeToWikiName.put("EL", "Greek");
-    isoCodeToWikiName.put("haw", "Hawaiian");
-    isoCodeToWikiName.put("HE", "Hebrew");
-    isoCodeToWikiName.put("HI", "Hindi");
-    isoCodeToWikiName.put("HU", "Hungarian");
-    isoCodeToWikiName.put("IS", "Icelandic");
-    isoCodeToWikiName.put("ID", "Indonesian");
-    isoCodeToWikiName.put("GA", "Irish");
-    isoCodeToWikiName.put("IT", "Italian");
-    isoCodeToWikiName.put("LA", "Latin");
-    isoCodeToWikiName.put("LV", "Latvian");
-    isoCodeToWikiName.put("LT", "Lithuanian");
-    isoCodeToWikiName.put("JA", "Japanese");
-    isoCodeToWikiName.put("KO", "Korean");
-    isoCodeToWikiName.put("KU", "Kurdish");
-    isoCodeToWikiName.put("MS", "Malay");
-    isoCodeToWikiName.put("MI", "Maori");
-    isoCodeToWikiName.put("MN", "Mongolian");
-    isoCodeToWikiName.put("NE", "Nepali");
-    isoCodeToWikiName.put("NO", "Norwegian");
-    isoCodeToWikiName.put("FA", "Persian");
-    isoCodeToWikiName.put("PL", "Polish");
-    isoCodeToWikiName.put("PT", "Portuguese");
-    isoCodeToWikiName.put("PA", "Punjabi");
-    isoCodeToWikiName.put("RO", "Romanian");
-    isoCodeToWikiName.put("RU", "Russian");
-    isoCodeToWikiName.put("SA", "Sanskrit");
-    isoCodeToWikiName.put("SR", "Serbian");
-    isoCodeToWikiName.put("SK", "Slovak");
-    isoCodeToWikiName.put("SO", "Somali");
-    isoCodeToWikiName.put("ES", "Spanish");
-    isoCodeToWikiName.put("SW", "Swahili");
-    isoCodeToWikiName.put("SV", "Swedish");
-    isoCodeToWikiName.put("TG", "Tajik");
-    isoCodeToWikiName.put("TH", "Thai");
-    isoCodeToWikiName.put("BO", "Tibetan");
-    isoCodeToWikiName.put("TR", "Turkish");
-    isoCodeToWikiName.put("UK", "Ukrainian");
-    isoCodeToWikiName.put("VI", "Vietnamese");
-    isoCodeToWikiName.put("CI", "Welsh");
-    isoCodeToWikiName.put("YI", "Yiddish");
-    isoCodeToWikiName.put("ZU", "Zulu");
+    isoCodeToResourceId.put("AF", R.string.AF);
+    isoCodeToResourceId.put("SQ", R.string.SQ);
+    isoCodeToResourceId.put("AR", R.string.AR);
+    isoCodeToResourceId.put("HY", R.string.HY);
+    isoCodeToResourceId.put("BE", R.string.BE);
+    isoCodeToResourceId.put("BN", R.string.BN);
+    isoCodeToResourceId.put("BS", R.string.BS);
+    isoCodeToResourceId.put("BG", R.string.BG);
+    isoCodeToResourceId.put("CA", R.string.CA);
+    isoCodeToResourceId.put("HR", R.string.HR);
+    isoCodeToResourceId.put("CS", R.string.CS);
+    isoCodeToResourceId.put("ZH", R.string.ZH);
+    isoCodeToResourceId.put("DA", R.string.DA);
+    isoCodeToResourceId.put("NL", R.string.NL);
+    isoCodeToResourceId.put("EN", R.string.EN);
+    isoCodeToResourceId.put("EO", R.string.EO);
+    isoCodeToResourceId.put("ET", R.string.ET);
+    isoCodeToResourceId.put("FI", R.string.FI);
+    isoCodeToResourceId.put("FR", R.string.FR);
+    isoCodeToResourceId.put("DE", R.string.DE);
+    isoCodeToResourceId.put("EL", R.string.EL);
+    isoCodeToResourceId.put("haw", R.string.haw);
+    isoCodeToResourceId.put("HE", R.string.HE);
+    isoCodeToResourceId.put("HI", R.string.HI);
+    isoCodeToResourceId.put("HU", R.string.HU);
+    isoCodeToResourceId.put("IS", R.string.IS);
+    isoCodeToResourceId.put("ID", R.string.ID);
+    isoCodeToResourceId.put("GA", R.string.GA);
+    isoCodeToResourceId.put("IT", R.string.IT);
+    isoCodeToResourceId.put("LA", R.string.LA);
+    isoCodeToResourceId.put("LV", R.string.LV);
+    isoCodeToResourceId.put("LT", R.string.LT);
+    isoCodeToResourceId.put("JA", R.string.JA);
+    isoCodeToResourceId.put("KO", R.string.KO);
+    isoCodeToResourceId.put("KU", R.string.KU);
+    isoCodeToResourceId.put("MS", R.string.MS);
+    isoCodeToResourceId.put("MI", R.string.MI);
+    isoCodeToResourceId.put("MN", R.string.MN);
+    isoCodeToResourceId.put("NE", R.string.NE);
+    isoCodeToResourceId.put("NO", R.string.NO);
+    isoCodeToResourceId.put("FA", R.string.FA);
+    isoCodeToResourceId.put("PL", R.string.PL);
+    isoCodeToResourceId.put("PT", R.string.PT);
+    isoCodeToResourceId.put("PA", R.string.PA);
+    isoCodeToResourceId.put("RO", R.string.RO);
+    isoCodeToResourceId.put("RU", R.string.RU);
+    isoCodeToResourceId.put("SA", R.string.SA);
+    isoCodeToResourceId.put("SR", R.string.SR);
+    isoCodeToResourceId.put("SK", R.string.SK);
+    isoCodeToResourceId.put("SO", R.string.SO);
+    isoCodeToResourceId.put("ES", R.string.ES);
+    isoCodeToResourceId.put("SW", R.string.SW);
+    isoCodeToResourceId.put("SV", R.string.SV);
+    isoCodeToResourceId.put("TG", R.string.TG);
+    isoCodeToResourceId.put("TH", R.string.TH);
+    isoCodeToResourceId.put("BO", R.string.BO);
+    isoCodeToResourceId.put("TR", R.string.TR);
+    isoCodeToResourceId.put("UK", R.string.UK);
+    isoCodeToResourceId.put("VI", R.string.VI);
+    isoCodeToResourceId.put("CI", R.string.CI);
+    isoCodeToResourceId.put("YI", R.string.YI);
+    isoCodeToResourceId.put("ZU", R.string.ZU);
   }
 
-  static final Map<String, Language> symbolToLangauge = new LinkedHashMap<String, Language>();
 
-  final String symbol;
+  private static final Map<String, Language> registry = new LinkedHashMap<String, Language>();
+
+  final String isoCode;
   final Locale locale;
   
   private Collator collator;
 
-  public Language(final Locale locale) {
-    this.symbol = locale.getLanguage();
+  private Language(final Locale locale, final String isoCode) {
     this.locale = locale;
+    this.isoCode = isoCode;
 
-    symbolToLangauge.put(symbol.toLowerCase(), this);
+    registry.put(isoCode.toLowerCase(), this);
   }
 
   @Override
@@ -107,8 +110,8 @@ public class Language {
     return locale.toString();
   }
   
-  public String getSymbol() {
-    return symbol;
+  public String getIsoCode() {
+    return isoCode;
   }
   
   public synchronized Collator getCollator() {
@@ -122,13 +125,27 @@ public class Language {
   public String getDefaultNormalizerRules() {
     return ":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;";
   }
+  
+  /**
+   * A practical pattern to identify strong RTL characters. This pattern is not
+   * completely correct according to the Unicode standard. It is simplified for
+   * performance and small code size.
+   */
+  private static final String rtlChars =
+      "\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC";
+  private static final Pattern RTL_TOKEN = Pattern.compile("[" + rtlChars + "]+");
+  
+  public static String fixBidiText(final String text) {
+    return RTL_TOKEN.matcher(text).replaceAll("\u200e $0 \u200e");
+  }
+  
   // ----------------------------------------------------------------
 
-  public static final Language en = new Language(Locale.ENGLISH);
-  public static final Language fr = new Language(Locale.FRENCH);
-  public static final Language it = new Language(Locale.ITALIAN);
+  public static final Language en = new Language(Locale.ENGLISH, "EN");
+  public static final Language fr = new Language(Locale.FRENCH, "FR");
+  public static final Language it = new Language(Locale.ITALIAN, "IT");
 
-  public static final Language de = new Language(Locale.GERMAN) {
+  public static final Language de = new Language(Locale.GERMAN, "DE") {
     @Override
     public String getDefaultNormalizerRules() {
       return ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; ";
@@ -137,10 +154,10 @@ public class Language {
   
   // ----------------------------------------------------------------
 
-  public static synchronized Language lookup(final String symbol) {
-    Language lang = symbolToLangauge.get(symbol.toLowerCase());
+  public static synchronized Language lookup(final String isoCode) {
+    Language lang = registry.get(isoCode.toLowerCase());
     if (lang == null) {
-      lang = new Language(new Locale(symbol));
+      lang = new Language(new Locale(isoCode), isoCode);
     }
     return lang;
   }

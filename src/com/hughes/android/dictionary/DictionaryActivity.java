@@ -66,6 +66,7 @@ import android.widget.Toast;
 
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Index;
+import com.hughes.android.dictionary.engine.Language;
 import com.hughes.android.dictionary.engine.PairEntry;
 import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
@@ -116,10 +117,18 @@ public class DictionaryActivity extends ListActivity {
   
   public static Intent getIntent(final Context context, final int dictIndex, final int indexIndex, final String searchToken) {
     setDictionaryPrefs(context, dictIndex, indexIndex, searchToken);
-    
     final Intent intent = new Intent();
     intent.setClassName(DictionaryActivity.class.getPackage().getName(), DictionaryActivity.class.getName());
     return intent;
+  }
+  
+  // TODO: Can we trigger an App restart when the preferences activity gets opened?
+  // TODO: fix these...
+
+  @Override
+  protected void onSaveInstanceState(final Bundle outState) {
+    super.onSaveInstanceState(outState);
+    setDictionaryPrefs(this, dictIndex, indexIndex, searchText.getText().toString());
   }
 
   public static void setDictionaryPrefs(final Context context,
@@ -130,9 +139,10 @@ public class DictionaryActivity extends ListActivity {
     prefs.putString(C.SEARCH_TOKEN, searchToken);
     prefs.commit();
   }
-
+  
   public static void clearDictionaryPrefs(final Context context) {
-    final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(context).edit();
+    final SharedPreferences.Editor prefs = PreferenceManager
+        .getDefaultSharedPreferences(context).edit();
     prefs.remove(C.DICT_INDEX);
     prefs.remove(C.INDEX_INDEX);
     prefs.remove(C.SEARCH_TOKEN);
@@ -153,7 +163,7 @@ public class DictionaryActivity extends ListActivity {
       QuickDicConfig quickDicConfig = PersistentObjectCache.init(
           this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
       dictIndex = prefs.getInt(C.DICT_INDEX, 0) ;
-      final DictionaryConfig dictionaryConfig = quickDicConfig.dictionaryConfigs.get(dictIndex);
+      final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryConfigs.get(dictIndex);
       this.setTitle("QuickDic: " + dictionaryConfig.name);
       dictRaf = new RandomAccessFile(dictionaryConfig.localFile, "r");
       dictionary = new Dictionary(dictRaf); 
@@ -168,7 +178,7 @@ public class DictionaryActivity extends ListActivity {
         dictRaf = null;
       }
       Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()), Toast.LENGTH_LONG);
-      startActivity(DictionaryEditActivity.getIntent(dictIndex));
+      startActivity(DictionaryManagerActivity.getIntent(this));
       finish();
       return;
     }
@@ -196,7 +206,7 @@ public class DictionaryActivity extends ListActivity {
         });
         
         for (final Index index : dictionary.indices) {
-          Log.d(LOG, "Starting collator load for lang=" + index.sortLanguage.getSymbol());
+          Log.d(LOG, "Starting collator load for lang=" + index.sortLanguage.getIsoCode());
           
           final com.ibm.icu.text.Collator c = index.sortLanguage.getCollator();          
           if (c.compare("pre-print", "preppy") >= 0) {
@@ -295,6 +305,11 @@ public class DictionaryActivity extends ListActivity {
   @Override
   protected void onResume() {
     super.onResume();
+    if (PreferenceActivity.prefsMightHaveChanged) {
+      PreferenceActivity.prefsMightHaveChanged = false;
+      finish();
+      startActivity(getIntent());
+    }
   }
   
   @Override
@@ -402,6 +417,7 @@ public class DictionaryActivity extends ListActivity {
       final MenuItem preferences = menu.add(getString(R.string.preferences));
       preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         public boolean onMenuItemClick(final MenuItem menuItem) {
+          PreferenceActivity.prefsMightHaveChanged = true;
           startActivity(new Intent(DictionaryActivity.this,
               PreferenceActivity.class));
           return false;
@@ -413,7 +429,7 @@ public class DictionaryActivity extends ListActivity {
       final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryList));
       dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         public boolean onMenuItemClick(final MenuItem menuItem) {
-          startActivity(DictionaryListActivity.getIntent(DictionaryActivity.this));
+          startActivity(DictionaryManagerActivity.getIntent(DictionaryActivity.this));
           finish();
           return false;
         }
@@ -545,14 +561,12 @@ public class DictionaryActivity extends ListActivity {
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_BACK) {
-      Log.d(LOG, "Clearing dictionary prefs.");
-      DictionaryActivity.clearDictionaryPrefs(this);
     }
     if (keyCode == KeyEvent.KEYCODE_ENTER) {
-//      Log.d(LOG, "Trying to hide soft keyboard.");
-//      final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//      manager.hideSoftInputFromWindow(searchText, InputMethodManager.SHOW_FORCED);
-
+      Log.d(LOG, "Trying to hide soft keyboard.");
+      final InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+      return true;
     }
     return super.onKeyDown(keyCode, event);
   }
@@ -720,7 +734,7 @@ public class DictionaryActivity extends ListActivity {
 
         // TODO: color words by gender
         final Pair pair = entry.pairs.get(r);
-        final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
+        final String col1Text = Language.fixBidiText(index.swapPairEntries ? pair.lang2 : pair.lang1);
         column1.setText(col1Text, TextView.BufferType.SPANNABLE);
         final Spannable col1Spannable = (Spannable) column1.getText();
         
@@ -732,7 +746,8 @@ public class DictionaryActivity extends ListActivity {
           startPos += token.length();
         }
 
-        final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
+        String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
+        col2Text = Language.fixBidiText(col2Text);
         column2.setText(col2Text, TextView.BufferType.NORMAL);
         
         column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
@@ -745,8 +760,13 @@ public class DictionaryActivity extends ListActivity {
     }
 
     private View getView(TokenRow row, ViewGroup parent) {
-      final TextView textView = new TextView(parent.getContext());
+      final Context context = parent.getContext();
+      final TextView textView = new TextView(context);
       textView.setText(row.getToken());
+      textView.setBackgroundResource(R.drawable.token_row_drawable);
+      // Doesn't work:
+      //textView.setTextColor(android.R.color.secondary_text_light);
+      textView.setTextAppearance(context, R.style.Theme_Light_Token);
       textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 5 * fontSizeSp / 4);
       return textView;
     }

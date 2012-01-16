@@ -17,6 +17,9 @@ package com.hughes.android.dictionary;
 import android.os.Bundle;
 
 public class PreferenceActivity extends android.preference.PreferenceActivity {
+  
+  static boolean prefsMightHaveChanged = false;
+  
   @Override
   public void onCreate(Bundle savedInstanceState) {
     ((DictionaryApplication)getApplication()).applyTheme(this);

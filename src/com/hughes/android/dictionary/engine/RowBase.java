@@ -113,8 +113,8 @@ public abstract class RowBase extends IndexedObject {
       final byte rowType = raf.readByte();
       if (rowType == 0) {
         return new PairEntry.Row(raf, listIndex, index);
-      } else if (rowType == 1) {
-        return new TokenRow(raf, listIndex, index);
+      } else if (rowType == 1 || rowType == 3) {
+        return new TokenRow(raf, listIndex, index, rowType == 1);
       } else if (rowType == 2) {
         return new TextEntry.Row(raf, listIndex, index);
       }
@@ -126,7 +126,8 @@ public abstract class RowBase extends IndexedObject {
       if (t instanceof PairEntry.Row) {
         raf.writeByte(0);
       } else if (t instanceof TokenRow) {
-        raf.writeByte(1);
+        final TokenRow tokenRow = (TokenRow) t;
+        raf.writeByte(tokenRow.hasMainEntry ? 1 : 3);
       } else if (t instanceof TextEntry.Row) {
         raf.writeByte(2);
       }

@@ -18,6 +18,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Environment;
+
 import com.hughes.android.dictionary.engine.Language;
 
 public final class QuickDicConfig implements Serializable {
@@ -27,7 +29,7 @@ public final class QuickDicConfig implements Serializable {
   // Just increment this to have them all update...
   static final int LATEST_VERSION = 6;
   
-  final List<DictionaryConfig> dictionaryConfigs = new ArrayList<DictionaryConfig>();
+  final List<DictionaryInfo> dictionaryConfigs = new ArrayList<DictionaryInfo>();
   int currentVersion = LATEST_VERSION;
   
   public QuickDicConfig() {
@@ -35,30 +37,31 @@ public final class QuickDicConfig implements Serializable {
   }
   
   static final String BASE_URL = "http://quickdic-dictionary.googlecode.com/files/";
-  static final String VERSION_SUFFIX = "v002";
 
+  // TODO: read this from a resource file....
+  
   public void addDefaultDictionaries() {
     {
-      final DictionaryConfig config = new DictionaryConfig();
+      final DictionaryInfo config = new DictionaryInfo();
       config.name = "German-English";
       config.downloadUrl = String.format("%sDE-EN_chemnitz_enwiktionary.quickdic.%s.zip", BASE_URL, VERSION_SUFFIX);
-      config.localFile = "/sdcard/quickDic/DE-EN_chemnitz_enwiktionary.quickdic";
+      config.localFile = String.format("%s/quickDic/DE-EN_chemnitz_enwiktionary.quickdic", Environment.getExternalStorageDirectory());
       addOrReplace(config);
     }
     
-    for (final String iso : Language.isoCodeToWikiName.keySet()) {
+    for (final String iso : Language.isoCodeToResourceName.keySet()) {
       if (iso.equals("EN") || iso.equals("DE")) {
         continue;
       }
-      final DictionaryConfig config = new DictionaryConfig();
+      final DictionaryInfo config = new DictionaryInfo();
       config.name = String.format("English-%s", Language.isoCodeToWikiName.get(iso));
       config.downloadUrl = String.format("%sEN-%s_enwiktionary.quickdic.%s.zip", BASE_URL, iso, VERSION_SUFFIX);
-      config.localFile = String.format("/sdcard/quickDic/EN-%s_enwiktionary.quickdic", iso);
+      config.localFile = String.format("%s/quickDic/EN-%s_enwiktionary.quickdic", Environment.getExternalStorageDirectory(), iso);
       addOrReplace(config);
     }
   }
 
-  private void addOrReplace(final DictionaryConfig dictionaryConfig) {
+  private void addOrReplace(final DictionaryInfo dictionaryConfig) {
     for (int i = 0; i < dictionaryConfigs.size(); ++i) {
       if (dictionaryConfigs.get(i).name.equals(dictionaryConfig.name)) {
         dictionaryConfigs.set(i, dictionaryConfig);
