@@ -15,43 +15,77 @@
 package com.hughes.android.dictionary;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DictionaryInfo implements Serializable {
   
   private static final long serialVersionUID = -6850863377577700388L;
   
+  public static final class IndexInfo {
+    public IndexInfo(String langIso, int allTokenCount, int mainTokenCount) {
+      this.langIso = langIso;
+      this.allTokenCount = allTokenCount;
+      this.mainTokenCount = mainTokenCount;
+    }
+    public final String langIso;
+    public final int allTokenCount;
+    public final int mainTokenCount;
+    
+    public static final int SIZE = 3;
+    
+    public StringBuilder append(StringBuilder result) {
+      result.append("\t").append(langIso);
+      result.append("\t").append(allTokenCount);
+      result.append("\t").append(mainTokenCount);
+      return result;
+    }
+
+    public IndexInfo(final String[] fields, int i) {
+      langIso = fields[i++];
+      allTokenCount = Integer.parseInt(fields[i++]);
+      mainTokenCount = Integer.parseInt(fields[i++]);
+    }
+
+  }
+  
   // Stuff populated from the text file.
-  public final String[] langIsos = new String[2];
   public String uncompressedFilename;
   public String downloadUrl;
   public long uncompressedSize;
   public long creationMillis;
-  public final int[] allTokenCounts = new int[2];
-  public final int[] mainTokenCounts = new int[2];
+  public String dictInfo;
+  public final List<IndexInfo> indexInfos = new ArrayList<DictionaryInfo.IndexInfo>();
 
-  String name;  // Determined at runtime based on locale on device--user editable.
+  String name;  // Determined at runtime based on locale on device--user editable?
   String localFile;  // Determined based on device's Environment.
   
-  public String toTabSeparatedString() {
-    return String.format("%s\t%s\t%s\t%s\t%d\t%d\t%d\t%d\t%d\t%d", langIsos[0],
-        langIsos[1], uncompressedFilename, downloadUrl, creationMillis, uncompressedSize,
-        mainTokenCounts[0], mainTokenCounts[1], allTokenCounts[0],
-        allTokenCounts[1]);
+  public StringBuilder append(final StringBuilder result) {
+    result.append(uncompressedFilename).append("\t");
+    result.append(downloadUrl).append("\t");
+    result.append(creationMillis).append("\t");
+    result.append(uncompressedSize).append("\t");
+    result.append(dictInfo).append("\t");
+    result.append(indexInfos.size()).append("\t");
+    for (final IndexInfo indexInfo : indexInfos) {
+      indexInfo.append(result);
+    }
+    return result;
   }
 
   public DictionaryInfo(final String line) {
     final String[] fields = line.split("\t");
     int i = 0;
-    langIsos[0] = fields[i++];
-    langIsos[1] = fields[i++];
     uncompressedFilename = fields[i++];
     downloadUrl = fields[i++];
     creationMillis = Long.parseLong(fields[i++]);
     uncompressedSize = Long.parseLong(fields[i++]);
-    mainTokenCounts[0] = Integer.parseInt(fields[i++]);
-    mainTokenCounts[1] = Integer.parseInt(fields[i++]);
-    allTokenCounts[0] = Integer.parseInt(fields[i++]);
-    allTokenCounts[1] = Integer.parseInt(fields[i++]);
+    dictInfo = fields[i++];
+    final int size = Integer.parseInt(fields[i++]);
+    for (int j = 0; j < size; ++j) {
+      indexInfos.add(new IndexInfo(fields, i));
+      i += IndexInfo.SIZE;
+    }
   }
 
   public DictionaryInfo() {

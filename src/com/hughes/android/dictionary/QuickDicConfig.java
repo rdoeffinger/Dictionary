@@ -61,9 +61,9 @@ public final class QuickDicConfig implements Serializable {
         }
         final DictionaryInfo dictionaryInfo = new DictionaryInfo(line);
         String name = "";
-        for (int i = 0; i < dictionaryInfo.langIsos.length; ++i) {
-          final Integer langCode = Language.isoCodeToResourceId.get(dictionaryInfo.langIsos[i]);
-          final String lang = langCode != null ? context.getString(langCode) : dictionaryInfo.langIsos[i];
+        for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
+          final Integer langCode = Language.isoCodeToResourceId.get(dictionaryInfo.indexInfos.get(i).langIso);
+          final String lang = langCode != null ? context.getString(langCode) : dictionaryInfo.indexInfos.get(i).langIso;
           if (i > 0) {
             name += "-";
           }

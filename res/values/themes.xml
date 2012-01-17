@@ -7,7 +7,7 @@
       <item name="android:textColorLink">#FFFFFF</item>
   </style>
 
-  <style name="Theme.Default.TokenRow.Fg" parent="@style/Theme.Light">
+  <style name="Theme.Default.TokenRow.Fg" parent="@style/Theme.Default">
     <item name="android:textColor">#FFFFFF</item>
   </style>
   

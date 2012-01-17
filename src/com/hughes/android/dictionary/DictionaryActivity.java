@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -28,6 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -62,6 +66,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -82,7 +87,7 @@ public class DictionaryActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
   
-  int dictIndex = 0;
+  String dictFile = null;
   RandomAccessFile dictRaf = null;
   Dictionary dictionary = null;
   int indexIndex = 0;
@@ -258,6 +263,13 @@ public class DictionaryActivity extends ListActivity {
         onLanguageButton();
       }
     });
+    langButton.setOnLongClickListener(new OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        onLanguageButtonLongClick();
+        return true;
+      }
+    });
     updateLangButton();
     
     final Button upButton = (Button) findViewById(R.id.UpButton);
@@ -368,7 +380,7 @@ public class DictionaryActivity extends ListActivity {
   }
   
   void updateLangButton() {
-    langButton.setText(index.shortName.toUpperCase());
+    langButton.setText(index.shortName);
   }
 
   void onLanguageButton() {
@@ -380,6 +392,72 @@ public class DictionaryActivity extends ListActivity {
     changeIndex((indexIndex + 1)% dictionary.indices.size());
     onSearchTextChange(searchText.getText().toString());
   }
+  
+  static class OpenIndexButton extends Button implements OnClickListener {
+
+    final Activity activity;
+    final int dictionaryIndex;
+    final int indexIndex;
+
+    public OpenIndexButton(final Context context, final Activity activity, final String text, final int dictionaryIndex, final int indexIndex) {
+      super(context);
+      this.activity = activity;
+      this.dictionaryIndex = dictionaryIndex;
+      this.indexIndex = indexIndex;
+      setOnClickListener(this);
+      setText(text, BufferType.NORMAL);
+    }
+
+    @Override
+    public void onClick(View v) {
+      activity.finish();
+      getContext().startActivity(DictionaryActivity.getIntent(getContext(), dictionaryIndex, indexIndex, ""));
+    }
+    
+  }
+
+  void onLanguageButtonLongClick() {
+    Context mContext = getApplicationContext();
+    Dialog dialog = new Dialog(mContext);
+    
+    dialog.setContentView(R.layout.select_dictionary_dialog);
+    dialog.setTitle(R.string.selectADictionary);
+
+    ListView listView = (ListView) dialog.findViewById(android.R.id.list);
+
+    QuickDicConfig quickDicConfig = PersistentObjectCache.init(
+        this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
+    final List<DictionaryInfo> dictionaryInfos = new ArrayList<DictionaryInfo>();
+    for (final DictionaryInfo dictionaryInfo : quickDicConfig.dictionaryInfos) {
+      if (new File(dictionaryInfo.localFile).canRead()) {
+        dictionaryInfos.add(dictionaryInfo);
+      }
+    }
+    listView.setAdapter(new BaseAdapter() {
+      
+      @Override
+      public View getView(int position, View convertView, ViewGroup parent) {
+        final LinearLayout result = new LinearLayout(parent.getContext());
+        result.addView(new Butt)
+      }
+      
+      @Override
+      public long getItemId(int position) {
+        return position;
+      }
+      
+      @Override
+      public Object getItem(int position) {
+        return dictionaryInfos.get(position);
+      }
+      
+      @Override
+      public int getCount() {
+        return dictionaryInfos.size();
+      }
+    });
+  }
+
 
   private void changeIndex(final int newIndex) {
     indexIndex = newIndex;

@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.hughes.android.dictionary.DictionaryInfo;
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.util.CachingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFSerializable;
@@ -39,7 +41,7 @@ public final class Index implements RAFSerializable<Index> {
   
   final Dictionary dict;
   
-  public final String shortName;
+  public final String shortName;  // Typically the ISO code for the language.
   public final String longName;
   
   // persisted: tells how the entries are sorted.
@@ -56,8 +58,10 @@ public final class Index implements RAFSerializable<Index> {
   // Various sub-types.
   // persisted
   public final List<RowBase> rows;
-  
   public final boolean swapPairEntries;
+  
+  // Version 2:
+  int mainTokenCount = -1;
   
   // --------------------------------------------------------------------------
   
@@ -92,6 +96,9 @@ public final class Index implements RAFSerializable<Index> {
     if (sortLanguage == null) {
       throw new IOException("Unsupported language: " + languageCode);
     }
+    if (dict.dictFileVersion >= 2) {
+      mainTokenCount = raf.readInt();
+    }
     sortedIndexEntries = CachingList.create(RAFList.create(raf, IndexEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
     rows = CachingList.create(UniformRAFList.create(raf, new RowBase.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
   }
@@ -103,6 +110,9 @@ public final class Index implements RAFSerializable<Index> {
     raf.writeUTF(sortLanguage.getIsoCode());
     raf.writeUTF(normalizerRules);
     raf.writeBoolean(swapPairEntries);
+    if (dict.dictFileVersion >= 2) {
+      raf.writeInt(mainTokenCount);
+    }
     RAFList.write(raf, sortedIndexEntries, IndexEntry.SERIALIZER);
     UniformRAFList.write(raf, (Collection<RowBase>) rows, new RowBase.Serializer(this), 5);
   }
@@ -168,8 +178,8 @@ public final class Index implements RAFSerializable<Index> {
   }
   
   public IndexEntry findInsertionPoint(String token, final AtomicBoolean interrupted) {
-    final Transliterator normalizer = normalizer();
     if (TransliteratorManager.init(null)) {
+      final Transliterator normalizer = normalizer();
       token = normalizer.transliterate(token);
     } else {
       // Do our best since the Transliterators aren't up yet.
@@ -214,6 +224,10 @@ public final class Index implements RAFSerializable<Index> {
       }
     }
     return result;
+  }
+
+  public IndexInfo getIndexInfo() {
+    return new DictionaryInfo.IndexInfo(shortName, sortedIndexEntries.size(), mainTokenCount);
   }
 
 }

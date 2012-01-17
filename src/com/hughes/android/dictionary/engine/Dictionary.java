@@ -20,6 +20,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.util.CachingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFListSerializer;
@@ -30,6 +31,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   static final int CACHE_SIZE = 5000;
   
+  static final int CURRENT_DICT_VERSION = 2;
   static final String END_OF_DICTIONARY = "END OF DICTIONARY";
   
   // persisted
@@ -43,12 +45,14 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   /**
    * dictFileVersion 1 adds:
-   * <li> counts of tokens in indices.
    * <li> links to sources?
+   * 
+   * dictFileVersion 2 adds:
+   * <li> counts of tokens in indices.
    */
   
   public Dictionary(final String dictInfo) {
-    this.dictFileVersion = 1;
+    this.dictFileVersion = CURRENT_DICT_VERSION;
     this.creationMillis = System.currentTimeMillis();
     this.dictInfo = dictInfo;
     pairEntries = new ArrayList<PairEntry>();
@@ -59,7 +63,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
 
   public Dictionary(final RandomAccessFile raf) throws IOException {
     dictFileVersion = raf.readInt();
-    if (dictFileVersion < 0 || dictFileVersion > 1) {
+    if (dictFileVersion < 0 || dictFileVersion > CURRENT_DICT_VERSION) {
       throw new IOException("Invalid dictionary version: " + dictFileVersion);
     }
     creationMillis = raf.readLong();
@@ -108,6 +112,16 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         index.print(out);
         out.println();
       }
+    }
+
+    public DictionaryInfo getDictionaryInfo() {
+      final DictionaryInfo result = new DictionaryInfo();
+      result.creationMillis = this.creationMillis;
+      result.dictInfo = this.dictInfo;
+      for (final Index index : indices) {
+        result.indexInfos.add(index.getIndexInfo());
+      }
+      return result;
     }
 
 
