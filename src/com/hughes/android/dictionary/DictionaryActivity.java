@@ -25,6 +25,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -39,6 +41,7 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
@@ -48,11 +51,12 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
@@ -67,7 +71,6 @@ import android.widget.Toast;
 
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Index;
-import com.hughes.android.dictionary.engine.Language;
 import com.hughes.android.dictionary.engine.PairEntry;
 import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
@@ -374,13 +377,17 @@ public class DictionaryActivity extends ListActivity {
       currentSearchOperation = null;
     }
     
-    indexIndex = (indexIndex + 1) % dictionary.indices.size();
+    changeIndex((indexIndex + 1)% dictionary.indices.size());
+    onSearchTextChange(searchText.getText().toString());
+  }
+
+  private void changeIndex(final int newIndex) {
+    indexIndex = newIndex;
     index = dictionary.indices.get(indexIndex);
     indexAdapter = new IndexAdapter(index);
-    Log.d(LOG, "onLanguageButton, newLang=" + index.longName);
+    Log.d(LOG, "changingIndex, newLang=" + index.longName);
     setListAdapter(indexAdapter);
     updateLangButton();
-    onSearchTextChange(searchText.getText().toString());
   }
   
   void onUpDownButton(final boolean up) {
@@ -477,6 +484,21 @@ public class DictionaryActivity extends ListActivity {
         return false;
       }
     });
+    
+    if (selectedSpannableText != null) {
+      final String selectedText = selectedSpannableText;
+      final MenuItem searchForSelection = menu.add(getString(R.string.searchForSelection, selectedSpannableText));
+      searchForSelection.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        public boolean onMenuItemClick(MenuItem item) {
+          if (indexIndex != selectedSpannableIndex) {
+            changeIndex(selectedSpannableIndex);
+          }
+          searchText.setText(selectedText);
+          return false;
+        }
+      });
+    }
+    
 
   }
   
@@ -684,63 +706,140 @@ public class DictionaryActivity extends ListActivity {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
       final RowBase row = index.rows.get(position);
       if (row instanceof PairEntry.Row) {
-        return getView((PairEntry.Row) row, parent);
+        return getView((PairEntry.Row) row, parent, convertView);
       } else if (row instanceof TokenRow) {
-        return getView((TokenRow) row, parent);
+        return getView((TokenRow) row, parent, convertView);
       } else {
         throw new IllegalArgumentException("Unsupported Row type: " + row.getClass());
       }
     }
 
-    private View getView(PairEntry.Row row, ViewGroup parent) {
-      final WebView result = new WebView(parent.getContext());
+    private View getView(PairEntry.Row row, ViewGroup parent, final View convertView) {
+      final TableLayout result = new TableLayout(parent.getContext());
       final PairEntry entry = row.getEntry();
       final int rowCount = entry.pairs.size();
-      final StringBuilder html = new StringBuilder();
-      html.append("<html><table width=\"100%\">");
       for (int r = 0; r < rowCount; ++r) {
-        html.append("<tr>");
+        final TableRow tableRow = new TableRow(result.getContext());
 
+        final TextView col1 = new TextView(tableRow.getContext());
+        final TextView col2 = new TextView(tableRow.getContext());
+        final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
+        layoutParams.weight = 0.5f;
+
+        // Set the columns in the table.
+        if (r > 0) {
+          final TextView bullet = new TextView(tableRow.getContext());
+          bullet.setText(" • ");
+          tableRow.addView(bullet);
+        }
+        tableRow.addView(col1, layoutParams);
+        final TextView margin = new TextView(tableRow.getContext());
+        margin.setText(" ");
+        tableRow.addView(margin);
+        if (r > 0) {
+          final TextView bullet = new TextView(tableRow.getContext());
+          bullet.setText(" • ");
+          tableRow.addView(bullet);
+        }
+        tableRow.addView(col2, layoutParams);
+        col1.setWidth(1);
+        col2.setWidth(1);
+        
+        // Set what's in the columns.
+
+        // TODO: color words by gender
         final Pair pair = entry.pairs.get(r);
-        // TODO: escape both the token and the text.
-        final String token = row.getTokenRow(true).getToken();
         final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
         final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
         
-        col1Text.replaceAll(token, String.format("<b>%s</b", token));
-
-        // Column1
-        html.append("<td width=\"50%\">");
-        if (r > 0) {
-          html.append("<li>");
+        col1.setText(col1Text, TextView.BufferType.SPANNABLE);
+        col2.setText(col2Text, TextView.BufferType.SPANNABLE);
+        
+        // Bold the token instances in col1.
+        final Spannable col1Spannable = (Spannable) col1.getText();
+        int startPos = 0;
+        final String token = row.getTokenRow(true).getToken();
+        while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
+          col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos,
+              startPos + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+          startPos += token.length();
         }
-        html.append(col1Text);
-        html.append("</td>");
-
-        // Column2
-        html.append("<td width=\"50%\">");
-        if (r > 0) {
-          html.append("<li>");
+        
+        createTokenLinkSpans(col1, col1Spannable, col1Text);
+        createTokenLinkSpans(col2, (Spannable) col2.getText(), col2Text);
+        
+        col1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+        col2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+        // col2.setBackgroundResource(theme.otherLangBg);
+        
+        if (index.swapPairEntries) {
+          col2.setOnLongClickListener(textViewLongClickListenerIndex0);
+          col1.setOnLongClickListener(textViewLongClickListenerIndex1);
+        } else {
+          col1.setOnLongClickListener(textViewLongClickListenerIndex0);
+          col2.setOnLongClickListener(textViewLongClickListenerIndex1);
         }
-        html.append(col2Text);
-        html.append("</td>");
-
-//        column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-//        column2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-
-        html.append("</tr>");
+        
+        result.addView(tableRow);
       }
-      html.append("</html></table>");
-      
-      result.loadData(html.toString(), "text/html", null);
 
       return result;
+
+      
+//      final WebView result = (WebView) (convertView instanceof WebView ? convertView : new WebView(parent.getContext()));
+//        
+//      final PairEntry entry = row.getEntry();
+//      final int rowCount = entry.pairs.size();
+//      final StringBuilder html = new StringBuilder();
+//      html.append("<html><body><table width=\"100%\">");
+//      for (int r = 0; r < rowCount; ++r) {
+//        html.append("<tr>");
+//
+//        final Pair pair = entry.pairs.get(r);
+//        // TODO: escape both the token and the text.
+//        final String token = row.getTokenRow(true).getToken();
+//        final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
+//        final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
+//        
+//        col1Text.replaceAll(token, String.format("<b>%s</b>", token));
+//
+//        // Column1
+//        html.append("<td width=\"50%\">");
+//        if (r > 0) {
+//          html.append("<li>");
+//        }
+//        html.append(col1Text);
+//        html.append("</td>");
+//
+//        // Column2
+//        html.append("<td width=\"50%\">");
+//        if (r > 0) {
+//          html.append("<li>");
+//        }
+//        html.append(col2Text);
+//        html.append("</td>");
+//
+////        column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+////        column2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+//
+//        html.append("</tr>");
+//      }
+//      html.append("</table></body></html>");
+//      
+//      Log.i(LOG, html.toString());
+//      
+//      result.getSettings().setRenderPriority(RenderPriority.HIGH);
+//      result.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+//      
+//      result.loadData("<html><body><table><tr><td>line (connected series of public conveyances, and hence, an established arrangement for forwarding merchandise, etc.) (noun)</td><td>verbinding</td></tr></table></body></html>", "text/html", "utf-8");
+//
+//      return result;
     }
 
-    private View getView(TokenRow row, ViewGroup parent) {
+    private View getView(TokenRow row, ViewGroup parent, final View convertView) {
       final Context context = parent.getContext();
       final TextView textView = new TextView(context);
       textView.setText(row.getToken());
@@ -753,6 +852,52 @@ public class DictionaryActivity extends ListActivity {
     }
     
   }
+
+  static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}0-9]+");
+
+  private void createTokenLinkSpans(final TextView textView, final Spannable spannable, final String text) {
+    // Saw from the source code that LinkMovementMethod sets the selection!
+    // http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.3.1_r1/android/text/method/LinkMovementMethod.java#LinkMovementMethod
+    textView.setMovementMethod(LinkMovementMethod.getInstance());
+    final Matcher matcher = CHAR_DASH.matcher(text);
+    while (matcher.find()) {
+      spannable.setSpan(new MyClickableSpan(), matcher.start(), matcher.end(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+    }
+  }
+  
+
+  String selectedSpannableText = null;
+  int selectedSpannableIndex = -1;
+
+  @Override
+  public boolean onTouchEvent(MotionEvent event) {
+    selectedSpannableText = null;
+    selectedSpannableIndex = -1;
+    return super.onTouchEvent(event);
+  }
+
+  private class TextViewLongClickListener implements OnLongClickListener {
+    final int index;
+    
+    private TextViewLongClickListener(final int index) {
+      this.index = index;
+    }
+
+    @Override
+    public boolean onLongClick(final View v) {
+      final TextView textView = (TextView) v;
+      final int start = textView.getSelectionStart();
+      final int end = textView.getSelectionEnd();
+      if (start >= 0 &&  end >= 0) {
+        selectedSpannableText = textView.getText().subSequence(start, end).toString();
+        selectedSpannableIndex = index;
+      }
+      return false;
+    }
+  }
+  final TextViewLongClickListener textViewLongClickListenerIndex0 = new TextViewLongClickListener(0);
+  final TextViewLongClickListener textViewLongClickListenerIndex1 = new TextViewLongClickListener(1);
+  
 
   // --------------------------------------------------------------------------
   // SearchText

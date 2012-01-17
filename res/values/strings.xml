@@ -54,9 +54,12 @@
 	<string name="downloadDictionary">Download dictionary…</string>
 	<string name="switchToLanguage">Switch to %s</string>
 	<string name="preferences">Preferences…</string>
-	<string name="about">About QuickDic…</string>
+	<string name="about">About QuickDic…</string> 
 	<string name="addToWordList">Add to word list: %s</string>
-  <string name="failedAddingToWordList">Failure adding to word list: %s</string>
+  <string name="searchForSelection">Find: %s</string>
+	<string name="failedAddingToWordList">Failure adding to word list: %s</string>
+  
+  <!--  do we need? -->
   <string name="unzippingDictionary">Unzipping dictionary…</string>
   <string name="failedToUnzipDictionary">Failed to unzip dictionary…</string>
 
