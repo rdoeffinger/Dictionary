@@ -35,7 +35,7 @@ public class DictionaryInfo implements Serializable {
     public static final int SIZE = 3;
     
     public StringBuilder append(StringBuilder result) {
-      result.append("\t").append(langIso);
+      result.append(langIso);
       result.append("\t").append(allTokenCount);
       result.append("\t").append(mainTokenCount);
       return result;
@@ -54,22 +54,22 @@ public class DictionaryInfo implements Serializable {
   public String downloadUrl;
   public long uncompressedSize;
   public long creationMillis;
-  public String dictInfo;
   public final List<IndexInfo> indexInfos = new ArrayList<DictionaryInfo.IndexInfo>();
+  public String dictInfo;
 
   String name;  // Determined at runtime based on locale on device--user editable?
   String localFile;  // Determined based on device's Environment.
   
   public StringBuilder append(final StringBuilder result) {
-    result.append(uncompressedFilename).append("\t");
-    result.append(downloadUrl).append("\t");
-    result.append(creationMillis).append("\t");
-    result.append(uncompressedSize).append("\t");
-    result.append(dictInfo).append("\t");
-    result.append(indexInfos.size()).append("\t");
+    result.append(uncompressedFilename);
+    result.append("\t").append(downloadUrl);
+    result.append("\t").append(creationMillis);
+    result.append("\t").append(uncompressedSize);
+    result.append("\t").append(indexInfos.size());
     for (final IndexInfo indexInfo : indexInfos) {
-      indexInfo.append(result);
+      indexInfo.append(result.append("\t"));
     }
+    result.append("\t").append(dictInfo.replaceAll("\n", "\\\\n"));
     return result;
   }
 
@@ -80,12 +80,12 @@ public class DictionaryInfo implements Serializable {
     downloadUrl = fields[i++];
     creationMillis = Long.parseLong(fields[i++]);
     uncompressedSize = Long.parseLong(fields[i++]);
-    dictInfo = fields[i++];
     final int size = Integer.parseInt(fields[i++]);
     for (int j = 0; j < size; ++j) {
       indexInfos.add(new IndexInfo(fields, i));
       i += IndexInfo.SIZE;
     }
+    dictInfo = fields[i++].replaceAll("\\n", "\n");
   }
 
   public DictionaryInfo() {
