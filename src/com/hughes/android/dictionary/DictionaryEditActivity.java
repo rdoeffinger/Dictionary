@@ -45,15 +45,15 @@ public class DictionaryEditActivity extends Activity {
   static final String LOG = "QuickDic";
 
   QuickDicConfig quickDicConfig;
-  private DictionaryInfo dictionaryConfig;
+  private DictionaryInfo dictionaryInfo;
   
   final Handler uiHandler = new Handler();
 
-  public static Intent getIntent(final int dictIndex) {
+  public static Intent getLaunchIntent(final String dictFile) {
     final Intent intent = new Intent();
     intent.setClassName(DictionaryEditActivity.class.getPackage().getName(),
         DictionaryEditActivity.class.getName());
-    intent.putExtra(C.DICT_INDEX, dictIndex);
+    intent.putExtra(C.DICT_FILE, dictFile);
     return intent;
   }
 
@@ -66,26 +66,26 @@ public class DictionaryEditActivity extends Activity {
     setContentView(R.layout.edit_activity);
 
     final Intent intent = getIntent();
-
-    final int dictIndex = intent.getIntExtra(C.DICT_INDEX, 0);
+    final String dictFile = intent.getStringExtra(C.DICT_FILE);
       
     PersistentObjectCache.init(this);
     try {
       quickDicConfig = PersistentObjectCache.init(this).read(
           C.DICTIONARY_CONFIGS, QuickDicConfig.class);
-      dictionaryConfig = quickDicConfig.dictionaryInfos.get(dictIndex);
+      dictionaryInfo = quickDicConfig.getDictionaryInfoByFile(dictFile);
     } catch (Exception e) {
       Log.e(LOG, "Failed to read QuickDicConfig.", e);
-      quickDicConfig = new QuickDicConfig(this);
-      dictionaryConfig = quickDicConfig.dictionaryInfos.get(0);
+      finish();
+      startActivity(DictionaryManagerActivity.getLaunchIntent());
+      return;
     }
     
     // Write stuff from object into fields.
 
     ((EditText) findViewById(R.id.dictionaryName))
-        .setText(dictionaryConfig.name);
+        .setText(dictionaryInfo.name);
     ((EditText) findViewById(R.id.localFile))
-        .setText(dictionaryConfig.localFile);
+        .setText(dictionaryInfo.localFile);
 
     final TextWatcher textWatcher = new TextWatcher() {
       @Override
@@ -107,7 +107,7 @@ public class DictionaryEditActivity extends Activity {
     ((EditText) findViewById(R.id.localFile)).addTextChangedListener(textWatcher);
 
     final EditText downloadUrl = (EditText) findViewById(R.id.downloadUrl);
-    downloadUrl.setText(dictionaryConfig.downloadUrl);
+    downloadUrl.setText(dictionaryInfo.downloadUrl);
     downloadUrl.addTextChangedListener(textWatcher);
     
     final Button downloadButton = (Button) findViewById(R.id.downloadButton);
@@ -115,7 +115,7 @@ public class DictionaryEditActivity extends Activity {
       @Override
       public void onClick(View v) {
         startDownloadDictActivity(DictionaryEditActivity.this,
-            dictionaryConfig);
+            dictionaryInfo);
       }
     });
 
@@ -123,7 +123,7 @@ public class DictionaryEditActivity extends Activity {
     openButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        final Intent intent = DictionaryActivity.getIntent(DictionaryEditActivity.this, dictIndex, 0, "");
+        final Intent intent = DictionaryActivity.getLaunchIntent(dictFile, 0, "");
         startActivity(intent);
       }
     });
@@ -148,11 +148,11 @@ public class DictionaryEditActivity extends Activity {
     super.onPause();
 
     // Read stuff from fields into object.
-    dictionaryConfig.name = ((EditText) findViewById(R.id.dictionaryName))
+    dictionaryInfo.name = ((EditText) findViewById(R.id.dictionaryName))
         .getText().toString();
-    dictionaryConfig.localFile = ((EditText) findViewById(R.id.localFile))
+    dictionaryInfo.localFile = ((EditText) findViewById(R.id.localFile))
         .getText().toString();
-    dictionaryConfig.downloadUrl = ((EditText) findViewById(R.id.downloadUrl))
+    dictionaryInfo.downloadUrl = ((EditText) findViewById(R.id.downloadUrl))
         .getText().toString();
 
     PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS,
@@ -165,7 +165,7 @@ public class DictionaryEditActivity extends Activity {
     newDictionaryMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
           public boolean onMenuItemClick(final MenuItem menuItem) {
             startDownloadDictActivity(DictionaryEditActivity.this,
-                dictionaryConfig);
+                dictionaryInfo);
             return false;
           }
         });
@@ -173,7 +173,7 @@ public class DictionaryEditActivity extends Activity {
     final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
     dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
-        startActivity(DictionaryManagerActivity.getIntent(DictionaryEditActivity.this));
+        startActivity(DictionaryManagerActivity.getLaunchIntent());
         return false;
       }
     });

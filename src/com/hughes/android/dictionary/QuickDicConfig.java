@@ -90,5 +90,14 @@ public final class QuickDicConfig implements Serializable {
     }
     dictionaryInfos.add(dictionaryConfig);
   }
+  
+  DictionaryInfo getDictionaryInfoByFile(final String dictFile) throws Exception {
+    for (int i = 0; i < dictionaryInfos.size(); ++i) {
+      if (dictionaryInfos.get(i).localFile.equals(dictFile)) {
+        return dictionaryInfos.get(i);
+      }
+    }
+    throw new Exception("Not found: " + dictFile);
+  }
 
 }

@@ -18,7 +18,6 @@ import java.io.File;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,28 +26,29 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.hughes.android.util.PersistentObjectCache;
 
 public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
-  
   QuickDicConfig quickDicConfig;
+  
+  static boolean canAutoLaunch = true;
   
   
   public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +74,7 @@ public class DictionaryManagerActivity extends ListActivity {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
     if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(thanksForUpdatingLatestVersion)) {
+      canAutoLaunch = false;
       final AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setCancelable(false);
       final WebView webView = new WebView(getApplicationContext());
@@ -93,10 +94,15 @@ public class DictionaryManagerActivity extends ListActivity {
       alert.getWindow().setAttributes(layoutParams);
       prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion).commit();
     }
+    
+    if (!getIntent().getBooleanExtra(C.CAN_AUTO_LAUNCH_DICT, true)) {
+      canAutoLaunch = false;
+    }
   }
   
   private void onClick(int dictIndex) {
-    final Intent intent = DictionaryActivity.getIntent(this, dictIndex, 0, "");
+    final DictionaryInfo dictionaryInfo = quickDicConfig.dictionaryInfos.get(dictIndex);
+    final Intent intent = DictionaryActivity.getLaunchIntent(dictionaryInfo.localFile, 0, "");
     startActivity(intent);
   }
   
@@ -111,9 +117,11 @@ public class DictionaryManagerActivity extends ListActivity {
     }
     
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    if (prefs.contains(C.DICT_INDEX) && prefs.contains(C.INDEX_INDEX)) {
+    if (canAutoLaunch && prefs.contains(C.DICT_FILE) && prefs.contains(C.INDEX_INDEX)) {
+      canAutoLaunch = false;  // Only autolaunch once per-process, on startup.
       Log.d(LOG, "Skipping Dictionary List, going straight to dictionary.");
-      startActivity(DictionaryActivity.getIntent(this, prefs.getInt(C.DICT_INDEX, 0), prefs.getInt(C.INDEX_INDEX, 0), prefs.getString(C.SEARCH_TOKEN, "")));
+      startActivity(DictionaryActivity.getLaunchIntent(prefs.getString(C.DICT_FILE, ""), prefs.getInt(C.INDEX_INDEX, 0), prefs.getString(C.SEARCH_TOKEN, "")));
+      // Don't finish, so that user can hit back and get here.
       //finish();
       return;
     }
@@ -229,11 +237,11 @@ public class DictionaryManagerActivity extends ListActivity {
     
   }
 
-  public static Intent getIntent(final Context context) {
-    DictionaryActivity.clearDictionaryPrefs(context);
+  public static Intent getLaunchIntent() {
     final Intent intent = new Intent();
     intent.setClassName(DictionaryManagerActivity.class.getPackage().getName(),
         DictionaryManagerActivity.class.getName());
+    intent.putExtra(C.CAN_AUTO_LAUNCH_DICT, false);
     return intent;
   }
 

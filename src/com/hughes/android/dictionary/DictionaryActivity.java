@@ -123,55 +123,39 @@ public class DictionaryActivity extends ListActivity {
   public DictionaryActivity() {
   }
   
-  public static Intent getIntent(final Context context, final int dictIndex, final int indexIndex, final String searchToken) {
-    setDictionaryPrefs(context, dictIndex, indexIndex, searchToken);
+  public static Intent getLaunchIntent(final String dictFile, final int indexIndex, final String searchToken) {
     final Intent intent = new Intent();
     intent.setClassName(DictionaryActivity.class.getPackage().getName(), DictionaryActivity.class.getName());
+    intent.putExtra(C.DICT_FILE, dictFile);
+    intent.putExtra(C.INDEX_INDEX, indexIndex);
+    intent.putExtra(C.SEARCH_TOKEN, searchToken);
     return intent;
   }
   
-  // TODO: Can we trigger an App restart when the preferences activity gets opened?
   // TODO: fix these...
 
   @Override
   protected void onSaveInstanceState(final Bundle outState) {
     super.onSaveInstanceState(outState);
-    setDictionaryPrefs(this, dictIndex, indexIndex, searchText.getText().toString());
-  }
-
-  public static void setDictionaryPrefs(final Context context,
-      final int dictIndex, final int indexIndex, final String searchToken) {
-    final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(context).edit();
-    prefs.putInt(C.DICT_INDEX, dictIndex);
-    prefs.putInt(C.INDEX_INDEX, indexIndex);
-    prefs.putString(C.SEARCH_TOKEN, searchToken);
-    prefs.commit();
+    outState.putString(C.SEARCH_TOKEN, searchText.getText().toString());
   }
   
-  public static void clearDictionaryPrefs(final Context context) {
-    final SharedPreferences.Editor prefs = PreferenceManager
-        .getDefaultSharedPreferences(context).edit();
-    prefs.remove(C.DICT_INDEX);
-    prefs.remove(C.INDEX_INDEX);
-    prefs.remove(C.SEARCH_TOKEN);
-    prefs.commit();
-    Log.d(LOG, "Removed default dictionary prefs.");
-  }
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    clearDictionaryPrefs(this);
+    
     Log.d(LOG, "onCreate:" + this);
     theme = ((DictionaryApplication)getApplication()).getSelectedTheme();
     super.onCreate(savedInstanceState);
     
-    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    
+    final Intent intent = getIntent();
+    dictFile = intent.getStringExtra(C.DICT_FILE);
+
     try {
       PersistentObjectCache.init(this);
       QuickDicConfig quickDicConfig = PersistentObjectCache.init(
           this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
-      dictIndex = prefs.getInt(C.DICT_INDEX, 0) ;
-      final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryInfos.get(dictIndex);
+      final DictionaryInfo dictionaryConfig = quickDicConfig.getDictionaryInfoByFile(dictFile);
       this.setTitle("QuickDic: " + dictionaryConfig.name);
       dictRaf = new RandomAccessFile(dictionaryConfig.localFile, "r");
       dictionary = new Dictionary(dictRaf); 
@@ -186,16 +170,16 @@ public class DictionaryActivity extends ListActivity {
         dictRaf = null;
       }
       Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()), Toast.LENGTH_LONG);
-      startActivity(DictionaryManagerActivity.getIntent(this));
+      startActivity(DictionaryEditActivity.getLaunchIntent(dictFile));
       finish();
       return;
     }
 
-    indexIndex = prefs.getInt(C.INDEX_INDEX, 0) % dictionary.indices.size();
     Log.d(LOG, "Loading index.");
+    indexIndex = intent.getIntExtra(C.INDEX_INDEX, 0) % dictionary.indices.size();
     index = dictionary.indices.get(indexIndex);
     setListAdapter(new IndexAdapter(index));
-
+    
     // Pre-load the collators.
     searchExecutor.execute(new Runnable() {
       public void run() {
@@ -227,9 +211,11 @@ public class DictionaryActivity extends ListActivity {
       }
     });
     
-    final String fontSize = prefs.getString(getString(R.string.fontSizeKey), "12");
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    
+    final String fontSize = prefs.getString(getString(R.string.fontSizeKey), "14");
     try {
-      fontSizeSp = Integer.parseInt(fontSize);
+      fontSizeSp = Integer.parseInt(fontSize.trim());
     } catch (NumberFormatException e) {
       fontSizeSp = 12;
     }
@@ -315,6 +301,8 @@ public class DictionaryActivity extends ListActivity {
       // vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     //}
     Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
+    
+    setDictionaryPrefs(this, dictFile, indexIndex, searchText.getText().toString());
   }
   
   @Override
@@ -331,6 +319,24 @@ public class DictionaryActivity extends ListActivity {
   protected void onPause() {
     super.onPause();
   }
+  
+  private static void setDictionaryPrefs(final Context context,
+      final String dictFile, final int indexIndex, final String searchToken) {
+    final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(context).edit();
+    prefs.putString(C.DICT_FILE, dictFile);
+    prefs.putInt(C.INDEX_INDEX, indexIndex);
+    prefs.putString(C.SEARCH_TOKEN, searchToken);
+    prefs.commit();
+  }
+
+  private static void clearDictionaryPrefs(final Context context) {
+    final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(context).edit();
+    prefs.remove(C.DICT_FILE);
+    prefs.remove(C.INDEX_INDEX);
+    prefs.remove(C.SEARCH_TOKEN);
+    prefs.commit();
+  }
+
 
   @Override
   protected void onDestroy() {
@@ -338,7 +344,6 @@ public class DictionaryActivity extends ListActivity {
     if (dictRaf == null) {
       return;
     }
-    setDictionaryPrefs(this, dictIndex, indexIndex, searchText.getText().toString());
     
     // Before we close the RAF, we have to wind the current search down.
     if (currentSearchOperation != null) {
@@ -388,21 +393,19 @@ public class DictionaryActivity extends ListActivity {
       currentSearchOperation.interrupted.set(true);
       currentSearchOperation = null;
     }
-    
     changeIndex((indexIndex + 1)% dictionary.indices.size());
-    onSearchTextChange(searchText.getText().toString());
   }
   
   static class OpenIndexButton extends Button implements OnClickListener {
 
     final Activity activity;
-    final int dictionaryIndex;
+    final String dictFile;
     final int indexIndex;
 
-    public OpenIndexButton(final Context context, final Activity activity, final String text, final int dictionaryIndex, final int indexIndex) {
+    public OpenIndexButton(final Context context, final Activity activity, final String text, final String dictFile, final int indexIndex) {
       super(context);
       this.activity = activity;
-      this.dictionaryIndex = dictionaryIndex;
+      this.dictFile = dictFile;
       this.indexIndex = indexIndex;
       setOnClickListener(this);
       setText(text, BufferType.NORMAL);
@@ -411,7 +414,7 @@ public class DictionaryActivity extends ListActivity {
     @Override
     public void onClick(View v) {
       activity.finish();
-      getContext().startActivity(DictionaryActivity.getIntent(getContext(), dictionaryIndex, indexIndex, ""));
+      getContext().startActivity(DictionaryActivity.getLaunchIntent(dictFile, indexIndex, ""));
     }
     
   }
@@ -438,7 +441,8 @@ public class DictionaryActivity extends ListActivity {
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {
         final LinearLayout result = new LinearLayout(parent.getContext());
-        result.addView(new Butt)
+        //result.addView(new Butt)
+        return result;
       }
       
       @Override
@@ -466,6 +470,8 @@ public class DictionaryActivity extends ListActivity {
     Log.d(LOG, "changingIndex, newLang=" + index.longName);
     setListAdapter(indexAdapter);
     updateLangButton();
+    searchText.requestFocus();  // Otherwise, nothing may happen.
+    onSearchTextChange(searchText.getText().toString());
   }
   
   void onUpDownButton(final boolean up) {
@@ -514,7 +520,7 @@ public class DictionaryActivity extends ListActivity {
       final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
       dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         public boolean onMenuItemClick(final MenuItem menuItem) {
-          startActivity(DictionaryManagerActivity.getIntent(DictionaryActivity.this));
+          startActivity(DictionaryManagerActivity.getLaunchIntent());
           finish();
           return false;
         }
@@ -571,7 +577,7 @@ public class DictionaryActivity extends ListActivity {
           if (indexIndex != selectedSpannableIndex) {
             changeIndex(selectedSpannableIndex);
           }
-          searchText.setText(selectedText);
+          setSearchText(selectedText);
           return false;
         }
       });
@@ -642,10 +648,7 @@ public class DictionaryActivity extends ListActivity {
   public boolean onKeyDown(final int keyCode, final KeyEvent event) {
     if (event.getUnicodeChar() != 0) {
       if (!searchText.hasFocus()) {
-        searchText.setText("" + (char) event.getUnicodeChar());
-        onSearchTextChange(searchText.getText().toString());
-        searchText.requestFocus();
-        Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
+        setSearchText("" + (char) event.getUnicodeChar());
       }
       return true;
     }
@@ -660,6 +663,13 @@ public class DictionaryActivity extends ListActivity {
       return true;
     }
     return super.onKeyDown(keyCode, event);
+  }
+
+  private void setSearchText(final String text) {
+    searchText.setText(text);
+    searchText.requestFocus();
+    onSearchTextChange(searchText.getText().toString());
+    Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
   }
 
 
@@ -939,7 +949,7 @@ public class DictionaryActivity extends ListActivity {
     textView.setMovementMethod(LinkMovementMethod.getInstance());
     final Matcher matcher = CHAR_DASH.matcher(text);
     while (matcher.find()) {
-      spannable.setSpan(new MyClickableSpan(), matcher.start(), matcher.end(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+      spannable.setSpan(new NonLinkClickableSpan(), matcher.start(), matcher.end(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
     }
   }
   

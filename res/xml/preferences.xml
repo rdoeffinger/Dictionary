@@ -12,7 +12,7 @@
     android:key="@string/fontSizeKey"
     android:title="@string/fontSizeTitle" 
     android:summary="@string/fontSizeSummary"
-    android:defaultValue="12"
+    android:defaultValue="14"
     android:persistent="true"
   />
 

@@ -22,7 +22,9 @@ public class DictionaryInfo implements Serializable {
   
   private static final long serialVersionUID = -6850863377577700388L;
   
-  public static final class IndexInfo {
+  public static final class IndexInfo implements Serializable {
+    private static final long serialVersionUID = 6524751236198309438L;
+
     public IndexInfo(String langIso, int allTokenCount, int mainTokenCount) {
       this.langIso = langIso;
       this.allTokenCount = allTokenCount;
