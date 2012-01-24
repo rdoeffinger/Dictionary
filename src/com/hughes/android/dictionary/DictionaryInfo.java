@@ -54,7 +54,8 @@ public class DictionaryInfo implements Serializable {
   // Stuff populated from the text file.
   public String uncompressedFilename;  // used as a key throughout the program.
   public String downloadUrl;
-  public long uncompressedSize;
+  public long uncompressedBytes;
+  public long zipBytes;
   public long creationMillis;
   public final List<IndexInfo> indexInfos = new ArrayList<DictionaryInfo.IndexInfo>();
   public String dictInfo;
@@ -67,7 +68,8 @@ public class DictionaryInfo implements Serializable {
     result.append(uncompressedFilename);
     result.append("\t").append(downloadUrl);
     result.append("\t").append(creationMillis);
-    result.append("\t").append(uncompressedSize);
+    result.append("\t").append(uncompressedBytes);
+    result.append("\t").append(zipBytes);
     result.append("\t").append(indexInfos.size());
     for (final IndexInfo indexInfo : indexInfos) {
       indexInfo.append(result.append("\t"));
@@ -82,13 +84,14 @@ public class DictionaryInfo implements Serializable {
     uncompressedFilename = fields[i++];
     downloadUrl = fields[i++];
     creationMillis = Long.parseLong(fields[i++]);
-    uncompressedSize = Long.parseLong(fields[i++]);
+    uncompressedBytes = Long.parseLong(fields[i++]);
+    zipBytes = Long.parseLong(fields[i++]);
     final int size = Integer.parseInt(fields[i++]);
     for (int j = 0; j < size; ++j) {
       indexInfos.add(new IndexInfo(fields, i));
       i += IndexInfo.SIZE;
     }
-    dictInfo = fields[i++].replaceAll("\\n", "\n");
+    dictInfo = fields[i++].replaceAll("\\\\n", "\n");
   }
 
   @Override

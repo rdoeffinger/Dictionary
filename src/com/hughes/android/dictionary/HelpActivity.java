@@ -14,18 +14,29 @@
 
 package com.hughes.android.dictionary;
 
+import com.hughes.util.StringUtil;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.webkit.WebView;
 
 public final class HelpActivity extends Activity {
+  
+  public static Intent getLaunchIntent() {
+    final Intent intent = new Intent();
+    intent.setClassName(HelpActivity.class.getPackage().getName(), HelpActivity.class.getName());
+    return intent;
+  }
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.help_activity);
-    
-    
+    final String html = StringUtil.readToString(getResources().openRawResource(R.raw.help));
+    final WebView webView = (WebView) findViewById(R.layout.help_activity);
+    webView.loadData(html, "text/html", "utf-8");
   }
 
 }

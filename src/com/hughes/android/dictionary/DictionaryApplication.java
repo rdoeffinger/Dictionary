@@ -30,11 +30,15 @@ import java.util.Set;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Language;
@@ -273,6 +277,38 @@ public class DictionaryApplication extends Application {
   public void invalidateDictionaryInfo(final String uncompressedFilename) {
     dictionaryConfig.invalidatedFilenames.add(uncompressedFilename);
     PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
+  }
+
+  public void onCreateGlobalOptionsMenu(
+      final Context context, final Menu menu) {
+    final MenuItem help = menu.add(getString(R.string.about));
+    help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        startActivity(HelpActivity.getLaunchIntent());
+        return false;
+      }
+    });
+
+    final MenuItem about = menu.add(getString(R.string.about));
+    about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        final Intent intent = new Intent().setClassName(AboutActivity.class
+            .getPackage().getName(), AboutActivity.class.getCanonicalName());
+        startActivity(intent);
+        return false;
+      }
+    });
+
+    final MenuItem preferences = menu.add(getString(R.string.preferences));
+    preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        PreferenceActivity.prefsMightHaveChanged = true;
+        final Intent intent = new Intent().setClassName(PreferenceActivity.class
+            .getPackage().getName(), PreferenceActivity.class.getCanonicalName());
+        startActivity(intent);
+        return false;
+      }
+    });
   }
   
 }

@@ -6,14 +6,14 @@
   <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
   <string name="helpText">Long-press for more options.</string>
-  <string name="downloadButton">Download</string>
-  <string name="updateButton">Update</string>
+  <string name="downloadButton">Download (%.1fMB)</string>
+  <string name="updateButton">Update (%.1fMB)</string>
   <string name="moveToTop">Move to top</string>
   <string name="deleteDictionary">Delete dictionary</string>
-  <string name="nameFormat2">%1$s (%2$s=%3$d, %4$s=%5$d entries)</string>
+  <string name="indexInfo">%1$s=%2$d entries</string>
   
 
-  <string name="thanksForUpdatingVersion">3.1</string>
+  <string name="thanksForUpdatingVersion">3.1_a</string>
  
   <!-- DictionaryEditActivity -->
   <!-- 

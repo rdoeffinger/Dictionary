@@ -43,6 +43,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 import com.hughes.util.StringUtil;
 
@@ -53,6 +54,14 @@ public class DictionaryManagerActivity extends ListActivity {
 
   DictionaryApplication application;
   Adapter adapter;
+  
+  public static Intent getLaunchIntent() {
+    final Intent intent = new Intent();
+    intent.setClassName(DictionaryManagerActivity.class.getPackage().getName(),
+        DictionaryManagerActivity.class.getName());
+    intent.putExtra(C.CAN_AUTO_LAUNCH_DICT, false);
+    return intent;
+  }
   
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -144,26 +153,7 @@ public class DictionaryManagerActivity extends ListActivity {
   }
 
   public boolean onCreateOptionsMenu(final Menu menu) {
-    final MenuItem about = menu.add(getString(R.string.about));
-    about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-      public boolean onMenuItemClick(final MenuItem menuItem) {
-        final Intent intent = new Intent().setClassName(AboutActivity.class
-            .getPackage().getName(), AboutActivity.class.getCanonicalName());
-        startActivity(intent);
-        return false;
-      }
-    });
-    
-    final MenuItem preferences = menu.add(getString(R.string.preferences));
-    preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-      public boolean onMenuItemClick(final MenuItem menuItem) {
-        PreferenceActivity.prefsMightHaveChanged = true;
-        startActivity(new Intent(DictionaryManagerActivity.this,
-            PreferenceActivity.class));
-        return false;
-      }
-    });
-    
+    application.onCreateGlobalOptionsMenu(this, menu);
     return true;
   }
   
@@ -229,7 +219,7 @@ public class DictionaryManagerActivity extends ListActivity {
       final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename); 
       if ((!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) || updateAvailable) && downloadable != null) {
         final Button downloadButton = new Button(parent.getContext());
-        downloadButton.setText(getString(updateAvailable ? R.string.updateButton : R.string.downloadButton));
+        downloadButton.setText(getString(updateAvailable ? R.string.updateButton : R.string.downloadButton, downloadable.zipBytes / 1024.0 / 1024.0));
         downloadButton.setOnClickListener(new IntentLauncher(parent.getContext(), DownloadActivity
             .getLaunchIntent(downloadable.downloadUrl,
                 application.getPath(dictionaryInfo.uncompressedFilename).getPath() + ".zip",
@@ -251,6 +241,13 @@ public class DictionaryManagerActivity extends ListActivity {
       textView.setText(name);
       textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
       result.addView(textView);
+      
+      // Add the information about each index.
+      for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
+        final TextView indexView = new TextView(parent.getContext());
+        indexView.setText(getString(R.string.indexInfo, indexInfo.shortName, indexInfo.mainTokenCount));
+        result.addView(indexView);
+      }
 
       // Because we have a Button inside a ListView row:
       // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
@@ -268,14 +265,6 @@ public class DictionaryManagerActivity extends ListActivity {
 
       return result;
     }
-  }
-
-  public static Intent getLaunchIntent() {
-    final Intent intent = new Intent();
-    intent.setClassName(DictionaryManagerActivity.class.getPackage().getName(),
-        DictionaryManagerActivity.class.getName());
-    intent.putExtra(C.CAN_AUTO_LAUNCH_DICT, false);
-    return intent;
   }
 
 }

@@ -136,7 +136,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         final Dictionary dict = new Dictionary(raf);
         final DictionaryInfo dictionaryInfo = dict.getDictionaryInfo();
         dictionaryInfo.uncompressedFilename = file.getName();
-        dictionaryInfo.uncompressedSize = file.length();
+        dictionaryInfo.uncompressedBytes = file.length();
         raf.close();
         return dictionaryInfo;
       } catch (IOException e) {

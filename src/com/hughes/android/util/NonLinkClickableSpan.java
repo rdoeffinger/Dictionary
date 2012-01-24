@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.hughes.android.dictionary;
+package com.hughes.android.util;
 
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;

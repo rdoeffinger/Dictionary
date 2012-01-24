@@ -58,7 +58,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -83,6 +82,7 @@ import com.hughes.android.dictionary.engine.RowBase;
 import com.hughes.android.dictionary.engine.TokenRow;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.IntentLauncher;
+import com.hughes.android.util.NonLinkClickableSpan;
 
 public class DictionaryActivity extends ListActivity {
 
@@ -155,10 +155,9 @@ public class DictionaryActivity extends ListActivity {
     // Clear them so that if something goes wrong, we won't relaunch.
     clearDictionaryPrefs(this);
     
-    
     final Intent intent = getIntent();
     dictFile = new File(intent.getStringExtra(C.DICT_FILE));
-
+    
     try {
       final String name = application.getDictionaryName(dictFile.getName());
       this.setTitle("QuickDic: " + name);
@@ -521,18 +520,7 @@ public class DictionaryActivity extends ListActivity {
   
   @Override
   public boolean onCreateOptionsMenu(final Menu menu) {
-    
-    {
-      final MenuItem preferences = menu.add(getString(R.string.preferences));
-      preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-        public boolean onMenuItemClick(final MenuItem menuItem) {
-          PreferenceActivity.prefsMightHaveChanged = true;
-          startActivity(new Intent(DictionaryActivity.this,
-              PreferenceActivity.class));
-          return false;
-        }
-      });
-    }
+    application.onCreateGlobalOptionsMenu(this, menu);
 
     {
       final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
@@ -540,18 +528,6 @@ public class DictionaryActivity extends ListActivity {
         public boolean onMenuItemClick(final MenuItem menuItem) {
           startActivity(DictionaryManagerActivity.getLaunchIntent());
           finish();
-          return false;
-        }
-      });
-    }
-
-    {
-      final MenuItem about = menu.add(getString(R.string.about));
-      about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-        public boolean onMenuItemClick(final MenuItem menuItem) {
-          final Intent intent = new Intent().setClassName(AboutActivity.class
-              .getPackage().getName(), AboutActivity.class.getCanonicalName());
-          startActivity(intent);
           return false;
         }
       });
@@ -824,18 +800,16 @@ public class DictionaryActivity extends ListActivity {
     }
 
     private View getView(PairEntry.Row row, ViewGroup parent, final View convertView) {
-      final LinearLayout result = new LinearLayout(parent.getContext());
+      final TableLayout result = new TableLayout(parent.getContext());
       final PairEntry entry = row.getEntry();
       final int rowCount = entry.pairs.size();
       for (int r = 0; r < rowCount; ++r) {
-        final LinearLayout tableRow = new LinearLayout(result.getContext());
-        final LinearLayout.LayoutParams rowLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        tableRow.setLayoutParams(rowLayoutParams);
+        final TableRow tableRow = new TableRow(result.getContext());
 
         final TextView col1 = new TextView(tableRow.getContext());
         final TextView col2 = new TextView(tableRow.getContext());
-        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.weight = 1.0f;
+        final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
+        layoutParams.weight = 0.5f;
 
         // Set the columns in the table.
         if (r > 0) {
@@ -853,8 +827,8 @@ public class DictionaryActivity extends ListActivity {
           tableRow.addView(bullet);
         }
         tableRow.addView(col2, layoutParams);
-        col1.setWidth(0);
-        col2.setWidth(0);
+        col1.setWidth(1);
+        col2.setWidth(1);
         
         // Set what's in the columns.
 
