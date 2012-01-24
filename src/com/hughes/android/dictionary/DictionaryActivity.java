@@ -58,6 +58,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -823,16 +824,18 @@ public class DictionaryActivity extends ListActivity {
     }
 
     private View getView(PairEntry.Row row, ViewGroup parent, final View convertView) {
-      final TableLayout result = new TableLayout(parent.getContext());
+      final LinearLayout result = new LinearLayout(parent.getContext());
       final PairEntry entry = row.getEntry();
       final int rowCount = entry.pairs.size();
       for (int r = 0; r < rowCount; ++r) {
-        final TableRow tableRow = new TableRow(result.getContext());
+        final LinearLayout tableRow = new LinearLayout(result.getContext());
+        final LinearLayout.LayoutParams rowLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        tableRow.setLayoutParams(rowLayoutParams);
 
         final TextView col1 = new TextView(tableRow.getContext());
         final TextView col2 = new TextView(tableRow.getContext());
-        final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
-        layoutParams.weight = 0.5f;
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.weight = 1.0f;
 
         // Set the columns in the table.
         if (r > 0) {
@@ -850,8 +853,8 @@ public class DictionaryActivity extends ListActivity {
           tableRow.addView(bullet);
         }
         tableRow.addView(col2, layoutParams);
-        col1.setWidth(1);
-        col2.setWidth(1);
+        col1.setWidth(0);
+        col2.setWidth(0);
         
         // Set what's in the columns.
 
