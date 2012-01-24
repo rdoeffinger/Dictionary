@@ -40,13 +40,12 @@
   <string name="downloadButton">Download</string>
   <string name="openButton">Open</string>
   <string name="dictionaryInfo">Dictionary info:</string>
+  <string name="indexInfo">Index %1$s, %2$d words</string>
   <string name="localFile">Dictionary file</string>
   <string name="wordListFile">Word list file</string>
   <string name="fileNotFound">File not found: \'%s\'</string>
   <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
   <string name="numPairEntries">Entries: %,d</string>
-  <string name="numTokens">Tokens: %,d</string>
-  <string name="numRows">Rows: %,d</string>
 
  
 	<!-- Main -->

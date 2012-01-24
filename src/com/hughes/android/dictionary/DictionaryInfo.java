@@ -25,26 +25,26 @@ public class DictionaryInfo implements Serializable {
   public static final class IndexInfo implements Serializable {
     private static final long serialVersionUID = 6524751236198309438L;
 
-    public IndexInfo(String langIso, int allTokenCount, int mainTokenCount) {
-      this.langIso = langIso;
+    public IndexInfo(String shortName, int allTokenCount, int mainTokenCount) {
+      this.shortName = shortName;
       this.allTokenCount = allTokenCount;
       this.mainTokenCount = mainTokenCount;
     }
-    public final String langIso;
+    public final String shortName;  // Often LangISO.
     public final int allTokenCount;
     public final int mainTokenCount;
     
     public static final int SIZE = 3;
     
     public StringBuilder append(StringBuilder result) {
-      result.append(langIso);
+      result.append(shortName);
       result.append("\t").append(allTokenCount);
       result.append("\t").append(mainTokenCount);
       return result;
     }
 
     public IndexInfo(final String[] fields, int i) {
-      langIso = fields[i++];
+      shortName = fields[i++];
       allTokenCount = Integer.parseInt(fields[i++]);
       mainTokenCount = Integer.parseInt(fields[i++]);
     }
@@ -52,15 +52,12 @@ public class DictionaryInfo implements Serializable {
   }
   
   // Stuff populated from the text file.
-  public String uncompressedFilename;
+  public String uncompressedFilename;  // used as a key throughout the program.
   public String downloadUrl;
   public long uncompressedSize;
   public long creationMillis;
   public final List<IndexInfo> indexInfos = new ArrayList<DictionaryInfo.IndexInfo>();
   public String dictInfo;
-
-  String name;  // Determined at runtime based on locale on device--user editable?
-  String localFile;  // Determined based on device's Environment.
   
   public StringBuilder append(final StringBuilder result) {
     result.append(uncompressedFilename);
@@ -96,7 +93,7 @@ public class DictionaryInfo implements Serializable {
 
   @Override
   public String toString() {
-    return name;
+    return uncompressedFilename;
   }
 
 

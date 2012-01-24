@@ -15,89 +15,31 @@
 package com.hughes.android.dictionary;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
+import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Language;
 
 public final class QuickDicConfig implements Serializable {
   
+  private static final String LOG = "QuickDicConfig";
+
   private static final long serialVersionUID = 6711617368780900979L;
-
-  final List<DictionaryInfo> dictionaryInfos = new ArrayList<DictionaryInfo>();
   
-  public QuickDicConfig(final Context context) {
-    addDefaultDictionaries(context);
-  }
   
-  public void addDefaultDictionaries(final Context context) {
-    for (final DictionaryInfo dictionaryInfo : getDefaultDictionaries(context).values()) {
-      addOrReplace(dictionaryInfo);
-    }
-  }
-  
-  private static Map<String,DictionaryInfo> defaultDictionaries = null;
-  public synchronized static Map<String,DictionaryInfo> getDefaultDictionaries(final Context context) {
-    if (defaultDictionaries != null) {
-      return defaultDictionaries;
-    }
-    
-    defaultDictionaries = new LinkedHashMap<String, DictionaryInfo>();
-    
-    final BufferedReader reader = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(R.raw.dictionary_info)));
-    String line;
-    try {
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith("#") || line.length() == 0) {
-          continue;
-        }
-        final DictionaryInfo dictionaryInfo = new DictionaryInfo(line);
-        String name = "";
-        for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
-          final Integer langCode = Language.isoCodeToResourceId.get(dictionaryInfo.indexInfos.get(i).langIso);
-          final String lang = langCode != null ? context.getString(langCode) : dictionaryInfo.indexInfos.get(i).langIso;
-          if (i > 0) {
-            name += "-";
-          }
-          name += lang;
-        }
-        dictionaryInfo.name = name;
-        dictionaryInfo.localFile = Environment.getExternalStorageDirectory().getName() + "/quickdic/" + dictionaryInfo.uncompressedFilename; 
-        defaultDictionaries.put(dictionaryInfo.localFile, dictionaryInfo);
-      }
-    } catch (IOException e) {
-      defaultDictionaries = null;
-      return new LinkedHashMap<String, DictionaryInfo>();
-    }
-    
-    return defaultDictionaries;
-  }
-
-  private void addOrReplace(final DictionaryInfo dictionaryConfig) {
-    for (int i = 0; i < dictionaryInfos.size(); ++i) {
-      if (dictionaryInfos.get(i).uncompressedFilename.equals(dictionaryConfig.uncompressedFilename)) {
-        dictionaryInfos.set(i, dictionaryConfig);
-        return;
-      }
-    }
-    dictionaryInfos.add(dictionaryConfig);
-  }
-  
-  DictionaryInfo getDictionaryInfoByFile(final String dictFile) throws Exception {
-    for (int i = 0; i < dictionaryInfos.size(); ++i) {
-      if (dictionaryInfos.get(i).localFile.equals(dictFile)) {
-        return dictionaryInfos.get(i);
-      }
-    }
-    throw new Exception("Not found: " + dictFile);
-  }
 
 }

@@ -85,6 +85,7 @@ public class Language {
     isoCodeToResourceId.put("BO", R.string.BO);
     isoCodeToResourceId.put("TR", R.string.TR);
     isoCodeToResourceId.put("UK", R.string.UK);
+    isoCodeToResourceId.put("UR", R.string.UR);
     isoCodeToResourceId.put("VI", R.string.VI);
     isoCodeToResourceId.put("CI", R.string.CI);
     isoCodeToResourceId.put("YI", R.string.YI);

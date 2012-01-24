@@ -14,7 +14,7 @@
 
 package com.hughes.android.dictionary;
 
-import java.io.File;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -41,8 +41,6 @@ import android.widget.BaseAdapter;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.hughes.android.util.PersistentObjectCache;
-
 public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
@@ -50,6 +48,7 @@ public class DictionaryManagerActivity extends ListActivity {
   
   static boolean canAutoLaunch = true;
   
+  final DictionaryApplication application = (DictionaryApplication) getApplication();
   
   public void onCreate(Bundle savedInstanceState) {
     //((DictionaryApplication)getApplication()).applyTheme(this);
@@ -100,9 +99,9 @@ public class DictionaryManagerActivity extends ListActivity {
     }
   }
   
-  private void onClick(int dictIndex) {
-    final DictionaryInfo dictionaryInfo = quickDicConfig.dictionaryInfos.get(dictIndex);
-    final Intent intent = DictionaryActivity.getLaunchIntent(dictionaryInfo.localFile, 0, "");
+  private void onClick(int index) {
+    final DictionaryInfo dictionaryInfo = adapter.getItem(index);
+    final Intent intent = DictionaryActivity.getLaunchIntent(dictionaryInfo.uncompressedFilename, 0, "");
     startActivity(intent);
   }
   
@@ -126,16 +125,7 @@ public class DictionaryManagerActivity extends ListActivity {
       return;
     }
 
-    quickDicConfig = PersistentObjectCache.init(this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
-    if (quickDicConfig == null) {
-      quickDicConfig = new QuickDicConfig(this);
-    } else {
-      quickDicConfig.addDefaultDictionaries(this);
-    }
-    PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, quickDicConfig);
-
-    Log.d(LOG, "DictionaryList: " + quickDicConfig.dictionaryInfos);
-    setListAdapter(new Adapter());
+    setListAdapter(adapter);
   }
 
   public boolean onCreateOptionsMenu(final Menu menu) {
@@ -169,15 +159,16 @@ public class DictionaryManagerActivity extends ListActivity {
     super.onCreateContextMenu(menu, view, menuInfo);
     
     final AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo) menuInfo;
+    final int position = adapterContextMenuInfo.position;
+    final DictionaryInfo dictionaryInfo = adapter.getItem(position);
     
-    if (adapterContextMenuInfo.position > 0) {
+    if (position > 0) {
       final MenuItem moveToTopMenuItem = menu.add(R.string.moveToTop);
       moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-          final DictionaryInfo dictionaryConfig = quickDicConfig.dictionaryInfos.remove(adapterContextMenuInfo.position);
-          quickDicConfig.dictionaryInfos.add(0, dictionaryConfig);
-          dictionaryConfigsChanged();
+          application.moveDictionaryToTop(dictionaryInfo.uncompressedFilename);
+          setListAdapter(adapter = new Adapter());
           return true;
         }
       });
@@ -187,29 +178,26 @@ public class DictionaryManagerActivity extends ListActivity {
     deleteMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
-        quickDicConfig.dictionaryInfos.remove(adapterContextMenuInfo.position);
-        dictionaryConfigsChanged();
+        application.deleteDictionary(dictionaryInfo.uncompressedFilename);
+        setListAdapter(adapter = new Adapter());
         return true;
       }
     });
 
   }
 
-  private void dictionaryConfigsChanged() {
-    PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, quickDicConfig);
-    setListAdapter(getListAdapter());
-  }
-
   class Adapter extends BaseAdapter {
+    
+    final List<DictionaryInfo> dictionaryInfos = application.getAllDictionaries();
 
     @Override
     public int getCount() {
-      return quickDicConfig.dictionaryInfos.size();
+      return dictionaryInfos.size();
     }
 
     @Override
     public DictionaryInfo getItem(int position) {
-      return quickDicConfig.dictionaryInfos.get(position);
+      return dictionaryInfos.get(position);
     }
 
     @Override
@@ -219,13 +207,13 @@ public class DictionaryManagerActivity extends ListActivity {
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      final DictionaryInfo dictionaryConfig = getItem(position);
+      final DictionaryInfo dictionaryInfo = getItem(position);
       final TableLayout tableLayout = new TableLayout(parent.getContext());
       final TextView view = new TextView(parent.getContext());
       
-      String name = dictionaryConfig.name;
-      if (!new File(dictionaryConfig.localFile).canRead()) {
-        name = getString(R.string.notOnDevice, dictionaryConfig.name);
+      String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
+      if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
+        name = getString(R.string.notOnDevice, name);
       }
 
       view.setText(name);
@@ -234,8 +222,8 @@ public class DictionaryManagerActivity extends ListActivity {
 
       return tableLayout;
     }
-    
   }
+  Adapter adapter = new Adapter();
 
   public static Intent getLaunchIntent() {
     final Intent intent = new Intent();

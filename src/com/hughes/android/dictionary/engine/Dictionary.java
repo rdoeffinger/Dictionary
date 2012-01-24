@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary.engine;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
@@ -31,7 +32,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   static final int CACHE_SIZE = 5000;
   
-  static final int CURRENT_DICT_VERSION = 2;
+  static final int CURRENT_DICT_VERSION = 3;
   static final String END_OF_DICTIONARY = "END OF DICTIONARY";
   
   // persisted
@@ -70,7 +71,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     dictInfo = raf.readUTF();
     
     // Load the sources, then seek past them, because reading them later disrupts the offset.
-    final RAFList<EntrySource> rafSources = RAFList.create(raf, EntrySource.SERIALIZER, raf.getFilePointer());
+    final RAFList<EntrySource> rafSources = RAFList.create(raf, new EntrySource.Serializer(this), raf.getFilePointer());
     sources = new ArrayList<EntrySource>(rafSources);
     raf.seek(rafSources.getEndOffset());
     
@@ -88,7 +89,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     raf.writeInt(dictFileVersion);
     raf.writeLong(creationMillis);
     raf.writeUTF(dictInfo);
-    RAFList.write(raf, sources, EntrySource.SERIALIZER);
+    RAFList.write(raf, sources, new EntrySource.Serializer(this));
     RAFList.write(raf, pairEntries, new PairEntry.Serializer(this));
     RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
     RAFList.write(raf, indices, indexSerializer);
@@ -107,6 +108,10 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     
     public void print(final PrintStream out) {
       out.println("dictInfo=" + dictInfo);
+      for (final EntrySource entrySource : sources) {
+        out.printf("EntrySource: %s %d\n", entrySource.name, entrySource.numEntries);
+      }
+      out.println();
       for (final Index index : indices) {
         out.printf("Index: %s %s\n", index.shortName, index.longName);
         index.print(out);
@@ -123,6 +128,26 @@ public class Dictionary implements RAFSerializable<Dictionary> {
       }
       return result;
     }
-
+    
+    public static DictionaryInfo getDictionaryInfo(final File file) {
+      RandomAccessFile raf = null;
+      try {
+        raf = new RandomAccessFile(file, "r");
+        final Dictionary dict = new Dictionary(raf);
+        final DictionaryInfo dictionaryInfo = dict.getDictionaryInfo();
+        raf.close();
+        return dictionaryInfo;
+      } catch (IOException e) {
+        return null;
+      } finally {
+        if (raf != null) {
+          try {
+            raf.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
 
 }

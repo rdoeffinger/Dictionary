@@ -24,6 +24,7 @@ public class TransliteratorManager {
   private static boolean starting = false;
   private static boolean ready = false;
   
+  // Whom to notify when we're all set up and ready to go.
   private static List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
   
   public static synchronized boolean init(final Callback callback) {

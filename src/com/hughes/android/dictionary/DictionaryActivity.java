@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -81,7 +80,6 @@ import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
 import com.hughes.android.dictionary.engine.TokenRow;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
-import com.hughes.android.util.PersistentObjectCache;
 
 public class DictionaryActivity extends ListActivity {
 
@@ -132,16 +130,25 @@ public class DictionaryActivity extends ListActivity {
     return intent;
   }
   
-  // TODO: fix these...
-
   @Override
   protected void onSaveInstanceState(final Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putString(C.SEARCH_TOKEN, searchText.getText().toString());
   }
+
+  @Override
+  protected void onRestoreInstanceState(final Bundle outState) {
+    super.onRestoreInstanceState(outState);
+    setSearchText(outState.getString(C.SEARCH_TOKEN));
+  }
+
+  public DictionaryApplication getDictionaryApplication() {
+    return (DictionaryApplication) super.getApplication();
+  }
   
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    // Clear them so that if something goes wrong, we won't relaunch.
     clearDictionaryPrefs(this);
     
     Log.d(LOG, "onCreate:" + this);
@@ -152,12 +159,9 @@ public class DictionaryActivity extends ListActivity {
     dictFile = intent.getStringExtra(C.DICT_FILE);
 
     try {
-      PersistentObjectCache.init(this);
-      QuickDicConfig quickDicConfig = PersistentObjectCache.init(
-          this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
-      final DictionaryInfo dictionaryConfig = quickDicConfig.getDictionaryInfoByFile(dictFile);
-      this.setTitle("QuickDic: " + dictionaryConfig.name);
-      dictRaf = new RandomAccessFile(dictionaryConfig.localFile, "r");
+      final String name = getDictionaryApplication().getDictionaryName(dictFile);
+      this.setTitle("QuickDic: " + name);
+      dictRaf = new RandomAccessFile(dictFile, "r");
       dictionary = new Dictionary(dictRaf); 
     } catch (Exception e) {
       Log.e(LOG, "Unable to load dictionary.", e);
@@ -170,7 +174,7 @@ public class DictionaryActivity extends ListActivity {
         dictRaf = null;
       }
       Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()), Toast.LENGTH_LONG);
-      startActivity(DictionaryEditActivity.getLaunchIntent(dictFile));
+      startActivity(DictionaryManagerActivity.getLaunchIntent());
       finish();
       return;
     }
@@ -427,21 +431,16 @@ public class DictionaryActivity extends ListActivity {
     dialog.setTitle(R.string.selectADictionary);
 
     ListView listView = (ListView) dialog.findViewById(android.R.id.list);
+    
+    final List<DictionaryInfo> installedDicts = ((DictionaryApplication)getApplication()).getUsableDicts();
 
-    QuickDicConfig quickDicConfig = PersistentObjectCache.init(
-        this).read(C.DICTIONARY_CONFIGS, QuickDicConfig.class);
-    final List<DictionaryInfo> dictionaryInfos = new ArrayList<DictionaryInfo>();
-    for (final DictionaryInfo dictionaryInfo : quickDicConfig.dictionaryInfos) {
-      if (new File(dictionaryInfo.localFile).canRead()) {
-        dictionaryInfos.add(dictionaryInfo);
-      }
-    }
     listView.setAdapter(new BaseAdapter() {
       
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {
         final LinearLayout result = new LinearLayout(parent.getContext());
         //result.addView(new Butt)
+        // TODO: me
         return result;
       }
       
@@ -451,13 +450,13 @@ public class DictionaryActivity extends ListActivity {
       }
       
       @Override
-      public Object getItem(int position) {
-        return dictionaryInfos.get(position);
+      public DictionaryInfo getItem(int position) {
+        return installedDicts.get(position);
       }
       
       @Override
       public int getCount() {
-        return dictionaryInfos.size();
+        return installedDicts.size();
       }
     });
   }

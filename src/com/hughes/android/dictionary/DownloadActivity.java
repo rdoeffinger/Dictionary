@@ -39,9 +39,11 @@ public class DownloadActivity extends Activity {
 
   public static final String SOURCE = "source";
   public static final String DEST = "dest";
+  public static final String MESSAGE = "message";
 
   String source;
   String dest;
+  String message;
   long bytesProcessed = 0;
   long contentLength = -1;
 
@@ -49,6 +51,15 @@ public class DownloadActivity extends Activity {
   private final Handler uiHandler = new Handler();
 
   final AtomicBoolean stop = new AtomicBoolean(false);
+  
+  public static Intent getLaunchIntent(final String dictFile, final String source, final String dest, final String message) {
+    final Intent intent = new Intent();
+    intent.setClassName(DownloadActivity.class.getPackage().getName(), DownloadActivity.class.getName());
+    intent.putExtra(SOURCE, source);
+    intent.putExtra(DEST, dest);
+    intent.putExtra(MESSAGE, message);
+    return intent;
+  }
 
   /** Called when the activity is first created. */
   @Override
@@ -59,6 +70,7 @@ public class DownloadActivity extends Activity {
     final Intent intent = getIntent();
     source = intent.getStringExtra(SOURCE);
     dest = intent.getStringExtra(DEST);
+    message = intent.getStringExtra(MESSAGE);
     if (source == null || dest == null) {
       throw new RuntimeException("null source or dest.");
     }
