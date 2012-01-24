@@ -28,7 +28,9 @@
 		android:layout_width="fill_parent" android:layout_height="wrap_content" android:indeterminate="false"/>
 
   <TextView android:id="@+id/downloadMessage" android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:visibility="visible" android:text="Download message."/>
+    android:layout_height="wrap_content" android:visibility="visible" android:text="Download message."
+    android:layout_marginTop="10dip"
+    android:layout_marginBottom="10dip"/>
  
 	<TextView android:id="@+id/downloadStatus" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:visibility="visible" android:text="Download status."/>

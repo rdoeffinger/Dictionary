@@ -52,7 +52,7 @@ public class DownloadActivity extends Activity {
 
   final AtomicBoolean stop = new AtomicBoolean(false);
   
-  public static Intent getLaunchIntent(final String dictFile, final String source, final String dest, final String message) {
+  public static Intent getLaunchIntent(final String source, final String dest, final String message) {
     final Intent intent = new Intent();
     intent.setClassName(DownloadActivity.class.getPackage().getName(), DownloadActivity.class.getName());
     intent.putExtra(SOURCE, source);
@@ -81,6 +81,9 @@ public class DownloadActivity extends Activity {
 
     final TextView destTextView = (TextView) findViewById(R.id.dest);
     destTextView.setText(dest);
+
+    final TextView messageTextView = (TextView) findViewById(R.id.downloadMessage);
+    messageTextView.setText(message);
 
     final ProgressBar progressBar = (ProgressBar) findViewById(R.id.downloadProgressBar);
     progressBar.setIndeterminate(false);
@@ -129,6 +132,7 @@ public class DownloadActivity extends Activity {
               final OutputStream zipOut = new FileOutputStream(destUnzipped);
               contentLength = zipEntry.getSize();
               bytesRead = copyStream(zipIn, zipOut, R.string.unzipping);
+              destFile.delete();
             }
           }
           

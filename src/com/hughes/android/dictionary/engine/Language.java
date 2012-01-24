@@ -80,6 +80,7 @@ public class Language {
     isoCodeToResourceId.put("ES", R.string.ES);
     isoCodeToResourceId.put("SW", R.string.SW);
     isoCodeToResourceId.put("SV", R.string.SV);
+    isoCodeToResourceId.put("TL", R.string.TL);
     isoCodeToResourceId.put("TG", R.string.TG);
     isoCodeToResourceId.put("TH", R.string.TH);
     isoCodeToResourceId.put("BO", R.string.BO);
@@ -91,10 +92,12 @@ public class Language {
     isoCodeToResourceId.put("YI", R.string.YI);
     isoCodeToResourceId.put("ZU", R.string.ZU);
     
+    
     // Hack to allow lower-case ISO codes to work:
     for (final String isoCode : new ArrayList<String>(isoCodeToResourceId.keySet())) {
       isoCodeToResourceId.put(isoCode.toLowerCase(), isoCodeToResourceId.get(isoCode));
     }
+
   }
 
 

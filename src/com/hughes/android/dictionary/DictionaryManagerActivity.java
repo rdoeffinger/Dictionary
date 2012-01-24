@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary;
 
+import java.io.File;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -38,23 +39,26 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.TableLayout;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.hughes.android.util.IntentLauncher;
+import com.hughes.util.StringUtil;
 
 public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
-  QuickDicConfig quickDicConfig;
-  
   static boolean canAutoLaunch = true;
-  
-  final DictionaryApplication application = (DictionaryApplication) getApplication();
+
+  DictionaryApplication application;
+  Adapter adapter;
   
   public void onCreate(Bundle savedInstanceState) {
-    //((DictionaryApplication)getApplication()).applyTheme(this);
-
     super.onCreate(savedInstanceState);
     Log.d(LOG, "onCreate:" + this);
+    
+    application = (DictionaryApplication) getApplication();
 
     // UI init.
     setContentView(R.layout.list_activity);
@@ -66,6 +70,8 @@ public class DictionaryManagerActivity extends ListActivity {
         onClick(index);
       }
     });
+    
+    getListView().setClickable(true);
 
     // ContextMenu.
     registerForContextMenu(getListView());
@@ -77,7 +83,7 @@ public class DictionaryManagerActivity extends ListActivity {
       final AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setCancelable(false);
       final WebView webView = new WebView(getApplicationContext());
-      webView.loadData(getString(R.string.thanksForUpdating), "text/html", "utf-8");
+      webView.loadData(StringUtil.readToString(getResources().openRawResource(R.raw.whats_new)), "text/html", "utf-8");
       builder.setView(webView);
       builder.setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
@@ -101,8 +107,17 @@ public class DictionaryManagerActivity extends ListActivity {
   
   private void onClick(int index) {
     final DictionaryInfo dictionaryInfo = adapter.getItem(index);
-    final Intent intent = DictionaryActivity.getLaunchIntent(dictionaryInfo.uncompressedFilename, 0, "");
-    startActivity(intent);
+    final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
+    if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) && downloadable != null) {
+      final Intent intent = DownloadActivity
+          .getLaunchIntent(downloadable.downloadUrl,
+              application.getPath(dictionaryInfo.uncompressedFilename).getPath() + ".zip",
+              dictionaryInfo.dictInfo);
+      startActivity(intent);
+    } else {
+      final Intent intent = DictionaryActivity.getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), 0, "");
+      startActivity(intent);
+    }
   }
   
   @Override
@@ -119,13 +134,13 @@ public class DictionaryManagerActivity extends ListActivity {
     if (canAutoLaunch && prefs.contains(C.DICT_FILE) && prefs.contains(C.INDEX_INDEX)) {
       canAutoLaunch = false;  // Only autolaunch once per-process, on startup.
       Log.d(LOG, "Skipping Dictionary List, going straight to dictionary.");
-      startActivity(DictionaryActivity.getLaunchIntent(prefs.getString(C.DICT_FILE, ""), prefs.getInt(C.INDEX_INDEX, 0), prefs.getString(C.SEARCH_TOKEN, "")));
+      startActivity(DictionaryActivity.getLaunchIntent(new File(prefs.getString(C.DICT_FILE, "")), prefs.getInt(C.INDEX_INDEX, 0), prefs.getString(C.SEARCH_TOKEN, "")));
       // Don't finish, so that user can hit back and get here.
       //finish();
       return;
     }
 
-    setListAdapter(adapter);
+    setListAdapter(adapter = new Adapter());
   }
 
   public boolean onCreateOptionsMenu(final Menu menu) {
@@ -167,7 +182,7 @@ public class DictionaryManagerActivity extends ListActivity {
       moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-          application.moveDictionaryToTop(dictionaryInfo.uncompressedFilename);
+          application.moveDictionaryToTop(dictionaryInfo);
           setListAdapter(adapter = new Adapter());
           return true;
         }
@@ -178,7 +193,7 @@ public class DictionaryManagerActivity extends ListActivity {
     deleteMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
-        application.deleteDictionary(dictionaryInfo.uncompressedFilename);
+        application.deleteDictionary(dictionaryInfo);
         setListAdapter(adapter = new Adapter());
         return true;
       }
@@ -206,24 +221,54 @@ public class DictionaryManagerActivity extends ListActivity {
     }
     
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
       final DictionaryInfo dictionaryInfo = getItem(position);
-      final TableLayout tableLayout = new TableLayout(parent.getContext());
-      final TextView view = new TextView(parent.getContext());
+      final LinearLayout result = new LinearLayout(parent.getContext());
       
-      String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
-      if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
-        name = getString(R.string.notOnDevice, name);
+      final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
+      final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename); 
+      if ((!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) || updateAvailable) && downloadable != null) {
+        final Button downloadButton = new Button(parent.getContext());
+        downloadButton.setText(getString(updateAvailable ? R.string.updateButton : R.string.downloadButton));
+        downloadButton.setOnClickListener(new IntentLauncher(parent.getContext(), DownloadActivity
+            .getLaunchIntent(downloadable.downloadUrl,
+                application.getPath(dictionaryInfo.uncompressedFilename).getPath() + ".zip",
+                dictionaryInfo.dictInfo)) {
+          @Override
+          protected void onGo() {
+            application.invalidateDictionaryInfo(dictionaryInfo.uncompressedFilename);
+          }
+        });
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        downloadButton.setLayoutParams(layoutParams);
+        result.addView(downloadButton);
       }
 
-      view.setText(name);
-      view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
-      tableLayout.addView(view);
+      final TextView textView = new TextView(parent.getContext());
+      final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
+      textView.setText(name);
+      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+      result.addView(textView);
 
-      return tableLayout;
+      // Because we have a Button inside a ListView row:
+      // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
+      result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+      result.setClickable(true);
+      result.setFocusable(true);
+      result.setLongClickable(true);
+      result.setBackgroundResource(android.R.drawable.menuitem_background);
+      result.setOnClickListener(new TextView.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          DictionaryManagerActivity.this.onClick(position);
+        }
+      });
+
+      return result;
     }
   }
-  Adapter adapter = new Adapter();
 
   public static Intent getLaunchIntent() {
     final Intent intent = new Intent();

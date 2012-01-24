@@ -3,20 +3,16 @@
 
 	<string name="app_name">QuickDic</string>
  
-  <!-- DictionaryListActivity -->
-  <string name="dictionaryList">Wörterbuch-Liste</string>
-  <string name="selectADictionary"><![CDATA[Wählen Sie ein Wörterbuch.\n
-Long-drücken, um das Wörterbuch Konfiguration zu bearbeiten. Drücken Sie "Menü", um ein neues Wörterbuch hinzufügen.]]></string>
-  <string name="addDictionary">Wörterbuch hinzufügen</string>
-  <string name="addDefaultDictionaries">Default Wörterbücher hinzufügen</string>
-  <string name="removeAllDictionaries">Alle Wörterbücher entfernen</string>
-  <string name="editDictionary">Wörterbuch Config bearbeiten</string>
-  <string name="deleteDictionary">Wörterbuch entfernen</string>
-  <string name="newDictionary">Neues Wörterbuch</string>
+  <!-- DictionaryManagerActivity -->
+  <string name="dictionaryManager">Wörterbuch-Liste</string>
+  <string name="helpText">Long-drücken, um weitere Möglichkeiten zu sehen.</string>
+  <string name="downloadButton">Herunterladen</string>
+  <string name="updateButton">Neuladen</string>
   <string name="moveToTop">Nach Anfang ziehen</string>
-  <string name="notOnDevice">%s (nicht auf dem Gerät)</string>
+  <string name="deleteDictionary">Wörterbuch entfernen</string>
+  <string name="nameFormat2">%1$s (%2$s=%3$d, %4$s=%5$d Einträge)</string>
 
-  <string name="thanksForUpdatingVersion">3.0.1k</string>
+  <string name="thanksForUpdatingVersion">3.1</string>
   <!-- Don't use links in the text below, it crashes the app. -->
   <string name="thanksForUpdating"><![CDATA[
 <html>
@@ -24,8 +20,8 @@ Long-drücken, um das Wörterbuch Konfiguration zu bearbeiten. Drücken Sie "Men
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
 </head>
 <body>
-  Danke, da&szlig; Sie QuickDic 3.0.1 heruntergeladen haben.
-  <p> neue Funktionen:
+  Danke, da&szlig; Sie QuickDic 3.1 heruntergeladen haben.
+  <p> Neue Funktionen:
   <ul>
     <li> QuickDic ist Open-Source!
     <li> Neue Einstellungen:
@@ -44,7 +40,7 @@ Long-drücken, um das Wörterbuch Konfiguration zu bearbeiten. Drücken Sie "Men
   <!-- DictionaryEditActivity -->
   <string name="dictionaryName">Wörterbuch Name</string>
   <string name="downloadUrl">Wörterbuch URL</string>
-  <string name="downloadButton">Herunterladen</string>
+  
   <string name="openButton">Öffnen</string>
   <string name="dictionaryInfo">Wörterbuch Info:</string>
   <string name="localFile">Wörterbuch Datei</string>
@@ -52,17 +48,16 @@ Long-drücken, um das Wörterbuch Konfiguration zu bearbeiten. Drücken Sie "Men
   <string name="fileNotFound">Datei nicht gefunden: \'%s\'</string>
   <string name="invalidDictionary">Ungültige Wörterbuch: file=%1$s, error=%2$s</string>
   <string name="numPairEntries">Einträge: %,d</string>
-  <string name="numTokens">Tokens: %,d</string>
-  <string name="numRows">Reihe: %,d</string>
 
  
-	<!-- Main -->
-	<string name="searchText">Suchtext</string>
-	<string name="downloadDictionary">Wörterbuch herunterladen…</string>
-	<string name="switchToLanguage">Zu %s wechseln</string>
-	<string name="preferences">Einstellungen…</string>
-	<string name="about">Über QuickDic…</string>
-	<string name="addToWordList">Zum Wortliste hinzufügen: %s</string>
+  <!-- Main -->
+  <string name="searchText">Suchtext</string>
+  <string name="downloadDictionary">Wörterbuch herunterladen…</string>
+  <string name="switchToLanguage">Zu %s wechseln</string>
+  <string name="preferences">Einstellungen…</string>
+  <string name="about">Über QuickDic…</string>
+  <string name="addToWordList">Zum Wortliste hinzufügen: %s</string>
+  <string name="searchForSelection">Suche: %s</string>
   <string name="failedAddingToWordList">Fehler beim Hinzufügen zur Wortliste: %s</string>
   <string name="unzippingDictionary">Wörterbuch entpacken…</string>
   <string name="failedToUnzipDictionary">Fehler beim Entpackung der Wörterbuch…</string>
@@ -97,7 +92,7 @@ Long-drücken, um das Wörterbuch Konfiguration zu bearbeiten. Drücken Sie "Men
 
   <string name="fontSizeKey">fontSize</string>
   <string name="fontSizeTitle">Schriftgröße</string>
-  <string name="fontSizeSummary">Die Größe der Schriftart für die Wörterbuch-Reihen (Neustart erforderlich).</string>
+  <string name="fontSizeSummary">Die Größe der Schriftart für die Wörterbuch-Reihen.</string>
 
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
   <string name="saveOnlyFirstSubentryTitle">Speichern nur erste Sub-Eintrag</string>
@@ -113,6 +108,6 @@ Long-drücken, um das Wörterbuch Konfiguration zu bearbeiten. Drücken Sie "Men
 
   <string name="themeKey">theme</string>
   <string name="themeTitle">UI Theme</string>
-  <string name="themeSummary">User-Interface Farbschema (Neustart erforderlich).</string>
+  <string name="themeSummary">User-Interface Farbschema.</string>
   
 </resources>

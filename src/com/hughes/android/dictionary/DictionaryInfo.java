@@ -58,7 +58,11 @@ public class DictionaryInfo implements Serializable {
   public long creationMillis;
   public final List<IndexInfo> indexInfos = new ArrayList<DictionaryInfo.IndexInfo>();
   public String dictInfo;
-  
+
+  public DictionaryInfo() {
+    // Blank object.
+  }
+
   public StringBuilder append(final StringBuilder result) {
     result.append(uncompressedFilename);
     result.append("\t").append(downloadUrl);
@@ -85,10 +89,6 @@ public class DictionaryInfo implements Serializable {
       i += IndexInfo.SIZE;
     }
     dictInfo = fields[i++].replaceAll("\\n", "\n");
-  }
-
-  public DictionaryInfo() {
-    // Blank object.
   }
 
   @Override

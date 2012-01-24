@@ -16,7 +16,7 @@ package com.hughes.android.dictionary;
 
 public class C {
 
-  static final String DICTIONARY_CONFIGS = "dictionaryConfigs";
+  static final String DICTIONARY_CONFIGS = "dictionaryConfigs2";
 
   static final String DICT_FILE = "dictFile";
   static final String INDEX_INDEX = "indexIndex";
@@ -31,7 +31,7 @@ public class C {
         R.drawable.theme_default_token_row_other_bg,
         R.drawable.theme_default_other_lang_bg),
         
-        LIGHT(R.style.Theme_Light,
+    LIGHT(R.style.Theme_Light,
         R.style.Theme_Light_TokenRow_Fg,
         R.drawable.theme_light_token_row_main_bg,
         R.drawable.theme_light_token_row_other_bg,

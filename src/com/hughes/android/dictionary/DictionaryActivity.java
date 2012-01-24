@@ -73,6 +73,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Index;
 import com.hughes.android.dictionary.engine.PairEntry;
@@ -80,12 +81,14 @@ import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
 import com.hughes.android.dictionary.engine.TokenRow;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
+import com.hughes.android.util.IntentLauncher;
 
 public class DictionaryActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
   
-  String dictFile = null;
+  DictionaryApplication application;
+  File dictFile = null;
   RandomAccessFile dictRaf = null;
   Dictionary dictionary = null;
   int indexIndex = 0;
@@ -116,15 +119,13 @@ public class DictionaryActivity extends ListActivity {
   
   final SearchTextWatcher searchTextWatcher = new SearchTextWatcher();
 
-  //private Vibrator vibrator = null;
-  
   public DictionaryActivity() {
   }
   
-  public static Intent getLaunchIntent(final String dictFile, final int indexIndex, final String searchToken) {
+  public static Intent getLaunchIntent(final File dictFile, final int indexIndex, final String searchToken) {
     final Intent intent = new Intent();
     intent.setClassName(DictionaryActivity.class.getPackage().getName(), DictionaryActivity.class.getName());
-    intent.putExtra(C.DICT_FILE, dictFile);
+    intent.putExtra(C.DICT_FILE, dictFile.getPath());
     intent.putExtra(C.INDEX_INDEX, indexIndex);
     intent.putExtra(C.SEARCH_TOKEN, searchToken);
     return intent;
@@ -142,24 +143,23 @@ public class DictionaryActivity extends ListActivity {
     setSearchText(outState.getString(C.SEARCH_TOKEN));
   }
 
-  public DictionaryApplication getDictionaryApplication() {
-    return (DictionaryApplication) super.getApplication();
-  }
-  
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreate(Bundle savedInstanceState) {    
+    Log.d(LOG, "onCreate:" + this);
+    super.onCreate(savedInstanceState);
+
+    application = (DictionaryApplication) getApplication();
+    theme = application.getSelectedTheme();
+
     // Clear them so that if something goes wrong, we won't relaunch.
     clearDictionaryPrefs(this);
     
-    Log.d(LOG, "onCreate:" + this);
-    theme = ((DictionaryApplication)getApplication()).getSelectedTheme();
-    super.onCreate(savedInstanceState);
     
     final Intent intent = getIntent();
-    dictFile = intent.getStringExtra(C.DICT_FILE);
+    dictFile = new File(intent.getStringExtra(C.DICT_FILE));
 
     try {
-      final String name = getDictionaryApplication().getDictionaryName(dictFile);
+      final String name = application.getDictionaryName(dictFile.getName());
       this.setTitle("QuickDic: " + name);
       dictRaf = new RandomAccessFile(dictFile, "r");
       dictionary = new Dictionary(dictRaf); 
@@ -256,7 +256,7 @@ public class DictionaryActivity extends ListActivity {
     langButton.setOnLongClickListener(new OnLongClickListener() {
       @Override
       public boolean onLongClick(View v) {
-        onLanguageButtonLongClick();
+        onLanguageButtonLongClick(v.getContext());
         return true;
       }
     });
@@ -325,9 +325,9 @@ public class DictionaryActivity extends ListActivity {
   }
   
   private static void setDictionaryPrefs(final Context context,
-      final String dictFile, final int indexIndex, final String searchToken) {
+      final File dictFile, final int indexIndex, final String searchToken) {
     final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(context).edit();
-    prefs.putString(C.DICT_FILE, dictFile);
+    prefs.putString(C.DICT_FILE, dictFile.getPath());
     prefs.putInt(C.INDEX_INDEX, indexIndex);
     prefs.putString(C.SEARCH_TOKEN, searchToken);
     prefs.commit();
@@ -403,14 +403,12 @@ public class DictionaryActivity extends ListActivity {
   static class OpenIndexButton extends Button implements OnClickListener {
 
     final Activity activity;
-    final String dictFile;
-    final int indexIndex;
+    final Intent intent;
 
-    public OpenIndexButton(final Context context, final Activity activity, final String text, final String dictFile, final int indexIndex) {
+    public OpenIndexButton(final Context context, final Activity activity, final String text, final Intent intent) {
       super(context);
       this.activity = activity;
-      this.dictFile = dictFile;
-      this.indexIndex = indexIndex;
+      this.intent = intent;
       setOnClickListener(this);
       setText(text, BufferType.NORMAL);
     }
@@ -418,29 +416,47 @@ public class DictionaryActivity extends ListActivity {
     @Override
     public void onClick(View v) {
       activity.finish();
-      getContext().startActivity(DictionaryActivity.getLaunchIntent(dictFile, indexIndex, ""));
+      getContext().startActivity(intent);
     }
     
   }
 
-  void onLanguageButtonLongClick() {
-    Context mContext = getApplicationContext();
-    Dialog dialog = new Dialog(mContext);
-    
+  void onLanguageButtonLongClick(final Context context) {
+    final Dialog dialog = new Dialog(context);
     dialog.setContentView(R.layout.select_dictionary_dialog);
-    dialog.setTitle(R.string.selectADictionary);
+    dialog.setTitle(R.string.selectDictionary);
 
-    ListView listView = (ListView) dialog.findViewById(android.R.id.list);
-    
     final List<DictionaryInfo> installedDicts = ((DictionaryApplication)getApplication()).getUsableDicts();
-
+    ListView listView = (ListView) dialog.findViewById(android.R.id.list);
     listView.setAdapter(new BaseAdapter() {
-      
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {
         final LinearLayout result = new LinearLayout(parent.getContext());
-        //result.addView(new Butt)
-        // TODO: me
+        final DictionaryInfo dictionaryInfo = getItem(position);
+        for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
+          final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
+          final Button button = new Button(parent.getContext());
+          String name = application.getLanguageName(indexInfo.shortName);
+          if (name == null) {
+            name = indexInfo.shortName;
+          }
+          button.setText(name);
+          final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(), getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), i, "")) {
+            @Override
+            protected void onGo() {
+              dialog.dismiss();
+              DictionaryActivity.this.finish();
+            };
+          };
+          button.setOnClickListener(intentLauncher);
+          
+          final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+          layoutParams.width = 0;
+          layoutParams.weight = 1.0f;
+          button.setLayoutParams(layoutParams);
+
+          result.addView(button);
+        }
         return result;
       }
       
@@ -459,6 +475,8 @@ public class DictionaryActivity extends ListActivity {
         return installedDicts.size();
       }
     });
+    
+    dialog.show();
   }
 
 

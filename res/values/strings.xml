@@ -5,65 +5,44 @@
  
   <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
-  <string name="selectADictionary"><![CDATA[Select a dictionary.
-\nLong-press to edit the dictionary config. Press "menu" to add a new dictionary.]]></string>
-  <string name="dictionaryConfig">Dictionary config</string>
+  <string name="helpText">Long-press for more options.</string>
+  <string name="downloadButton">Download</string>
+  <string name="updateButton">Update</string>
   <string name="moveToTop">Move to top</string>
   <string name="deleteDictionary">Delete dictionary</string>
-  <string name="notOnDevice">%s (not on device)</string>
+  <string name="nameFormat2">%1$s (%2$s=%3$d, %4$s=%5$d entries)</string>
+  
 
-  <string name="thanksForUpdatingVersion">3.0.1h</string>
-  <!-- Don't use links in the text below, it crashes the app. -->
-  <string name="thanksForUpdating"><![CDATA[
-<html>
-<body>
-  Thanks for updating to QuickDic 3.0.1.
-  <p> New features:
-  <ul>
-    <li> QuickDic is open-source!
-    <li> New preferences:
-    <ul>
-      <li> Dictionary font size is adjustable.
-      <li> Short clicks on dictionary entries no longer open context menu by default.
-    </ul>
-    <li> 17 new English dictionaries: Albanian, Armenian, Belarusian, Bengali, Bosnian, Bulgarian, Catalan, Esperanto, Estonian, Hungarian, Indonesian, Latin, Latvian, Polish, Punjabi, Slovak, Swahili. (based on enwiktionary.com data).
-    <li> All dictionaries updated (mostly with better formatting), and can be re-downloaded at your leisure (previously downloaded dictionaries will still work).
-  </ul>
-</body>
-</html> 
-]]>
-  </string>
+  <string name="thanksForUpdatingVersion">3.1</string>
  
   <!-- DictionaryEditActivity -->
+  <!-- 
   <string name="dictionaryName">Dictionary name</string>
   <string name="downloadUrl">Dictionary download URL</string>
-  <string name="downloadButton">Download</string>
   <string name="openButton">Open</string>
   <string name="dictionaryInfo">Dictionary info:</string>
   <string name="indexInfo">Index %1$s, %2$d words</string>
   <string name="localFile">Dictionary file</string>
   <string name="wordListFile">Word list file</string>
   <string name="fileNotFound">File not found: \'%s\'</string>
-  <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
   <string name="numPairEntries">Entries: %,d</string>
-
+ -->
  
-	<!-- Main -->
-	<string name="searchText">Search Text</string>
-	<string name="downloadDictionary">Download dictionary…</string>
-	<string name="switchToLanguage">Switch to %s</string>
-	<string name="preferences">Preferences…</string>
-	<string name="about">About QuickDic…</string> 
-	<string name="addToWordList">Add to word list: %s</string>
+  <!-- DictionaryActivity -->
+  <string name="searchText">Search Text</string>
+  <string name="selectDictionary">Select dictionary…</string>
+  <string name="switchToLanguage">Switch to %s</string>
+  <string name="preferences">Preferences…</string>
+  <string name="about">About QuickDic…</string> 
+  <string name="addToWordList">Add to word list: %s</string>
   <string name="searchForSelection">Find: %s</string>
-	<string name="failedAddingToWordList">Failure adding to word list: %s</string>
-  
-  <!--  do we need? -->
+  <string name="failedAddingToWordList">Failure adding to word list: %s</string>
   <string name="unzippingDictionary">Unzipping dictionary…</string>
   <string name="failedToUnzipDictionary">Failed to unzip dictionary…</string>
-
+  <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
+  
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 3.0.1</string>
+	<string name="titleWithVersion">QuickDic 3.1</string>
 	<string name="thadHughes">Thad Hughes</string>
 	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources. Please send comments, suggestions, bug reports, or just a quick hello to:</string>
 	<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
@@ -88,7 +67,7 @@
 
   <string name="fontSizeKey">fontSize</string>
   <string name="fontSizeTitle">Font size</string>
-  <string name="fontSizeSummary">The size of the font for dictionary rows (restart required).</string>
+  <string name="fontSizeSummary">The size of the font for dictionary rows.</string>
 
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
   <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
@@ -104,6 +83,6 @@
 
   <string name="themeKey">theme</string>
   <string name="themeTitle">UI theme</string>
-  <string name="themeSummary">User-interface color theme (restart required).</string>
+  <string name="themeSummary">User-interface color theme.</string>
   
 </resources>

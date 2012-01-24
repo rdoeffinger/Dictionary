@@ -12,7 +12,7 @@
   <string name="CA">Catalan</string>
   <string name="HR">Croatian</string>
   <string name="CS">Czech</string>
-  <string name="ZH">Chinese|Mandarin|Cantonese</string>
+  <string name="ZH">Chinese (Mandarin, Cantonese)</string>
   <string name="DA">Danish</string>
   <string name="NL">Dutch</string>
   <string name="EN">English</string>
@@ -54,6 +54,7 @@
   <string name="ES">Spanish</string>
   <string name="SW">Swahili</string>
   <string name="SV">Swedish</string>
+  <string name="TL">Tagalog</string>
   <string name="TG">Tajik</string>
   <string name="TH">Thai</string>
   <string name="BO">Tibetan</string>

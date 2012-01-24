@@ -53,12 +53,21 @@ public class DictionaryApplication extends Application {
   static Map<String,DictionaryInfo> DOWNLOADABLE_NAME_TO_INFO = null;
   
   static final class DictionaryConfig implements Serializable {
-    private static final long serialVersionUID = -1444177164708201260L;
+    private static final long serialVersionUID = -1444177164708201262L;
     // User-ordered list, persisted, just the ones that are/have been present.
-    final List<String> dictionaryFiles = new ArrayList<String>();
+    final List<DictionaryInfo> dictionaryFilesOrdered = new ArrayList<DictionaryInfo>();
+    final Set<String> invalidatedFilenames = new LinkedHashSet<String>();
   }
   DictionaryConfig dictionaryConfig = null;
-    
+
+  static final class DictionaryHistory implements Serializable {
+    private static final long serialVersionUID = -4842995032541390284L;
+    // User-ordered list, persisted, just the ones that are/have been present.
+    final List<DictionaryLink> dictionaryLinks = new ArrayList<DictionaryLink>();
+  }
+  DictionaryHistory dictionaryHistory = null;
+
+  
   @Override
   public void onCreate() {
     super.onCreate();
@@ -119,20 +128,36 @@ public class DictionaryApplication extends Application {
     }
   }
 
-  private File getPath(String uncompressedFilename) {
+  public File getPath(String uncompressedFilename) {
     return new File(DICT_DIR, uncompressedFilename);
   }
 
 
   public List<DictionaryInfo> getUsableDicts() {
-    final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(dictionaryConfig.dictionaryFiles.size());
-    for (final String uncompressedFilename : dictionaryConfig.dictionaryFiles) {
-      final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(getPath(uncompressedFilename));
+    final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(dictionaryConfig.dictionaryFilesOrdered.size());
+    for (int i = 0; i < dictionaryConfig.dictionaryFilesOrdered.size(); ++i) {
+      DictionaryInfo dictionaryInfo = dictionaryConfig.dictionaryFilesOrdered.get(i);
+      if (dictionaryConfig.invalidatedFilenames.contains(dictionaryInfo.uncompressedFilename)) {
+        dictionaryInfo = Dictionary.getDictionaryInfo(getPath(dictionaryInfo.uncompressedFilename));
+        if (dictionaryInfo != null) {
+          dictionaryConfig.dictionaryFilesOrdered.set(i, dictionaryInfo);
+        }
+      }
       if (dictionaryInfo != null) {
         result.add(dictionaryInfo);
       }
     }
+    if (!dictionaryConfig.invalidatedFilenames.isEmpty()) {
+      dictionaryConfig.invalidatedFilenames.clear();
+      PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
+    }
     return result;
+  }
+  
+  public String getLanguageName(final String isoCode) {
+    final Integer langCode = Language.isoCodeToResourceId.get(isoCode);
+    final String lang = langCode != null ? getApplicationContext().getString(langCode) : isoCode;
+    return lang;
   }
 
   final Map<String, String> fileToNameCache = new LinkedHashMap<String, String>();
@@ -143,16 +168,13 @@ public class DictionaryApplication extends Application {
     }
     
     final DictionaryInfo dictionaryInfo = DOWNLOADABLE_NAME_TO_INFO.get(uncompressedFilename);
-    final Context context = getApplicationContext();
     if (dictionaryInfo != null) {
       final StringBuilder nameBuilder = new StringBuilder();
       for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
-        final Integer langCode = Language.isoCodeToResourceId.get(dictionaryInfo.indexInfos.get(i).shortName);
-        final String lang = langCode != null ? context.getString(langCode) : dictionaryInfo.indexInfos.get(i).shortName;
         if (i > 0) {
           nameBuilder.append("-");
         }
-        nameBuilder.append(lang);
+        nameBuilder.append(getLanguageName(dictionaryInfo.indexInfos.get(i).shortName));
       }
       name = nameBuilder.toString();
     } else {
@@ -162,16 +184,25 @@ public class DictionaryApplication extends Application {
     return name;
   }
 
-  public void moveDictionaryToTop(final String canonicalPath) {
-    dictionaryConfig.dictionaryFiles.remove(canonicalPath);
-    dictionaryConfig.dictionaryFiles.add(0, canonicalPath);
+  public void moveDictionaryToTop(final DictionaryInfo dictionaryInfo) {
+    dictionaryConfig.dictionaryFilesOrdered.remove(dictionaryInfo);
+    dictionaryConfig.dictionaryFilesOrdered.add(0, dictionaryInfo);
     PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
   }
 
-  public void deleteDictionary(String canonicalPath) {
-    while (dictionaryConfig.dictionaryFiles.remove(canonicalPath)) {};
+  public void deleteDictionary(final DictionaryInfo dictionaryInfo) {
+    while (dictionaryConfig.dictionaryFilesOrdered.remove(dictionaryInfo)) {};
+    getPath(dictionaryInfo.uncompressedFilename).delete();
     PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
   }
+
+  final Collator collator = Collator.getInstance();
+  final Comparator<DictionaryInfo> comparator = new Comparator<DictionaryInfo>() {
+    @Override
+    public int compare(DictionaryInfo object1, DictionaryInfo object2) {
+      return collator.compare(getDictionaryName(object1.uncompressedFilename), getDictionaryName(object2.uncompressedFilename));
+    }
+  };
 
   public List<DictionaryInfo> getAllDictionaries() {
     final List<DictionaryInfo> result = getUsableDicts();
@@ -181,10 +212,13 @@ public class DictionaryApplication extends Application {
     for (final DictionaryInfo usable : result) {
       known.add(usable.uncompressedFilename);
     }
+    if (!dictionaryConfig.invalidatedFilenames.isEmpty()) {
+      dictionaryConfig.invalidatedFilenames.clear();
+    }
     
     // Are there dictionaries on the device that we didn't know about already?
     // Pick them up and put them at the end of the list.
-    boolean foundNew = false;
+    final List<DictionaryInfo> toAddSorted = new ArrayList<DictionaryInfo>();
     final File[] dictDirFiles = DICT_DIR.listFiles();
     for (final File file : dictDirFiles) {
       if (!file.getName().endsWith(".quickdic")) {
@@ -200,27 +234,25 @@ public class DictionaryApplication extends Application {
         continue;
       }
       known.add(file.getName());
-      foundNew = true;
-      dictionaryConfig.dictionaryFiles.add(file.getName());
-      result.add(dictionaryInfo);
+      toAddSorted.add(dictionaryInfo);
     }
-    if (foundNew) {
+    if (!toAddSorted.isEmpty()) {
+      Collections.sort(toAddSorted, comparator);
+      result.addAll(toAddSorted);
+//      for (final DictionaryInfo dictionaryInfo : toAddSorted) {
+//        dictionaryConfig.dictionaryFilesOrdered.add(dictionaryInfo.uncompressedFilename);
+//      }
+      dictionaryConfig.dictionaryFilesOrdered.addAll(toAddSorted);
       PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
     // The downloadable ones.
     final Map<String,DictionaryInfo> remaining = new LinkedHashMap<String, DictionaryInfo>(DOWNLOADABLE_NAME_TO_INFO);
     remaining.keySet().removeAll(known);
-    final List<DictionaryInfo> remainingSorted = new ArrayList<DictionaryInfo>(remaining.values());
-    final Collator collator = Collator.getInstance();
-    Collections.sort(remainingSorted, new Comparator<DictionaryInfo>() {
-      @Override
-      public int compare(DictionaryInfo object1, DictionaryInfo object2) {
-        return collator.compare(getDictionaryName(object1.uncompressedFilename), getDictionaryName(object2.uncompressedFilename));
-      }
-    });
-
-    result.addAll(remainingSorted);
+    toAddSorted.clear();
+    toAddSorted.addAll(remaining.values());
+    Collections.sort(toAddSorted, comparator);
+    result.addAll(toAddSorted);
     return result;
   }
 
@@ -228,5 +260,19 @@ public class DictionaryApplication extends Application {
     return getPath(uncompressedFilename).canRead();
   }
 
+  public boolean updateAvailable(final DictionaryInfo dictionaryInfo) {
+    final DictionaryInfo downloadable = DOWNLOADABLE_NAME_TO_INFO.get(dictionaryInfo.uncompressedFilename);
+    return downloadable != null && downloadable.creationMillis > dictionaryInfo.creationMillis;
+  }
+
+  public DictionaryInfo getDownloadable(final String uncompressedFilename) {
+    final DictionaryInfo downloadable = DOWNLOADABLE_NAME_TO_INFO.get(uncompressedFilename);
+    return downloadable;
+  }
+
+  public void invalidateDictionaryInfo(final String uncompressedFilename) {
+    dictionaryConfig.invalidatedFilenames.add(uncompressedFilename);
+    PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
+  }
   
 }
