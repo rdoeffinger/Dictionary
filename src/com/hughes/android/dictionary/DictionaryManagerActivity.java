@@ -31,6 +31,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -250,12 +251,20 @@ public class DictionaryManagerActivity extends ListActivity {
       // Add the information about each index.
       final LinearLayout row2 = new LinearLayout(parent.getContext());
       row2.setOrientation(LinearLayout.HORIZONTAL);
+      final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      row2.setLayoutParams(layoutParams);
       result.addView(row2);
+      final StringBuilder builder = new StringBuilder();
       for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
-        final TextView indexView = new TextView(parent.getContext());
-        indexView.setText(getString(R.string.indexInfo, indexInfo.shortName, indexInfo.mainTokenCount));
-        row2.addView(indexView);
+        if (builder.length() > 0) {
+          builder.append(" | ");
+        }
+        builder.append(getString(R.string.indexInfo, indexInfo.shortName, indexInfo.mainTokenCount));
       }
+      final TextView indexView = new TextView(parent.getContext());
+      indexView.setText(builder.toString());
+      row2.addView(indexView);
+      
       
       // Because we have a Button inside a ListView row:
       // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
