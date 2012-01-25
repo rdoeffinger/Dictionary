@@ -214,7 +214,12 @@ public class DictionaryManagerActivity extends ListActivity {
     public View getView(final int position, final View convertView, final ViewGroup parent) {
       final DictionaryInfo dictionaryInfo = getItem(position);
       final LinearLayout result = new LinearLayout(parent.getContext());
-      
+      result.setOrientation(LinearLayout.VERTICAL);
+
+      final LinearLayout row = new LinearLayout(parent.getContext());
+      row.setOrientation(LinearLayout.HORIZONTAL);
+      result.addView(row);
+
       final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
       final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename); 
       if ((!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) || updateAvailable) && downloadable != null) {
@@ -233,22 +238,25 @@ public class DictionaryManagerActivity extends ListActivity {
         layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         downloadButton.setLayoutParams(layoutParams);
-        result.addView(downloadButton);
+        row.addView(downloadButton);
       }
 
       final TextView textView = new TextView(parent.getContext());
       final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
       textView.setText(name);
       textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
-      result.addView(textView);
+      row.addView(textView);
       
       // Add the information about each index.
+      final LinearLayout row2 = new LinearLayout(parent.getContext());
+      row2.setOrientation(LinearLayout.HORIZONTAL);
+      result.addView(row2);
       for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
         final TextView indexView = new TextView(parent.getContext());
         indexView.setText(getString(R.string.indexInfo, indexInfo.shortName, indexInfo.mainTokenCount));
-        result.addView(indexView);
+        row2.addView(indexView);
       }
-
+      
       // Because we have a Button inside a ListView row:
       // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
       result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
