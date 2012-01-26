@@ -19,9 +19,11 @@ import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
+import com.ibm.icu.text.Transliterator;
 
 public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntry>, Comparable<PairEntry> {
   
@@ -97,6 +99,11 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         final Index index) {
       super(referenceIndex, thisRowIndex, index);
     }
+    
+    @Override
+    public String toString() {
+      return getRawText(false);
+    }
 
     public PairEntry getEntry() {
       return index.dict.pairEntries.get(referenceIndex);
@@ -115,6 +122,40 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     public String getRawText(boolean compact) {
       final PairEntry pairEntry = getEntry();
       return pairEntry.getRawText(compact);
+    }
+
+    @Override
+    public RowMatchType matches(final List<String> searchTokens, final Transliterator normalizer, final boolean swapPairEntries) {
+      final int side = swapPairEntries ? 1 : 0;
+      final List<Pair> pairs = getEntry().pairs;
+      final String[] pairSides = new String[pairs.size()];
+      for (int i = 0; i < pairs.size(); ++i) {
+        pairSides[i] = normalizer.transform(pairs.get(i).get(side));
+      }
+      for (int i = searchTokens.size() - 1; i >= 0; --i) {
+        final String searchToken = searchTokens.get(i);
+        boolean found = false;
+        for (final String pairSide : pairSides) {
+          found |= pairSide.contains(searchToken);
+        }
+        if (!found) {
+          return RowMatchType.NO_MATCH;
+        }
+      }
+      final StringBuilder regex = new StringBuilder();
+      for (final String searchToken : searchTokens) {
+        if (regex.length() > 0) {
+          regex.append("[\\s]*");
+        }
+        regex.append(Pattern.quote(searchToken));
+      }
+      final Pattern pattern = Pattern.compile(regex.toString());
+      for (final String pairSide : pairSides) {
+        if (pattern.matcher(pairSide).matches()) {
+          return RowMatchType.ORDERED_MATCH;
+        }
+      }
+      return RowMatchType.BAG_OF_WORDS_MATCH;
     }
   
   }

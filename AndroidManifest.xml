@@ -55,6 +55,7 @@
   <activity android:name=".DictionaryActivity" />
   <activity android:name=".DictionaryEditActivity" />
   <activity android:name=".AboutActivity" />
+  <activity android:name=".HelpActivity" />
   <activity android:name=".PreferenceActivity" />
   <activity android:name=".DownloadActivity"
       android:configChanges="keyboardHidden|orientation"/>

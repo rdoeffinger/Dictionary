@@ -31,7 +31,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -41,6 +40,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -240,6 +240,10 @@ public class DictionaryManagerActivity extends ListActivity {
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         downloadButton.setLayoutParams(layoutParams);
         row.addView(downloadButton);
+      } else {
+        final ImageView checkMark = new ImageView(parent.getContext());
+        checkMark.setImageResource(android.R.drawable.checkbox_on_background);
+        row.addView(checkMark);
       }
 
       final TextView textView = new TextView(parent.getContext());

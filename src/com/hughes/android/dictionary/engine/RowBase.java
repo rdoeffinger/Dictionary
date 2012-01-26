@@ -17,9 +17,11 @@ package com.hughes.android.dictionary.engine;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.util.List;
 
 import com.hughes.util.IndexedObject;
 import com.hughes.util.raf.RAFListSerializer;
+import com.ibm.icu.text.Transliterator;
 
 public abstract class RowBase extends IndexedObject {
   /**
@@ -97,6 +99,8 @@ public abstract class RowBase extends IndexedObject {
   public abstract void print(PrintStream out);
 
   public abstract String getRawText(final boolean compact);
+  
+  public abstract RowMatchType matches(final List<String> searchTokens, final Transliterator normalizer, boolean swapPairEntries);
 
   // RowBase must manage "disk-based" polymorphism.  All other polymorphism is
   // dealt with in the normal manner.
@@ -134,5 +138,5 @@ public abstract class RowBase extends IndexedObject {
       raf.writeInt(t.referenceIndex);
     }
   }
-
+  
 }

@@ -179,8 +179,8 @@ public class DictionaryActivity extends ListActivity {
       return;
     }
 
-    Log.d(LOG, "Loading index.");
     indexIndex = intent.getIntExtra(C.INDEX_INDEX, 0) % dictionary.indices.size();
+    Log.d(LOG, "Loading index " + indexIndex);
     index = dictionary.indices.get(indexIndex);
     setListAdapter(new IndexAdapter(index));
     
@@ -400,27 +400,6 @@ public class DictionaryActivity extends ListActivity {
     changeIndex((indexIndex + 1)% dictionary.indices.size());
   }
   
-  static class OpenIndexButton extends Button implements OnClickListener {
-
-    final Activity activity;
-    final Intent intent;
-
-    public OpenIndexButton(final Context context, final Activity activity, final String text, final Intent intent) {
-      super(context);
-      this.activity = activity;
-      this.intent = intent;
-      setOnClickListener(this);
-      setText(text, BufferType.NORMAL);
-    }
-
-    @Override
-    public void onClick(View v) {
-      activity.finish();
-      getContext().startActivity(intent);
-    }
-    
-  }
-
   void onLanguageButtonLongClick(final Context context) {
     final Dialog dialog = new Dialog(context);
     dialog.setContentView(R.layout.select_dictionary_dialog);
@@ -489,6 +468,7 @@ public class DictionaryActivity extends ListActivity {
     updateLangButton();
     searchText.requestFocus();  // Otherwise, nothing may happen.
     onSearchTextChange(searchText.getText().toString());
+    setDictionaryPrefs(this, dictFile, indexIndex, searchText.getText().toString());
   }
   
   void onUpDownButton(final boolean up) {
@@ -583,7 +563,6 @@ public class DictionaryActivity extends ListActivity {
   @Override
   protected void onListItemClick(ListView l, View v, int row, long id) {
     defocusSearchText();
-    
     if (clickOpensContextMenu && dictRaf != null) {
       openContextMenu(v);
     }
@@ -791,7 +770,7 @@ public class DictionaryActivity extends ListActivity {
     public View getView(int position, final View convertView, ViewGroup parent) {
       final RowBase row = index.rows.get(position);
       if (row instanceof PairEntry.Row) {
-        return getView((PairEntry.Row) row, parent, convertView);
+        return getView(position, (PairEntry.Row) row, parent, convertView);
       } else if (row instanceof TokenRow) {
         return getView((TokenRow) row, parent, convertView);
       } else {
@@ -799,7 +778,7 @@ public class DictionaryActivity extends ListActivity {
       }
     }
 
-    private View getView(PairEntry.Row row, ViewGroup parent, final View convertView) {
+    private View getView(final int position, PairEntry.Row row, ViewGroup parent, final View convertView) {
       final TableLayout result = new TableLayout(parent.getContext());
       final PairEntry entry = row.getEntry();
       final int rowCount = entry.pairs.size();
@@ -864,6 +843,20 @@ public class DictionaryActivity extends ListActivity {
           col1.setOnLongClickListener(textViewLongClickListenerIndex0);
           col2.setOnLongClickListener(textViewLongClickListenerIndex1);
         }
+        
+        // Because we have a Button inside a ListView row:
+        // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
+        result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        result.setClickable(true);
+        result.setFocusable(true);
+        result.setLongClickable(true);
+        result.setBackgroundResource(android.R.drawable.menuitem_background);
+        result.setOnClickListener(new TextView.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            DictionaryActivity.this.onListItemClick(null, v, position, position);
+          }
+        });
         
         result.addView(tableRow);
       }

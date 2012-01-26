@@ -281,20 +281,20 @@ public class DictionaryApplication extends Application {
 
   public void onCreateGlobalOptionsMenu(
       final Context context, final Menu menu) {
-    final MenuItem help = menu.add(getString(R.string.about));
-    help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-      public boolean onMenuItemClick(final MenuItem menuItem) {
-        startActivity(HelpActivity.getLaunchIntent());
-        return false;
-      }
-    });
-
     final MenuItem about = menu.add(getString(R.string.about));
     about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
         final Intent intent = new Intent().setClassName(AboutActivity.class
             .getPackage().getName(), AboutActivity.class.getCanonicalName());
-        startActivity(intent);
+        context.startActivity(intent);
+        return false;
+      }
+    });
+
+    final MenuItem help = menu.add(getString(R.string.help));
+    help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        context.startActivity(HelpActivity.getLaunchIntent());
         return false;
       }
     });
@@ -305,7 +305,7 @@ public class DictionaryApplication extends Application {
         PreferenceActivity.prefsMightHaveChanged = true;
         final Intent intent = new Intent().setClassName(PreferenceActivity.class
             .getPackage().getName(), PreferenceActivity.class.getCanonicalName());
-        startActivity(intent);
+        context.startActivity(intent);
         return false;
       }
     });

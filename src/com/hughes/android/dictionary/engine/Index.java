@@ -22,7 +22,11 @@ import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.hughes.android.dictionary.DictionaryInfo;
@@ -178,13 +182,12 @@ public final class Index implements RAFSerializable<Index> {
   }
   
   public IndexEntry findInsertionPoint(String token, final AtomicBoolean interrupted) {
-    if (TransliteratorManager.init(null)) {
-      final Transliterator normalizer = normalizer();
-      token = normalizer.transliterate(token);
-    } else {
-      // Do our best since the Transliterators aren't up yet.
-      token = token.toLowerCase();
-    }
+    final int index = findInsertionPointIndex(token, interrupted);
+    return index != -1 ? sortedIndexEntries.get(index) : null;
+  }
+  
+  public int findInsertionPointIndex(String token, final AtomicBoolean interrupted) {
+    token = normalizeToken(token);
 
     int start = 0;
     int end = sortedIndexEntries.size();
@@ -193,14 +196,14 @@ public final class Index implements RAFSerializable<Index> {
     while (start < end) {
       final int mid = (start + end) / 2;
       if (interrupted.get()) {
-        return null;
+        return -1;
       }
       final IndexEntry midEntry = sortedIndexEntries.get(mid);
 
       final int comp = sortCollator.compare(token, midEntry.normalizedToken());
       if (comp == 0) {
         final int result = windBackCase(token, mid, interrupted);
-        return sortedIndexEntries.get(result);
+        return result;
       } else if (comp < 0) {
         //System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
         end = mid;
@@ -213,7 +216,7 @@ public final class Index implements RAFSerializable<Index> {
     // If we search for a substring of a string that's in there, return that.
     int result = Math.min(start, sortedIndexEntries.size() - 1);
     result = windBackCase(sortedIndexEntries.get(result).normalizedToken(), result, interrupted);
-    return sortedIndexEntries.get(result);
+    return result;
   }
     
   private final int windBackCase(final String token, int result, final AtomicBoolean interrupted) {
@@ -228,6 +231,67 @@ public final class Index implements RAFSerializable<Index> {
 
   public IndexInfo getIndexInfo() {
     return new DictionaryInfo.IndexInfo(shortName, sortedIndexEntries.size(), mainTokenCount);
+  }
+  
+  final List<RowBase> multiWordSearch(final List<String> searchTokens, final AtomicBoolean interrupted) {
+    final List<RowBase> result = new ArrayList<RowBase>();
+
+    // Heuristic: use the longest searchToken as the base.
+    String searchToken = null;
+    for (int i = 0; i < searchTokens.size(); ++i) {
+      if (interrupted.get()) { return null; }
+      final String normalized = normalizeToken(searchTokens.get(i));
+      // Normalize them all.
+      searchTokens.set(i, normalized);
+      if (searchToken == null || normalized.length() > searchToken.length()) {
+        searchToken = normalized;
+      }
+    }
+    
+    final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
+    if (insertionPointIndex == -1 || interrupted.get()) {
+      return null;
+    }
+    
+    // The things that match.
+    // TODO: use a key
+    final Map<RowMatchType,Set<RowBase>> matches = new EnumMap<RowMatchType, Set<RowBase>>(RowMatchType.class);
+    for (final RowMatchType rowMatchType : RowMatchType.values()) {
+      matches.put(rowMatchType, new LinkedHashSet<RowBase>());
+    }
+    
+    for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
+      if (interrupted.get()) { return null; }
+      final IndexEntry indexEntry = sortedIndexEntries.get(index);
+      if (!indexEntry.normalizedToken.equals(searchToken)) {
+        break;
+      }
+      
+      for (int rowIndex = indexEntry.startRow; rowIndex < indexEntry.startRow + indexEntry.numRows; ++rowIndex) {
+        if (interrupted.get()) { return null; }
+        final RowBase row = rows.get(rowIndex);
+        final RowMatchType matchType = row.matches(searchTokens, normalizer, swapPairEntries);
+        if (matchType != RowMatchType.NO_MATCH) {
+          matches.get(matchType).add(row);
+        }
+      }
+    }
+    
+    for (final Set<RowBase> rows : matches.values()) {
+      result.addAll(rows);
+    }
+    
+    return result;
+  }
+
+  private String normalizeToken(final String searchToken) {
+    if (TransliteratorManager.init(null)) {
+      final Transliterator normalizer = normalizer();
+      return normalizer.transliterate(searchToken);
+    } else {
+      // Do our best since the Transliterators aren't up yet.
+      return searchToken.toLowerCase();
+    }
   }
 
 }

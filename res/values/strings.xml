@@ -32,8 +32,6 @@
   <string name="searchText">Search Text</string>
   <string name="selectDictionary">Select dictionary…</string>
   <string name="switchToLanguage">Switch to %s</string>
-  <string name="preferences">Preferences…</string>
-  <string name="about">About QuickDic…</string> 
   <string name="addToWordList">Add to word list: %s</string>
   <string name="searchForSelection">Find: %s</string>
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
@@ -57,8 +55,14 @@
 	<string name="downloading">Downloading: %1$,d of %2$,d bytes.</string>
   <string name="unzipping">Unzipping: %1$,d of %2$,d bytes.</string>
 	<string name="downloadFinished">Finished: %,d bytes.</string>
-	<string name="errorDownloadingFile">"Error downloading file: \n%s"</string>
+	<string name="errorDownloadingFile">Error downloading file: \n%s</string>
 
+  <!-- Global. -->
+  <string name="about">About QuickDic…</string> 
+  <string name="preferences">Preferences…</string>
+  <string name="help">Help</string>
+  
+ 
 	<!-- Preferences -->
 	<string name="wordListFileKey">wordListFile</string>
 	<string name="wordListFileTitle">Word list file</string>

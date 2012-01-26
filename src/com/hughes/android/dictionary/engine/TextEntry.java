@@ -17,9 +17,11 @@ package com.hughes.android.dictionary.engine;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.util.List;
 
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
+import com.ibm.icu.text.Transliterator;
 
 public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntry> {
   
@@ -28,6 +30,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
   public TextEntry(final Dictionary dictionary, final RandomAccessFile raf) throws IOException {
     super(dictionary, raf);
     text = raf.readUTF();
+    throw new RuntimeException();
   }
   @Override
   public void write(RandomAccessFile raf) throws IOException {
@@ -80,6 +83,11 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     @Override
     public String getRawText(boolean compact) {
       return getEntry().text;
+    }
+    
+    @Override
+    public RowMatchType matches(List<String> searchTokens, Transliterator normalizer, boolean swapPairEntries) {
+      return null;
     }
   }
 

@@ -17,6 +17,9 @@ package com.hughes.android.dictionary.engine;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.util.List;
+
+import com.ibm.icu.text.Transliterator;
 
 public class TokenRow extends RowBase {
   
@@ -59,6 +62,11 @@ public class TokenRow extends RowBase {
   @Override
   public String getRawText(boolean compact) {
     return getToken();
+  }
+
+  @Override
+  public RowMatchType matches(List<String> searchTokens, Transliterator normalizer, boolean swapPairEntries) {
+    return RowMatchType.NO_MATCH;
   }
 
 

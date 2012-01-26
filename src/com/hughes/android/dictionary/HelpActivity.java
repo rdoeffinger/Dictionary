@@ -35,7 +35,7 @@ public final class HelpActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.help_activity);
     final String html = StringUtil.readToString(getResources().openRawResource(R.raw.help));
-    final WebView webView = (WebView) findViewById(R.layout.help_activity);
+    final WebView webView = (WebView) findViewById(R.id.helpWebView);
     webView.loadData(html, "text/html", "utf-8");
   }
 
