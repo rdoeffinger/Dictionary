@@ -32,7 +32,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   static final int CACHE_SIZE = 5000;
   
-  static final int CURRENT_DICT_VERSION = 3;
+  static final int CURRENT_DICT_VERSION = 4;
   static final String END_OF_DICTIONARY = "END OF DICTIONARY";
   
   // persisted
@@ -71,13 +71,19 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     dictInfo = raf.readUTF();
     
     // Load the sources, then seek past them, because reading them later disrupts the offset.
-    final RAFList<EntrySource> rafSources = RAFList.create(raf, new EntrySource.Serializer(this), raf.getFilePointer());
-    sources = new ArrayList<EntrySource>(rafSources);
-    raf.seek(rafSources.getEndOffset());
-    
-    pairEntries = CachingList.create(RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
-    textEntries = CachingList.create(RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
-    indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer, raf.getFilePointer()));
+    try {
+      final RAFList<EntrySource> rafSources = RAFList.create(raf, new EntrySource.Serializer(this), raf.getFilePointer());
+      sources = new ArrayList<EntrySource>(rafSources);
+      raf.seek(rafSources.getEndOffset());
+      
+      pairEntries = CachingList.create(RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
+      textEntries = CachingList.create(RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
+      indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer, raf.getFilePointer()));
+    } catch (RuntimeException e) {
+      final IOException ioe = new IOException("RuntimeException loading dictionary");
+      ioe.initCause(e);
+      throw ioe;
+    }
     final String end = raf.readUTF(); 
     if (!end.equals(END_OF_DICTIONARY)) {
       throw new IOException("Dictionary seems corrupt: " + end);

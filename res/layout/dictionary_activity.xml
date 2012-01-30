@@ -23,32 +23,36 @@
 				
       <Button 
         android:id="@+id/ClearSearchTextButton"
-        android:text="&lt;x"
-        android:minWidth="50dip"
+        android:drawableLeft="@+drawable/ic_input_delete"
+        android:background="#00000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        />  <!-- transparent -->
 
 			<Button 
 				android:id="@+id/LangButton"
-				android:text="LANG"
+				android:text=""
 				android:minWidth="50dip"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				/>
 				
 			<Button
-				android:id="@+id/DownButton"
-				android:text="v"
-				android:minWidth="50dip"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" 
-				/>
+		    android:id="@+id/DownButton"
+        android:drawableLeft="@+drawable/arrow_down_float"
+        android:background="#00000000"
+        android:minWidth="30dip" 
+        android:minHeight="30dip"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+          />
 				
 			<Button 
 				android:id="@+id/UpButton"
-				android:text="^"
-				android:minWidth="50dip"
+        android:drawableLeft="@+drawable/arrow_up_float"
+        android:background="#00000000"
+        android:minWidth="30dip"
+        android:minHeight="30dip"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" 
 				/>
@@ -63,5 +67,10 @@
 		android:clickable="true" 
 		android:focusableInTouchMode="true"
 		android:focusable="true"/>
+ 
+  <TextView android:id="@android:id/empty"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="@+string/noSearchResults"/>
 
 </LinearLayout>

@@ -22,12 +22,14 @@ import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
@@ -35,6 +37,7 @@ import com.hughes.util.CachingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
+import com.hughes.util.raf.SerializableSerializer;
 import com.hughes.util.raf.UniformRAFList;
 import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.Transliterator;
@@ -57,6 +60,9 @@ public final class Index implements RAFSerializable<Index> {
     
   // persisted
   public final List<IndexEntry> sortedIndexEntries;
+  
+  // persisted.
+  public final Set<String> stoplist;
 
   // One big list!
   // Various sub-types.
@@ -69,7 +75,7 @@ public final class Index implements RAFSerializable<Index> {
   
   // --------------------------------------------------------------------------
   
-  public Index(final Dictionary dict, final String shortName, final String longName, final Language sortLanguage, final String normalizerRules, final boolean swapPairEntries) {
+  public Index(final Dictionary dict, final String shortName, final String longName, final Language sortLanguage, final String normalizerRules, final boolean swapPairEntries, final Set<String> stoplist) {
     this.dict = dict;
     this.shortName = shortName;
     this.longName = longName;
@@ -77,6 +83,7 @@ public final class Index implements RAFSerializable<Index> {
     this.normalizerRules = normalizerRules;
     this.swapPairEntries = swapPairEntries;
     sortedIndexEntries = new ArrayList<IndexEntry>();
+    this.stoplist = stoplist;
     rows = new ArrayList<RowBase>();
     
     normalizer = null;
@@ -104,6 +111,11 @@ public final class Index implements RAFSerializable<Index> {
       mainTokenCount = raf.readInt();
     }
     sortedIndexEntries = CachingList.create(RAFList.create(raf, IndexEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
+    if (dict.dictFileVersion >= 4) {
+      stoplist = new SerializableSerializer<Set<String>>().read(raf);
+    } else {
+      stoplist = Collections.emptySet();
+    }
     rows = CachingList.create(UniformRAFList.create(raf, new RowBase.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
   }
   
@@ -118,6 +130,7 @@ public final class Index implements RAFSerializable<Index> {
       raf.writeInt(mainTokenCount);
     }
     RAFList.write(raf, sortedIndexEntries, IndexEntry.SERIALIZER);
+    new SerializableSerializer<Set<String>>().write(raf, stoplist);
     UniformRAFList.write(raf, (Collection<RowBase>) rows, new RowBase.Serializer(this), 5);
   }
 
@@ -233,57 +246,107 @@ public final class Index implements RAFSerializable<Index> {
     return new DictionaryInfo.IndexInfo(shortName, sortedIndexEntries.size(), mainTokenCount);
   }
   
-  final List<RowBase> multiWordSearch(final List<String> searchTokens, final AtomicBoolean interrupted) {
+  public final List<RowBase> multiWordSearch(final List<String> searchTokens, final AtomicBoolean interrupted) {
     final List<RowBase> result = new ArrayList<RowBase>();
-
-    // Heuristic: use the longest searchToken as the base.
-    String searchToken = null;
+    
+    final Set<String> normalizedNonStoplist = new LinkedHashSet<String>();
+    
+    final StringBuilder regex = new StringBuilder();
     for (int i = 0; i < searchTokens.size(); ++i) {
-      if (interrupted.get()) { return null; }
+      final String searchToken = searchTokens.get(i);
       final String normalized = normalizeToken(searchTokens.get(i));
       // Normalize them all.
       searchTokens.set(i, normalized);
-      if (searchToken == null || normalized.length() > searchToken.length()) {
-        searchToken = normalized;
+
+      if (!stoplist.contains(searchToken)) {
+        normalizedNonStoplist.add(normalized);
+      }
+
+      if (regex.length() > 0) {
+        regex.append("[\\s]*");
+      }
+      regex.append(Pattern.quote(normalized));
+    }
+    final Pattern pattern = Pattern.compile(regex.toString());
+    
+
+    // The things that match.
+    final Map<RowMatchType,List<RowBase>> matches = new EnumMap<RowMatchType, List<RowBase>>(RowMatchType.class);
+    for (final RowMatchType rowMatchType : RowMatchType.values()) {
+      if (rowMatchType != RowMatchType.NO_MATCH) {
+        matches.put(rowMatchType, new ArrayList<RowBase>());
       }
     }
     
-    final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
-    if (insertionPointIndex == -1 || interrupted.get()) {
-      return null;
-    }
-    
-    // The things that match.
-    // TODO: use a key
-    final Map<RowMatchType,Set<RowBase>> matches = new EnumMap<RowMatchType, Set<RowBase>>(RowMatchType.class);
-    for (final RowMatchType rowMatchType : RowMatchType.values()) {
-      matches.put(rowMatchType, new LinkedHashSet<RowBase>());
-    }
-    
-    for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
+    int bestRowCount = Integer.MAX_VALUE;
+    String bestToken = null;
+    for (final String searchToken : normalizedNonStoplist) {
+      final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
       if (interrupted.get()) { return null; }
-      final IndexEntry indexEntry = sortedIndexEntries.get(index);
-      if (!indexEntry.normalizedToken.equals(searchToken)) {
-        break;
+      if (insertionPointIndex == -1) {
+        // If we've typed "train statio", don't fail just because the index
+        // doesn't contain "statio".
+        continue;
+      }
+
+      int rowCount = 0;
+      for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
+        if (interrupted.get()) { return null; }
+        final IndexEntry indexEntry = sortedIndexEntries.get(index);
+        if (!indexEntry.normalizedToken.equals(searchToken)) {
+          break;
+        }
+        rowCount += indexEntry.numRows;
       }
       
-      for (int rowIndex = indexEntry.startRow; rowIndex < indexEntry.startRow + indexEntry.numRows; ++rowIndex) {
-        if (interrupted.get()) { return null; }
-        final RowBase row = rows.get(rowIndex);
-        final RowMatchType matchType = row.matches(searchTokens, normalizer, swapPairEntries);
-        if (matchType != RowMatchType.NO_MATCH) {
-          matches.get(matchType).add(row);
-        }
+      //System.out.println(searchToken + ", rowCount=" + rowCount);
+      if (rowCount < bestRowCount) {
+        bestRowCount = rowCount;
+        bestToken = searchToken;
       }
     }
     
-    for (final Set<RowBase> rows : matches.values()) {
-      result.addAll(rows);
+    final String searchToken = bestToken != null ? bestToken : searchTokens.get(0);
+    
+//    for (final String searchToken : searchTokens) {
+    
+    final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
+    if (interrupted.get()) { return null; }
+
+      
+//      System.out.println("Searching token: " + searchToken);
+
+  
+      for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
+        if (interrupted.get()) { return null; }
+        final IndexEntry indexEntry = sortedIndexEntries.get(index);
+        if (!indexEntry.normalizedToken.equals(searchToken)) {
+          break;
+        }
+
+//        System.out.println("Searching indexEntry: " + indexEntry.token);
+
+        for (int rowIndex = indexEntry.startRow; rowIndex < indexEntry.startRow + indexEntry.numRows; ++rowIndex) {
+          if (interrupted.get()) { return null; }
+          final RowBase row = rows.get(rowIndex);
+          final RowMatchType matchType = row.matches(searchTokens, pattern, normalizer(), swapPairEntries);
+          if (matchType != RowMatchType.NO_MATCH) {
+            matches.get(matchType).add(row);
+          }
+        }
+      }
+//    }  // searchTokens
+  
+    final RowBase.LengthComparator lengthComparator = new RowBase.LengthComparator(swapPairEntries);
+    for (final Collection<RowBase> rows : matches.values()) {
+      final List<RowBase> ordered = new ArrayList<RowBase>(rows);
+      Collections.sort(ordered, lengthComparator);
+      result.addAll(ordered);
     }
     
     return result;
   }
-
+  
   private String normalizeToken(final String searchToken) {
     if (TransliteratorManager.init(null)) {
       final Transliterator normalizer = normalizer();

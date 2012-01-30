@@ -221,6 +221,17 @@ public class DictionaryManagerActivity extends ListActivity {
       row.setOrientation(LinearLayout.HORIZONTAL);
       result.addView(row);
 
+      {
+      final TextView textView = new TextView(parent.getContext());
+      final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
+      textView.setText(name);
+      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+      row.addView(textView);
+      LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+      layoutParams.weight = 1.0f;
+      textView.setLayoutParams(layoutParams);
+      }
+      
       final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
       final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename); 
       if ((!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) || updateAvailable) && downloadable != null) {
@@ -242,16 +253,10 @@ public class DictionaryManagerActivity extends ListActivity {
         row.addView(downloadButton);
       } else {
         final ImageView checkMark = new ImageView(parent.getContext());
-        checkMark.setImageResource(android.R.drawable.checkbox_on_background);
+        checkMark.setImageResource(R.drawable.btn_check_buttonless_on);
         row.addView(checkMark);
       }
 
-      final TextView textView = new TextView(parent.getContext());
-      final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
-      textView.setText(name);
-      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
-      row.addView(textView);
-      
       // Add the information about each index.
       final LinearLayout row2 = new LinearLayout(parent.getContext());
       row2.setOrientation(LinearLayout.HORIZONTAL);

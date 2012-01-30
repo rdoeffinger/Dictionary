@@ -20,8 +20,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -29,7 +33,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -53,6 +56,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -94,6 +98,7 @@ public class DictionaryActivity extends ListActivity {
   Dictionary dictionary = null;
   int indexIndex = 0;
   Index index = null;
+  List<RowBase> rowsToShow = null;  // if not null, just show these rows.
   
   // package for test.
   final Handler uiHandler = new Handler();
@@ -280,11 +285,12 @@ public class DictionaryActivity extends ListActivity {
       public void onItemSelected(AdapterView<?> adapterView, View arg1, final int position,
           long id) {
         if (!searchText.isFocused()) {
-          // TODO: don't do this if multi words are entered.
-          final RowBase row = (RowBase) getListAdapter().getItem(position);
-          Log.d(LOG, "onItemSelected: " + row.index());
-          final TokenRow tokenRow = row.getTokenRow(true);
-          searchText.setText(tokenRow.getToken());
+          if (!isFiltered()) {
+            final RowBase row = (RowBase) getListAdapter().getItem(position);
+            Log.d(LOG, "onItemSelected: " + row.index());
+            final TokenRow tokenRow = row.getTokenRow(true);
+            searchText.setText(tokenRow.getToken());
+          }
         }
       }
 
@@ -385,7 +391,7 @@ public class DictionaryActivity extends ListActivity {
     searchText.requestFocus();
     Log.d(LOG, "Trying to show soft keyboard.");
     final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    manager.showSoftInput(searchText, InputMethodManager.SHOW_FORCED);
+    manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
   }
   
   void updateLangButton() {
@@ -472,6 +478,9 @@ public class DictionaryActivity extends ListActivity {
   }
   
   void onUpDownButton(final boolean up) {
+    if (isFiltered()) {
+      return;
+    }
     final int firstVisibleRow = getListView().getFirstVisiblePosition();
     final RowBase row = index.rows.get(firstVisibleRow);
     final TokenRow tokenRow = row.getTokenRow(true);
@@ -490,6 +499,7 @@ public class DictionaryActivity extends ListActivity {
     Log.d(LOG, "onUpDownButton, destIndexEntry=" + dest.token);
     searchText.removeTextChangedListener(searchTextWatcher);
     searchText.setText(dest.token);
+    Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
     jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
     searchText.addTextChangedListener(searchTextWatcher);
   }
@@ -508,6 +518,45 @@ public class DictionaryActivity extends ListActivity {
         public boolean onMenuItemClick(final MenuItem menuItem) {
           startActivity(DictionaryManagerActivity.getLaunchIntent());
           finish();
+          return false;
+        }
+      });
+    }
+
+    {
+      final MenuItem aboutDictionary = menu.add(getString(R.string.aboutDictionary));
+      aboutDictionary.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        public boolean onMenuItemClick(final MenuItem menuItem) {
+          final Context context = getListView().getContext();
+          final Dialog dialog = new Dialog(context);
+          dialog.setContentView(R.layout.about_dictionary_dialog);
+          final TextView textView = (TextView) dialog.findViewById(R.id.text);
+
+          final String name = application.getDictionaryName(dictFile.getName());
+          dialog.setTitle(name);
+          
+          final StringBuilder builder = new StringBuilder();
+          final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(dictFile);
+          if (dictionaryInfo != null) {
+            builder.append(dictionaryInfo.dictInfo).append("\n\n");
+            builder.append(getString(R.string.dictionaryPath, dictFile.getPath())).append("\n");
+            builder.append(getString(R.string.dictionarySize, dictionaryInfo.uncompressedBytes)).append("\n");
+            builder.append(getString(R.string.dictionaryCreationTime, dictionaryInfo.creationMillis)).append("\n");
+            for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
+              builder.append("\n");
+              builder.append(getString(R.string.indexName, indexInfo.shortName)).append("\n");
+              builder.append(getString(R.string.mainTokenCount, indexInfo.mainTokenCount)).append("\n");
+            }
+          } else {
+            builder.append(getString(R.string.invalidDictionary));
+          }
+          textView.setText(builder.toString());
+          
+          dialog.show();
+          final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+          layoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
+          layoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
+          dialog.getWindow().setAttributes(layoutParams);
           return false;
         }
       });
@@ -664,26 +713,26 @@ public class DictionaryActivity extends ListActivity {
     Log.d(LOG, "searchFinished: " + searchOperation + ", searchResult=" + searchResult);
 
     currentSearchOperation = null;
-
     uiHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
         if (currentSearchOperation == null) {
-          jumpToRow(searchResult.startRow);
+          if (searchResult != null) {
+            if (isFiltered()) {
+              clearFiltered();
+            }
+            jumpToRow(searchResult.startRow);
+          } else if (searchOperation.multiWordSearchResult != null) {
+            // Multi-row search....
+            setFiltered(searchOperation);
+          } else {
+            throw new IllegalStateException("This should never happen.");
+          }
         } else {
           Log.d(LOG, "More coming, waiting for currentSearchOperation.");
         }
       }
-    }, 50);
-    
-//    if (!searchResult.success) {
-//      if (vibrator != null) {
-//        vibrator.vibrate(VIBRATE_MILLIS);
-//      }
-//      searchText.setText(searchResult.longestPrefixString);
-//      searchText.setSelection(searchResult.longestPrefixString.length());
-//      return;
-//    }
+    }, 20);
     
   }
   
@@ -692,15 +741,18 @@ public class DictionaryActivity extends ListActivity {
     getListView().setSelected(true);
   }
 
+  static final Pattern WHITESPACE = Pattern.compile("\\s+");
   final class SearchOperation implements Runnable {
     
     final AtomicBoolean interrupted = new AtomicBoolean(false);
     final String searchText;
+    List<String> searchTokens;  // filled in for multiWord.
     final Index index;
     
     long searchStartMillis;
 
     Index.IndexEntry searchResult;
+    List<RowBase> multiWordSearchResult;
     
     boolean done = false;
     
@@ -717,7 +769,13 @@ public class DictionaryActivity extends ListActivity {
     public void run() {
       try {
         searchStartMillis = System.currentTimeMillis();
-        searchResult = index.findInsertionPoint(searchText, interrupted);
+        final String[] searchTokenArray = WHITESPACE.split(searchText);
+        if (searchTokenArray.length == 1) {
+          searchResult = index.findInsertionPoint(searchText, interrupted);
+        } else {
+          searchTokens = Arrays.asList(searchTokenArray);
+          multiWordSearchResult = index.multiWordSearch(searchTokens, interrupted);
+        }
         Log.d(LOG, "searchText=" + searchText + ", searchDuration="
             + (System.currentTimeMillis() - searchStartMillis) + ", interrupted="
             + interrupted.get());
@@ -746,19 +804,29 @@ public class DictionaryActivity extends ListActivity {
   final class IndexAdapter extends BaseAdapter {
     
     final Index index;
+    final List<RowBase> rows;
+    final Set<String> toHighlight;
 
     IndexAdapter(final Index index) {
       this.index = index;
+      rows = index.rows;
+      this.toHighlight = null;
+    }
+
+    IndexAdapter(final Index index, final List<RowBase> rows, final List<String> toHighlight) {
+      this.index = index;
+      this.rows = rows;
+      this.toHighlight = new LinkedHashSet<String>(toHighlight);
     }
 
     @Override
     public int getCount() {
-      return index.rows.size();
+      return rows.size();
     }
 
     @Override
     public RowBase getItem(int position) {
-      return index.rows.get(position);
+      return rows.get(position);
     }
 
     @Override
@@ -768,7 +836,7 @@ public class DictionaryActivity extends ListActivity {
 
     @Override
     public View getView(int position, final View convertView, ViewGroup parent) {
-      final RowBase row = index.rows.get(position);
+      final RowBase row = getItem(position);
       if (row instanceof PairEntry.Row) {
         return getView(position, (PairEntry.Row) row, parent, convertView);
       } else if (row instanceof TokenRow) {
@@ -820,13 +888,15 @@ public class DictionaryActivity extends ListActivity {
         col2.setText(col2Text, TextView.BufferType.SPANNABLE);
         
         // Bold the token instances in col1.
+        final Set<String> toBold = toHighlight != null ? this.toHighlight : Collections.singleton(row.getTokenRow(true).getToken());
         final Spannable col1Spannable = (Spannable) col1.getText();
-        int startPos = 0;
-        final String token = row.getTokenRow(true).getToken();
-        while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
-          col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos,
-              startPos + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-          startPos += token.length();
+        for (final String token : toBold) {
+          int startPos = 0;
+          while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
+            col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos,
+                startPos + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            startPos += token.length();
+          }
         }
         
         createTokenLinkSpans(col1, col1Spannable, col1Text);
@@ -1011,6 +1081,28 @@ public class DictionaryActivity extends ListActivity {
 
     public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
     }
+  }
+
+  // --------------------------------------------------------------------------
+  // Filtered results.
+  // --------------------------------------------------------------------------
+
+  boolean isFiltered() {
+    return rowsToShow != null;
+  }
+
+  void setFiltered(final SearchOperation searchOperation) {
+    ((Button) findViewById(R.id.UpButton)).setEnabled(false);
+    ((Button) findViewById(R.id.DownButton)).setEnabled(false);
+    rowsToShow = searchOperation.multiWordSearchResult;
+    setListAdapter(new IndexAdapter(index, rowsToShow, searchOperation.searchTokens));
+  }
+
+  void clearFiltered() {
+    ((Button) findViewById(R.id.UpButton)).setEnabled(true);
+    ((Button) findViewById(R.id.DownButton)).setEnabled(true);
+    setListAdapter(new IndexAdapter(index));
+    rowsToShow = null;
   }
 
 }

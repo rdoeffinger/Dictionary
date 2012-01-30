@@ -33,11 +33,21 @@
   <string name="selectDictionary">Select dictionary…</string>
   <string name="switchToLanguage">Switch to %s</string>
   <string name="addToWordList">Add to word list: %s</string>
-  <string name="searchForSelection">Find: %s</string>
+  <string name="searchForSelection">Search: "%s"</string>
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
   <string name="unzippingDictionary">Unzipping dictionary…</string>
   <string name="failedToUnzipDictionary">Failed to unzip dictionary…</string>
   <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
+  <string name="noSearchResults">No search results.</string>
+  <string name="aboutDictionary">About dictionary…</string> 
+
+  <!-- About dictionary. -->
+  <string name="dictionaryPath">File: %s</string> 
+  <string name="dictionarySize">Size: %d bytes</string> 
+  <string name="dictionaryCreationTime">Created: %tc</string> 
+  <string name="indexName">Index: %s</string> 
+  <string name="mainTokenCount">Num words: %d</string> 
+  
   
 	<!-- About. -->
 	<string name="titleWithVersion">QuickDic 3.1</string>

@@ -125,7 +125,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     }
 
     @Override
-    public RowMatchType matches(final List<String> searchTokens, final Transliterator normalizer, final boolean swapPairEntries) {
+    public RowMatchType matches(final List<String> searchTokens, final Pattern orderedMatchPattern, final Transliterator normalizer, final boolean swapPairEntries) {
       final int side = swapPairEntries ? 1 : 0;
       final List<Pair> pairs = getEntry().pairs;
       final String[] pairSides = new String[pairs.size()];
@@ -142,20 +142,22 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
           return RowMatchType.NO_MATCH;
         }
       }
-      final StringBuilder regex = new StringBuilder();
-      for (final String searchToken : searchTokens) {
-        if (regex.length() > 0) {
-          regex.append("[\\s]*");
-        }
-        regex.append(Pattern.quote(searchToken));
-      }
-      final Pattern pattern = Pattern.compile(regex.toString());
       for (final String pairSide : pairSides) {
-        if (pattern.matcher(pairSide).matches()) {
+        if (orderedMatchPattern.matcher(pairSide).find()) {
           return RowMatchType.ORDERED_MATCH;
         }
       }
       return RowMatchType.BAG_OF_WORDS_MATCH;
+    }
+    
+    @Override
+    public int getSideLength(boolean swapPairEntries) {
+      int result = 0;
+      final int side = swapPairEntries ? 1 : 0;
+      for (final Pair pair : getEntry().pairs) {
+        result += pair.get(side).length();
+      }
+      return result;
     }
   
   }

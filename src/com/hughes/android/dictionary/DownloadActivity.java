@@ -98,7 +98,9 @@ public class DownloadActivity extends Activity {
 
         try {
           final File destFile = new File(dest);
-          destFile.getParentFile().mkdirs();
+          if (destFile.getAbsoluteFile().getParent() != null) {
+            destFile.getAbsoluteFile().getParentFile().mkdirs();
+          }
 
           final File destTmpFile = File.createTempFile("dictionaryDownload", "tmp", destFile
               .getParentFile());

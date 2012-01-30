@@ -225,6 +225,7 @@ public class DictionaryApplication extends Application {
     final List<DictionaryInfo> toAddSorted = new ArrayList<DictionaryInfo>();
     final File[] dictDirFiles = DICT_DIR.listFiles();
     for (final File file : dictDirFiles) {
+      // TODO: delete zip files here.
       if (!file.getName().endsWith(".quickdic")) {
         continue;
       }

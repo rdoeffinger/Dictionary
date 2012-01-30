@@ -22,7 +22,11 @@ import java.io.ObjectOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.hughes.android.dictionary.DictionaryApplication;
+
+import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 public class PersistentObjectCache {
@@ -70,9 +74,10 @@ public class PersistentObjectCache {
   }
 
   private PersistentObjectCache(final Context context) {
-    dir = context.getFilesDir();
+    final File filesDir = context.getFilesDir();
+    dir = filesDir != null ? filesDir : Environment.getExternalStorageDirectory();
     if (dir == null) {
-      throw new RuntimeException("context.getFilesDir() == null");
+      throw new RuntimeException("context.getFilesDir() == " + context.getFilesDir() + ", Environment.getExternalStorageDirectory()=" + Environment.getExternalStorageDirectory());
     }
   }
   

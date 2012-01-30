@@ -28,7 +28,7 @@
   <string name="HU">Hungarian</string>
   <string name="IS">Icelandic</string>
   <string name="ID">Indonesian</string>
-  <string name="GA">Irish</string>
+  <string name="GA">Gaelic (Irish, Scottish)</string>
   <string name="IT">Italian</string>
   <string name="LA">Latin</string>
   <string name="LV">Latvian</string>
@@ -66,4 +66,16 @@
   <string name="YI">Yiddish</string>
   <string name="ZU">Zulu</string>
 
+  
+  <string name="AZ">Azeri</string>
+  <string name="EU">Basque</string>
+  <string name="BR">Breton</string>
+  <string name="MR">Burmese</string>
+  <string name="FO">Faroese</string>
+  <string name="GL">Galician</string>
+  <string name="KA">Georgian</string>
+  <string name="HT">Haitian Creole</string>
+  <string name="LB">Luxembourgish</string>
+  <string name="MK">Macedonian</string>
+   
 </resources>

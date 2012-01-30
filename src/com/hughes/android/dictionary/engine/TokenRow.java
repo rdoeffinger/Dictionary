@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.ibm.icu.text.Transliterator;
 
@@ -65,7 +66,7 @@ public class TokenRow extends RowBase {
   }
 
   @Override
-  public RowMatchType matches(List<String> searchTokens, Transliterator normalizer, boolean swapPairEntries) {
+  public RowMatchType matches(List<String> searchTokens, final Pattern orderedMatchPattern, Transliterator normalizer, boolean swapPairEntries) {
     return RowMatchType.NO_MATCH;
   }
 

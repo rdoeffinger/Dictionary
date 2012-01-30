@@ -91,8 +91,17 @@ public class Language {
     isoCodeToResourceId.put("CI", R.string.CI);
     isoCodeToResourceId.put("YI", R.string.YI);
     isoCodeToResourceId.put("ZU", R.string.ZU);
-    
-    
+
+    isoCodeToResourceId.put("AZ", R.string.AZ);
+    isoCodeToResourceId.put("EU", R.string.EU);
+    isoCodeToResourceId.put("BR", R.string.BR);
+    isoCodeToResourceId.put("MR", R.string.MR);
+    isoCodeToResourceId.put("FO", R.string.FO);
+    isoCodeToResourceId.put("GL", R.string.GL);
+    isoCodeToResourceId.put("HT", R.string.HT);
+    isoCodeToResourceId.put("LB", R.string.LB);
+    isoCodeToResourceId.put("MK", R.string.MK);
+
     // Hack to allow lower-case ISO codes to work:
     for (final String isoCode : new ArrayList<String>(isoCodeToResourceId.keySet())) {
       isoCodeToResourceId.put(isoCode.toLowerCase(), isoCodeToResourceId.get(isoCode));
@@ -143,10 +152,16 @@ public class Language {
    */
   private static final String rtlChars =
       "\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC";
-  private static final Pattern RTL_TOKEN = Pattern.compile("[" + rtlChars + "]");
+
+  private static final String puncChars =
+      "\\[\\]\\(\\)\\{\\}\\=";
+
+  private static final Pattern RTL_LEFT_BOUNDARY = Pattern.compile("(["+ puncChars +"])([" + rtlChars + "])");
+  private static final Pattern RTL_RIGHT_BOUNDARY = Pattern.compile("([" + rtlChars + "])(["+ puncChars +"])");
   
-  public static String fixBidiText(final String text) {
-    // TODO: fix me!, use me!
+  public static String fixBidiText(String text) {
+//    text = RTL_LEFT_BOUNDARY.matcher(text).replaceAll("$1\u200e $2");
+//    text = RTL_RIGHT_BOUNDARY.matcher(text).replaceAll("$1 \u200e$2");
     return text;
   }
   

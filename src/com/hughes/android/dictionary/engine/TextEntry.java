@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
@@ -86,7 +87,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     }
     
     @Override
-    public RowMatchType matches(List<String> searchTokens, Transliterator normalizer, boolean swapPairEntries) {
+    public RowMatchType matches(final List<String> searchTokens, final Pattern orderedMatchPattern, Transliterator normalizer, boolean swapPairEntries) {
       return null;
     }
   }

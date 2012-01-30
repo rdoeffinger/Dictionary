@@ -17,7 +17,9 @@ package com.hughes.android.dictionary.engine;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.hughes.util.IndexedObject;
 import com.hughes.util.raf.RAFListSerializer;
@@ -49,6 +51,34 @@ public abstract class RowBase extends IndexedObject {
     super(thisRowIndex);
     this.index = index;
     this.referenceIndex = referenceIndex;
+  }
+  
+  static final class RowKey {
+    final Class<? extends RowBase> rowClass;
+    final int referenceIndex;
+    
+    private RowKey(Class<? extends RowBase> rowClass, int referenceIndex) {
+      this.rowClass = rowClass;
+      this.referenceIndex = referenceIndex;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof RowKey)) {
+        return false;
+      }
+      final RowKey that = (RowKey) o;
+      return this.referenceIndex == that.referenceIndex && this.rowClass.equals(that.rowClass);
+    }
+    
+    @Override
+    public int hashCode() {
+      return rowClass.hashCode() + referenceIndex;
+    }
+  }
+  
+  public RowKey getRowKey() {
+    return new RowKey(this.getClass(), referenceIndex);
   }
 
   /**
@@ -100,7 +130,7 @@ public abstract class RowBase extends IndexedObject {
 
   public abstract String getRawText(final boolean compact);
   
-  public abstract RowMatchType matches(final List<String> searchTokens, final Transliterator normalizer, boolean swapPairEntries);
+  public abstract RowMatchType matches(final List<String> searchTokens, final Pattern orderedMatch, final Transliterator normalizer, boolean swapPairEntries);
 
   // RowBase must manage "disk-based" polymorphism.  All other polymorphism is
   // dealt with in the normal manner.
@@ -137,6 +167,26 @@ public abstract class RowBase extends IndexedObject {
       }
       raf.writeInt(t.referenceIndex);
     }
+  }
+  
+  public static final class LengthComparator implements Comparator<RowBase> {
+    
+    final boolean swapPairEntries;
+
+    public LengthComparator(boolean swapPairEntries) {
+      this.swapPairEntries = swapPairEntries;
+    }
+
+    @Override
+    public int compare(RowBase row1, RowBase row2) {
+      final int l1 = row1.getSideLength(swapPairEntries);
+      final int l2 = row2.getSideLength(swapPairEntries);
+      return l1 < l2 ? -1 : l1 == l2 ? 0 : 1;
+    }
+  }
+
+  public int getSideLength(boolean swapPairEntries) {
+    return getRawText(false).length();
   }
   
 }
