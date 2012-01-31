@@ -65,6 +65,8 @@ public class DictionaryManagerActivity extends ListActivity {
   }
   
   public void onCreate(Bundle savedInstanceState) {
+    setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
+
     super.onCreate(savedInstanceState);
     Log.d(LOG, "onCreate:" + this);
     

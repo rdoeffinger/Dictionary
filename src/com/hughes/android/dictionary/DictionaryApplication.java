@@ -159,8 +159,8 @@ public class DictionaryApplication extends Application {
   }
   
   public String getLanguageName(final String isoCode) {
-    final Integer langCode = Language.isoCodeToResourceId.get(isoCode);
-    final String lang = langCode != null ? getApplicationContext().getString(langCode) : isoCode;
+    final Language.LanguageResources languageResources = Language.isoCodeToResources.get(isoCode); 
+    final String lang = languageResources != null ? getApplicationContext().getString(languageResources.nameId) : isoCode;
     return lang;
   }
 

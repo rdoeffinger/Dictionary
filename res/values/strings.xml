@@ -1,39 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="app_name">QuickDic</string>
+  <string name="app_name">QuickDic</string>
  
-  <!-- DictionaryManagerActivity -->
+  <!-- Global. -->
+  <string name="about">About QuickDic…</string> 
+  <string name="preferences">Preferences…</string>
+  <string name="help">Help</string>
+  
+  
+   <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
   <string name="helpText">Long-press for more options.</string>
   <string name="downloadButton">Download (%.1fMB)</string>
   <string name="updateButton">Update (%.1fMB)</string>
   <string name="moveToTop">Move to top</string>
   <string name="deleteDictionary">Delete dictionary</string>
-  <string name="indexInfo">%1$s: %2$d words</string>
-  
+  <string name="indexInfo">%1$s: %2$,d words</string>
 
   <string name="thanksForUpdatingVersion">3.1_a</string>
- 
-  <!-- DictionaryEditActivity -->
-  <!-- 
-  <string name="dictionaryName">Dictionary name</string>
-  <string name="downloadUrl">Dictionary download URL</string>
-  <string name="openButton">Open</string>
-  <string name="dictionaryInfo">Dictionary info:</string>
-  <string name="indexInfo">Index %1$s, %2$d words</string>
-  <string name="localFile">Dictionary file</string>
-  <string name="wordListFile">Word list file</string>
-  <string name="fileNotFound">File not found: \'%s\'</string>
-  <string name="numPairEntries">Entries: %,d</string>
- -->
- 
+
   <!-- DictionaryActivity -->
   <string name="searchText">Search Text</string>
   <string name="selectDictionary">Select dictionary…</string>
   <string name="switchToLanguage">Switch to %s</string>
   <string name="addToWordList">Add to word list: %s</string>
-  <string name="searchForSelection">Search: "%s"</string>
+  <string name="searchForSelection">Search: %s</string>
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
   <string name="unzippingDictionary">Unzipping dictionary…</string>
   <string name="failedToUnzipDictionary">Failed to unzip dictionary…</string>
@@ -41,38 +33,40 @@
   <string name="noSearchResults">No search results.</string>
   <string name="aboutDictionary">About dictionary…</string> 
 
+
   <!-- About dictionary. -->
   <string name="dictionaryPath">File: %s</string> 
-  <string name="dictionarySize">Size: %d bytes</string> 
+  <string name="dictionarySize">Size: %,d bytes</string> 
   <string name="dictionaryCreationTime">Created: %tc</string> 
   <string name="indexName">Index: %s</string> 
-  <string name="mainTokenCount">Num words: %d</string> 
+  <string name="mainTokenCount">Word count: %,d</string> 
+  <string name="sources">Sources</string> 
+  <string name="sourceInfo">%1$s : %2$,d entries</string> 
   
+
   
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 3.1</string>
-	<string name="thadHughes">Thad Hughes</string>
-	<string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.  Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources. Please send comments, suggestions, bug reports, or just a quick hello to:</string>
-	<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+  <string name="titleWithVersion">QuickDic 3.1</string>
+  <string name="thadHughes">Thad Hughes</string>
+  <string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.
+  Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources.
+  Please send comments, suggestions, bug reports, or just a quick hello to:</string>
+  <string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
   <string name="webPage">For more information, see:</string>
   <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
   
   <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
   <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
  
+ 
 	<!-- Download. -->
   <string name="openingConnection">Opening connection…</string>
-	<string name="downloading">Downloading: %1$,d of %2$,d bytes.</string>
+  <string name="downloading">Downloading: %1$,d of %2$,d bytes.</string>
   <string name="unzipping">Unzipping: %1$,d of %2$,d bytes.</string>
-	<string name="downloadFinished">Finished: %,d bytes.</string>
-	<string name="errorDownloadingFile">Error downloading file: \n%s</string>
+  <string name="downloadFinished">Finished: %,d bytes.</string>
+  <string name="errorDownloadingFile">Error downloading file: \n%s</string>  
 
-  <!-- Global. -->
-  <string name="about">About QuickDic…</string> 
-  <string name="preferences">Preferences…</string>
-  <string name="help">Help</string>
-  
- 
+
 	<!-- Preferences -->
 	<string name="wordListFileKey">wordListFile</string>
 	<string name="wordListFileTitle">Word list file</string>

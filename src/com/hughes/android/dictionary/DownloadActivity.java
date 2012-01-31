@@ -64,7 +64,7 @@ public class DownloadActivity extends Activity {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(final Bundle savedInstanceState) {
-    //((DictionaryApplication)getApplication()).applyTheme(this);
+    setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
 
     super.onCreate(savedInstanceState);
     final Intent intent = getIntent();

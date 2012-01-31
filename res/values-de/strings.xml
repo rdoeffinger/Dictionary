@@ -3,6 +3,12 @@
 
 	<string name="app_name">QuickDic</string>
  
+  <!-- Global. -->
+  <string name="about">Über QuickDic…</string>
+  <string name="preferences">Einstellungen…</string>
+  <string name="help">Hilfe</string>
+  
+  
   <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Wörterbuch-Liste</string>
   <string name="helpText">Long-drücken, um weitere Möglichkeiten zu sehen.</string>
@@ -10,67 +16,43 @@
   <string name="updateButton">Neuladen</string>
   <string name="moveToTop">Nach Anfang ziehen</string>
   <string name="deleteDictionary">Wörterbuch entfernen</string>
-  <string name="nameFormat2">%1$s (%2$s=%3$d, %4$s=%5$d Einträge)</string>
+  <string name="indexInfo">%1$s: %2$,d Wörter</string>
 
-  <string name="thanksForUpdatingVersion">3.1</string>
-  <!-- Don't use links in the text below, it crashes the app. -->
-  <string name="thanksForUpdating"><![CDATA[
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
-</head>
-<body>
-  Danke, da&szlig; Sie QuickDic 3.1 heruntergeladen haben.
-  <p> Neue Funktionen:
-  <ul>
-    <li> QuickDic ist Open-Source!
-    <li> Neue Einstellungen:
-    <ul>
-      <li> W&ouml;rterbuch Schriftgr&ouml;&szlig;e ist einstellbar.
-      <li> Kurze Klicks auf W&ouml;rterbucheintr&auml;ge &ouml;ffnen Kontextmen&uuml; nicht mehr standardm&auml;&szlig;ig.
-    </ul>
-    <li> 17 neue Englische W&ouml;rterb&uuml;cher: Albanian, Armenian, Belarusian, Bengali, Bosnian, Bulgarian, Catalan, Esperanto, Estonian, Hungarian, Indonesian, Latin, Latvian, Polish, Punjabi, Slovak, Swahili. (von enwiktionary.com).
-    <li> Alle W&ouml;rterb&uuml;cher sind updated (meist mit besseren Formatierung) und k&ouml;nnen wiederheruntergeladen werden (zuvor heruntergeladene W&ouml;rterb&uuml;cher wird immer noch funktionieren).
-  </ul>
-</body>
-</html> 
-]]>
-  </string>
- 
-  <!-- DictionaryEditActivity -->
-  <string name="dictionaryName">Wörterbuch Name</string>
-  <string name="downloadUrl">Wörterbuch URL</string>
-  
-  <string name="openButton">Öffnen</string>
-  <string name="dictionaryInfo">Wörterbuch Info:</string>
-  <string name="localFile">Wörterbuch Datei</string>
-  <string name="wordListFile">Wortliste-Datei</string>
-  <string name="fileNotFound">Datei nicht gefunden: \'%s\'</string>
-  <string name="invalidDictionary">Ungültige Wörterbuch: file=%1$s, error=%2$s</string>
-  <string name="numPairEntries">Einträge: %,d</string>
+  <string name="thanksForUpdatingVersion">3.1_a</string>
 
- 
-  <!-- Main -->
+  <!-- DictionaryActivity -->
   <string name="searchText">Suchtext</string>
-  <string name="downloadDictionary">Wörterbuch herunterladen…</string>
+  <string name="selectDictionary">Wörterbuch wählen…</string>
   <string name="switchToLanguage">Zu %s wechseln</string>
-  <string name="preferences">Einstellungen…</string>
-  <string name="about">Über QuickDic…</string>
   <string name="addToWordList">Zum Wortliste hinzufügen: %s</string>
   <string name="searchForSelection">Suche: %s</string>
   <string name="failedAddingToWordList">Fehler beim Hinzufügen zur Wortliste: %s</string>
   <string name="unzippingDictionary">Wörterbuch entpacken…</string>
   <string name="failedToUnzipDictionary">Fehler beim Entpackung der Wörterbuch…</string>
-
+  <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
+  <string name="noSearchResults">Keine Treffe.</string>
+  <string name="aboutDictionary">Über Wörterbuch…</string> 
+  
+  
+  <!-- About dictionary. -->
+  <string name="dictionaryPath">Datei: %s</string> 
+  <string name="dictionarySize">Grosse: %,d bytes</string> 
+  <string name="dictionaryCreationTime">Hergestellt: %tc</string> 
+  <string name="indexName">Index: %s</string> 
+  <string name="mainTokenCount">Wortzahl: %,d</string> 
+  <string name="sources">Quellen</string> 
+  <string name="sourceInfo">%1$s : %2$,d Einträge</string> 
+  
+  
 	<!-- About. -->
-	<string name="titleWithVersion">QuickDic 3.0.1</string>
-	<string name="thadHughes">Thad Hughes</string>
-	<string name="contactMe">
+  <string name="titleWithVersion">QuickDic 3.1</string>
+  <string name="thadHughes">Thad Hughes</string>
+  <string name="contactMe">
      Wenn Sie QuickDic benutzen, würde ich gerne von Ihnen hören.
      Leider kann ich keine Verantwortung für die Wörterbücher (außer Formatierung) nehmen, weil sie aus anderen Quellen erzeugt werden.
-     Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein schnelles Hallo an:
+     Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:
   </string>
-	<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+  <string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
   <string name="webPage">Weitere Informationen finden Sie unter:</string>
   <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
   
@@ -79,10 +61,10 @@
  
 	<!-- Download. -->
   <string name="openingConnection">Verbindungsaufbau…</string>
-	<string name="downloading">Herunterladen: %1$,d von %2$,d Bytes.</string>
+  <string name="downloading">Herunterladen: %1$,d von %2$,d Bytes.</string>
   <string name="unzipping">Entpackung: %1$,d von %2$,d Bytes.</string>
-	<string name="downloadFinished">Fertig: %,d Bytes.</string>
-	<string name="errorDownloadingFile">"Fehler beim Herunterladen: \n%s"</string>
+  <string name="downloadFinished">Fertig: %,d Bytes.</string>
+  <string name="errorDownloadingFile">"Fehler beim Herunterladen: \n%s"</string>
 
 	<!-- Preferences -->
 	<string name="wordListFileKey">wordListFile</string>

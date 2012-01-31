@@ -56,13 +56,13 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -79,8 +79,10 @@ import android.widget.Toast;
 
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
+import com.hughes.android.dictionary.engine.EntrySource;
 import com.hughes.android.dictionary.engine.Index;
 import com.hughes.android.dictionary.engine.PairEntry;
+import com.hughes.android.dictionary.engine.Index.IndexEntry;
 import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
 import com.hughes.android.dictionary.engine.TokenRow;
@@ -91,7 +93,9 @@ import com.hughes.android.util.NonLinkClickableSpan;
 public class DictionaryActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
-  
+
+  private String initialSearchText;
+
   DictionaryApplication application;
   File dictFile = null;
   RandomAccessFile dictRaf = null;
@@ -125,6 +129,7 @@ public class DictionaryActivity extends ListActivity {
   
   final SearchTextWatcher searchTextWatcher = new SearchTextWatcher();
 
+
   public DictionaryActivity() {
   }
   
@@ -140,17 +145,21 @@ public class DictionaryActivity extends ListActivity {
   @Override
   protected void onSaveInstanceState(final Bundle outState) {
     super.onSaveInstanceState(outState);
+    Log.d(LOG, "onSaveInstanceState: " + searchText.getText().toString());
     outState.putString(C.SEARCH_TOKEN, searchText.getText().toString());
   }
 
   @Override
   protected void onRestoreInstanceState(final Bundle outState) {
     super.onRestoreInstanceState(outState);
-    setSearchText(outState.getString(C.SEARCH_TOKEN));
+    Log.d(LOG, "onRestoreInstanceState: " + outState.getString(C.SEARCH_TOKEN));
+    initialSearchText = outState.getString(C.SEARCH_TOKEN);
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {    
+  public void onCreate(Bundle savedInstanceState) { 
+    setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
+
     Log.d(LOG, "onCreate:" + this);
     super.onCreate(savedInstanceState);
 
@@ -323,6 +332,9 @@ public class DictionaryActivity extends ListActivity {
       finish();
       startActivity(getIntent());
     }
+    if (initialSearchText != null) {
+      setSearchText(initialSearchText);
+    }
   }
   
   @Override
@@ -395,7 +407,13 @@ public class DictionaryActivity extends ListActivity {
   }
   
   void updateLangButton() {
-    langButton.setText(index.shortName);
+//    final LanguageResources languageResources = Language.isoCodeToResources.get(index.shortName);
+//    if (languageResources != null && languageResources.flagId != 0) {
+//      langButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, languageResources.flagId, 0);
+//    } else {
+//      langButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+      langButton.setText(index.shortName);
+//    }
   }
 
   void onLanguageButton() {
@@ -418,15 +436,10 @@ public class DictionaryActivity extends ListActivity {
       public View getView(int position, View convertView, ViewGroup parent) {
         final LinearLayout result = new LinearLayout(parent.getContext());
         final DictionaryInfo dictionaryInfo = getItem(position);
-        for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
-          final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
           final Button button = new Button(parent.getContext());
-          String name = application.getLanguageName(indexInfo.shortName);
-          if (name == null) {
-            name = indexInfo.shortName;
-          }
+          final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
           button.setText(name);
-          final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(), getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), i, "")) {
+          final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(), getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), 0, "")) {
             @Override
             protected void onGo() {
               dialog.dismiss();
@@ -441,7 +454,6 @@ public class DictionaryActivity extends ListActivity {
           button.setLayoutParams(layoutParams);
 
           result.addView(button);
-        }
         return result;
       }
       
@@ -536,7 +548,8 @@ public class DictionaryActivity extends ListActivity {
           dialog.setTitle(name);
           
           final StringBuilder builder = new StringBuilder();
-          final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(dictFile);
+          final DictionaryInfo dictionaryInfo = dictionary.getDictionaryInfo();
+          dictionaryInfo.uncompressedBytes = dictFile.length();
           if (dictionaryInfo != null) {
             builder.append(dictionaryInfo.dictInfo).append("\n\n");
             builder.append(getString(R.string.dictionaryPath, dictFile.getPath())).append("\n");
@@ -546,6 +559,11 @@ public class DictionaryActivity extends ListActivity {
               builder.append("\n");
               builder.append(getString(R.string.indexName, indexInfo.shortName)).append("\n");
               builder.append(getString(R.string.mainTokenCount, indexInfo.mainTokenCount)).append("\n");
+            }
+            builder.append("\n");
+            builder.append(getString(R.string.sources)).append("\n");
+            for (final EntrySource source : dictionary.sources) {
+              builder.append(getString(R.string.sourceInfo, source.getName(), source.getNumEntries())).append("\n");
             }
           } else {
             builder.append(getString(R.string.invalidDictionary));
@@ -597,8 +615,21 @@ public class DictionaryActivity extends ListActivity {
       final MenuItem searchForSelection = menu.add(getString(R.string.searchForSelection, selectedSpannableText));
       searchForSelection.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         public boolean onMenuItemClick(MenuItem item) {
-          if (indexIndex != selectedSpannableIndex) {
-            changeIndex(selectedSpannableIndex);
+          int indexToUse = -1;
+          for (int i = 0; i < dictionary.indices.size(); ++i) {
+            final Index index = dictionary.indices.get(i);
+            final IndexEntry indexEntry = index.findExact(selectedText); 
+            final TokenRow tokenRow = index.rows.get(indexEntry.startRow).getTokenRow(false);
+            if (tokenRow != null && tokenRow.hasMainEntry) {
+              indexToUse = i;
+              break;
+            }
+          }
+          if (indexToUse == -1) {
+            indexToUse = selectedSpannableIndex;
+          }
+          if (indexIndex != indexToUse) {
+            changeIndex(indexToUse);
           }
           setSearchText(selectedText);
           return false;
@@ -691,7 +722,10 @@ public class DictionaryActivity extends ListActivity {
     searchText.setText(text);
     searchText.requestFocus();
     onSearchTextChange(searchText.getText().toString());
-    Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
+    if (searchText.getLayout() != null) {
+      // Surprising, but this can crash when you rotate...
+      Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
+    }
   }
 
 

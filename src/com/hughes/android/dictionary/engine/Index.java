@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,9 @@ import java.util.regex.Pattern;
 
 import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.RowBase.RowKey;
 import com.hughes.util.CachingList;
+import com.hughes.util.TransformingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
@@ -89,11 +93,21 @@ public final class Index implements RAFSerializable<Index> {
     normalizer = null;
   }
   
+  /**
+   * Deferred initialization because it can be slow.
+   */
   public synchronized Transliterator normalizer() {
     if (normalizer == null) {
       normalizer = Transliterator.createFromRules("", normalizerRules, Transliterator.FORWARD);
     }
     return normalizer;
+  }
+  
+  /**
+   * Note that using this comparator probably involves doing too many text normalizations.
+   */
+  public NormalizeComparator getSortComparator() {
+    return new NormalizeComparator(normalizer(), sortLanguage.getCollator());
   }
   
   public Index(final Dictionary dict, final RandomAccessFile raf) throws IOException {
@@ -144,7 +158,7 @@ public final class Index implements RAFSerializable<Index> {
     public final String token;
     private final String normalizedToken;
     public final int startRow;
-    public final int numRows;
+    public final int numRows;  // doesn't count the token row!
     
     
     static final RAFSerializer<IndexEntry> SERIALIZER = new RAFSerializer<IndexEntry> () {
@@ -192,6 +206,21 @@ public final class Index implements RAFSerializable<Index> {
     public String normalizedToken() {
       return normalizedToken;
     }
+  }
+  
+  static final TransformingList.Transformer<IndexEntry, String> INDEX_ENTRY_TO_TOKEN = new TransformingList.Transformer<IndexEntry, String>() {
+    @Override
+    public String transform(IndexEntry t1) {
+      return t1.token;
+    }
+  };
+  
+  public IndexEntry findExact(final String exactToken) {
+    final int result = Collections.binarySearch(TransformingList.create(sortedIndexEntries, INDEX_ENTRY_TO_TOKEN), exactToken, getSortComparator());
+    if (result >= 0) {
+      return sortedIndexEntries.get(result);
+    }
+    return null;
   }
   
   public IndexEntry findInsertionPoint(String token, final AtomicBoolean interrupted) {
@@ -246,20 +275,62 @@ public final class Index implements RAFSerializable<Index> {
     return new DictionaryInfo.IndexInfo(shortName, sortedIndexEntries.size(), mainTokenCount);
   }
   
+  private static final int MAX_SEARCH_ROWS = 1000;
+  
+  private final Map<String,Integer> prefixToNumRows = new LinkedHashMap<String, Integer>();
+  private synchronized final int getUpperBoundOnRowsStartingWith(final String normalizedPrefix, final int maxRows, final AtomicBoolean interrupted) {
+    final Integer numRows = prefixToNumRows.get(normalizedPrefix);
+    if (numRows != null) {
+      return numRows;
+    }
+    final int insertionPointIndex = findInsertionPointIndex(normalizedPrefix, interrupted);
+  
+    int rowCount = 0;
+    for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
+      if (interrupted.get()) { return -1; }
+      final IndexEntry indexEntry = sortedIndexEntries.get(index);
+      if (!indexEntry.normalizedToken.startsWith(normalizedPrefix)) {
+        break;
+      }
+      rowCount += indexEntry.numRows;
+      if (rowCount > maxRows) {
+        System.out.println("Giving up, too many words with prefix: " + normalizedPrefix);
+        break;
+      }
+    }
+    prefixToNumRows.put(normalizedPrefix, numRows);
+    return rowCount;
+  }
+  
+  
   public final List<RowBase> multiWordSearch(final List<String> searchTokens, final AtomicBoolean interrupted) {
+    final long startMills = System.currentTimeMillis();
     final List<RowBase> result = new ArrayList<RowBase>();
     
     final Set<String> normalizedNonStoplist = new LinkedHashSet<String>();
     
+    String bestPrefix = null;
+    int leastRows = Integer.MAX_VALUE;
     final StringBuilder regex = new StringBuilder();
     for (int i = 0; i < searchTokens.size(); ++i) {
+      if (interrupted.get()) { return null; }
       final String searchToken = searchTokens.get(i);
       final String normalized = normalizeToken(searchTokens.get(i));
       // Normalize them all.
       searchTokens.set(i, normalized);
 
       if (!stoplist.contains(searchToken)) {
-        normalizedNonStoplist.add(normalized);
+        if (normalizedNonStoplist.add(normalized)) {
+          final int numRows = getUpperBoundOnRowsStartingWith(normalized, MAX_SEARCH_ROWS, interrupted);
+          if (numRows != -1 && numRows < leastRows) {
+            if (numRows == 0) {
+              // We really are done here.
+              return Collections.emptyList();
+            }
+            leastRows = numRows;
+            bestPrefix = normalized;
+          }
+        }
       }
 
       if (regex.length() > 0) {
@@ -269,8 +340,13 @@ public final class Index implements RAFSerializable<Index> {
     }
     final Pattern pattern = Pattern.compile(regex.toString());
     
+    if (bestPrefix == null) {
+      bestPrefix = searchTokens.get(0);
+      System.out.println("Everything was in the stoplist!");
+    }
+    System.out.println("Searching using prefix: " + bestPrefix + ", leastRows=" + leastRows + ", searchTokens=" + searchTokens);
 
-    // The things that match.
+    // Place to store the things that match.
     final Map<RowMatchType,List<RowBase>> matches = new EnumMap<RowMatchType, List<RowBase>>(RowMatchType.class);
     for (final RowMatchType rowMatchType : RowMatchType.values()) {
       if (rowMatchType != RowMatchType.NO_MATCH) {
@@ -278,65 +354,42 @@ public final class Index implements RAFSerializable<Index> {
       }
     }
     
-    int bestRowCount = Integer.MAX_VALUE;
-    String bestToken = null;
-    for (final String searchToken : normalizedNonStoplist) {
-      final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
-      if (interrupted.get()) { return null; }
-      if (insertionPointIndex == -1) {
-        // If we've typed "train statio", don't fail just because the index
-        // doesn't contain "statio".
-        continue;
-      }
-
-      int rowCount = 0;
-      for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
-        if (interrupted.get()) { return null; }
-        final IndexEntry indexEntry = sortedIndexEntries.get(index);
-        if (!indexEntry.normalizedToken.equals(searchToken)) {
-          break;
-        }
-        rowCount += indexEntry.numRows;
-      }
-      
-      //System.out.println(searchToken + ", rowCount=" + rowCount);
-      if (rowCount < bestRowCount) {
-        bestRowCount = rowCount;
-        bestToken = searchToken;
-      }
-    }
-    
-    final String searchToken = bestToken != null ? bestToken : searchTokens.get(0);
+    int matchCount = 0;
+    final Set<RowKey> cachedRowKeys = new HashSet<RowBase.RowKey>();
     
 //    for (final String searchToken : searchTokens) {
+    final String searchToken = bestPrefix;
     
     final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
-    if (interrupted.get()) { return null; }
 
-      
-//      System.out.println("Searching token: " + searchToken);
-
-  
-      for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
+    for (int index = insertionPointIndex; index < sortedIndexEntries.size() && matchCount < MAX_SEARCH_ROWS; ++index) {
         if (interrupted.get()) { return null; }
         final IndexEntry indexEntry = sortedIndexEntries.get(index);
-        if (!indexEntry.normalizedToken.equals(searchToken)) {
+        if (!indexEntry.normalizedToken.startsWith(searchToken)) {
           break;
         }
 
 //        System.out.println("Searching indexEntry: " + indexEntry.token);
 
-        for (int rowIndex = indexEntry.startRow; rowIndex < indexEntry.startRow + indexEntry.numRows; ++rowIndex) {
+        // Extra +1 to skip token row.
+        for (int rowIndex = indexEntry.startRow + 1; rowIndex < indexEntry.startRow + 1 + indexEntry.numRows && rowIndex < rows.size(); ++rowIndex) {
           if (interrupted.get()) { return null; }
           final RowBase row = rows.get(rowIndex);
+          final RowBase.RowKey rowKey = row.getRowKey();
+          if (cachedRowKeys.contains(rowKey)) {
+            continue;
+          }
+          cachedRowKeys.add(rowKey);
           final RowMatchType matchType = row.matches(searchTokens, pattern, normalizer(), swapPairEntries);
           if (matchType != RowMatchType.NO_MATCH) {
             matches.get(matchType).add(row);
+            ++matchCount;
           }
         }
       }
 //    }  // searchTokens
-  
+
+    // Sort them into a reasonable order.
     final RowBase.LengthComparator lengthComparator = new RowBase.LengthComparator(swapPairEntries);
     for (final Collection<RowBase> rows : matches.values()) {
       final List<RowBase> ordered = new ArrayList<RowBase>(rows);
@@ -344,6 +397,7 @@ public final class Index implements RAFSerializable<Index> {
       result.addAll(ordered);
     }
     
+    System.out.println("searchDuration: " + (System.currentTimeMillis() - startMills));
     return result;
   }
   

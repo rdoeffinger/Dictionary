@@ -38,6 +38,17 @@ public class EntrySource extends IndexedObject implements Serializable {
   public String toString() {
     return name;
   }
+  
+  
+
+
+  public int getNumEntries() {
+    return numEntries;
+  }
+
+  public String getName() {
+    return name;
+  }
 
 
   public static final class Serializer implements RAFListSerializer<EntrySource> {

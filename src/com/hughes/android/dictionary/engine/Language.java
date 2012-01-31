@@ -24,87 +24,103 @@ import com.hughes.android.dictionary.R;
 import com.ibm.icu.text.Collator;
 
 public class Language {
+  
+  public static final class LanguageResources {
+    public final String englishName;
+    public final int nameId;
+    public final int flagId;
+    
+    private LanguageResources(final String englishName, int nameId, int flagId) {
+      this.englishName = englishName;
+      this.nameId = nameId;
+      this.flagId = flagId;
+    }
 
-  public static final Map<String,Integer> isoCodeToResourceId = new LinkedHashMap<String,Integer>();
+    private LanguageResources(final String englishName, int nameId) {
+      this(englishName, nameId, 0);
+    }
+}
+
+  public static final Map<String,LanguageResources> isoCodeToResources = new LinkedHashMap<String,LanguageResources>();
   static {
-    isoCodeToResourceId.put("AF", R.string.AF);
-    isoCodeToResourceId.put("SQ", R.string.SQ);
-    isoCodeToResourceId.put("AR", R.string.AR);
-    isoCodeToResourceId.put("HY", R.string.HY);
-    isoCodeToResourceId.put("BE", R.string.BE);
-    isoCodeToResourceId.put("BN", R.string.BN);
-    isoCodeToResourceId.put("BS", R.string.BS);
-    isoCodeToResourceId.put("BG", R.string.BG);
-    isoCodeToResourceId.put("CA", R.string.CA);
-    isoCodeToResourceId.put("HR", R.string.HR);
-    isoCodeToResourceId.put("CS", R.string.CS);
-    isoCodeToResourceId.put("ZH", R.string.ZH);
-    isoCodeToResourceId.put("DA", R.string.DA);
-    isoCodeToResourceId.put("NL", R.string.NL);
-    isoCodeToResourceId.put("EN", R.string.EN);
-    isoCodeToResourceId.put("EO", R.string.EO);
-    isoCodeToResourceId.put("ET", R.string.ET);
-    isoCodeToResourceId.put("FI", R.string.FI);
-    isoCodeToResourceId.put("FR", R.string.FR);
-    isoCodeToResourceId.put("DE", R.string.DE);
-    isoCodeToResourceId.put("EL", R.string.EL);
-    isoCodeToResourceId.put("haw", R.string.haw);
-    isoCodeToResourceId.put("HE", R.string.HE);
-    isoCodeToResourceId.put("HI", R.string.HI);
-    isoCodeToResourceId.put("HU", R.string.HU);
-    isoCodeToResourceId.put("IS", R.string.IS);
-    isoCodeToResourceId.put("ID", R.string.ID);
-    isoCodeToResourceId.put("GA", R.string.GA);
-    isoCodeToResourceId.put("IT", R.string.IT);
-    isoCodeToResourceId.put("LA", R.string.LA);
-    isoCodeToResourceId.put("LV", R.string.LV);
-    isoCodeToResourceId.put("LT", R.string.LT);
-    isoCodeToResourceId.put("JA", R.string.JA);
-    isoCodeToResourceId.put("KO", R.string.KO);
-    isoCodeToResourceId.put("KU", R.string.KU);
-    isoCodeToResourceId.put("MS", R.string.MS);
-    isoCodeToResourceId.put("MI", R.string.MI);
-    isoCodeToResourceId.put("MN", R.string.MN);
-    isoCodeToResourceId.put("NE", R.string.NE);
-    isoCodeToResourceId.put("NO", R.string.NO);
-    isoCodeToResourceId.put("FA", R.string.FA);
-    isoCodeToResourceId.put("PL", R.string.PL);
-    isoCodeToResourceId.put("PT", R.string.PT);
-    isoCodeToResourceId.put("PA", R.string.PA);
-    isoCodeToResourceId.put("RO", R.string.RO);
-    isoCodeToResourceId.put("RU", R.string.RU);
-    isoCodeToResourceId.put("SA", R.string.SA);
-    isoCodeToResourceId.put("SR", R.string.SR);
-    isoCodeToResourceId.put("SK", R.string.SK);
-    isoCodeToResourceId.put("SO", R.string.SO);
-    isoCodeToResourceId.put("ES", R.string.ES);
-    isoCodeToResourceId.put("SW", R.string.SW);
-    isoCodeToResourceId.put("SV", R.string.SV);
-    isoCodeToResourceId.put("TL", R.string.TL);
-    isoCodeToResourceId.put("TG", R.string.TG);
-    isoCodeToResourceId.put("TH", R.string.TH);
-    isoCodeToResourceId.put("BO", R.string.BO);
-    isoCodeToResourceId.put("TR", R.string.TR);
-    isoCodeToResourceId.put("UK", R.string.UK);
-    isoCodeToResourceId.put("UR", R.string.UR);
-    isoCodeToResourceId.put("VI", R.string.VI);
-    isoCodeToResourceId.put("CI", R.string.CI);
-    isoCodeToResourceId.put("YI", R.string.YI);
-    isoCodeToResourceId.put("ZU", R.string.ZU);
+    isoCodeToResources.put("AF", new LanguageResources("Afrikaans", R.string.AF));
+    isoCodeToResources.put("SQ", new LanguageResources("Albanian", R.string.SQ));
+    isoCodeToResources.put("AR", new LanguageResources("Arabic", R.string.AR));
+    isoCodeToResources.put("HY", new LanguageResources("Armenian", R.string.HY));
+    isoCodeToResources.put("BE", new LanguageResources("Belarusian", R.string.BE));
+    isoCodeToResources.put("BN", new LanguageResources("Bengali", R.string.BN));
+    isoCodeToResources.put("BS", new LanguageResources("Bosnian", R.string.BS));
+    isoCodeToResources.put("BG", new LanguageResources("Bulgarian", R.string.BG));
+    isoCodeToResources.put("CA", new LanguageResources("Catalan", R.string.CA));
+    isoCodeToResources.put("HR", new LanguageResources("Croatian", R.string.HR));
+    isoCodeToResources.put("CS", new LanguageResources("Czech", R.string.CS));
+    isoCodeToResources.put("ZH", new LanguageResources("Chinese", R.string.ZH));
+    isoCodeToResources.put("DA", new LanguageResources("Danish", R.string.DA));
+    isoCodeToResources.put("NL", new LanguageResources("Dutch", R.string.NL));
+    isoCodeToResources.put("EN", new LanguageResources("English", R.string.EN));
+    isoCodeToResources.put("EO", new LanguageResources("Esperanto", R.string.EO));
+    isoCodeToResources.put("ET", new LanguageResources("Estonian", R.string.ET));
+    isoCodeToResources.put("FI", new LanguageResources("Finnish", R.string.FI));
+    isoCodeToResources.put("FR", new LanguageResources("French", R.string.FR));
+    isoCodeToResources.put("DE", new LanguageResources("German", R.string.DE));
+    isoCodeToResources.put("EL", new LanguageResources("Greek", R.string.EL));
+    isoCodeToResources.put("haw", new LanguageResources("Hawaiian", R.string.haw));
+    isoCodeToResources.put("HE", new LanguageResources("Hebrew", R.string.HE));
+    isoCodeToResources.put("HI", new LanguageResources("Hindi", R.string.HI));
+    isoCodeToResources.put("HU", new LanguageResources("Hungarian", R.string.HU));
+    isoCodeToResources.put("IS", new LanguageResources("Icelandic", R.string.IS));
+    isoCodeToResources.put("ID", new LanguageResources("Indonesian", R.string.ID));
+    isoCodeToResources.put("GA", new LanguageResources("Gaelic (Irish, Scottish)", R.string.GA));
+    isoCodeToResources.put("IT", new LanguageResources("Italian", R.string.IT));
+    isoCodeToResources.put("LA", new LanguageResources("Latin", R.string.LA));
+    isoCodeToResources.put("LV", new LanguageResources("Latvian", R.string.LV));
+    isoCodeToResources.put("LT", new LanguageResources("Lithuanian", R.string.LT));
+    isoCodeToResources.put("JA", new LanguageResources("Japanese", R.string.JA));
+    isoCodeToResources.put("KO", new LanguageResources("Korean", R.string.KO));
+    isoCodeToResources.put("KU", new LanguageResources("Kurdish", R.string.KU));
+    isoCodeToResources.put("MS", new LanguageResources("Malay", R.string.MS));
+    isoCodeToResources.put("MI", new LanguageResources("Maori", R.string.MI));
+    isoCodeToResources.put("MN", new LanguageResources("Mongolian", R.string.MN));
+    isoCodeToResources.put("NE", new LanguageResources("Nepali", R.string.NE));
+    isoCodeToResources.put("NO", new LanguageResources("Norwegian", R.string.NO));
+    isoCodeToResources.put("FA", new LanguageResources("Persian", R.string.FA));
+    isoCodeToResources.put("PL", new LanguageResources("Polish", R.string.PL));
+    isoCodeToResources.put("PT", new LanguageResources("Portuguese", R.string.PT));
+    isoCodeToResources.put("PA", new LanguageResources("Punjabi", R.string.PA));
+    isoCodeToResources.put("RO", new LanguageResources("Romanian", R.string.RO));
+    isoCodeToResources.put("RU", new LanguageResources("Russian", R.string.RU));
+    isoCodeToResources.put("SA", new LanguageResources("Sanskrit", R.string.SA));
+    isoCodeToResources.put("SR", new LanguageResources("Serbian", R.string.SR));
+    isoCodeToResources.put("SK", new LanguageResources("Slovak", R.string.SK));
+    isoCodeToResources.put("SO", new LanguageResources("Somali", R.string.SO));
+    isoCodeToResources.put("ES", new LanguageResources("Spanish", R.string.ES));
+    isoCodeToResources.put("SW", new LanguageResources("Swahili", R.string.SW));
+    isoCodeToResources.put("SV", new LanguageResources("Swedish", R.string.SV));
+    isoCodeToResources.put("TL", new LanguageResources("Tagalog", R.string.TL));
+    isoCodeToResources.put("TG", new LanguageResources("Tajik", R.string.TG));
+    isoCodeToResources.put("TH", new LanguageResources("Thai", R.string.TH));
+    isoCodeToResources.put("BO", new LanguageResources("Tibetan", R.string.BO));
+    isoCodeToResources.put("TR", new LanguageResources("Turkish", R.string.TR));
+    isoCodeToResources.put("UK", new LanguageResources("", R.string.UK));
+    isoCodeToResources.put("UR", new LanguageResources("", R.string.UR));
+    isoCodeToResources.put("VI", new LanguageResources("", R.string.VI));
+    isoCodeToResources.put("CI", new LanguageResources("", R.string.CI));
+    isoCodeToResources.put("YI", new LanguageResources("", R.string.YI));
+    isoCodeToResources.put("ZU", new LanguageResources("", R.string.ZU));
 
-    isoCodeToResourceId.put("AZ", R.string.AZ);
-    isoCodeToResourceId.put("EU", R.string.EU);
-    isoCodeToResourceId.put("BR", R.string.BR);
-    isoCodeToResourceId.put("MR", R.string.MR);
-    isoCodeToResourceId.put("FO", R.string.FO);
-    isoCodeToResourceId.put("GL", R.string.GL);
-    isoCodeToResourceId.put("HT", R.string.HT);
-    isoCodeToResourceId.put("LB", R.string.LB);
-    isoCodeToResourceId.put("MK", R.string.MK);
+    isoCodeToResources.put("AZ", new LanguageResources("", R.string.AZ));
+    isoCodeToResources.put("EU", new LanguageResources("", R.string.EU));
+    isoCodeToResources.put("BR", new LanguageResources("", R.string.BR));
+    isoCodeToResources.put("MR", new LanguageResources("", R.string.MR));
+    isoCodeToResources.put("FO", new LanguageResources("", R.string.FO));
+    isoCodeToResources.put("GL", new LanguageResources("", R.string.GL));
+    isoCodeToResources.put("HT", new LanguageResources("", R.string.HT));
+    isoCodeToResources.put("LB", new LanguageResources("", R.string.LB));
+    isoCodeToResources.put("MK", new LanguageResources("", R.string.MK));
 
     // Hack to allow lower-case ISO codes to work:
-    for (final String isoCode : new ArrayList<String>(isoCodeToResourceId.keySet())) {
-      isoCodeToResourceId.put(isoCode.toLowerCase(), isoCodeToResourceId.get(isoCode));
+    for (final String isoCode : new ArrayList<String>(isoCodeToResources.keySet())) {
+      isoCodeToResources.put(isoCode.toLowerCase(), isoCodeToResources.get(isoCode));
     }
 
   }

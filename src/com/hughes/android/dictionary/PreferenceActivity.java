@@ -22,7 +22,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
   
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    //((DictionaryApplication)getApplication()).applyTheme(this);
+    setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
 
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.preferences);

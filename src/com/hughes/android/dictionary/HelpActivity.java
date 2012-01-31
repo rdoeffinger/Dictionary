@@ -32,6 +32,8 @@ public final class HelpActivity extends Activity {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(final Bundle savedInstanceState) {
+    setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
+
     super.onCreate(savedInstanceState);
     setContentView(R.layout.help_activity);
     final String html = StringUtil.readToString(getResources().openRawResource(R.raw.help));
