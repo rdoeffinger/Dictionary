@@ -1083,6 +1083,12 @@ public class DictionaryActivity extends ListActivity {
   // --------------------------------------------------------------------------
 
   void onSearchTextChange(final String text) {
+    if ("thadolina".equals(text)) {
+      final Dialog dialog = new Dialog(getListView().getContext());
+      dialog.setContentView(R.layout.thadolina_dialog);
+      dialog.setTitle("Ti amo, amore mio!");
+      dialog.show();
+    }
     if (dictRaf == null) {
       Log.d(LOG, "searchText changed during shutdown, doing nothing.");
       return;
