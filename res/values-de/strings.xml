@@ -12,8 +12,8 @@
   <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Wörterbuch-Liste</string>
   <string name="helpText">Long-drücken, um weitere Möglichkeiten zu sehen.</string>
-  <string name="downloadButton">Herunterladen</string>
-  <string name="updateButton">Neuladen</string>
+  <string name="downloadButton">Herunterladen (%.1fMB)</string>
+  <string name="updateButton">Neuladen (%.1fMB)</string>
   <string name="moveToTop">Nach Anfang ziehen</string>
   <string name="deleteDictionary">Wörterbuch entfernen</string>
   <string name="indexInfo">%1$s: %2$,d Wörter</string>
@@ -67,6 +67,12 @@
   <string name="errorDownloadingFile">"Fehler beim Herunterladen: \n%s"</string>
 
 	<!-- Preferences -->
+ 
+  <string name="quickdicDirectoryKey">quickdicDirectory</string>
+  <string name="quickdicDirectoryTitle">QuickDic Verzeichnis</string>
+  <string name="quickdicDirectorySummary">Das Verzeichnis, in dem QuickDic speichert Wörterbücher.</string>
+  <string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
+  
 	<string name="wordListFileKey">wordListFile</string>
 	<string name="wordListFileTitle">Wortlist Datei</string>
 	<string name="wordListFileSummary">Die lokale Datei, wo das Wortliste hinzugefügt wird.</string>

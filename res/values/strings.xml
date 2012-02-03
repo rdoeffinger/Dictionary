@@ -68,6 +68,12 @@
 
 
 	<!-- Preferences -->
+
+  <string name="quickdicDirectoryKey">quickdicDirectory</string>
+  <string name="quickdicDirectoryTitle">QuickDic directory</string>
+  <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries.</string>
+  <string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
+  
 	<string name="wordListFileKey">wordListFile</string>
 	<string name="wordListFileTitle">Word list file</string>
 	<string name="wordListFileSummary">The local file where the word list will be appended.</string>

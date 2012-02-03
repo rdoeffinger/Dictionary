@@ -32,7 +32,5 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
   public void onContentChanged() {
     super.onContentChanged();
   }
-  
-  
 
 }

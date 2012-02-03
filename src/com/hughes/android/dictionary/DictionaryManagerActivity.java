@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,6 +45,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hughes.android.dictionary.C.Theme;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 import com.hughes.util.StringUtil;
@@ -55,6 +57,8 @@ public class DictionaryManagerActivity extends ListActivity {
 
   DictionaryApplication application;
   Adapter adapter;
+  
+  Handler uiHandler;
   
   public static Intent getLaunchIntent() {
     final Intent intent = new Intent();
@@ -117,14 +121,23 @@ public class DictionaryManagerActivity extends ListActivity {
     }
   }
   
+  @Override
+  protected void onStart() {
+    super.onStart();
+    uiHandler = new Handler();
+  }
+  
+  @Override
+  protected void onStop() {
+    super.onStop();
+    uiHandler = null;
+  }
+
   private void onClick(int index) {
     final DictionaryInfo dictionaryInfo = adapter.getItem(index);
     final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
     if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) && downloadable != null) {
-      final Intent intent = DownloadActivity
-          .getLaunchIntent(downloadable.downloadUrl,
-              application.getPath(dictionaryInfo.uncompressedFilename).getPath() + ".zip",
-              dictionaryInfo.dictInfo);
+      final Intent intent = getDownloadIntent(downloadable);
       startActivity(intent);
     } else {
       final Intent intent = DictionaryActivity.getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), 0, "");
@@ -151,6 +164,21 @@ public class DictionaryManagerActivity extends ListActivity {
       //finish();
       return;
     }
+    
+    application.backgroundUpdateDictionaries(new Runnable() {
+      @Override
+      public void run() {
+        if (uiHandler == null) {
+          return;
+        }
+        uiHandler.post(new Runnable() {
+          @Override
+          public void run() {
+            setListAdapter(adapter = new Adapter());
+          }
+        });
+      }
+    });
 
     setListAdapter(adapter = new Adapter());
   }
@@ -170,7 +198,7 @@ public class DictionaryManagerActivity extends ListActivity {
     final int position = adapterContextMenuInfo.position;
     final DictionaryInfo dictionaryInfo = adapter.getItem(position);
     
-    if (position > 0) {
+    if (position > 0 && application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
       final MenuItem moveToTopMenuItem = menu.add(R.string.moveToTop);
       moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
@@ -192,6 +220,28 @@ public class DictionaryManagerActivity extends ListActivity {
       }
     });
 
+    final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
+    if (downloadable != null) {
+      final MenuItem downloadMenuItem = menu.add(getString(R.string.downloadButton, downloadable.zipBytes/1024.0/1024.0));
+      downloadMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+          final Intent intent = getDownloadIntent(downloadable);
+          startActivity(intent);
+          setListAdapter(adapter = new Adapter());
+          return true;
+        }
+
+      });
+    }
+
+  }
+
+  private Intent getDownloadIntent(final DictionaryInfo downloadable) {
+    final Intent intent = DownloadActivity.getLaunchIntent(downloadable.downloadUrl,
+        application.getPath(downloadable.uncompressedFilename).getPath() + ".zip",
+        downloadable.dictInfo);
+    return intent;
   }
 
   class Adapter extends BaseAdapter {
@@ -215,8 +265,16 @@ public class DictionaryManagerActivity extends ListActivity {
     
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
+      final LinearLayout result;
+      // Android 4.0.3 leaks memory like crazy if we don't do this.
+      if (convertView instanceof LinearLayout) {
+        result = (LinearLayout) convertView;
+        result.removeAllViews();
+      } else {
+        result = new LinearLayout(parent.getContext());
+      }
+      
       final DictionaryInfo dictionaryInfo = getItem(position);
-      final LinearLayout result = new LinearLayout(parent.getContext());
       result.setOrientation(LinearLayout.VERTICAL);
 
       final LinearLayout row = new LinearLayout(parent.getContext());
@@ -239,15 +297,8 @@ public class DictionaryManagerActivity extends ListActivity {
       if ((!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) || updateAvailable) && downloadable != null) {
         final Button downloadButton = new Button(parent.getContext());
         downloadButton.setText(getString(updateAvailable ? R.string.updateButton : R.string.downloadButton, downloadable.zipBytes / 1024.0 / 1024.0));
-        downloadButton.setOnClickListener(new IntentLauncher(parent.getContext(), DownloadActivity
-            .getLaunchIntent(downloadable.downloadUrl,
-                application.getPath(dictionaryInfo.uncompressedFilename).getPath() + ".zip",
-                dictionaryInfo.dictInfo)) {
-          @Override
-          protected void onGo() {
-            application.invalidateDictionaryInfo(dictionaryInfo.uncompressedFilename);
-          }
-        });
+        final Intent intent = getDownloadIntent(downloadable);
+        downloadButton.setOnClickListener(new IntentLauncher(parent.getContext(), intent));
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -290,7 +341,7 @@ public class DictionaryManagerActivity extends ListActivity {
           DictionaryManagerActivity.this.onClick(position);
         }
       });
-
+      
       return result;
     }
   }

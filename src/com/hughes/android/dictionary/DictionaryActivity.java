@@ -39,6 +39,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -69,6 +70,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -81,8 +83,8 @@ import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.EntrySource;
 import com.hughes.android.dictionary.engine.Index;
-import com.hughes.android.dictionary.engine.PairEntry;
 import com.hughes.android.dictionary.engine.Index.IndexEntry;
+import com.hughes.android.dictionary.engine.PairEntry;
 import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
 import com.hughes.android.dictionary.engine.TokenRow;
@@ -128,6 +130,14 @@ public class DictionaryActivity extends ListActivity {
   ListAdapter indexAdapter = null;
   
   final SearchTextWatcher searchTextWatcher = new SearchTextWatcher();
+  
+  /**
+   * For some languages, loading the transliterators used in this search takes
+   * a long time, so we fire it up on a different thread, and don't invoke it
+   * from the main thread until it's already finished once.
+   */
+  private volatile boolean indexPrepFinished = false;
+
 
 
   public DictionaryActivity() {
@@ -146,6 +156,7 @@ public class DictionaryActivity extends ListActivity {
   protected void onSaveInstanceState(final Bundle outState) {
     super.onSaveInstanceState(outState);
     Log.d(LOG, "onSaveInstanceState: " + searchText.getText().toString());
+    outState.putInt(C.INDEX_INDEX, indexIndex);
     outState.putString(C.SEARCH_TOKEN, searchText.getText().toString());
   }
 
@@ -153,7 +164,7 @@ public class DictionaryActivity extends ListActivity {
   protected void onRestoreInstanceState(final Bundle outState) {
     super.onRestoreInstanceState(outState);
     Log.d(LOG, "onRestoreInstanceState: " + outState.getString(C.SEARCH_TOKEN));
-    initialSearchText = outState.getString(C.SEARCH_TOKEN);
+    onCreate(outState);
   }
 
   @Override
@@ -187,47 +198,52 @@ public class DictionaryActivity extends ListActivity {
         }
         dictRaf = null;
       }
-      Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()), Toast.LENGTH_LONG);
+      Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()), Toast.LENGTH_LONG).show();
       startActivity(DictionaryManagerActivity.getLaunchIntent());
       finish();
       return;
     }
-
-    indexIndex = intent.getIntExtra(C.INDEX_INDEX, 0) % dictionary.indices.size();
+    indexIndex = intent.getIntExtra(C.INDEX_INDEX, 0);
+    if (savedInstanceState != null) {
+      indexIndex = savedInstanceState.getInt(C.INDEX_INDEX, indexIndex);
+    }
+    indexIndex %= dictionary.indices.size();
     Log.d(LOG, "Loading index " + indexIndex);
     index = dictionary.indices.get(indexIndex);
     setListAdapter(new IndexAdapter(index));
     
     // Pre-load the collators.
-    searchExecutor.execute(new Runnable() {
+    new Thread(new Runnable() {
       public void run() {
         final long startMillis = System.currentTimeMillis();
-        
-        TransliteratorManager.init(new TransliteratorManager.Callback() {
-          @Override
-          public void onTransliteratorReady() {
-            uiHandler.post(new Runnable() {
-              @Override
-              public void run() {
-                onSearchTextChange(searchText.getText().toString());
-              }
-            });
-          }
-        });
-        
-        for (final Index index : dictionary.indices) {
-          Log.d(LOG, "Starting collator load for lang=" + index.sortLanguage.getIsoCode());
+        try {
+          TransliteratorManager.init(new TransliteratorManager.Callback() {
+            @Override
+            public void onTransliteratorReady() {
+              uiHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                  onSearchTextChange(searchText.getText().toString());
+                }
+              });
+            }
+          });
           
-          final com.ibm.icu.text.Collator c = index.sortLanguage.getCollator();          
-          if (c.compare("pre-print", "preppy") >= 0) {
-            Log.e(LOG, c.getClass()
-                + " is buggy, lookups may not work properly.");
+          for (final Index index : dictionary.indices) {
+            final String searchToken = index.sortedIndexEntries.get(0).token;
+            final IndexEntry entry = index.findExact(searchToken);
+            if (!searchToken.equals(entry.token)) {
+              Log.e(LOG, "Couldn't find token: " + searchToken + ", " + entry.token);
+            }
           }
+          indexPrepFinished = true;
+        } catch (Exception e) {
+          Log.w(LOG, "Exception while prepping.  This can happen if dictionary is closed while search is happening.");
         }
-        Log.d(LOG, "Loading collators took:"
-            + (System.currentTimeMillis() - startMillis));
+          Log.d(LOG, "Prepping indices took:"
+              + (System.currentTimeMillis() - startMillis));
       }
-    });
+    }).start();
     
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     
@@ -246,10 +262,15 @@ public class DictionaryActivity extends ListActivity {
     
     searchText.requestFocus();
     searchText.addTextChangedListener(searchTextWatcher);
-    final String search = prefs.getString(C.SEARCH_TOKEN, "");
-    searchText.setText(search);
-    searchText.setSelection(0, search.length());
-    Log.d(LOG, "Trying to restore searchText=" + search);
+    String text = "";
+    if (savedInstanceState != null) {
+      text = savedInstanceState.getString(C.SEARCH_TOKEN);
+      if (text == null) {
+        text = "";
+      }
+    }
+    setSearchText(text, true);
+    Log.d(LOG, "Trying to restore searchText=" + text);
     
     final Button clearSearchTextButton = (Button) findViewById(R.id.ClearSearchTextButton);
     clearSearchTextButton.setOnClickListener(new OnClickListener() {
@@ -333,7 +354,7 @@ public class DictionaryActivity extends ListActivity {
       startActivity(getIntent());
     }
     if (initialSearchText != null) {
-      setSearchText(initialSearchText);
+      setSearchText(initialSearchText, true);
     }
   }
   
@@ -421,7 +442,7 @@ public class DictionaryActivity extends ListActivity {
       currentSearchOperation.interrupted.set(true);
       currentSearchOperation = null;
     }
-    changeIndex((indexIndex + 1)% dictionary.indices.size());
+    changeIndexGetFocusAndResearch((indexIndex + 1)% dictionary.indices.size());
   }
   
   void onLanguageButtonLongClick(final Context context) {
@@ -477,7 +498,7 @@ public class DictionaryActivity extends ListActivity {
   }
 
 
-  private void changeIndex(final int newIndex) {
+  private void changeIndexGetFocusAndResearch(final int newIndex) {
     indexIndex = newIndex;
     index = dictionary.indices.get(indexIndex);
     indexAdapter = new IndexAdapter(index);
@@ -565,9 +586,10 @@ public class DictionaryActivity extends ListActivity {
             for (final EntrySource source : dictionary.sources) {
               builder.append(getString(R.string.sourceInfo, source.getName(), source.getNumEntries())).append("\n");
             }
-          } else {
-            builder.append(getString(R.string.invalidDictionary));
           }
+//          } else {
+//            builder.append(getString(R.string.invalidDictionary));
+//          }
           textView.setText(builder.toString());
           
           dialog.show();
@@ -618,20 +640,30 @@ public class DictionaryActivity extends ListActivity {
           int indexToUse = -1;
           for (int i = 0; i < dictionary.indices.size(); ++i) {
             final Index index = dictionary.indices.get(i);
-            final IndexEntry indexEntry = index.findExact(selectedText); 
-            final TokenRow tokenRow = index.rows.get(indexEntry.startRow).getTokenRow(false);
-            if (tokenRow != null && tokenRow.hasMainEntry) {
-              indexToUse = i;
-              break;
+            if (indexPrepFinished) {
+              System.out.println("Doing index lookup: on " + selectedText);
+              final IndexEntry indexEntry = index.findExact(selectedText);
+              if (indexEntry != null) {
+                final TokenRow tokenRow = index.rows.get(indexEntry.startRow).getTokenRow(false);
+                if (tokenRow != null && tokenRow.hasMainEntry) {
+                  indexToUse = i;
+                  break;
+                }
+              }
+            } else {
+              Log.w(LOG, "Skipping findExact on index " + index.shortName);
             }
           }
           if (indexToUse == -1) {
             indexToUse = selectedSpannableIndex;
           }
-          if (indexIndex != indexToUse) {
-            changeIndex(indexToUse);
+          final boolean changeIndex = indexIndex != indexToUse;
+          setSearchText(selectedText, !changeIndex);  // If we're not changing index, we have to triggerSearch.
+          if (changeIndex) {
+            changeIndexGetFocusAndResearch(indexToUse);
           }
-          setSearchText(selectedText);
+          // Give focus back to list view because typing is done.
+          getListView().requestFocus();
           return false;
         }
       });
@@ -701,7 +733,7 @@ public class DictionaryActivity extends ListActivity {
   public boolean onKeyDown(final int keyCode, final KeyEvent event) {
     if (event.getUnicodeChar() != 0) {
       if (!searchText.hasFocus()) {
-        setSearchText("" + (char) event.getUnicodeChar());
+        setSearchText("" + (char) event.getUnicodeChar(), true);
       }
       return true;
     }
@@ -718,13 +750,18 @@ public class DictionaryActivity extends ListActivity {
     return super.onKeyDown(keyCode, event);
   }
 
-  private void setSearchText(final String text) {
+  private void setSearchText(final String text, final boolean triggerSearch) {
+    if (!triggerSearch) {
+      getListView().requestFocus();
+    }
     searchText.setText(text);
     searchText.requestFocus();
-    onSearchTextChange(searchText.getText().toString());
     if (searchText.getLayout() != null) {
       // Surprising, but this can crash when you rotate...
       Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
+    }
+    if (triggerSearch) {
+      onSearchTextChange(text);
     }
   }
 
@@ -869,28 +906,36 @@ public class DictionaryActivity extends ListActivity {
     }
 
     @Override
-    public View getView(int position, final View convertView, ViewGroup parent) {
+    public TableLayout getView(int position, View convertView, ViewGroup parent) {
+      final TableLayout result;
+      if (convertView instanceof TableLayout) {
+        result = (TableLayout) convertView;
+        result.removeAllViews();
+      } else {
+        result = new TableLayout(parent.getContext());
+      }
       final RowBase row = getItem(position);
       if (row instanceof PairEntry.Row) {
-        return getView(position, (PairEntry.Row) row, parent, convertView);
+        return getView(position, (PairEntry.Row) row, parent, result);
       } else if (row instanceof TokenRow) {
-        return getView((TokenRow) row, parent, convertView);
+        return getView((TokenRow) row, parent, result);
       } else {
         throw new IllegalArgumentException("Unsupported Row type: " + row.getClass());
       }
     }
 
-    private View getView(final int position, PairEntry.Row row, ViewGroup parent, final View convertView) {
-      final TableLayout result = new TableLayout(parent.getContext());
+    private TableLayout getView(final int position, PairEntry.Row row, ViewGroup parent, final TableLayout result) {
       final PairEntry entry = row.getEntry();
       final int rowCount = entry.pairs.size();
+      
+      final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
+      layoutParams.weight = 0.5f;
+      
       for (int r = 0; r < rowCount; ++r) {
         final TableRow tableRow = new TableRow(result.getContext());
 
         final TextView col1 = new TextView(tableRow.getContext());
         final TextView col2 = new TextView(tableRow.getContext());
-        final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
-        layoutParams.weight = 0.5f;
 
         // Set the columns in the table.
         if (r > 0) {
@@ -913,7 +958,6 @@ public class DictionaryActivity extends ListActivity {
         
         // Set what's in the columns.
 
-        // TODO: color words by gender
         final Pair pair = entry.pairs.get(r);
         final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
         final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
@@ -948,86 +992,40 @@ public class DictionaryActivity extends ListActivity {
           col2.setOnLongClickListener(textViewLongClickListenerIndex1);
         }
         
-        // Because we have a Button inside a ListView row:
-        // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
-        result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        result.setClickable(true);
-        result.setFocusable(true);
-        result.setLongClickable(true);
-        result.setBackgroundResource(android.R.drawable.menuitem_background);
-        result.setOnClickListener(new TextView.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            DictionaryActivity.this.onListItemClick(null, v, position, position);
-          }
-        });
-        
         result.addView(tableRow);
       }
 
-      return result;
+      // Because we have a Button inside a ListView row:
+      // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
+      result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+      result.setClickable(true);
+      result.setFocusable(true);
+      result.setLongClickable(true);
+      result.setBackgroundResource(android.R.drawable.menuitem_background);
+      result.setOnClickListener(new TextView.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          DictionaryActivity.this.onListItemClick(getListView(), v, position, position);
+        }
+      });
 
-      
-//      final WebView result = (WebView) (convertView instanceof WebView ? convertView : new WebView(parent.getContext()));
-//        
-//      final PairEntry entry = row.getEntry();
-//      final int rowCount = entry.pairs.size();
-//      final StringBuilder html = new StringBuilder();
-//      html.append("<html><body><table width=\"100%\">");
-//      for (int r = 0; r < rowCount; ++r) {
-//        html.append("<tr>");
-//
-//        final Pair pair = entry.pairs.get(r);
-//        // TODO: escape both the token and the text.
-//        final String token = row.getTokenRow(true).getToken();
-//        final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
-//        final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
-//        
-//        col1Text.replaceAll(token, String.format("<b>%s</b>", token));
-//
-//        // Column1
-//        html.append("<td width=\"50%\">");
-//        if (r > 0) {
-//          html.append("<li>");
-//        }
-//        html.append(col1Text);
-//        html.append("</td>");
-//
-//        // Column2
-//        html.append("<td width=\"50%\">");
-//        if (r > 0) {
-//          html.append("<li>");
-//        }
-//        html.append(col2Text);
-//        html.append("</td>");
-//
-////        column1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-////        column2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-//
-//        html.append("</tr>");
-//      }
-//      html.append("</table></body></html>");
-//      
-//      Log.i(LOG, html.toString());
-//      
-//      result.getSettings().setRenderPriority(RenderPriority.HIGH);
-//      result.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-//      
-//      result.loadData("<html><body><table><tr><td>line (connected series of public conveyances, and hence, an established arrangement for forwarding merchandise, etc.) (noun)</td><td>verbinding</td></tr></table></body></html>", "text/html", "utf-8");
-//
-//      return result;
+      return result;
     }
 
-    private View getView(TokenRow row, ViewGroup parent, final View convertView) {
+    private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
       final Context context = parent.getContext();
       final TextView textView = new TextView(context);
       textView.setText(row.getToken());
-      textView.setBackgroundResource(row.hasMainEntry ? theme.tokenRowMainBg : theme.tokenRowOtherBg);
       // Doesn't work:
       //textView.setTextColor(android.R.color.secondary_text_light);
       textView.setTextAppearance(context, theme.tokenRowFg);
       textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 5 * fontSizeSp / 4);
-      return textView;
+      
+      final TableRow tableRow = new TableRow(result.getContext());
+      tableRow.addView(textView);
+      tableRow.setBackgroundResource(row.hasMainEntry ? theme.tokenRowMainBg : theme.tokenRowOtherBg);
+      result.addView(tableRow);
+      return result;
     }
     
   }
@@ -1087,6 +1085,15 @@ public class DictionaryActivity extends ListActivity {
       final Dialog dialog = new Dialog(getListView().getContext());
       dialog.setContentView(R.layout.thadolina_dialog);
       dialog.setTitle("Ti amo, amore mio!");
+      final ImageView imageView = (ImageView) dialog.findViewById(R.id.thadolina_image);
+      imageView.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          final Intent intent = new Intent(Intent.ACTION_VIEW);
+          intent.setData(Uri.parse("https://sites.google.com/site/cfoxroxvday/vday2012"));
+          startActivity(intent);
+        }
+      });
       dialog.show();
     }
     if (dictRaf == null) {

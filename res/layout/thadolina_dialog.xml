@@ -6,26 +6,49 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+       <TextView
+         android:layout_marginTop="20dip"
+         android:id="@+id/text_quote_flower"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:text="There is a flower... I think that she has tamed me..."
+         android:layout_marginBottom="20dip"
+          />
+        
+        
+
         <ImageView
-            android:id="@+id/ImageView01"
+            android:id="@+id/thadolina_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/thadolina"
-            android:layout_marginTop="20dip"
             android:layout_marginBottom="20dip"
              />
 
         <TextView
-            android:id="@+id/text1"
+            android:id="@+id/text_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Happy Valentine's Day, amore mio!  And happy every other day, too!" 
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:layout_marginBottom="20dip"
+            />
+        
+        <TextView
+            android:id="@+id/text_quote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="It is only with the heart that one can see rightly; what is essential is invisible to the eye."
-            android:textAppearance="@android:style/TextAppearance.Large" />
+             />
+
+        
     </LinearLayout>
 
 </ScrollView>
