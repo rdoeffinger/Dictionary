@@ -4,8 +4,8 @@
  
  package="com.hughes.android.dictionary"
  
- android:versionCode="15"
- android:versionName="3.0.1"
+ android:versionCode="16"
+ android:versionName="3.1"
  android:installLocation="preferExternal">
 
  <uses-sdk android:minSdkVersion="4" />

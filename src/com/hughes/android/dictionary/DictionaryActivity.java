@@ -387,22 +387,15 @@ public class DictionaryActivity extends ListActivity {
     if (dictRaf == null) {
       return;
     }
-    
+
+    final SearchOperation searchOperation = currentSearchOperation;
+    currentSearchOperation = null;
+
     // Before we close the RAF, we have to wind the current search down.
-    if (currentSearchOperation != null) {
+    if (searchOperation != null) {
       Log.d(LOG, "Interrupting search to shut down.");
-      final SearchOperation searchOperation = currentSearchOperation;
       currentSearchOperation = null;
       searchOperation.interrupted.set(true);
-      synchronized (searchOperation) {
-        while (!searchOperation.done) {
-          try {
-            searchOperation.wait();
-          } catch (InterruptedException e) {
-            Log.d(LOG, "Interrupted.", e);
-          }
-        }
-      }
     }
     
     try {
@@ -419,9 +412,7 @@ public class DictionaryActivity extends ListActivity {
   // --------------------------------------------------------------------------
 
   private void onClearSearchTextButton(final Button clearSearchTextButton) {
-    clearSearchTextButton.requestFocus();
-    searchText.setText("");
-    searchText.requestFocus();
+    setSearchText("", true);
     Log.d(LOG, "Trying to show soft keyboard.");
     final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
@@ -858,6 +849,8 @@ public class DictionaryActivity extends ListActivity {
             }
           });
         }
+      } catch (Exception e) {
+        Log.e(LOG, "Failure during search (can happen during Activity close.");
       } finally {
         synchronized (this) {
           done = true;

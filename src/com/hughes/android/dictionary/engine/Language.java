@@ -151,10 +151,11 @@ public class Language {
   }
   
   public synchronized Collator getCollator() {
-    if (collator == null) {
+    // Don't think this is thread-safe...
+//    if (collator == null) {
       this.collator = Collator.getInstance(locale);
       this.collator.setStrength(Collator.IDENTICAL);
-    }
+//    }
     return collator;
   }
   
