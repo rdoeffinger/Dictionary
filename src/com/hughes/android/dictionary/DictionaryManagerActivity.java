@@ -45,7 +45,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hughes.android.dictionary.C.Theme;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 import com.hughes.util.StringUtil;

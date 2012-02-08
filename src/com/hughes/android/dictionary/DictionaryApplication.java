@@ -256,27 +256,31 @@ public class DictionaryApplication extends Application {
         // Pick them up and put them at the end of the list.
         final List<String> toAddSorted = new ArrayList<String>();
         final File[] dictDirFiles = getDictDir().listFiles();
-        for (final File file : dictDirFiles) {
-          if (file.getName().endsWith(".zip")) {
-            if (DOWNLOADABLE_NAME_TO_INFO.containsKey(file.getName().replace(".zip", ""))) {
-              file.delete();
+        if (dictDirFiles != null) {
+          for (final File file : dictDirFiles) {
+            if (file.getName().endsWith(".zip")) {
+              if (DOWNLOADABLE_NAME_TO_INFO.containsKey(file.getName().replace(".zip", ""))) {
+                file.delete();
+              }
             }
+            if (!file.getName().endsWith(".quickdic")) {
+              continue;
+            }
+            if (newDictionaryConfig.dictionaryInfoCache.containsKey(file.getName())) {
+              // We have it in our list already.
+              continue;
+            }
+            final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(file);
+            if (dictionaryInfo == null) {
+              Log.e(LOG, "Unable to parse dictionary: " + file.getPath());
+              continue;
+            }
+            
+            toAddSorted.add(file.getName());
+            newDictionaryConfig.dictionaryInfoCache.put(file.getName(), dictionaryInfo);
           }
-          if (!file.getName().endsWith(".quickdic")) {
-            continue;
-          }
-          if (newDictionaryConfig.dictionaryInfoCache.containsKey(file.getName())) {
-            // We have it in our list already.
-            continue;
-          }
-          final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(file);
-          if (dictionaryInfo == null) {
-            Log.e(LOG, "Unable to parse dictionary: " + file.getPath());
-            continue;
-          }
-          
-          toAddSorted.add(file.getName());
-          newDictionaryConfig.dictionaryInfoCache.put(file.getName(), dictionaryInfo);
+        } else {
+          Log.w(LOG, "dictDir is not a diretory: " + getDictDir().getPath());
         }
         if (!toAddSorted.isEmpty()) {
           Collections.sort(toAddSorted, uncompressedFilenameComparator);
