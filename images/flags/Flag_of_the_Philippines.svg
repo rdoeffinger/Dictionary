@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="450">
+	<rect width="900" height="450" fill="#0038a8"/>
+	<rect y="225" width="900" height="225" fill="#ce1126"/>
+	<path d="M 389.983,225 0,450 0,0" fill="#fff"/>
+	<circle cx="140" cy="225" r="45" fill="#fcd116"/>
+	<path id="rays" d="m 151.91574,182.53822 8.08404,-30.988 -5.38769,-6.71 -6.64357,37.698 3.94722,0 z m -16.78966,0 -4.68526,-41.998 9.45035,-10.54 9.32628,10.54 -4.70583,41.998 -9.38554,0 z m -7.41036,0 -7.71594,-30.988 5.47505,-6.71 6.19434,37.698 -3.95345,0 z" fill="#fcd116"/>
+	<use xlink:href="#rays" transform="rotate(45 140,225)"/>
+	<use xlink:href="#rays" transform="rotate(90 140,225)"/>
+	<use xlink:href="#rays" transform="rotate(135 140,225)"/>
+	<use xlink:href="#rays" transform="rotate(180 140,225)"/>
+	<use xlink:href="#rays" transform="rotate(225 140,225)"/>
+	<use xlink:href="#rays" transform="rotate(270 140,225)"/>
+	<use xlink:href="#rays" transform="rotate(315 140,225)"/>
+	<path d="m 295.51186,241.27423 11.91752,-16.24894 -11.95037,-16.22484 19.13642,6.3131 11.73784,-16.37919 -0.0792,20.15063 19.20489,6.10191 -19.19223,6.1407 0.11873,20.15039 -11.77069,-16.35548 -19.12375,6.35172 z" fill="#fcd116"/>
+	<path id="star" d="m 60.74334,376.84708 -20.030755,2.1964 -8.075939,-18.46174 -4.100905,19.72917 -20.0537158,1.97567 17.4905578,10.00673 -4.318036,19.68288 14.914118,-13.55061 17.391385,10.17802 -8.278916,-18.37146 15.062626,-13.38579 z" fill="#fcd116"/>
+	<use xlink:href="#star" transform="matrix(1,0,0,-1,0,450)"/>
+</svg>

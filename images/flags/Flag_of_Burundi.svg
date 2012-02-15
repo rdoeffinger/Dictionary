@@ -1,0 +1,38 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg>
+<svg width="800" height="480" viewBox="-125 -75 250 150" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+      <clipPath id="frame">
+         <rect width="100%" height="100%" x="-50%" y="-50%"/>
+      </clipPath>
+      <g id="star">
+         <g id="triangle">
+            <g id="cone">
+               <path id="helper" d="M 0,0 v 10 h 10" transform="translate(0,-10) rotate(30)"/>
+               <use xlink:href="#helper" transform="scale(-1,1)"/>
+            </g>
+            <use xlink:href="#cone" transform="rotate(120)"/>
+            <use xlink:href="#cone" transform="rotate(-120)"/>
+         </g>
+         <use xlink:href="#triangle" transform="rotate(180)"/>
+      </g>
+   </defs>
+   <path fill="#ce1126" d="M 0,0 L -125,-75 h 250 z l 125,75 h -250 z"/>
+   <path fill="#1eb53a" d="M 0,0 L -125,-75 v 150 z l 125,75 v -150 z"/>
+   <g stroke="white" stroke-width="20" clip-path="url(#frame)">
+      <line x1="-150" y1="-90" x2="150" y2="90"/>
+      <line x1="-150" y1="90" x2="150" y2="-90"/>
+   </g>
+   <circle r="42.5" fill="white"/>
+   <g fill="#1eb53a">
+      <use xlink:href="#star" transform="translate(0,-22)"/>
+      <use xlink:href="#star" transform="rotate(120) translate(0,-22)"/>
+      <use xlink:href="#star" transform="rotate(-120) translate(0,-22)"/>
+   </g>
+   <comment>The size of the red stars needs to be precisely 82% of the size of the green stars</comment>
+   <g fill="#ce1126">
+      <use xlink:href="#star" transform="translate(0,-22) scale(.82)"/>
+      <use xlink:href="#star" transform="rotate(120) translate(0,-22) scale(.82)"/>
+      <use xlink:href="#star" transform="rotate(-120) translate(0,-22) scale(.82)"/>
+   </g>
+</svg>

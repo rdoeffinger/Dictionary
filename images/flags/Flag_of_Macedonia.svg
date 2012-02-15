@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="2800" height="1400">
+<rect  width="2800"  height="1400" id="red field" style="fill:#d20000"/>
+<path style="fill:#ffe600" d="M 0,0 420,0 1400,675 2380,0 2800,0 1400,700 z" id="path2997"/>
+<use transform="matrix(1,0,0,-1,0,1400)" id="use3768" xlink:href="#path2997"/>
+<polygon points="2800,560 2800,840 0,560 0,560 0,840" id="ray 3" style="fill:#ffe600"/>
+<path d="M 1260,0 1400,600 1540,0 z" id="path2993" style="fill:#ffe600"/>
+<use transform="matrix(1,0,0,-1,0,1400)" id="use3767" xlink:href="#path2993"/>
+<circle fill="#d20000" cx="1400" cy="700" r="250"/>
+<circle fill="#ffe600" cx="1400" cy="700" r="200"/>
+</svg>

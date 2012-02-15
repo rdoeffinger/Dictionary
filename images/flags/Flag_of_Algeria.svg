@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="600" viewBox="-30 -20 60 40">
+<desc>Flag of Algeria</desc>
+<rect fill="#fff" x="-30" y="-20" width="60" height="40"/>
+<rect fill="#006233" x="-30" y="-20" width="30" height="40"/>
+<g fill="#d21034">
+<!-- sqrt(75) --><path d="M 8.66025403784438646763723170752936183471405,5 a 10,10 0 1,1 0,-10 a 8,8 0 1,0 0,10"/>
+<!-- cos(Pi/5) --><g transform="scale(5, 5) translate(0.809017)">
+<g id="cone">
+<polygon id="triangle" points="0,0 -1,0 -1,0.5" transform="translate(1) rotate(18)"/>
+<use xlink:href="#triangle" transform="scale(1, -1)"/>
+</g>
+<use xlink:href="#cone" transform="rotate(72)"/>
+<use xlink:href="#cone" transform="rotate(-72)"/>
+<use xlink:href="#cone" transform="rotate(144)"/>
+<use xlink:href="#cone" transform="rotate(-144)"/>
+</g>
+</g>
+</svg>

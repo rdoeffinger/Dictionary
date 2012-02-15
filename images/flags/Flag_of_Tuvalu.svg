@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="500">
+	<rect width="1000" height="500" fill="#5b97b1"/>
+	<svg width="500" height="250" viewBox="0,0 600,300">
+		<rect width="600" height="300" fill="#00247d"/>
+		<path d="M 0,0 L 600,300 M 600,0 L 0,300" stroke="#fff" stroke-width="60"/>
+		<clipPath id="p">
+			<path d="M 300,150 h 300 v 150 z v 150 H 0 z H 0 V 0 z V 0 h 300 z"/>
+		</clipPath>
+		<path d="M 0,0 L 600,300 M 600,0 L 0,300" stroke="#cf142b" stroke-width="40" clip-path="url(#p)"/>
+		<path d="M 300,0 v 300 M 0,150 h 600" stroke="#fff" stroke-width="100"/>
+		<path d="M 300,0 v 300 M 0,150 h 600" stroke="#cf142b" stroke-width="60"/>
+	</svg>
+	<g transform="scale(1.666667) scale(.604757)">
+		<symbol id="s">
+			<polygon points="591.041,433.161 533.774,391.476 476.501,433.151 498.449,365.806 441.115,324.214 511.946,324.278 533.785,256.897 555.613,324.281 626.445,324.23 569.104,365.812" fill="#ffce00" transform="matrix(.498761,0,0,.469385,0,0)"/>
+		</symbol>
+		<use xlink:href="#s" x="657.6627" y="-98.2599"/>
+		<use xlink:href="#s" x="569.0006" y="153.8731"/>
+		<use xlink:href="#s" x="657.6628" y="96.79682"/>
+		<use xlink:href="#s" x="276.4154" y="279.6626"/>
+		<use xlink:href="#s" transform="translate(910.834,486.0882) scale(-1)"/>
+		<use xlink:href="#s" transform="translate(1015.012,342.0122) scale(-1)"/>
+		<use xlink:href="#s" transform="translate(1102.566,312.0887) scale(-1)"/>
+		<use xlink:href="#s" transform="translate(1015.012,561.451) scale(-1)"/>
+		<use xlink:href="#s" transform="translate(910.834,586.9413) scale(-1)"/>
+	</g>
+</svg>

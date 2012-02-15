@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg>
+<svg	xmlns="http://www.w3.org/2000/svg"
+	width="600"
+	height="300"
+	viewBox="0 0 12 6">
+<clipPath id="r">
+	<rect width="12" height="6"/>
+</clipPath>
+<rect width="12" height="6" fill="#308a2a" id="green_area" />
+<path d="M0,0 L12,6 v-6 L0,6" fill="black" id="black_area" />
+<path d="M0,0 L12,6 M12,0 L0,6" stroke="#f9da00" stroke-width="1" clip-path="url(#r)" id="yellow_cross" />
+</svg>

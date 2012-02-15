@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.1" width="900px" height="600px" viewBox="-450 -300 900 600" >
+  <!-- Three rects, a little bit overlapped to prevent gaps by browser errors -->
+  <rect x="-450" y="-300" width="900" height="201" style="fill:#ce1126"/>
+  <rect x="-450" y="-100" width="900" height="201" style="fill:#000000"/>
+  <rect x="-450" y="100" width="900" height="200" style="fill:#339e35"/>
+  <g style="fill:#fff">
+    <circle r="80"/>
+    <g id="rays15">
+      <g id="rays5">
+        <path id="ray" d="M 1,98 S 7.3,165 0,165 S -1,98,-1,98"/>
+        <use transform="rotate(8)" xlink:href="#ray"/>
+        <use transform="rotate(-8)" xlink:href="#ray"/>
+        <use transform="rotate(16)" xlink:href="#ray"/>
+        <use transform="rotate(-16)" xlink:href="#ray"/>
+      </g>
+      <use transform="rotate(40)" xlink:href="#rays5"/>
+      <use transform="rotate(-40)" xlink:href="#rays5"/>
+    </g>
+    <use transform="rotate(120)" xlink:href="#rays15"/>
+    <use transform="rotate(-120)" xlink:href="#rays15"/>
+  </g>
+</svg>

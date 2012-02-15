@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="1540" height="880" id="svg2383">
+  <defs id="defs2385">
+    <path d="m 0,0 1,0 0,-2 3,0 0,2 5,0 0,-3 -3,0 0,1 2,0 0,1 -3,0 0,-2 -5,0 0,3 z m 2,0 1,0 0,-1 -1,0 0,1 z m -2,-4 13,0 0,-1 -13,0 0,1 z m 13,4 -3,0 0,-3 4,0 0,-2 1,0 0,4 1,0 0,-4 1,0 0,4 1,0 0,-4 1,0 0,5 -5,0 0,-2 -3,0 0,1 2,0 0,1 z" transform="translate(-9.5,0)" id="Allahu_Akbar" style="fill:#ffffff" />
+    <path d="m 0,0 9,0 0,-2 -9,0 0,2 z m 10,0 9,0 0,-2 -9,0 0,2 z" transform="translate(-9.5,0)" id="lines" style="fill:#ffffff" />
+  </defs>
+  <path d="m 0,0 1540,0 0,880 L 0,880 0,0 z" id="rect2389" style="fill:#ffffff" />
+  <rect width="1540" height="294" x="0" y="0" id="rect2391" style="fill:#239f40" />
+  <path d="m 743,329 c -2,7 1,14 7,18 7,4 15,2 20,-3 5,5 13,7 20,3 6,-4 9,-11 7,-18 -2,4 -7,7 -12,8 -5,1 -11,0 -15,-3 -4,3 -10,4 -15,3 -5,-1 -10,-4 -12,-8 z m 27,19 -14,11 2,149 c -11,-9 -21,-20 -29,-33 -22,-38 -19,-86 7,-121 -40,31 -51,88 -25,132 10,17 24,30 40,38 -16,6 -32,8 -49,6 18,7 38,9 57,5 l 0,1 11,13 11,-13 0,-1 c 19,4 39,2 57,-5 -17,2 -33,0 -49,-6 16,-8 30,-21 40,-38 26,-44 15,-101 -25,-132 26,35 29,83 7,121 -8,13 -18,24 -29,33 l 2,-149 -14,-11 z m -47,2 c -35,10 -60,39 -64,75 -5,36 14,70 45,88 -20,-24 -30,-55 -26,-86 4,-31 20,-59 45,-77 z m 94,0 c 25,18 41,46 45,77 4,31 -6,62 -26,86 31,-18 50,-52 45,-88 -4,-36 -29,-65 -64,-75 z M 0,586 l 0,294 1540,0 0,-294 -1540,0 z" id="rect2395" style="fill:#da0000" />
+  <use transform="matrix(7,0,0,7,70,280)" id="use2412" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,210,280)" id="use2414" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,350,280)" id="use2416" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,490,280)" id="use2418" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,630,280)" id="use2420" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,770,280)" id="use2422" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,910,280)" id="use2424" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1050,280)" id="use2426" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1190,280)" id="use2428" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1330,280)" id="use2430" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1470,280)" id="use2432" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,70,301)" id="use2435" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,210,301)" id="use2437" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,350,301)" id="use2439" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,490,301)" id="use2441" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,630,301)" id="use2443" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,770,301)" id="use2445" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,910,301)" id="use2447" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1050,301)" id="use2449" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1190,301)" id="use2451" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1330,301)" id="use2453" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1470,301)" id="use2455" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,70,635)" id="use2579" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,210,635)" id="use2581" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,350,635)" id="use2583" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,490,635)" id="use2585" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,630,635)" id="use2587" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,770,635)" id="use2589" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,910,635)" id="use2591" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1050,635)" id="use2593" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1190,635)" id="use2595" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1330,635)" id="use2597" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,1470,635)" id="use2599" x="0" y="0" width="1540" height="880" xlink:href="#Allahu_Akbar" />
+  <use transform="matrix(7,0,0,7,70,593)" id="use2544" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,210,593)" id="use2546" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,350,593)" id="use2548" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,490,593)" id="use2550" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,630,593)" id="use2552" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,770,593)" id="use2554" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,910,593)" id="use2556" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1050,593)" id="use2558" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1190,593)" id="use2560" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1330,593)" id="use2562" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+  <use transform="matrix(7,0,0,7,1470,593)" id="use2564" x="0" y="0" width="1540" height="880" xlink:href="#lines" />
+</svg>
