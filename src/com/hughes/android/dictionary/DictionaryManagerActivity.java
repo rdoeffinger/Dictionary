@@ -52,7 +52,9 @@ import com.hughes.util.StringUtil;
 public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
-  static boolean canAutoLaunch = true;
+  static final long AUTO_LAUNCH_WAIT_MILLIS = 20 * 1000;
+  static long lastAutoLaunchMillis = -1;
+  static boolean blockAutoLaunch = false;
 
   DictionaryApplication application;
   Adapter adapter;
@@ -91,10 +93,11 @@ public class DictionaryManagerActivity extends ListActivity {
     // ContextMenu.
     registerForContextMenu(getListView());
 
+    blockAutoLaunch = false;
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
     if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(thanksForUpdatingLatestVersion)) {
-      canAutoLaunch = false;
+      blockAutoLaunch = true;
       final AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setCancelable(false);
       final WebView webView = new WebView(getApplicationContext());
@@ -113,10 +116,6 @@ public class DictionaryManagerActivity extends ListActivity {
       alert.show();
       alert.getWindow().setAttributes(layoutParams);
       prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion).commit();
-    }
-    
-    if (!getIntent().getBooleanExtra(C.CAN_AUTO_LAUNCH_DICT, true)) {
-      canAutoLaunch = false;
     }
   }
   
@@ -154,11 +153,16 @@ public class DictionaryManagerActivity extends ListActivity {
       startActivity(getIntent());
     }
     
+    final long now = System.currentTimeMillis();
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    if (canAutoLaunch && prefs.contains(C.DICT_FILE) && prefs.contains(C.INDEX_INDEX)) {
-      canAutoLaunch = false;  // Only autolaunch once per-process, on startup.
+    if (now - lastAutoLaunchMillis > AUTO_LAUNCH_WAIT_MILLIS &&
+        getIntent().getBooleanExtra(C.CAN_AUTO_LAUNCH_DICT, true) &&
+        prefs.contains(C.DICT_FILE) && 
+        prefs.contains(C.INDEX_INDEX) &&
+        !blockAutoLaunch) {
       Log.d(LOG, "Skipping Dictionary List, going straight to dictionary.");
       startActivity(DictionaryActivity.getLaunchIntent(new File(prefs.getString(C.DICT_FILE, "")), prefs.getInt(C.INDEX_INDEX, 0), prefs.getString(C.SEARCH_TOKEN, "")));
+      lastAutoLaunchMillis = now;
       // Don't finish, so that user can hit back and get here.
       //finish();
       return;

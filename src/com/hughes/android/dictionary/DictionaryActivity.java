@@ -176,9 +176,6 @@ public class DictionaryActivity extends ListActivity {
 
     application = (DictionaryApplication) getApplication();
     theme = application.getSelectedTheme();
-
-    // Clear them so that if something goes wrong, we won't relaunch.
-    clearDictionaryPrefs(this);
     
     final Intent intent = getIntent();
     dictFile = new File(intent.getStringExtra(C.DICT_FILE));
@@ -372,15 +369,6 @@ public class DictionaryActivity extends ListActivity {
     prefs.commit();
   }
 
-  private static void clearDictionaryPrefs(final Context context) {
-    final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(context).edit();
-    prefs.remove(C.DICT_FILE);
-    prefs.remove(C.INDEX_INDEX);
-    prefs.remove(C.SEARCH_TOKEN);
-    prefs.commit();
-  }
-
-
   @Override
   protected void onDestroy() {
     super.onDestroy();
@@ -523,7 +511,10 @@ public class DictionaryActivity extends ListActivity {
     Log.d(LOG, "onUpDownButton, destIndexEntry=" + dest.token);
     searchText.removeTextChangedListener(searchTextWatcher);
     searchText.setText(dest.token);
-    Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
+    if (searchText.getLayout() != null) {
+      // Surprising, but this can otherwise crash sometimes...
+      Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
+    }
     jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
     searchText.addTextChangedListener(searchTextWatcher);
   }
@@ -730,7 +721,8 @@ public class DictionaryActivity extends ListActivity {
     }
     if (keyCode == KeyEvent.KEYCODE_BACK) {
       Log.d(LOG, "Clearing dictionary prefs.");
-      DictionaryActivity.clearDictionaryPrefs(this);
+      // Pretend that we just autolaunched so that we won't do it again.
+      DictionaryManagerActivity.lastAutoLaunchMillis = System.currentTimeMillis();
     }
     if (keyCode == KeyEvent.KEYCODE_ENTER) {
       Log.d(LOG, "Trying to hide soft keyboard.");
