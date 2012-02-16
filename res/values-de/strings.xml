@@ -2,7 +2,9 @@
 <resources>
 
 	<string name="app_name">QuickDic</string>
- 
+
+	<string name="titleWithVersion">QuickDic 3.1.1</string>
+	
   <!-- Global. -->
   <string name="about">Über QuickDic…</string>
   <string name="preferences">Einstellungen…</string>
@@ -47,7 +49,6 @@
   
   
 	<!-- About. -->
-  <string name="titleWithVersion">QuickDic 3.1</string>
   <string name="thadHughes">Thad Hughes</string>
   <string name="contactMe">
      Wenn Sie QuickDic benutzen, würde ich gerne von Ihnen hören.

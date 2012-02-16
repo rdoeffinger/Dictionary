@@ -2,7 +2,9 @@
 <resources>
 
   <string name="app_name">QuickDic</string>
- 
+
+  <string name="titleWithVersion">QuickDic 3.1.1</string>
+  
   <!-- Global. -->
   <string name="about">About QuickDic…</string> 
   <string name="preferences">Preferences…</string>
@@ -48,7 +50,6 @@
 
   
 	<!-- About. -->
-  <string name="titleWithVersion">QuickDic 3.1</string>
   <string name="thadHughes">Thad Hughes</string>
   <string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.
   Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources.
