@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -144,6 +145,17 @@ public class DictionaryApplication extends Application {
         PreferenceActivity.prefsMightHaveChanged = true;
         final Intent intent = new Intent().setClassName(PreferenceActivity.class
             .getPackage().getName(), PreferenceActivity.class.getCanonicalName());
+        context.startActivity(intent);
+        return false;
+      }
+    });
+    
+    
+    final MenuItem reportIssue = menu.add(getString(R.string.reportIssue));
+    reportIssue.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      public boolean onMenuItemClick(final MenuItem menuItem) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("http://code.google.com/p/quickdic-dictionary/issues/entry"));
         context.startActivity(intent);
         return false;
       }

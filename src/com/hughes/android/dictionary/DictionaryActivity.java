@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -523,10 +524,23 @@ public class DictionaryActivity extends ListActivity {
   // Options Menu
   // --------------------------------------------------------------------------
   
+  final Random random = new Random();
+  
   @Override
   public boolean onCreateOptionsMenu(final Menu menu) {
     application.onCreateGlobalOptionsMenu(this, menu);
 
+    {
+      final MenuItem randomWord = menu.add(getString(R.string.randomWord));
+      randomWord.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        public boolean onMenuItemClick(final MenuItem menuItem) {
+          final String word = index.sortedIndexEntries.get(random.nextInt(index.sortedIndexEntries.size())).token;
+          setSearchText(word, true);
+          return false;
+        }
+      });
+    }
+    
     {
       final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
       dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
