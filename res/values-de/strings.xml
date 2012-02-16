@@ -19,7 +19,7 @@
   <string name="deleteDictionary">Wörterbuch entfernen</string>
   <string name="indexInfo">%1$s: %2$,d Wörter</string>
 
-  <string name="thanksForUpdatingVersion">3.1_de_a</string>
+  <string name="thanksForUpdatingVersion">3.1_de_b</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Suchtext</string>

@@ -9,7 +9,7 @@
 
   <style name="Theme.Default.TokenRow.Fg" parent="@style/Theme.Default">
     <item name="android:textColor">#FFFFFF</item>
-  </style>
+    </style>
   
   <color name="theme_default_token_row_main_bg">#111111</color>
   <color name="theme_default_token_row_other_bg">#111111</color>

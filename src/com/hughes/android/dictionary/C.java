@@ -26,7 +26,7 @@ public class C {
   public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
 
   enum Theme {
-    DEFAULT(R.style.Theme_Default, R.style.Theme_Light_TokenRow_Fg,
+    DEFAULT(R.style.Theme_Default, R.style.Theme_Default_TokenRow_Fg,
         R.drawable.theme_default_token_row_main_bg,
         R.drawable.theme_default_token_row_other_bg,
         R.drawable.theme_default_other_lang_bg),
