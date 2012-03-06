@@ -16,7 +16,17 @@
 		android:defaultValue="@string/wordListFileDefault"
     android:persistent="true"
 	/>
-
+ 
+   <ListPreference 
+    android:key="@string/fontKey"
+    android:title="@string/fontTitle"
+    android:summary="@string/fontSummary"
+    android:persistent="true"
+    android:defaultValue="FreeSerif.ttf.jpg"
+    android:entries="@array/fonts"
+    android:entryValues="@array/fontKeys"
+  />
+ 
   <EditTextPreference
     android:key="@string/fontSizeKey"
     android:title="@string/fontSizeTitle" 

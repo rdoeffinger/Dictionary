@@ -118,6 +118,7 @@ public class DictionaryActivity extends ListActivity {
   private SearchOperation currentSearchOperation = null;
 
   C.Theme theme = C.Theme.LIGHT;
+  Typeface typeface;
   int fontSizeSp;
   EditText searchText;
   Button langButton;
@@ -169,7 +170,10 @@ public class DictionaryActivity extends ListActivity {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) { 
+  public void onCreate(Bundle savedInstanceState) {
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    prefs.edit().remove(C.INDEX_INDEX).commit();  // Don't auto-launch if this fails.
+
     setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
 
     Log.d(LOG, "onCreate:" + this);
@@ -243,17 +247,26 @@ public class DictionaryActivity extends ListActivity {
       }
     }).start();
     
-    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    
+    final String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.ttf.jpg");
+    if ("SYSTEM".equals(fontName)) {
+      typeface = Typeface.DEFAULT;
+    } else {
+      typeface = Typeface.createFromAsset(getAssets(), fontName);
+    }
+    if (typeface == null) {
+      Log.w(LOG, "Unable to create typeface, using default.");
+      typeface = Typeface.DEFAULT;
+    }
     final String fontSize = prefs.getString(getString(R.string.fontSizeKey), "14");
     try {
       fontSizeSp = Integer.parseInt(fontSize.trim());
     } catch (NumberFormatException e) {
-      fontSizeSp = 12;
+      fontSizeSp = 14;
     }
 
     setContentView(R.layout.dictionary_activity);
     searchText = (EditText) findViewById(R.id.SearchText);
+    searchText.setTypeface(typeface);
     searchText.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
     
     langButton = (Button) findViewById(R.id.LangButton);
@@ -440,7 +453,7 @@ public class DictionaryActivity extends ListActivity {
           final Button button = new Button(parent.getContext());
           final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
           button.setText(name);
-          final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(), getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), 0, "")) {
+          final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(), getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), 0, searchText.getText().toString())) {
             @Override
             protected void onGo() {
               dialog.dismiss();
@@ -979,6 +992,8 @@ public class DictionaryActivity extends ListActivity {
         createTokenLinkSpans(col1, col1Spannable, col1Text);
         createTokenLinkSpans(col2, (Spannable) col2.getText(), col2Text);
         
+        col1.setTypeface(typeface);
+        col2.setTypeface(typeface);
         col1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
         col2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
         // col2.setBackgroundResource(theme.otherLangBg);
@@ -1018,6 +1033,7 @@ public class DictionaryActivity extends ListActivity {
       // Doesn't work:
       //textView.setTextColor(android.R.color.secondary_text_light);
       textView.setTextAppearance(context, theme.tokenRowFg);
+      textView.setTypeface(typeface);
       textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 5 * fontSizeSp / 4);
       
       final TableRow tableRow = new TableRow(result.getContext());

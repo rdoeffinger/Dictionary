@@ -82,7 +82,11 @@
 	<string name="wordListFileSummary">The local file where the word list will be appended.</string>
 	<string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
 
-  <string name="fontSizeKey">fontSize</string>
+  <string name="fontKey">font</string>
+  <string name="fontTitle">Dictionary font</string>
+  <string name="fontSummary">Font used to display dictionaries.</string>
+ 
+	<string name="fontSizeKey">fontSize</string>
   <string name="fontSizeTitle">Font size</string>
   <string name="fontSizeSummary">The size of the font for dictionary rows.</string>
 
