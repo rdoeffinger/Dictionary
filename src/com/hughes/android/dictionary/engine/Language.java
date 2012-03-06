@@ -70,7 +70,8 @@ public class Language {
     isoCodeToResources.put("HU", new LanguageResources("Hungarian", R.string.HU));
     isoCodeToResources.put("IS", new LanguageResources("Icelandic", R.string.IS));
     isoCodeToResources.put("ID", new LanguageResources("Indonesian", R.string.ID));
-    isoCodeToResources.put("GA", new LanguageResources("Gaelic (Irish, Scottish)", R.string.GA));
+    isoCodeToResources.put("GA", new LanguageResources("Irish", R.string.GA));
+    isoCodeToResources.put("GD", new LanguageResources("Scottish Gaelic", R.string.GD));
     isoCodeToResources.put("IT", new LanguageResources("Italian", R.string.IT));
     isoCodeToResources.put("LA", new LanguageResources("Latin", R.string.LA));
     isoCodeToResources.put("LV", new LanguageResources("Latvian", R.string.LV));

@@ -20,6 +20,7 @@
   <string name="ET">Estonian</string>
   <string name="FI">Finnish</string>
   <string name="FR">French</string>
+  <string name="GD">Scottish Gaelic</string>
   <string name="DE">German</string>
   <string name="EL">Greek</string>
   <string name="haw">Hawaiian</string>
@@ -28,7 +29,7 @@
   <string name="HU">Hungarian</string>
   <string name="IS">Icelandic</string>
   <string name="ID">Indonesian</string>
-  <string name="GA">Gaelic (Irish, Scottish)</string>
+  <string name="GA">Irish</string>
   <string name="IT">Italian</string>
   <string name="LA">Latin</string>
   <string name="LV">Latvian</string>
