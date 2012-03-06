@@ -1029,7 +1029,7 @@ public class DictionaryActivity extends ListActivity {
     
   }
 
-  static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}0-9]+");
+  static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+");
 
   private void createTokenLinkSpans(final TextView textView, final Spannable spannable, final String text) {
     // Saw from the source code that LinkMovementMethod sets the selection!
