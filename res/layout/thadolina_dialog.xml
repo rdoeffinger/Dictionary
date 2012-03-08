@@ -19,8 +19,6 @@
          android:layout_marginBottom="20dip"
           />
         
-        
-
         <ImageView
             android:id="@+id/thadolina_image"
             android:layout_width="wrap_content"
@@ -28,6 +26,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/thadolina"
             android:layout_marginBottom="20dip"
+            android:contentDescription="Ti amo tanto!"
              />
 
         <TextView

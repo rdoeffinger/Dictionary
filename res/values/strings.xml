@@ -3,7 +3,7 @@
 
   <string name="app_name">QuickDic</string>
 
-  <string name="titleWithVersion">QuickDic 3.1.1</string>
+  <string name="titleWithVersion">QuickDic 3.2</string>
   
   <!-- Global. -->
   <string name="about">About QuickDic…</string> 
@@ -21,7 +21,7 @@
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="indexInfo">%1$s: %2$,d words</string>
 
-  <string name="thanksForUpdatingVersion">3.1_en_b</string>
+  <string name="thanksForUpdatingVersion">3.2_en_a</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Search Text</string>
@@ -77,10 +77,10 @@
   <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries.</string>
   <string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
   
-	<string name="wordListFileKey">wordListFile</string>
-	<string name="wordListFileTitle">Word list file</string>
-	<string name="wordListFileSummary">The local file where the word list will be appended.</string>
-	<string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
+  <string name="wordListFileKey">wordListFile</string>
+  <string name="wordListFileTitle">Word list file</string>
+  <string name="wordListFileSummary">The local file where the word list will be appended.</string>
+  <string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
 
   <string name="fontKey">font</string>
   <string name="fontTitle">Dictionary font</string>

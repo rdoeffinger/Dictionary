@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+  <string-array name="fontKeys">
+    <item>FreeSerif.ttf.jpg</item>
+    <item>FreeSans.ttf</item>
+    <item>SYSTEM</item>
+  </string-array>
+
+  <string-array name="fonts">
+    <item>FreeSerif</item>
+    <item>FreeSans</item>
+    <item>System Default</item>
+  </string-array>
+    
   <string-array name="themeKeys">
     <item>themeLight</item>
     <item>themeDefault</item>

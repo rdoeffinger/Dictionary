@@ -3,7 +3,7 @@
 
 	<string name="app_name">QuickDic</string>
 
-	<string name="titleWithVersion">QuickDic 3.1.1</string>
+	<string name="titleWithVersion">QuickDic 3.2</string>
 	
   <!-- Global. -->
   <string name="about">Über QuickDic…</string>
@@ -21,7 +21,7 @@
   <string name="deleteDictionary">Wörterbuch entfernen</string>
   <string name="indexInfo">%1$s: %2$,d Wörter</string>
 
-  <string name="thanksForUpdatingVersion">3.1_de_b</string>
+  <string name="thanksForUpdatingVersion">3.2_de_a</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Suchtext</string>
@@ -76,10 +76,14 @@
   <string name="quickdicDirectorySummary">Das Verzeichnis, in dem QuickDic speichert Wörterbücher.</string>
   <string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
   
-	<string name="wordListFileKey">wordListFile</string>
-	<string name="wordListFileTitle">Wortlist Datei</string>
-	<string name="wordListFileSummary">Die lokale Datei, wo das Wortliste hinzugefügt wird.</string>
-	<string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
+  <string name="wordListFileKey">wordListFile</string>
+  <string name="wordListFileTitle">Wortlist Datei</string>
+  <string name="wordListFileSummary">Die lokale Datei, wo das Wortliste hinzugefügt wird.</string>
+  <string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
+
+  <string name="fontKey">font</string>
+  <string name="fontTitle">Wörterbuch Schriftart</string>
+  <string name="fontSummary">Schriftart für Wörterbucher.</string>
 
   <string name="fontSizeKey">fontSize</string>
   <string name="fontSizeTitle">Schriftgröße</string>
