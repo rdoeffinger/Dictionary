@@ -21,7 +21,7 @@
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="indexInfo">%1$s: %2$,d words</string>
 
-  <string name="thanksForUpdatingVersion">3.2_en_a</string>
+  <string name="thanksForUpdatingVersion">3.2_en_b</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Search Text</string>

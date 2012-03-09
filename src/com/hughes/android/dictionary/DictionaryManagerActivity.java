@@ -52,7 +52,7 @@ import com.hughes.util.StringUtil;
 public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
-  static final long AUTO_LAUNCH_WAIT_MILLIS = 20 * 1000;
+  static final long AUTO_LAUNCH_WAIT_MILLIS = 10 * 1000;
   static long lastAutoLaunchMillis = -1;
   static boolean blockAutoLaunch = false;
 
