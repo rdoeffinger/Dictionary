@@ -15,6 +15,7 @@
 package com.hughes.android.dictionary;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -22,9 +23,12 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -41,6 +45,10 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -52,12 +60,13 @@ import com.hughes.util.StringUtil;
 public class DictionaryManagerActivity extends ListActivity {
 
   static final String LOG = "QuickDic";
-  static final long AUTO_LAUNCH_WAIT_MILLIS = 10 * 1000;
-  static long lastAutoLaunchMillis = -1;
   static boolean blockAutoLaunch = false;
 
   DictionaryApplication application;
   Adapter adapter;
+  
+  EditText filterText;
+  CheckBox showLocal;
   
   Handler uiHandler;
   
@@ -78,7 +87,32 @@ public class DictionaryManagerActivity extends ListActivity {
     application = (DictionaryApplication) getApplication();
 
     // UI init.
-    setContentView(R.layout.list_activity);
+    setContentView(R.layout.dictionary_manager_activity);
+    
+    filterText = (EditText) findViewById(R.id.filterText);
+    showLocal = (CheckBox) findViewById(R.id.showLocal);
+    
+    filterText.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+      }
+      
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      }
+      
+      @Override
+      public void afterTextChanged(Editable s) {
+        onFilterTextChanged();
+      }
+    });
+    
+    showLocal.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        onShowLocalChanged();
+      }
+    });
 
     getListView().setOnItemClickListener(new OnItemClickListener() {
       @Override
@@ -130,18 +164,6 @@ public class DictionaryManagerActivity extends ListActivity {
     super.onStop();
     uiHandler = null;
   }
-
-  private void onClick(int index) {
-    final DictionaryInfo dictionaryInfo = adapter.getItem(index);
-    final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
-    if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) && downloadable != null) {
-      final Intent intent = getDownloadIntent(downloadable);
-      startActivity(intent);
-    } else {
-      final Intent intent = DictionaryActivity.getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), 0, "");
-      startActivity(intent);
-    }
-  }
   
   @Override
   protected void onResume() {
@@ -153,18 +175,16 @@ public class DictionaryManagerActivity extends ListActivity {
       startActivity(getIntent());
     }
     
-    final long now = System.currentTimeMillis();
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    if (now - lastAutoLaunchMillis > AUTO_LAUNCH_WAIT_MILLIS &&
+    showLocal.setChecked(prefs.getBoolean(C.SHOW_LOCAL, false));
+    
+    if (!blockAutoLaunch &&
         getIntent().getBooleanExtra(C.CAN_AUTO_LAUNCH_DICT, true) &&
         prefs.contains(C.DICT_FILE) && 
-        prefs.contains(C.INDEX_INDEX) &&
-        !blockAutoLaunch) {
+        prefs.contains(C.INDEX_INDEX)) {
       Log.d(LOG, "Skipping Dictionary List, going straight to dictionary.");
       startActivity(DictionaryActivity.getLaunchIntent(new File(prefs.getString(C.DICT_FILE, "")), prefs.getInt(C.INDEX_INDEX, 0), prefs.getString(C.SEARCH_TOKEN, "")));
-      lastAutoLaunchMillis = now;
-      // Don't finish, so that user can hit back and get here.
-      //finish();
+      finish();
       return;
     }
     
@@ -234,7 +254,6 @@ public class DictionaryManagerActivity extends ListActivity {
           setListAdapter(adapter = new Adapter());
           return true;
         }
-
       });
     }
 
@@ -246,10 +265,53 @@ public class DictionaryManagerActivity extends ListActivity {
         downloadable.dictInfo);
     return intent;
   }
+  
+  private void onFilterTextChanged() {
+    setListAdapter(adapter = new Adapter());
 
+  }
+
+  private void onShowLocalChanged() {
+    setListAdapter(adapter = new Adapter());
+    Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
+    prefs.putBoolean(C.SHOW_LOCAL, showLocal.isChecked());
+    prefs.commit();
+  }
+  
+  private void onClick(int index) {
+    final DictionaryInfo dictionaryInfo = adapter.getItem(index);
+    final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
+    if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) && downloadable != null) {
+      final Intent intent = getDownloadIntent(downloadable);
+      startActivity(intent);
+    } else {
+      final Intent intent = DictionaryActivity.getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), 0, "");
+      startActivity(intent);
+    }
+  }
+  
   class Adapter extends BaseAdapter {
     
-    final List<DictionaryInfo> dictionaryInfos = application.getAllDictionaries();
+    final List<DictionaryInfo> dictionaryInfos = new ArrayList<DictionaryInfo>();
+    
+    Adapter() {
+      final String filter = filterText.getText().toString().trim().toLowerCase();
+      for (final DictionaryInfo dictionaryInfo : application.getAllDictionaries()) {
+        boolean canShow = true;
+        if (showLocal.isChecked() && !application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
+          canShow = false;
+        }
+        if (canShow && filter.length() > 0) {
+          if (!application.getDictionaryName(dictionaryInfo.uncompressedFilename).toLowerCase().contains(filter)) {
+            canShow = false;
+          }
+        }
+        if (canShow) {
+          dictionaryInfos.add(dictionaryInfo);
+          
+        }
+      }
+    }
 
     @Override
     public int getCount() {

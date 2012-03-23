@@ -444,11 +444,33 @@ public class DictionaryActivity extends ListActivity {
     dialog.setTitle(R.string.selectDictionary);
 
     final List<DictionaryInfo> installedDicts = ((DictionaryApplication)getApplication()).getUsableDicts();
+    
     ListView listView = (ListView) dialog.findViewById(android.R.id.list);
+
+//    final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//    layoutParams.width = 0;
+//    layoutParams.weight = 1.0f;
+
+    final Button button = new Button(listView.getContext());
+    final String name = getString(R.string.dictionaryManager);
+    button.setText(name);
+    final IntentLauncher intentLauncher = new IntentLauncher(listView.getContext(), DictionaryManagerActivity.getLaunchIntent()) {
+      @Override
+      protected void onGo() {
+        dialog.dismiss();
+        DictionaryActivity.this.finish();
+      };
+    };
+    button.setOnClickListener(intentLauncher);
+//    button.setLayoutParams(layoutParams);
+    listView.addHeaderView(button);
+//    listView.setHeaderDividersEnabled(true);
+    
     listView.setAdapter(new BaseAdapter() {
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {
         final LinearLayout result = new LinearLayout(parent.getContext());
+
         final DictionaryInfo dictionaryInfo = getItem(position);
           final Button button = new Button(parent.getContext());
           final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
@@ -461,12 +483,10 @@ public class DictionaryActivity extends ListActivity {
             };
           };
           button.setOnClickListener(intentLauncher);
-          
           final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
           layoutParams.width = 0;
           layoutParams.weight = 1.0f;
           button.setLayoutParams(layoutParams);
-
           result.addView(button);
         return result;
       }
@@ -747,9 +767,9 @@ public class DictionaryActivity extends ListActivity {
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_BACK) {
-      Log.d(LOG, "Clearing dictionary prefs.");
+      //Log.d(LOG, "Clearing dictionary prefs.");
       // Pretend that we just autolaunched so that we won't do it again.
-      DictionaryManagerActivity.lastAutoLaunchMillis = System.currentTimeMillis();
+      //DictionaryManagerActivity.lastAutoLaunchMillis = System.currentTimeMillis();
     }
     if (keyCode == KeyEvent.KEYCODE_ENTER) {
       Log.d(LOG, "Trying to hide soft keyboard.");

@@ -20,6 +20,9 @@
   <string name="moveToTop">Move to top</string>
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="indexInfo">%1$s: %2$,d words</string>
+  <string name="managerFilterText">List filter</string>
+  <string name="managerFilterCheckbox">Local only</string>
+  
 
   <string name="thanksForUpdatingVersion">3.2_en_b</string>
 

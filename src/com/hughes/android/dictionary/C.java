@@ -22,8 +22,10 @@ public class C {
   static final String INDEX_INDEX = "indexIndex";
   static final String SEARCH_TOKEN = "searchToken";
   static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
+  public static final String SHOW_LOCAL = "showLocal";
 
   public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
+
 
   enum Theme {
     DEFAULT(R.style.Theme_Default, R.style.Theme_Default_TokenRow_Fg,
