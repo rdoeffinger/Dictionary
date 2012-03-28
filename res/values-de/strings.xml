@@ -36,6 +36,7 @@
   <string name="noSearchResults">Keine Treffe.</string>
   <string name="aboutDictionary">Über Wörterbuch…</string> 
   <string name="randomWord">Random Wort</string> 
+  <string name="fontFailure">Font failure: %s</string> 
   
   
   <!-- About dictionary. -->
@@ -73,36 +74,36 @@
  
   <string name="quickdicDirectoryKey">quickdicDirectory</string>
   <string name="quickdicDirectoryTitle">QuickDic Verzeichnis</string>
-  <string name="quickdicDirectorySummary">Das Verzeichnis, in dem QuickDic speichert Wörterbücher.</string>
+  <string name="quickdicDirectorySummary">Das Verzeichnis, in dem QuickDic die Wörterbücher speichert.</string>
   <string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
   
   <string name="wordListFileKey">wordListFile</string>
-  <string name="wordListFileTitle">Wortlist Datei</string>
-  <string name="wordListFileSummary">Die lokale Datei, wo das Wortliste hinzugefügt wird.</string>
+  <string name="wordListFileTitle">Wörterbucheinträge</string>
+  <string name="wordListFileSummary">Die lokale Datei, in die Wörterbucheinträge hinzugefügt werden können.</string>
   <string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
 
   <string name="fontKey">font</string>
-  <string name="fontTitle">Wörterbuch Schriftart</string>
-  <string name="fontSummary">Schriftart für Wörterbucher.</string>
+  <string name="fontTitle">Schriftart</string>
+  <string name="fontSummary">Definition der Wörterbuchschrift.</string>
 
   <string name="fontSizeKey">fontSize</string>
   <string name="fontSizeTitle">Schriftgröße</string>
-  <string name="fontSizeSummary">Die Größe der Schriftart für die Wörterbuch-Reihen.</string>
+  <string name="fontSizeSummary">Schriftgröße für die Wörterbucheinträge.</string>
 
   <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
-  <string name="saveOnlyFirstSubentryTitle">Speichern nur erste Sub-Eintrag</string>
-  <string name="saveOnlyFirstSubentrySummary">Bei Einträgen mit mehreren Sub-Einträge werden nur die ersten auf die Wortliste hinzugefügt.</string>
+  <string name="saveOnlyFirstSubentryTitle">Export-Filter</string>
+  <string name="saveOnlyFirstSubentrySummary">Bei mehrfachen Einträgen nur den ersten exportieren.</string>
 
   <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
-  <string name="clickOpensContextMenuTitle">Klick öffnet Kontextmenü</string>
-  <string name="clickOpensContextMenuSummary">Das Kontextmenü öffnet mit Klicks auf Einträge (long-Klicks öffnen immer das Kontextmenü).</string>
+  <string name="clickOpensContextMenuTitle">Kontextmenü</string>
+  <string name="clickOpensContextMenuSummary">Kontextmenü bereits bei kurzem Klick auf einen Eintrag öffnen.</string>
 
   <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
-  <string name="showClearSearchTextButtonTitle">Zeige \'Suchtext entfernen\' Button</string>
-  <string name="showClearSearchTextButtonSummary">Zeigen die Button, um die Suchtext zu löschen. Sie können auch einfach weg von Suchtext konzentrieren und anfangen zu schreiben.</string>
+  <string name="showClearSearchTextButtonTitle">Suchtext löschen</string>
+  <string name="showClearSearchTextButtonSummary">Zusätzlichen Knopf zum Löschen des Suchtexts anzeigen. Der Suchtext wird automatisch überschrieben, wenn kein Textcursor sichtbar ist.</string>
 
   <string name="themeKey">theme</string>
-  <string name="themeTitle">UI Theme</string>
-  <string name="themeSummary">User-Interface Farbschema.</string>
+  <string name="themeTitle">Farbschema</string>
+  <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
   
 </resources>

@@ -251,7 +251,12 @@ public class DictionaryActivity extends ListActivity {
     if ("SYSTEM".equals(fontName)) {
       typeface = Typeface.DEFAULT;
     } else {
-      typeface = Typeface.createFromAsset(getAssets(), fontName);
+      try {
+        typeface = Typeface.createFromAsset(getAssets(), fontName);
+      } catch (Exception e) {
+        Log.w(LOG, "Exception trying to use typeface, using default.", e);
+        Toast.makeText(this, getString(R.string.fontFailure, e.getLocalizedMessage()), Toast.LENGTH_LONG).show();
+      }
     }
     if (typeface == null) {
       Log.w(LOG, "Unable to create typeface, using default.");
