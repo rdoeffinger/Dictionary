@@ -4,8 +4,8 @@
  
  package="com.hughes.android.dictionary"
  
- android:versionCode="18"
- android:versionName="3.2"
+ android:versionCode="19"
+ android:versionName="3.2.1"
  android:installLocation="auto">
 
  <uses-sdk android:minSdkVersion="4" />

@@ -278,12 +278,14 @@ public class DictionaryActivity extends ListActivity {
     
     searchText.requestFocus();
     searchText.addTextChangedListener(searchTextWatcher);
-    String text = "";
+    
+    // Set the search text from the intent, then the saved state.
+    String text = getIntent().getStringExtra(C.SEARCH_TOKEN);
     if (savedInstanceState != null) {
       text = savedInstanceState.getString(C.SEARCH_TOKEN);
-      if (text == null) {
-        text = "";
-      }
+    }
+    if (text == null) {
+      text = "";
     }
     setSearchText(text, true);
     Log.d(LOG, "Trying to restore searchText=" + text);
@@ -791,12 +793,26 @@ public class DictionaryActivity extends ListActivity {
     }
     searchText.setText(text);
     searchText.requestFocus();
-    if (searchText.getLayout() != null) {
-      // Surprising, but this can crash when you rotate...
-      Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
-    }
+    moveCursorToRight();
     if (triggerSearch) {
       onSearchTextChange(text);
+    }
+  }
+  
+  private long cursorDelayMillis = 100;
+  private void moveCursorToRight() {
+    if (searchText.getLayout() != null) {
+      cursorDelayMillis = 100;
+      // Surprising, but this can crash when you rotate...
+      Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
+    } else {
+      uiHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          moveCursorToRight();
+        }
+      }, cursorDelayMillis);
+      cursorDelayMillis = Math.min(10 * 1000, 2 * cursorDelayMillis);
     }
   }
 

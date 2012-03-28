@@ -3,7 +3,7 @@
 
 	<string name="app_name">QuickDic</string>
 
-	<string name="titleWithVersion">QuickDic 3.2</string>
+	<string name="titleWithVersion">QuickDic 3.2.1</string>
 	
   <!-- Global. -->
   <string name="about">Über QuickDic…</string>
@@ -54,6 +54,7 @@
   <string name="contactMe">
      Wenn Sie QuickDic benutzen, würde ich gerne von Ihnen hören.
      Leider kann ich keine Verantwortung für die Wörterbücher (außer Formatierung) nehmen, weil sie aus anderen Quellen erzeugt werden.
+     Danke an Michael Vogel für Hilfe mit dem Icon und den deutschen Übersetzungen.
      Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:
   </string>
   <string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
