@@ -11,7 +11,7 @@
     <item>FreeSerif</item>
     <item>FreeSans</item>
     <item>System default</item>
-    </string-array>
+  </string-array>
     
   <string-array name="themeKeys">
     <item>themeLight</item>

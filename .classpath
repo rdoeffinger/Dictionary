@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Util"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="jars/icu4j-module.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

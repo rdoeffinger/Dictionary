@@ -26,6 +26,8 @@ public class C {
 
   public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
 
+  public static final String FONT_WORKAROUND = "fontWorkaround";
+
 
   enum Theme {
     DEFAULT(R.style.Theme_Default, R.style.Theme_Default_TokenRow_Fg,

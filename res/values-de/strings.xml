@@ -3,13 +3,14 @@
 
 	<string name="app_name">QuickDic</string>
 
-	<string name="titleWithVersion">QuickDic 3.2.1</string>
+	<string name="titleWithVersion">QuickDic 3.2.2</string>
 	
   <!-- Global. -->
   <string name="about">Über QuickDic…</string>
   <string name="preferences">Einstellungen…</string>
   <string name="help">Hilfe</string>
   <string name="reportIssue">Problem melden…</string>
+  <string name="fontWorkaround">Detected font problem (common on Sony Ericsson devices), switching back to default font.</string>
   
   
   <!-- DictionaryManagerActivity -->
@@ -21,7 +22,7 @@
   <string name="deleteDictionary">Wörterbuch entfernen</string>
   <string name="indexInfo">%1$s: %2$,d Wörter</string>
 
-  <string name="thanksForUpdatingVersion">3.2.1_de_a</string>
+  <string name="thanksForUpdatingVersion">3.2.2_de_a</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Suchtext</string>

@@ -136,19 +136,19 @@ public class DictionaryManagerActivity extends ListActivity {
       builder.setCancelable(false);
       final WebView webView = new WebView(getApplicationContext());
       webView.loadData(StringUtil.readToString(getResources().openRawResource(R.raw.whats_new)), "text/html", "utf-8");
-      builder.setView(webView);
       builder.setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
                dialog.cancel();
           }
       });
-      final AlertDialog alert = builder.create();
       WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-      layoutParams.copyFrom(alert.getWindow().getAttributes());
       layoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
       layoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
+      webView.setLayoutParams(layoutParams);
+      builder.setView(webView);
+      final AlertDialog alert = builder.create();
+      alert.getWindow().setLayout(WindowManager.LayoutParams.FILL_PARENT, WindowManager.LayoutParams.FILL_PARENT);
       alert.show();
-      alert.getWindow().setAttributes(layoutParams);
       prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion).commit();
     }
   }

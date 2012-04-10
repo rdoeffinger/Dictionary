@@ -3,13 +3,14 @@
 
   <string name="app_name">QuickDic</string>
 
-  <string name="titleWithVersion">QuickDic 3.2.1</string>
+  <string name="titleWithVersion">QuickDic 3.2.2</string>
   
   <!-- Global. -->
   <string name="about">About QuickDic…</string> 
   <string name="preferences">Preferences…</string>
   <string name="help">Help</string>
   <string name="reportIssue">Report issue…</string>
+  <string name="fontWorkaround">Detected font problem (common on Sony Ericsson devices), switching back to default font.</string>
   
   
    <!-- DictionaryManagerActivity -->
@@ -24,7 +25,7 @@
   <string name="managerFilterCheckbox">Local only</string>
   
 
-  <string name="thanksForUpdatingVersion">3.2.1_en_a</string>
+  <string name="thanksForUpdatingVersion">3.2.2_en_e</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Search Text</string>

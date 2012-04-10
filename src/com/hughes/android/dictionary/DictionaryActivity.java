@@ -247,8 +247,15 @@ public class DictionaryActivity extends ListActivity {
       }
     }).start();
     
-    final String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.ttf.jpg");
-    if ("SYSTEM".equals(fontName)) {
+    
+    final int fontWorkAround = prefs.getInt(C.FONT_WORKAROUND, 1);
+    if (fontWorkAround == 0) {
+      Toast.makeText(this, getString(R.string.fontWorkaround), Toast.LENGTH_LONG).show();
+      prefs.edit().putString(getString(R.string.fontKey), "SYSTEM").commit();
+    }
+    prefs.edit().putInt(C.FONT_WORKAROUND, 0).commit();
+    String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.ttf.jpg");
+    if (fontWorkAround == 0 || "SYSTEM".equals(fontName)) {
       typeface = Typeface.DEFAULT;
     } else {
       try {
@@ -258,6 +265,9 @@ public class DictionaryActivity extends ListActivity {
         Toast.makeText(this, getString(R.string.fontFailure, e.getLocalizedMessage()), Toast.LENGTH_LONG).show();
       }
     }
+//    if (!"SYSTEM".equals(fontName)) {
+//      throw new RuntimeException("Test force using system font: " + fontName);
+//    }
     if (typeface == null) {
       Log.w(LOG, "Unable to create typeface, using default.");
       typeface = Typeface.DEFAULT;
@@ -267,7 +277,10 @@ public class DictionaryActivity extends ListActivity {
       fontSizeSp = Integer.parseInt(fontSize.trim());
     } catch (NumberFormatException e) {
       fontSizeSp = 14;
-    }
+    } 
+    // Things worked with loading the font.
+    prefs.edit().putInt(C.FONT_WORKAROUND, 1).commit();
+
 
     setContentView(R.layout.dictionary_activity);
     searchText = (EditText) findViewById(R.id.SearchText);
