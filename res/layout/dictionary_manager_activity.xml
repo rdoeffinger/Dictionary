@@ -37,7 +37,7 @@
     android:layout_weight="1.0"
     />
 
-   <TextView 
+   <EditText 
      android:id="@+id/DictionaryListHeader"
      android:hint="@string/helpText"
      android:layout_width="fill_parent"

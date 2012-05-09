@@ -21,7 +21,9 @@
   <string name="moveToTop">Nach Anfang ziehen</string>
   <string name="deleteDictionary">Wörterbuch entfernen</string>
   <string name="indexInfo">%1$s: %2$,d Wörter</string>
-
+  <string name="managerFilterText">Filter</string>
+  <string name="managerFilterCheckbox">Nur SD-Karte</string>
+  
   <string name="thanksForUpdatingVersion">3.2.2_de_a</string>
 
   <!-- DictionaryActivity -->

@@ -1,103 +1,103 @@
-<ScrollView android:id="@+id/ScrollView01"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="wrap_content" 
-	android:layout_height="wrap_content">
-	
-<LinearLayout 
-	android:id="@+id/LinearLayout01"
-	android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	>
-
-	<LinearLayout 
-		android:id="@+id/LinearLayout02"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
-		android:paddingBottom="10dip">
-
-		<ImageView 
-			android:id="@+id/ImageView01"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"
-			android:background="@drawable/icon" 
-      android:contentDescription="icon"/>
-
-		<TextView 
-			android:id="@+id/title" 
-			android:text="@string/titleWithVersion"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical|fill_vertical" />
-	</LinearLayout>
-
-	<TextView 
-		android:id="@+id/copyright"
-		android:text="Copyright 2009-2011 Google Inc." 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"/>
-
-	<TextView 
-		android:id="@+id/author"
-		android:text="Thad Hughes" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
-		android:paddingBottom="10dip"/>
-
-	<TextView 
-		android:id="@+id/emailMe"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" 
-		android:text="@string/contactMe"/>
-
-	<TextView 
-		android:id="@+id/email" 
-		android:text="@string/myEmail"
-		android:autoLink="email"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" 
-		android:clickable="true" 
-		android:layout_gravity="left"
-		android:paddingBottom="10dip"/>
-  
-    <TextView 
-    android:id="@+id/webPage"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollView01"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" 
-    android:text="@string/webPage"/>
+    android:layout_height="wrap_content"
+    tools:ignore="HardcodedText" >
 
-  <TextView 
-    android:id="@+id/webPageUrl" 
-    android:text="@string/webPageUrl"
-    android:autoLink="web"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" 
-    android:clickable="true" 
-    android:layout_gravity="left"
-    android:paddingBottom="10dip"/>
-  
-  <TextView
-    android:id="@+id/license" 
-    android:text="@string/license"
-    android:autoLink="web"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" 
-    android:layout_gravity="left"/>
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-  <TextView
-    android:id="@+id/licenseUrl" 
-    android:text="@string/licenseUrl"
-    android:autoLink="web"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" 
-    android:layout_gravity="left"
-    android:paddingBottom="10dip"/>
-  
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/LinearLayout02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="10dip" >
+
+            <ImageView
+                android:id="@+id/ImageView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/icon"
+                android:contentDescription="icon" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_vertical"
+                android:text="@string/titleWithVersion"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/copyright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Copyright 2009-2011 Google Inc." />
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="10dip"
+            android:text="Thad Hughes" />
+
+        <TextView
+            android:id="@+id/emailMe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/contactMe" />
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:autoLink="email"
+            android:clickable="true"
+            android:paddingBottom="10dip"
+            android:text="@string/myEmail" />
+
+        <TextView
+            android:id="@+id/webPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/webPage" />
+
+        <TextView
+            android:id="@+id/webPageUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:autoLink="web"
+            android:clickable="true"
+            android:paddingBottom="10dip"
+            android:text="@string/webPageUrl" />
+
+        <TextView
+            android:id="@+id/license"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:autoLink="web"
+            android:text="@string/license" />
+
+        <TextView
+            android:id="@+id/licenseUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:autoLink="web"
+            android:paddingBottom="10dip"
+            android:text="@string/licenseUrl" />
+    </LinearLayout>
 
 </ScrollView>

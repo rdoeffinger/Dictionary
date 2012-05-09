@@ -250,6 +250,7 @@ public class DictionaryActivity extends ListActivity {
     
     final int fontWorkAround = prefs.getInt(C.FONT_WORKAROUND, 1);
     if (fontWorkAround == 0) {
+      Log.w(LOG, "Loading font seemed to fail last time, trying with default font.");
       Toast.makeText(this, getString(R.string.fontWorkaround), Toast.LENGTH_LONG).show();
       prefs.edit().putString(getString(R.string.fontKey), "SYSTEM").commit();
     }
@@ -278,8 +279,6 @@ public class DictionaryActivity extends ListActivity {
     } catch (NumberFormatException e) {
       fontSizeSp = 14;
     } 
-    // Things worked with loading the font.
-    prefs.edit().putInt(C.FONT_WORKAROUND, 1).commit();
 
 
     setContentView(R.layout.dictionary_activity);
@@ -392,6 +391,11 @@ public class DictionaryActivity extends ListActivity {
   @Override
   protected void onPause() {
     super.onPause();
+    
+    // If the app exits normally, this will happen.
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    Log.d(LOG, "Loading font seemed to work.");
+    prefs.edit().putInt(C.FONT_WORKAROUND, 1).commit();
   }
   
   private static void setDictionaryPrefs(final Context context,
