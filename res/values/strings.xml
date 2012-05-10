@@ -15,7 +15,7 @@
   
    <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
-  <string name="helpText">Long-press for more options.</string>
+  <string name="helpText">Long-press a dictionary for more options.</string>
   <string name="downloadButton">Download (%.1fMB)</string>
   <string name="updateButton">Update (%.1fMB)</string>
   <string name="moveToTop">Move to top</string>
