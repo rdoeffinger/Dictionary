@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.Application;
@@ -43,6 +44,7 @@ import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Language;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
+import com.hughes.util.ListUtil;
 import com.ibm.icu.text.Collator;
 
 public class DictionaryApplication extends Application {
@@ -112,7 +114,7 @@ public class DictionaryApplication extends Application {
       @Override
       public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
           String key) {
-        Log.d("THAD", "prefs changed: " + key);
+        Log.d("QuickDic", "prefs changed: " + key);
         if (key.equals(getString(R.string.themeKey))) {
           setTheme(getSelectedTheme().themeId);
         }
@@ -189,6 +191,8 @@ public class DictionaryApplication extends Application {
   }
   
   
+  
+  String defaultLangISO2 = Locale.getDefault().getLanguage().toLowerCase();
   final Map<String, String> fileToNameCache = new LinkedHashMap<String, String>();
 
   public String getLanguageName(final String isoCode) {
@@ -196,8 +200,15 @@ public class DictionaryApplication extends Application {
     final String lang = languageResources != null ? getApplicationContext().getString(languageResources.nameId) : isoCode;
     return lang;
   }
+  
 
   public synchronized String getDictionaryName(final String uncompressedFilename) {
+    final String currentLocale = Locale.getDefault().getLanguage().toLowerCase(); 
+    if (!currentLocale.equals(defaultLangISO2)) {
+      defaultLangISO2 = currentLocale;
+      fileToNameCache.clear();
+    }
+    
     String name = fileToNameCache.get(uncompressedFilename);
     if (name != null) {
       return name;
@@ -206,11 +217,22 @@ public class DictionaryApplication extends Application {
     final DictionaryInfo dictionaryInfo = DOWNLOADABLE_NAME_TO_INFO.get(uncompressedFilename);
     if (dictionaryInfo != null) {
       final StringBuilder nameBuilder = new StringBuilder();
+
+      // Hack to put the default locale first in the name.
+      boolean swapped = false;
+      if (dictionaryInfo.indexInfos.size() > 1 && 
+          dictionaryInfo.indexInfos.get(1).shortName.toLowerCase().equals(defaultLangISO2)) {
+        ListUtil.swap(dictionaryInfo.indexInfos, 0, 1);
+        swapped = true;
+      }
       for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
         if (i > 0) {
           nameBuilder.append("-");
         }
         nameBuilder.append(getLanguageName(dictionaryInfo.indexInfos.get(i).shortName));
+      }
+      if (swapped) {
+        ListUtil.swap(dictionaryInfo.indexInfos, 0, 1);
       }
       name = nameBuilder.toString();
     } else {
