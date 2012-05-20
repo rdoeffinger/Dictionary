@@ -39,7 +39,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Language;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
@@ -137,7 +136,7 @@ public class DictionaryApplication extends Application {
     final MenuItem help = menu.add(getString(R.string.help));
     help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
-        context.startActivity(HelpActivity.getLaunchIntent());
+        context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent());
         return false;
       }
     });
@@ -193,6 +192,7 @@ public class DictionaryApplication extends Application {
   
   
   String defaultLangISO2 = Locale.getDefault().getLanguage().toLowerCase();
+  String defaultLangName = null;
   final Map<String, String> fileToNameCache = new LinkedHashMap<String, String>();
 
   public String getLanguageName(final String isoCode) {
@@ -207,6 +207,10 @@ public class DictionaryApplication extends Application {
     if (!currentLocale.equals(defaultLangISO2)) {
       defaultLangISO2 = currentLocale;
       fileToNameCache.clear();
+      defaultLangName = null;
+    }
+    if (defaultLangName == null) {
+      defaultLangName = getLanguageName(defaultLangISO2);
     }
     
     String name = fileToNameCache.get(uncompressedFilename);
@@ -259,7 +263,16 @@ public class DictionaryApplication extends Application {
   final Comparator<String> uncompressedFilenameComparator = new Comparator<String>() {
     @Override
     public int compare(String uncompressedFilename1, String uncompressedFilename2) {
-      return collator.compare(getDictionaryName(uncompressedFilename1), getDictionaryName(uncompressedFilename2));
+      final String name1 = getDictionaryName(uncompressedFilename1);
+      final String name2 = getDictionaryName(uncompressedFilename2);
+      if (defaultLangName.length() > 0) {
+        if (name1.startsWith(defaultLangName) && !name2.startsWith(defaultLangName)) {
+          return -1;
+        } else if (name2.startsWith(defaultLangName) && !name1.startsWith(defaultLangName)) {
+          return 1;
+        }
+      }
+      return collator.compare(name1, name2);
     }
   };
   final Comparator<DictionaryInfo> dictionaryInfoComparator = new Comparator<DictionaryInfo>() {

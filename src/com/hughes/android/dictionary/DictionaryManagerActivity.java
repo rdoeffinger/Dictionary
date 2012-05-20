@@ -132,23 +132,7 @@ public class DictionaryManagerActivity extends ListActivity {
     final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
     if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(thanksForUpdatingLatestVersion)) {
       blockAutoLaunch = true;
-      final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-      builder.setCancelable(false);
-      final WebView webView = new WebView(getApplicationContext());
-      webView.loadData(StringUtil.readToString(getResources().openRawResource(R.raw.whats_new)), "text/html", "utf-8");
-      builder.setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int id) {
-               dialog.cancel();
-          }
-      });
-      WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-      layoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
-      layoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
-      webView.setLayoutParams(layoutParams);
-      builder.setView(webView);
-      final AlertDialog alert = builder.create();
-      alert.getWindow().setLayout(WindowManager.LayoutParams.FILL_PARENT, WindowManager.LayoutParams.FILL_PARENT);
-      alert.show();
+      startActivity(HtmlDisplayActivity.getWhatsNewLaunchIntent());
       prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion).commit();
     }
   }

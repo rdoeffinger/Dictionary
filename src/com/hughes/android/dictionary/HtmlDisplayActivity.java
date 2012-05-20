@@ -14,18 +14,31 @@
 
 package com.hughes.android.dictionary;
 
-import com.hughes.util.StringUtil;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.widget.Button;
 
-public final class HelpActivity extends Activity {
+import com.hughes.util.StringUtil;
+
+public final class HtmlDisplayActivity extends Activity {
   
-  public static Intent getLaunchIntent() {
+  static final String HTML_RES = "html_res";
+  
+  public static Intent getHelpLaunchIntent() {
     final Intent intent = new Intent();
-    intent.setClassName(HelpActivity.class.getPackage().getName(), HelpActivity.class.getName());
+    intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(), HtmlDisplayActivity.class.getName());
+    intent.putExtra(HTML_RES, R.raw.help);
+    return intent;
+  }
+
+  public static Intent getWhatsNewLaunchIntent() {
+    final Intent intent = new Intent();
+    intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(), HtmlDisplayActivity.class.getName());
+    intent.putExtra(HTML_RES, R.raw.whats_new);
     return intent;
   }
 
@@ -36,9 +49,18 @@ public final class HelpActivity extends Activity {
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.help_activity);
-    final String html = StringUtil.readToString(getResources().openRawResource(R.raw.help));
-    final WebView webView = (WebView) findViewById(R.id.helpWebView);
+    final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
+    final String html = StringUtil.readToString(getResources().openRawResource(htmlRes));
+    final WebView webView = (WebView) findViewById(R.id.webView);
     webView.loadData(html, "text/html", "utf-8");
+    
+    final Button okButton = (Button) findViewById(R.id.okButton);
+    okButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
   }
 
 }

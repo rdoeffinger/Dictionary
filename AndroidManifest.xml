@@ -4,8 +4,8 @@
  
  package="com.hughes.android.dictionary"
  
- android:versionCode="20"
- android:versionName="3.2.2"
+ android:versionCode="21"
+ android:versionName="3.3"
  android:installLocation="auto">
 
  <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4"/>
@@ -55,7 +55,7 @@
   <activity android:name=".DictionaryActivity" />
   <activity android:name=".DictionaryEditActivity" />
   <activity android:name=".AboutActivity" />
-  <activity android:name=".HelpActivity" />
+  <activity android:name=".HtmlDisplayActivity" />
   <activity android:name=".PreferenceActivity" />
   <activity android:name=".DownloadActivity"
       android:configChanges="keyboardHidden|orientation"/>

@@ -3,13 +3,11 @@
 
   <string-array name="fontKeys">
     <item>FreeSerif.ttf.jpg</item>
-    <item>FreeSans.ttf.jpg</item>
     <item>SYSTEM</item>
   </string-array>
 
   <string-array name="fonts">
     <item>FreeSerif</item>
-    <item>FreeSans</item>
     <item>System Default</item>
   </string-array>
     

@@ -3,7 +3,7 @@
 
   <string name="app_name">QuickDic</string>
 
-  <string name="titleWithVersion">QuickDic 3.2.2</string>
+  <string name="titleWithVersion">QuickDic 3.3</string>
   
   <!-- Global. -->
   <string name="about">About QuickDic…</string> 
@@ -25,7 +25,7 @@
   <string name="managerFilterCheckbox">Local only</string>
   
 
-  <string name="thanksForUpdatingVersion">3.2.2_en_e</string>
+  <string name="thanksForUpdatingVersion">3.3_en_e</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Search Text</string>
