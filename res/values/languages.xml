@@ -32,12 +32,14 @@
   <string name="GA">Irish</string>
   <string name="IT">Italian</string>
   <string name="LA">Latin</string>
+  <string name="LO">Lao</string>
   <string name="LV">Latvian</string>
   <string name="LT">Lithuanian</string>
   <string name="JA">Japanese</string>
   <string name="KO">Korean</string>
   <string name="KU">Kurdish</string>
   <string name="MS">Malay</string>
+  <string name="ML">Malayalam</string>
   <string name="MI">Maori</string>
   <string name="MN">Mongolian</string>
   <string name="NE">Nepali</string>
@@ -51,6 +53,7 @@
   <string name="SA">Sanskrit</string>
   <string name="SR">Serbian</string>
   <string name="SK">Slovak</string>
+  <string name="SL">Slovenian</string>
   <string name="SO">Somali</string>
   <string name="ES">Spanish</string>
   <string name="SW">Swahili</string>

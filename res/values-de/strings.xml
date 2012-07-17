@@ -36,7 +36,7 @@
   <string name="unzippingDictionary">Wörterbuch entpacken…</string>
   <string name="failedToUnzipDictionary">Fehler beim Entpackung der Wörterbuch…</string>
   <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
-  <string name="noSearchResults">Keine Treffe.</string>
+  <string name="noSearchResults">Kein Treffer.</string>
   <string name="aboutDictionary">Über Wörterbuch…</string> 
   <string name="randomWord">Random Wort</string> 
   <string name="fontFailure">Font failure: %s</string> 

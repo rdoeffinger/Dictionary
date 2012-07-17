@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.hughes.android.dictionary.DictionaryInfo;
@@ -32,7 +33,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   static final int CACHE_SIZE = 5000;
   
-  static final int CURRENT_DICT_VERSION = 4;
+  static final int CURRENT_DICT_VERSION = 5;
   static final String END_OF_DICTIONARY = "END OF DICTIONARY";
   
   // persisted
@@ -41,6 +42,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   public final String dictInfo;
   public final List<PairEntry> pairEntries;
   public final List<TextEntry> textEntries;
+  public final List<HtmlEntry> htmlEntries;
   public final List<EntrySource> sources;
   public final List<Index> indices;
   
@@ -58,6 +60,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     this.dictInfo = dictInfo;
     pairEntries = new ArrayList<PairEntry>();
     textEntries = new ArrayList<TextEntry>();
+    htmlEntries = new ArrayList<HtmlEntry>();
     sources = new ArrayList<EntrySource>();
     indices = new ArrayList<Index>();
   }
@@ -78,6 +81,11 @@ public class Dictionary implements RAFSerializable<Dictionary> {
       
       pairEntries = CachingList.create(RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
       textEntries = CachingList.create(RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
+      if (dictFileVersion >= 5) {
+        htmlEntries = CachingList.create(RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer()), CACHE_SIZE);
+      } else {
+        htmlEntries = Collections.emptyList();
+      }
       indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer, raf.getFilePointer()));
     } catch (RuntimeException e) {
       final IOException ioe = new IOException("RuntimeException loading dictionary");
@@ -98,6 +106,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     RAFList.write(raf, sources, new EntrySource.Serializer(this));
     RAFList.write(raf, pairEntries, new PairEntry.Serializer(this));
     RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
+    RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this));
     RAFList.write(raf, indices, indexSerializer);
     raf.writeUTF(END_OF_DICTIONARY);
   }
