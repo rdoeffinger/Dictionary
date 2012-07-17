@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string-array name="fontKeys">
+    <item>FreeSerif.ttf.jpg</item>
+    <item>SYSTEM</item>
+  </string-array>
+
+  <string-array name="fonts">
+    <item>FreeSerif</item>
+    <item>Default di Sistema</item>
+  </string-array>
+    
+  <string-array name="themeKeys">
+    <item>themeLight</item>
+    <item>themeDefault</item>
+  </string-array>
+
+  <string-array name="themes">
+    <item>Tema Light</item>
+    <item>Tema di Default</item>
+  </string-array>
+  
+</resources>

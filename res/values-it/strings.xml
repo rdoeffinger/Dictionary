@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">QuickDic</string>
+<string name="titleWithVersion">QuickDic 3.3</string>
+<!-- Global. -->
+<string name="about">About QuickDic…</string>
+<string name="preferences">Preferenze…</string>
+<string name="help">Guida</string>
+<string name="reportIssue">Segnala problema…</string>
+<string name="fontWorkaround">
+Rilevato problema di font (comune su apparecchi Sony Ericsson), ritorno a font di default.
+</string>
+<!-- DictionaryManagerActivity -->
+<string name="dictionaryManager">Gestione Dizionari</string>
+<string name="helpText">Per più opzioni tieni premuto su un dizionario.</string>
+<string name="downloadButton">Download (%.1fMB)</string>
+<string name="updateButton">Update (%.1fMB)</string>
+<string name="moveToTop">Sposta in alto</string>
+<string name="deleteDictionary">Cancella dizionario</string>
+<string name="indexInfo">%1$s: %2$,d parole</string>
+<string name="managerFilterText">Filtra lista</string>
+<string name="managerFilterCheckbox">Solo locali</string>
+<string name="thanksForUpdatingVersion">3.3_en_e</string>
+<!-- DictionaryActivity -->
+<string name="searchText">Cerca testo</string>
+<string name="selectDictionary">Seleziona dizionario…</string>
+<string name="switchToLanguage">Passa a %s</string>
+<string name="addToWordList">Aggiungi alla lista parole: %s</string>
+<string name="searchForSelection">Cerca: %s</string>
+<string name="failedAddingToWordList">Problema nell\'aggiungere alla lista parole: %s</string>
+<string name="unzippingDictionary">Decompressione dizionario…</string>
+<string name="failedToUnzipDictionary">Decompressione dizionario fallita…</string>
+<string name="invalidDictionary">Dizionario invalido: file=%1$s, error=%2$s</string>
+<string name="noSearchResults">Nessun risultato.</string>
+<string name="aboutDictionary">About dictionary…</string>
+<string name="randomWord">Parola a caso</string>
+<string name="fontFailure">Problema di Font: %s</string>
+<!-- About dictionary. -->
+<string name="dictionaryPath">File: %s</string>
+<string name="dictionarySize">Dimenzione: %,d bytes</string>
+<string name="dictionaryCreationTime">Creato: %tc</string>
+<string name="indexName">Indice: %s</string>
+<string name="mainTokenCount">Numero parole: %,d</string>
+<string name="sources">Sorgenti</string>
+<string name="sourceInfo">%1$s : %2$,d entries</string>
+<!-- About. -->
+<string name="thadHughes">Thad Hughes</string>
+<string name="contactMe">
+Grazie a Fabio per la traduzione in italiano!
+Se stai usando QuickDic, mi piacerebbe saperlo. 
+Sfortunatamente, non ho responsabilità circa il contenuto del dizionario 
+(al difuori della formattazione), in quanto è creato con altre sorgenti. 
+Per favore inviami (in inglese) commenti, suggerimenti, 
+segnalazioni di bug o semplicemente un breve saluto a:
+</string>
+<string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+<string name="webPage">Per più informazioni, guarda:</string>
+<string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
+<string name="license">
+QuickDic contiene codice con copyright di Google e rilasciato sotto licenza Apache 2.0
+</string>
+<string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
+<!-- Download. -->
+<string name="openingConnection">Apertura connessione…</string>
+<string name="downloading">Downloading: %1$,d of %2$,d bytes.</string>
+<string name="unzipping">Decompressione: %1$,d of %2$,d bytes.</string>
+<string name="downloadFinished">Terminato: %,d bytes.</string>
+<string name="errorDownloadingFile">Errore nel dowload del file: \n%s</string>
+<!-- Preferences -->
+<string name="quickdicDirectoryKey">QuickDic Directory</string>
+<string name="quickdicDirectoryTitle">QuickDic Directory</string>
+<string name="quickdicDirectorySummary">La cartella dove QuickDic salva i dizionari.</string>
+<string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
+<string name="wordListFileKey">wordListFile</string>
+<string name="wordListFileTitle">Word list file</string>
+<string name="wordListFileSummary">
+Il file locale dove sarà aggiunta la lista parole (word list).
+</string>
+<string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
+<string name="fontKey">font</string>
+<string name="fontTitle">Fonts dizionario</string>
+<string name="fontSummary">Font usato per i dizionari.</string>
+<string name="fontSizeKey">fontSize</string>
+<string name="fontSizeTitle">Dimensione font</string>
+<string name="fontSizeSummary">La grandezza del font per le righe del dizionario.</string>
+<string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
+<string name="saveOnlyFirstSubentryTitle">Salva solo la prima sotto-voce</string>
+<string name="saveOnlyFirstSubentrySummary">
+Per voci con più sotto-voci, aggiungi solamente la prima alla word list.
+</string>
+<string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
+<string name="clickOpensContextMenuTitle">Premi per aprire il menù contestuale</string>
+<string name="clickOpensContextMenuSummary">
+Apri il meù contestuale con un solo click (Click lunghi apriranno comunque il menù contestuale).
+</string>
+<string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
+<string name="showClearSearchTextButtonTitle">Mostra il pulsante cancella</string>
+<string name="showClearSearchTextButtonSummary">
+Mostra il pulsante per pulire il campo di ricerca. inoltre, per cercare il testo puoi fare click altrove e cominciare a scrivere.
+</string>
+<string name="themeKey">theme</string>
+<string name="themeTitle">Tema</string>
+<string name="themeSummary">Colore del tema utente.</string>
+</resources>
