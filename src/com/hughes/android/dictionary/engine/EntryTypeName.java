@@ -17,6 +17,7 @@ package com.hughes.android.dictionary.engine;
 
 public enum EntryTypeName {
 
+  WIKTIONARY_TITLE_SINGLE_DETAIL(true, true, null),
   WIKTIONARY_TITLE_SINGLE(true, true, null),
   WIKTIONARY_INFLECTD_FORM_SINGLE(false, true, null),
 
@@ -25,6 +26,7 @@ public enum EntryTypeName {
   MULTIROW_HEAD_ONE_WORD(true, true, null),
   MULTIROW_TAIL_ONE_WORD(false, true, null),
 
+  WIKTIONARY_TITLE_MULTI_DETAIL(false, true, WIKTIONARY_TITLE_SINGLE_DETAIL),
   WIKTIONARY_TITLE_MULTI(false, true, WIKTIONARY_TITLE_SINGLE),
   WIKTIONARY_TRANSLITERATION(),
   WIKTIONARY_INFLECTED_FORM_MULTI(false, true, WIKTIONARY_INFLECTD_FORM_SINGLE),

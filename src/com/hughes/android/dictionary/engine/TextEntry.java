@@ -20,6 +20,7 @@ import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.hughes.android.dictionary.engine.HtmlEntry.Row;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
 import com.ibm.icu.text.Transliterator;
@@ -63,6 +64,11 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
   public int addToDictionary(final Dictionary dictionary) {
     dictionary.textEntries.add(this);
     return dictionary.textEntries.size() - 1;
+  }
+  
+  @Override
+  public RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex) {
+    throw new UnsupportedOperationException("TextEntry's don't really exist.");
   }
 
   public static class Row extends RowBase {

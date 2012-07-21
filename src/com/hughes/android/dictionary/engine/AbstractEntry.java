@@ -39,6 +39,11 @@ public abstract class AbstractEntry {
     raf.writeShort(entrySource.index());
   }
 
+  /**
+   * @return this entry's position within the list just added to.
+   */
   public abstract int addToDictionary(final Dictionary dictionary);
+
+  public abstract RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex);
 
 }

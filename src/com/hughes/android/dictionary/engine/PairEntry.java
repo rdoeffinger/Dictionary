@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.hughes.android.dictionary.engine.HtmlEntry.Row;
 import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
 import com.ibm.icu.text.Transliterator;
@@ -84,6 +85,11 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     return dictionary.pairEntries.size() - 1;
   }
   
+  @Override
+  public RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex) {
+    return new Row(entryIndex, rowIndex, dictionaryIndex);
+  }
+
 
   // --------------------------------------------------------------------
   

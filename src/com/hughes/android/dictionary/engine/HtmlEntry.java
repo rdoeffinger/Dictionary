@@ -15,7 +15,15 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
   
   final String title;
   final String html;
+  
+  
 
+  public HtmlEntry(final EntrySource entrySource, String title, String html) {
+    super(entrySource);
+    this.title = title;
+    this.html = html;
+  }
+  
   public HtmlEntry(Dictionary dictionary, RandomAccessFile raf) throws IOException {
     super(dictionary, raf);
     title = raf.readUTF();
@@ -33,6 +41,12 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     dictionary.htmlEntries.add(this);
     return dictionary.htmlEntries.size() - 1;
   }
+  
+  @Override
+  public RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex) {
+    return new Row(entryIndex, rowIndex, dictionaryIndex);
+  }
+
   
   static final class Serializer implements RAFSerializer<HtmlEntry> {
     
