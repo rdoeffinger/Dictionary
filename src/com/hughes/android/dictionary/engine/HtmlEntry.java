@@ -14,14 +14,13 @@ import com.ibm.icu.text.Transliterator;
 public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntry>, Comparable<HtmlEntry> {
   
   final String title;
-  final String html;
+  public String html;
   
   
 
-  public HtmlEntry(final EntrySource entrySource, String title, String html) {
+  public HtmlEntry(final EntrySource entrySource, String title) {
     super(entrySource);
     this.title = title;
-    this.html = html;
   }
   
   public HtmlEntry(Dictionary dictionary, RandomAccessFile raf) throws IOException {
@@ -68,7 +67,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
   };
 
   public String getRawText(final boolean compact) {
-    return title + ": " + html;
+    return title + ":\n" + html;
   }
 
   
