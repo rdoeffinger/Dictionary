@@ -13,7 +13,7 @@ import com.ibm.icu.text.Transliterator;
 
 public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntry>, Comparable<HtmlEntry> {
   
-  final String title;
+  public final String title;
   public String html;
   
   
@@ -88,6 +88,8 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
   
 
   public static class Row extends RowBase {
+    
+    boolean isExpanded = false;
     
     Row(final RandomAccessFile raf, final int thisRowIndex,
         final Index index) throws IOException {

@@ -64,8 +64,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
@@ -83,6 +85,7 @@ import android.widget.Toast;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.EntrySource;
+import com.hughes.android.dictionary.engine.HtmlEntry;
 import com.hughes.android.dictionary.engine.Index;
 import com.hughes.android.dictionary.engine.Index.IndexEntry;
 import com.hughes.android.dictionary.engine.PairEntry;
@@ -929,6 +932,9 @@ public class DictionaryActivity extends ListActivity {
   // --------------------------------------------------------------------------
   // IndexAdapter
   // --------------------------------------------------------------------------
+  
+  static ViewGroup.LayoutParams WEIGHT_1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, 1.0f);
+  static ViewGroup.LayoutParams WEIGHT_0 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, 0.0f);
 
   final class IndexAdapter extends BaseAdapter {
     
@@ -977,6 +983,8 @@ public class DictionaryActivity extends ListActivity {
         return getView(position, (PairEntry.Row) row, parent, result);
       } else if (row instanceof TokenRow) {
         return getView((TokenRow) row, parent, result);
+      } else if (row instanceof HtmlEntry.Row) {
+        return getView((HtmlEntry.Row) row, parent, result);
       } else {
         throw new IllegalArgumentException("Unsupported Row type: " + row.getClass());
       }
@@ -1071,7 +1079,39 @@ public class DictionaryActivity extends ListActivity {
 
       return result;
     }
+    
 
+    private TableLayout getView(HtmlEntry.Row row, ViewGroup parent, final TableLayout result) {
+      final Context context = parent.getContext();
+      
+      final HtmlEntry htmlEntry = row.getEntry();
+      
+      //final TableRow tableRow = new TableRow(context);
+      final LinearLayout tableRow = new LinearLayout(context);
+      result.addView(tableRow);
+      
+      // Text.
+      final TextView textView = new TextView(context);
+      textView.setText(htmlEntry.title);
+      textView.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
+      tableRow.addView(textView);
+      
+      // Button.
+      final Button button = new Button(context);
+      button.setText("open");
+      button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.0f));
+      tableRow.addView(button);
+      
+      button.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          startActivity(HtmlDisplayActivity.getHtmlIntent(String.format("<html><head></head><body>%s</body></html>", htmlEntry.html)));
+        }
+      });
+      
+      return result;
+    }
+    
     private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
       final Context context = parent.getContext();
       final TextView textView = new TextView(context);
