@@ -293,8 +293,6 @@ public class DictionaryActivity extends ListActivity {
 
         setContentView(R.layout.dictionary_activity);
         searchText = (EditText) findViewById(R.id.SearchText);
-        searchText.setTypeface(typeface);
-        searchText.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
 
         langButton = (Button) findViewById(R.id.LangButton);
 
