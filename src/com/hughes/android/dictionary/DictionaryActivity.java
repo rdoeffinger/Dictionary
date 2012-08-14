@@ -293,9 +293,6 @@ public class DictionaryActivity extends ListActivity {
 
         setContentView(R.layout.dictionary_activity);
         searchText = (EditText) findViewById(R.id.SearchText);
-
-        langButton = (Button) findViewById(R.id.LangButton);
-
         searchText.requestFocus();
         searchText.addTextChangedListener(searchTextWatcher);
 
@@ -320,7 +317,7 @@ public class DictionaryActivity extends ListActivity {
                 .getBoolean(getString(R.string.showClearSearchTextButtonKey), true) ? View.VISIBLE
                 : View.GONE);
 
-        final Button langButton = (Button) findViewById(R.id.LangButton);
+        langButton = (Button) findViewById(R.id.LangButton);
         langButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 onLanguageButton();
@@ -335,13 +332,13 @@ public class DictionaryActivity extends ListActivity {
         });
         updateLangButton();
 
-        final Button upButton = (Button) findViewById(R.id.UpButton);
+        final View upButton = findViewById(R.id.UpButton);
         upButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 onUpDownButton(true);
             }
         });
-        final Button downButton = (Button) findViewById(R.id.DownButton);
+        final View downButton = findViewById(R.id.DownButton);
         downButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 onUpDownButton(false);
