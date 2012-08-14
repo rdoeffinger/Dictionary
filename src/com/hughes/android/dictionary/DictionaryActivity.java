@@ -991,22 +991,40 @@ public class DictionaryActivity extends ListActivity {
 
     final class IndexAdapter extends BaseAdapter {
 
+        private static final float PADDING_DEFAULT_DP = 8;
+
+        private static final float PADDING_LARGE_DP = 16;
+
         final Index index;
 
         final List<RowBase> rows;
 
         final Set<String> toHighlight;
 
+        private int mPaddingDefault;
+
+        private int mPaddingLarge;
+
         IndexAdapter(final Index index) {
             this.index = index;
             rows = index.rows;
             this.toHighlight = null;
+            getMetrics();
         }
 
         IndexAdapter(final Index index, final List<RowBase> rows, final List<String> toHighlight) {
             this.index = index;
             this.rows = rows;
             this.toHighlight = new LinkedHashSet<String>(toHighlight);
+            getMetrics();
+        }
+
+        private void getMetrics() {
+            // Get the screen's density scale
+            final float scale = getResources().getDisplayMetrics().density;
+            // Convert the dps to pixels, based on density scale
+            mPaddingDefault = (int) (PADDING_DEFAULT_DP * scale + 0.5f);
+            mPaddingLarge = (int) (PADDING_LARGE_DP * scale + 0.5f);
         }
 
         @Override
@@ -1052,6 +1070,7 @@ public class DictionaryActivity extends ListActivity {
 
             final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
             layoutParams.weight = 0.5f;
+            layoutParams.leftMargin = mPaddingLarge;
 
             for (int r = 0; r < rowCount; ++r) {
                 final TableRow tableRow = new TableRow(result.getContext());
@@ -1185,6 +1204,7 @@ public class DictionaryActivity extends ListActivity {
             tableRow.addView(textView);
             tableRow.setBackgroundResource(row.hasMainEntry ? theme.tokenRowMainBg
                     : theme.tokenRowOtherBg);
+            tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
             result.addView(tableRow);
             return result;
         }
