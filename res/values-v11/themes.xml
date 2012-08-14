@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  
+  <!-- Default: dark theme -->
+    
+  <style name="Theme.Default" parent="@android:style/Theme.Holo">
+      <item name="android:textColorLink">#FFFFFF</item>
+  </style>
+  
+  
+  <!-- ****************************************************************** -->
+
+  <style name="Theme.Light" parent="@android:style/Theme.Holo.Light">
+      <item name="android:textColorLink">#000000</item>
+  </style>
+  
+
+</resources>
