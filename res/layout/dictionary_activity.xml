@@ -34,23 +34,19 @@
             android:padding="@dimen/default_padding"
             android:src="@drawable/ic_input_delete" />
 
-        <Button
+        <ImageButton
             android:id="@+id/DownButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#00000000"
-            android:drawableLeft="@drawable/arrow_down_float"
-            android:minHeight="30dip"
-            android:minWidth="30dip" />
+            style="@style/BorderlessButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/arrow_down_float" />
 
-        <Button
+        <ImageButton
             android:id="@+id/UpButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#00000000"
-            android:drawableLeft="@drawable/arrow_up_float"
-            android:minHeight="30dip"
-            android:minWidth="30dip" />
+            style="@style/BorderlessButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/arrow_up_float" />
     </LinearLayout>
 
     <ListView
