@@ -14,25 +14,19 @@
 
 package com.hughes.android.dictionary;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.RandomAccessFile;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.Dictionary;
+import com.hughes.android.dictionary.engine.EntrySource;
+import com.hughes.android.dictionary.engine.HtmlEntry;
+import com.hughes.android.dictionary.engine.Index;
+import com.hughes.android.dictionary.engine.Index.IndexEntry;
+import com.hughes.android.dictionary.engine.PairEntry;
+import com.hughes.android.dictionary.engine.PairEntry.Pair;
+import com.hughes.android.dictionary.engine.RowBase;
+import com.hughes.android.dictionary.engine.TokenRow;
+import com.hughes.android.dictionary.engine.TransliteratorManager;
+import com.hughes.android.util.IntentLauncher;
+import com.hughes.android.util.NonLinkClickableSpan;
 
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -64,10 +58,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
@@ -82,19 +74,25 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
-import com.hughes.android.dictionary.engine.Dictionary;
-import com.hughes.android.dictionary.engine.EntrySource;
-import com.hughes.android.dictionary.engine.HtmlEntry;
-import com.hughes.android.dictionary.engine.Index;
-import com.hughes.android.dictionary.engine.Index.IndexEntry;
-import com.hughes.android.dictionary.engine.PairEntry;
-import com.hughes.android.dictionary.engine.PairEntry.Pair;
-import com.hughes.android.dictionary.engine.RowBase;
-import com.hughes.android.dictionary.engine.TokenRow;
-import com.hughes.android.dictionary.engine.TransliteratorManager;
-import com.hughes.android.util.IntentLauncher;
-import com.hughes.android.util.NonLinkClickableSpan;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DictionaryActivity extends ListActivity {
 
@@ -638,8 +636,8 @@ public class DictionaryActivity extends ListActivity {
           
           dialog.show();
           final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-          layoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
-          layoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
+          layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+          layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
           dialog.getWindow().setAttributes(layoutParams);
           return false;
         }
@@ -744,7 +742,7 @@ public class DictionaryActivity extends ListActivity {
       out.close();
     } catch (IOException e) {
       Log.e(LOG, "Unable to append to " + wordList.getAbsolutePath(), e);
-      Toast.makeText(this, getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()), Toast.LENGTH_LONG);
+      Toast.makeText(this, getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()), Toast.LENGTH_LONG).show();
     }
     return;
   }
@@ -762,7 +760,8 @@ public class DictionaryActivity extends ListActivity {
     searchText.selectAll();
   }
 
-  void onCopy(final RowBase row) {
+  @SuppressWarnings("deprecation")
+void onCopy(final RowBase row) {
     defocusSearchText();
 
     Log.d(LOG, "Copy, row=" + row);
@@ -933,8 +932,8 @@ public class DictionaryActivity extends ListActivity {
   // IndexAdapter
   // --------------------------------------------------------------------------
   
-  static ViewGroup.LayoutParams WEIGHT_1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, 1.0f);
-  static ViewGroup.LayoutParams WEIGHT_0 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, 0.0f);
+  static ViewGroup.LayoutParams WEIGHT_1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f);
+  static ViewGroup.LayoutParams WEIGHT_0 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.0f);
 
   final class IndexAdapter extends BaseAdapter {
     

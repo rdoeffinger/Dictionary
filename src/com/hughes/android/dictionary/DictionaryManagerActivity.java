@@ -14,13 +14,10 @@
 
 package com.hughes.android.dictionary;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.util.IntentLauncher;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -39,7 +36,6 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -53,9 +49,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
-import com.hughes.android.util.IntentLauncher;
-import com.hughes.util.StringUtil;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DictionaryManagerActivity extends ListActivity {
 
