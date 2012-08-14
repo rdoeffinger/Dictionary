@@ -9,6 +9,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
+        <Button
+            android:id="@+id/LangButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:minWidth="50dip"
+            android:text="" />
+
         <EditText
             android:id="@+id/SearchText"
             android:layout_width="0dip"
@@ -18,22 +26,13 @@
             android:imeOptions="actionSearch|flagNoEnterAction|flagNoExtractUi"
             android:inputType="text" />
 
-        <Button
+        <ImageButton
             android:id="@+id/ClearSearchTextButton"
+            style="@style/BorderlessButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dip"
-            android:background="#00000000"
-            android:drawableLeft="@drawable/ic_input_delete" />
-        <!-- transparent -->
-
-        <Button
-            android:id="@+id/LangButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:minWidth="50dip"
-            android:text="" />
+            android:padding="@dimen/default_padding"
+            android:src="@drawable/ic_input_delete" />
 
         <Button
             android:id="@+id/DownButton"

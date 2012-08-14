@@ -310,10 +310,10 @@ public class DictionaryActivity extends ListActivity {
         setSearchText(text, true);
         Log.d(LOG, "Trying to restore searchText=" + text);
 
-        final Button clearSearchTextButton = (Button) findViewById(R.id.ClearSearchTextButton);
+        final View clearSearchTextButton = findViewById(R.id.ClearSearchTextButton);
         clearSearchTextButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                onClearSearchTextButton(clearSearchTextButton);
+                onClearSearchTextButton();
             }
         });
         clearSearchTextButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
@@ -444,7 +444,7 @@ public class DictionaryActivity extends ListActivity {
     // Buttons
     // --------------------------------------------------------------------------
 
-    private void onClearSearchTextButton(final Button clearSearchTextButton) {
+    private void onClearSearchTextButton() {
         setSearchText("", true);
         Log.d(LOG, "Trying to show soft keyboard.");
         final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
