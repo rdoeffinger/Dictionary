@@ -51,6 +51,8 @@ public class Language {
     isoCodeToResources.put("BN", new LanguageResources("Bengali", R.string.BN));
     isoCodeToResources.put("BS", new LanguageResources("Bosnian", R.string.BS));
     isoCodeToResources.put("BG", new LanguageResources("Bulgarian", R.string.BG));
+    isoCodeToResources.put("MY", new LanguageResources("Burmese", R.string.MY));
+    isoCodeToResources.put("yue", new LanguageResources("Cantonese", R.string.yue));
     isoCodeToResources.put("CA", new LanguageResources("Catalan", R.string.CA));
     isoCodeToResources.put("HR", new LanguageResources("Croatian", R.string.HR));
     isoCodeToResources.put("CS", new LanguageResources("Czech", R.string.CS));
@@ -64,6 +66,7 @@ public class Language {
     isoCodeToResources.put("FR", new LanguageResources("French", R.string.FR));
     isoCodeToResources.put("DE", new LanguageResources("German", R.string.DE));
     isoCodeToResources.put("EL", new LanguageResources("Greek", R.string.EL));
+    isoCodeToResources.put("grc", new LanguageResources("Ancient Greek", R.string.grc));
     isoCodeToResources.put("haw", new LanguageResources("Hawaiian", R.string.haw));
     isoCodeToResources.put("HE", new LanguageResources("Hebrew", R.string.HE));
     isoCodeToResources.put("HI", new LanguageResources("Hindi", R.string.HI));

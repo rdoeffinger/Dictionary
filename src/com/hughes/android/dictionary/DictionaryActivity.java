@@ -14,20 +14,6 @@
 
 package com.hughes.android.dictionary;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
-import com.hughes.android.dictionary.engine.Dictionary;
-import com.hughes.android.dictionary.engine.EntrySource;
-import com.hughes.android.dictionary.engine.HtmlEntry;
-import com.hughes.android.dictionary.engine.Index;
-import com.hughes.android.dictionary.engine.Index.IndexEntry;
-import com.hughes.android.dictionary.engine.PairEntry;
-import com.hughes.android.dictionary.engine.PairEntry.Pair;
-import com.hughes.android.dictionary.engine.RowBase;
-import com.hughes.android.dictionary.engine.TokenRow;
-import com.hughes.android.dictionary.engine.TransliteratorManager;
-import com.hughes.android.util.IntentLauncher;
-import com.hughes.android.util.NonLinkClickableSpan;
-
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -62,9 +48,11 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -73,6 +61,20 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.Dictionary;
+import com.hughes.android.dictionary.engine.EntrySource;
+import com.hughes.android.dictionary.engine.HtmlEntry;
+import com.hughes.android.dictionary.engine.Index;
+import com.hughes.android.dictionary.engine.Index.IndexEntry;
+import com.hughes.android.dictionary.engine.PairEntry;
+import com.hughes.android.dictionary.engine.PairEntry.Pair;
+import com.hughes.android.dictionary.engine.RowBase;
+import com.hughes.android.dictionary.engine.TokenRow;
+import com.hughes.android.dictionary.engine.TransliteratorManager;
+import com.hughes.android.util.IntentLauncher;
+import com.hughes.android.util.NonLinkClickableSpan;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -1187,20 +1189,48 @@ public class DictionaryActivity extends ListActivity {
 
         private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
             final Context context = parent.getContext();
+            
+            final TableRow tableRow = new TableRow(result.getContext());
+            tableRow.setBackgroundResource(row.hasMainEntry ? theme.tokenRowMainBg
+                    : theme.tokenRowOtherBg);
+            tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
+            result.addView(tableRow);
+            
+            final IndexEntry indexEntry = row.getIndexEntry();
+
             final TextView textView = new TextView(context);
-            textView.setText(row.getToken());
+            textView.setText(indexEntry.token);
             // Doesn't work:
             // textView.setTextColor(android.R.color.secondary_text_light);
             textView.setTextAppearance(context, theme.tokenRowFg);
             textView.setTypeface(typeface);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 5 * fontSizeSp / 4);
-
-            final TableRow tableRow = new TableRow(result.getContext());
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(0);
+            lp.weight = 1.0f;
+            textView.setLayoutParams(lp);
             tableRow.addView(textView);
-            tableRow.setBackgroundResource(row.hasMainEntry ? theme.tokenRowMainBg
-                    : theme.tokenRowOtherBg);
-            tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
-            result.addView(tableRow);
+
+            
+            if (!indexEntry.htmlEntries.isEmpty()) {
+                final ImageButton button = new ImageButton(context);
+                button.setImageResource(R.drawable.ic_menu_forward);
+                button.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String html = HtmlEntry.htmlBody(indexEntry.htmlEntries);
+                        startActivity(HtmlDisplayActivity.getHtmlIntent(String.format(
+                                "<html><head></head><body>%s</body></html>", html)));
+                    }
+                });
+                tableRow.addView(button);
+                lp = new TableRow.LayoutParams(1);
+                lp.weight = 0.0f;
+                button.setLayoutParams(lp);
+                //result.setColumnStretchable(0, true);
+                //result.setColumnStretchable(1, false);
+            }
+            
+            
             return result;
         }
 

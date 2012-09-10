@@ -9,10 +9,12 @@
   <string name="BN">Bengali</string>
   <string name="BS">Bosnian</string>
   <string name="BG">Bulgarian</string>
+  <string name="MY">Burmese</string>
+  <string name="yue">Cantonese</string>
   <string name="CA">Catalan</string>
   <string name="HR">Croatian</string>
   <string name="CS">Czech</string>
-  <string name="ZH">Chinese (Mandarin, Cantonese)</string>
+  <string name="ZH">Chinese (Mandarin)</string>
   <string name="DA">Danish</string>
   <string name="NL">Dutch</string>
   <string name="EN">English</string>
@@ -23,6 +25,7 @@
   <string name="GD">Scottish Gaelic</string>
   <string name="DE">German</string>
   <string name="EL">Greek</string>
+  <string name="grc">Ancient Greek</string>
   <string name="haw">Hawaiian</string>
   <string name="HE">Hebrew</string>
   <string name="HI">Hindi</string>

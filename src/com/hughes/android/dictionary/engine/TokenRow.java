@@ -20,6 +20,7 @@ import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.hughes.android.dictionary.engine.Index.IndexEntry;
 import com.ibm.icu.text.Transliterator;
 
 public class TokenRow extends RowBase {
@@ -51,7 +52,11 @@ public class TokenRow extends RowBase {
   }
   
   public String getToken() {
-    return index.sortedIndexEntries.get(referenceIndex).token;
+    return getIndexEntry().token;
+  }
+  
+  public IndexEntry getIndexEntry() {
+      return index.sortedIndexEntries.get(referenceIndex);
   }
 
   @Override

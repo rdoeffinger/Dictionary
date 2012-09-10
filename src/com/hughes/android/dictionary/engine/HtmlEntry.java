@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntry>, Comparable<HtmlEntry> {
   
+  // Both are HTML escaped already.
   public final String title;
   public String html;
   
@@ -136,5 +137,13 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     }
     
   }
+
+    public static String htmlBody(final List<HtmlEntry> htmlEntries) {
+        final StringBuilder result = new StringBuilder();
+        for (final HtmlEntry htmlEntry : htmlEntries) {
+            result.append(String.format("<h1>%s</h1>%s\n", htmlEntry.title, htmlEntry.html));
+        }
+        return result.toString();
+    }
 
 }
