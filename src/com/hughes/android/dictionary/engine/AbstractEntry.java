@@ -14,19 +14,23 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.util.IndexedObject;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 
-public abstract class AbstractEntry {
+public abstract class AbstractEntry extends IndexedObject {
   
   final EntrySource entrySource;
   
   protected AbstractEntry(EntrySource entrySource) {
+    super(-1);
     this.entrySource = entrySource;
   }
 
-  public AbstractEntry(Dictionary dictionary, RandomAccessFile raf) throws IOException {
+  public AbstractEntry(Dictionary dictionary, RandomAccessFile raf, final int index) throws IOException {
+    super(index);
     if (dictionary.dictFileVersion >= 1) {
       final int entrySouceIdx = raf.readShort();
       this.entrySource = dictionary.sources.get(entrySouceIdx);
@@ -39,11 +43,8 @@ public abstract class AbstractEntry {
     raf.writeShort(entrySource.index());
   }
 
-  /**
-   * @return this entry's position within the list just added to.
-   */
-  public abstract int addToDictionary(final Dictionary dictionary);
+  public abstract void addToDictionary(final Dictionary dictionary);
 
-  public abstract RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex);
+  public abstract RowBase CreateRow(int rowIndex, Index dictionaryIndex);
 
 }

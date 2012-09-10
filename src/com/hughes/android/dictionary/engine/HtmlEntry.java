@@ -1,30 +1,27 @@
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFSerializable;
+import com.ibm.icu.text.Transliterator;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.hughes.android.dictionary.engine.PairEntry.Pair;
-import com.hughes.util.raf.RAFSerializable;
-import com.hughes.util.raf.RAFSerializer;
-import com.ibm.icu.text.Transliterator;
-
 public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntry>, Comparable<HtmlEntry> {
   
   public final String title;
   public String html;
   
-  
-
   public HtmlEntry(final EntrySource entrySource, String title) {
     super(entrySource);
     this.title = title;
   }
   
-  public HtmlEntry(Dictionary dictionary, RandomAccessFile raf) throws IOException {
-    super(dictionary, raf);
+  public HtmlEntry(Dictionary dictionary, RandomAccessFile raf, final int index) throws IOException {
+    super(dictionary, raf, index);
     title = raf.readUTF();
     html = raf.readUTF();
   }
@@ -36,18 +33,19 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
   }
 
   @Override
-  public int addToDictionary(Dictionary dictionary) {
+  public void addToDictionary(Dictionary dictionary) {
+    assert index == -1;
     dictionary.htmlEntries.add(this);
-    return dictionary.htmlEntries.size() - 1;
+    index = dictionary.htmlEntries.size() - 1;
   }
   
   @Override
-  public RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex) {
-    return new Row(entryIndex, rowIndex, dictionaryIndex);
+  public RowBase CreateRow(int rowIndex, Index dictionaryIndex) {
+    return new Row(this.index, rowIndex, dictionaryIndex);
   }
 
   
-  static final class Serializer implements RAFSerializer<HtmlEntry> {
+  static final class Serializer implements RAFListSerializer<HtmlEntry> {
     
     final Dictionary dictionary;
     
@@ -56,8 +54,8 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     }
 
     @Override
-    public HtmlEntry read(RandomAccessFile raf) throws IOException {
-      return new HtmlEntry(dictionary, raf);
+    public HtmlEntry read(RandomAccessFile raf, final int index) throws IOException {
+      return new HtmlEntry(dictionary, raf, index);
     }
 
     @Override

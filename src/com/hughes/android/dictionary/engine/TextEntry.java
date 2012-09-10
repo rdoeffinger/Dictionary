@@ -14,23 +14,22 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFSerializable;
+import com.ibm.icu.text.Transliterator;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.hughes.android.dictionary.engine.HtmlEntry.Row;
-import com.hughes.util.raf.RAFSerializable;
-import com.hughes.util.raf.RAFSerializer;
-import com.ibm.icu.text.Transliterator;
-
 public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntry> {
   
   final String text;
   
-  public TextEntry(final Dictionary dictionary, final RandomAccessFile raf) throws IOException {
-    super(dictionary, raf);
+  public TextEntry(final Dictionary dictionary, final RandomAccessFile raf, final int index) throws IOException {
+    super(dictionary, raf, index);
     text = raf.readUTF();
     throw new RuntimeException();
   }
@@ -40,7 +39,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     raf.writeUTF(text);
   }
   
-  static final class Serializer implements RAFSerializer<TextEntry> {
+  static final class Serializer implements RAFListSerializer<TextEntry> {
     
     final Dictionary dictionary;
     
@@ -49,8 +48,8 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     }
 
     @Override
-    public TextEntry read(RandomAccessFile raf) throws IOException {
-      return new TextEntry(dictionary, raf);
+    public TextEntry read(RandomAccessFile raf, final int index) throws IOException {
+      return new TextEntry(dictionary, raf, index);
     }
 
     @Override
@@ -61,13 +60,14 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
 
   
   @Override
-  public int addToDictionary(final Dictionary dictionary) {
+  public void addToDictionary(final Dictionary dictionary) {
+    assert index == -1;
     dictionary.textEntries.add(this);
-    return dictionary.textEntries.size() - 1;
+    index = dictionary.textEntries.size() - 1;
   }
   
   @Override
-  public RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex) {
+  public RowBase CreateRow(int rowIndex, Index dictionaryIndex) {
     throw new UnsupportedOperationException("TextEntry's don't really exist.");
   }
 

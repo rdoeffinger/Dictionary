@@ -14,17 +14,16 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFSerializable;
+import com.ibm.icu.text.Transliterator;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import com.hughes.android.dictionary.engine.HtmlEntry.Row;
-import com.hughes.util.raf.RAFSerializable;
-import com.hughes.util.raf.RAFSerializer;
-import com.ibm.icu.text.Transliterator;
 
 public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntry>, Comparable<PairEntry> {
   
@@ -40,8 +39,8 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     this.pairs.add(new Pair(lang1, lang2));
   }
   
-  public PairEntry(final Dictionary dictionary, final RandomAccessFile raf) throws IOException {
-    super(dictionary, raf);
+  public PairEntry(final Dictionary dictionary, final RandomAccessFile raf, final int index) throws IOException {
+    super(dictionary, raf, index);
     final int size = raf.readInt();
     pairs = new ArrayList<PairEntry.Pair>(size);
     for (int i = 0; i < size; ++i) {
@@ -60,7 +59,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     }
   }
   
-  static final class Serializer implements RAFSerializer<PairEntry> {
+  static final class Serializer implements RAFListSerializer<PairEntry> {
     
     final Dictionary dictionary;
     
@@ -69,8 +68,8 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     }
 
     @Override
-    public PairEntry read(RandomAccessFile raf) throws IOException {
-      return new PairEntry(dictionary, raf);
+    public PairEntry read(RandomAccessFile raf, int index) throws IOException {
+      return new PairEntry(dictionary, raf, index);
     }
 
     @Override
@@ -80,14 +79,15 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
   };
   
   @Override
-  public int addToDictionary(final Dictionary dictionary) {
+  public void addToDictionary(final Dictionary dictionary) {
+    assert index == -1;
     dictionary.pairEntries.add(this);
-    return dictionary.pairEntries.size() - 1;
+    index = dictionary.pairEntries.size() - 1;
   }
   
   @Override
-  public RowBase CreateRow(int entryIndex, int rowIndex, Index dictionaryIndex) {
-    return new Row(entryIndex, rowIndex, dictionaryIndex);
+  public RowBase CreateRow(int rowIndex, Index dictionaryIndex) {
+    return new Row(this.index, rowIndex, dictionaryIndex);
   }
 
 

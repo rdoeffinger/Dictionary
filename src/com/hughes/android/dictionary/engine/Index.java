@@ -17,6 +17,19 @@
  */
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.android.dictionary.DictionaryInfo;
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.RowBase.RowKey;
+import com.hughes.util.CachingList;
+import com.hughes.util.TransformingList;
+import com.hughes.util.raf.RAFList;
+import com.hughes.util.raf.RAFSerializable;
+import com.hughes.util.raf.RAFSerializer;
+import com.hughes.util.raf.SerializableSerializer;
+import com.hughes.util.raf.UniformRAFList;
+import com.ibm.icu.text.Collator;
+import com.ibm.icu.text.Transliterator;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
@@ -33,24 +46,11 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-import com.hughes.android.dictionary.DictionaryInfo;
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
-import com.hughes.android.dictionary.engine.RowBase.RowKey;
-import com.hughes.util.CachingList;
-import com.hughes.util.TransformingList;
-import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFSerializable;
-import com.hughes.util.raf.RAFSerializer;
-import com.hughes.util.raf.SerializableSerializer;
-import com.hughes.util.raf.UniformRAFList;
-import com.ibm.icu.text.Collator;
-import com.ibm.icu.text.Transliterator;
-
 public final class Index implements RAFSerializable<Index> {
   
   static final int CACHE_SIZE = 5000;
   
-  final Dictionary dict;
+  public final Dictionary dict;
   
   public final String shortName;  // Typically the ISO code for the language.
   public final String longName;
@@ -124,7 +124,7 @@ public final class Index implements RAFSerializable<Index> {
     if (dict.dictFileVersion >= 2) {
       mainTokenCount = raf.readInt();
     }
-    sortedIndexEntries = CachingList.create(RAFList.create(raf, IndexEntry.SERIALIZER, raf.getFilePointer()), CACHE_SIZE);
+    sortedIndexEntries = CachingList.create(RAFList.create(raf, indexEntrySerializer, raf.getFilePointer()), CACHE_SIZE);
     if (dict.dictFileVersion >= 4) {
       stoplist = new SerializableSerializer<Set<String>>().read(raf);
     } else {
@@ -143,7 +143,7 @@ public final class Index implements RAFSerializable<Index> {
     if (dict.dictFileVersion >= 2) {
       raf.writeInt(mainTokenCount);
     }
-    RAFList.write(raf, sortedIndexEntries, IndexEntry.SERIALIZER);
+    RAFList.write(raf, sortedIndexEntries, indexEntrySerializer);
     new SerializableSerializer<Set<String>>().write(raf, stoplist);
     UniformRAFList.write(raf, (Collection<RowBase>) rows, new RowBase.Serializer(this), 5 /* bytes per entry */);
   }
@@ -154,38 +154,49 @@ public final class Index implements RAFSerializable<Index> {
     }
   }
   
-  public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
-    public final String token;
-    private final String normalizedToken;
-    public final int startRow;
-    public final int numRows;  // doesn't count the token row!
-    
-    
-    static final RAFSerializer<IndexEntry> SERIALIZER = new RAFSerializer<IndexEntry> () {
+  private final RAFSerializer<IndexEntry> indexEntrySerializer = new RAFSerializer<IndexEntry> () {
       @Override
       public IndexEntry read(RandomAccessFile raf) throws IOException {
-        return new IndexEntry(raf);
+        return new IndexEntry(Index.this, raf);
       }
       @Override
       public void write(RandomAccessFile raf, IndexEntry t) throws IOException {
         t.write(raf);
       }};
       
-    public IndexEntry(final String token, final String normalizedToken, final int startRow, final int numRows) {
+
+  public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
+    private final Index index;
+    public final String token;
+    private final String normalizedToken;
+    public final int startRow;
+    public final int numRows;  // doesn't count the token row!
+    public final List<HtmlEntry> htmlEntries;
+    
+    
+    public IndexEntry(final Index index, final String token, final String normalizedToken, final int startRow, final int numRows) {
+      this.index = index;
       assert token.equals(token.trim());
       assert token.length() > 0;
       this.token = token;
       this.normalizedToken = normalizedToken;
       this.startRow = startRow;
       this.numRows = numRows;
+      this.htmlEntries = new ArrayList<HtmlEntry>();
     }
     
-    public IndexEntry(final RandomAccessFile raf) throws IOException {
+    public IndexEntry(final Index index, final RandomAccessFile raf) throws IOException {
+      this.index = index;
       token = raf.readUTF();
       startRow = raf.readInt();
       numRows = raf.readInt();
       final boolean hasNormalizedForm = raf.readBoolean();
       normalizedToken = hasNormalizedForm ? raf.readUTF() : token;
+      if (index.dict.dictFileVersion >= 6) {
+        this.htmlEntries = CachingList.create(RAFList.create(raf, index.dict.htmlEntryIndexSerializer, raf.getFilePointer()), 1);
+      } else {
+        this.htmlEntries = Collections.emptyList();
+      }
     }
     
     public void write(RandomAccessFile raf) throws IOException {
@@ -197,6 +208,7 @@ public final class Index implements RAFSerializable<Index> {
       if (hasNormalizedForm) {
         raf.writeUTF(normalizedToken);
       }
+      RAFList.write(raf, htmlEntries, index.dict.htmlEntryIndexSerializer);
     }
 
     public String toString() {
@@ -247,10 +259,10 @@ public final class Index implements RAFSerializable<Index> {
         final int result = windBackCase(token, mid, interrupted);
         return result;
       } else if (comp < 0) {
-        //System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
+        System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
         end = mid;
       } else {
-        //System.out.println("Lower bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
+        System.out.println("Lower bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
         start = mid + 1;
       }
     }
@@ -397,7 +409,7 @@ public final class Index implements RAFSerializable<Index> {
       result.addAll(ordered);
     }
     
-    System.out.println("searchDuration: " + (System.currentTimeMillis() - startMills));
+    //System.out.println("searchDuration: " + (System.currentTimeMillis() - startMills));
     return result;
   }
   

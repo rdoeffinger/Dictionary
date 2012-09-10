@@ -33,7 +33,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
   
   static final int CACHE_SIZE = 5000;
   
-  static final int CURRENT_DICT_VERSION = 5;
+  static final int CURRENT_DICT_VERSION = 6;
   static final String END_OF_DICTIONARY = "END OF DICTIONARY";
   
   // persisted
@@ -120,6 +120,17 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     public void write(RandomAccessFile raf, Index t) throws IOException {
       t.write(raf);
     }};
+    
+    final RAFListSerializer<HtmlEntry> htmlEntryIndexSerializer = new RAFListSerializer<HtmlEntry>() {
+        @Override
+        public void write(RandomAccessFile raf, HtmlEntry t) throws IOException {
+            if (t.index() == -1) throw new IndexOutOfBoundsException();
+            raf.writeInt(t.index());
+        }
+        @Override
+        public HtmlEntry read(RandomAccessFile raf, int readIndex) throws IOException {
+            return htmlEntries.get(raf.readInt());
+        }}; 
     
     public void print(final PrintStream out) {
       out.println("dictInfo=" + dictInfo);

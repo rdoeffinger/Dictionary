@@ -148,7 +148,7 @@ public abstract class RowBase extends IndexedObject {
       if (rowType == 0) {
         return new PairEntry.Row(raf, listIndex, index);
       } else if (rowType == 1 || rowType == 3) {
-        return new TokenRow(raf, listIndex, index, rowType == 1);
+        return new TokenRow(raf, listIndex, index, /* hasMainEntry */ rowType == 1);
       } else if (rowType == 2) {
         return new TextEntry.Row(raf, listIndex, index);
       } else if (rowType == 4) {
