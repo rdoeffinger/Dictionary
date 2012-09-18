@@ -529,6 +529,12 @@ public class DictionaryActivity extends ListActivity {
                     layoutParams.weight = 1.0f;
                     button.setLayoutParams(layoutParams);
                     result.addView(button);
+                    
+                    if (i > 0) {
+                        final TextView dash = new TextView(parent.getContext());
+                        dash.setText("-");
+                        result.addView(dash);
+                    }
                 }
                 return result;
             }
