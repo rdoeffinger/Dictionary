@@ -48,7 +48,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -508,26 +507,29 @@ public class DictionaryActivity extends ListActivity {
                 final LinearLayout result = new LinearLayout(parent.getContext());
 
                 final DictionaryInfo dictionaryInfo = getItem(position);
-                final Button button = new Button(parent.getContext());
-                final String name = application
-                        .getDictionaryName(dictionaryInfo.uncompressedFilename);
-                button.setText(name);
-                final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
-                        getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename),
-                                0, searchText.getText().toString())) {
-                    @Override
-                    protected void onGo() {
-                        dialog.dismiss();
-                        DictionaryActivity.this.finish();
+                for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
+                    final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
+                    final Button button = new Button(parent.getContext());
+//                    final String name = application
+//                            .getDictionaryName(dictionaryInfo.uncompressedFilename);
+                    button.setText(indexInfo.shortName);
+                    final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
+                            getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename),
+                                    i, searchText.getText().toString())) {
+                        @Override
+                        protected void onGo() {
+                            dialog.dismiss();
+                            DictionaryActivity.this.finish();
+                        };
                     };
-                };
-                button.setOnClickListener(intentLauncher);
-                final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                layoutParams.width = 0;
-                layoutParams.weight = 1.0f;
-                button.setLayoutParams(layoutParams);
-                result.addView(button);
+                    button.setOnClickListener(intentLauncher);
+                    final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.width = 0;
+                    layoutParams.weight = 1.0f;
+                    button.setLayoutParams(layoutParams);
+                    result.addView(button);
+                }
                 return result;
             }
 
