@@ -386,6 +386,7 @@ public class DictionaryActivity extends ListActivity {
 
     @Override
     protected void onResume() {
+        Log.d(LOG, "onResume");
         super.onResume();
         if (PreferenceActivity.prefsMightHaveChanged) {
             PreferenceActivity.prefsMightHaveChanged = false;
@@ -395,6 +396,7 @@ public class DictionaryActivity extends ListActivity {
         if (initialSearchText != null) {
             setSearchText(initialSearchText, true);
         }
+        showKeyboard();
     }
 
     @Override
@@ -444,6 +446,10 @@ public class DictionaryActivity extends ListActivity {
 
     private void onClearSearchTextButton() {
         setSearchText("", true);
+        showKeyboard();
+    }
+
+    private void showKeyboard() {
         Log.d(LOG, "Trying to show soft keyboard.");
         final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
@@ -1161,30 +1167,33 @@ public class DictionaryActivity extends ListActivity {
             return result;
         }
 
-        private TableLayout getView(HtmlEntry.Row row, ViewGroup parent, final TableLayout result) {
-            final HtmlEntry htmlEntry = row.getEntry();
-            return getPossibleHtmlEntryView(htmlEntry.title, false, Collections.singletonList(htmlEntry), parent, result);
-        }
-
-        private TableLayout getPossibleHtmlEntryView(final String text, final boolean hasMainEntry, final List<HtmlEntry> htmlEntries, ViewGroup parent, final TableLayout result) {
+        private TableLayout getPossibleHtmlEntryView(final boolean isTokenRow, final String text, final boolean hasMainEntry, final List<HtmlEntry> htmlEntries, final String htmlTextToHighlight, ViewGroup parent, final TableLayout result) {
             final Context context = parent.getContext();
             
             final TableRow tableRow = new TableRow(result.getContext());
             tableRow.setBackgroundResource(hasMainEntry ? theme.tokenRowMainBg
                     : theme.tokenRowOtherBg);
-            tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
+            if (isTokenRow) {
+                tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
+            } else {
+                tableRow.setPadding(mPaddingLarge, mPaddingDefault, mPaddingDefault, 0);
+            }
             result.addView(tableRow);
-            
 
             final TextView textView = new TextView(context);
             textView.setText(text);
             // Doesn't work:
             // textView.setTextColor(android.R.color.secondary_text_light);
-            textView.setTextAppearance(context, theme.tokenRowFg);
             textView.setTypeface(typeface);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 5 * fontSizeSp / 4);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(0);
+            if (isTokenRow) {
+                textView.setTextAppearance(context, theme.tokenRowFg);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 4 * fontSizeSp / 3);
+            } else {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+            }
             lp.weight = 1.0f;
+            
             textView.setLayoutParams(lp);
             tableRow.addView(textView);
 
@@ -1197,7 +1206,7 @@ public class DictionaryActivity extends ListActivity {
                     public void onClick(View v) {
                         final String html = HtmlEntry.htmlBody(htmlEntries);
                         startActivity(HtmlDisplayActivity.getHtmlIntent(String.format(
-                                "<html><head></head><body>%s</body></html>", html), text));
+                                "<html><head></head><body>%s</body></html>", html), htmlTextToHighlight, false));
                     }
                 });
                 tableRow.addView(button);
@@ -1212,8 +1221,15 @@ public class DictionaryActivity extends ListActivity {
         
         private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
             final IndexEntry indexEntry = row.getIndexEntry();
-            return getPossibleHtmlEntryView(indexEntry.token, row.hasMainEntry, indexEntry.htmlEntries, parent, result);
+            return getPossibleHtmlEntryView(true, indexEntry.token, row.hasMainEntry, indexEntry.htmlEntries, null, parent, result);
         }
+        
+        private TableLayout getView(HtmlEntry.Row row, ViewGroup parent, final TableLayout result) {
+            final HtmlEntry htmlEntry = row.getEntry();
+            final TokenRow tokenRow = row.getTokenRow(true);
+            return getPossibleHtmlEntryView(false, getString(R.string.seeAlso, htmlEntry.title), false, Collections.singletonList(htmlEntry), tokenRow.getToken(), parent, result);
+        }
+
 
     }
     

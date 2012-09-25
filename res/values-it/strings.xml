@@ -35,6 +35,7 @@ Rilevato problema di font (comune su apparecchi Sony Ericsson), ritorno a font d
 <string name="aboutDictionary">About dictionary…</string>
 <string name="randomWord">Parola a caso</string>
 <string name="fontFailure">Problema di Font: %s</string>
+<string name="seeAlso">Vedi anche: %s</string>
 <!-- About dictionary. -->
 <string name="dictionaryPath">File: %s</string>
 <string name="dictionarySize">Dimenzione: %,d bytes</string>

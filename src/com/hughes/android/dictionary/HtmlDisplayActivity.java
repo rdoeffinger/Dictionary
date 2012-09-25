@@ -17,23 +17,23 @@ package com.hughes.android.dictionary;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.webkit.WebView;
 import android.widget.Button;
 
 import com.hughes.util.StringUtil;
 
 public final class HtmlDisplayActivity extends Activity {
+    
+  static final String LOG = "QuickDic";
+
   
   static final String HTML_RES = "html_res";
   static final String HTML = "html";
   static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
+  static final String SHOW_OK_BUTTON = "showOKButton";
   
   public static Intent getHelpLaunchIntent() {
     final Intent intent = new Intent();
@@ -49,11 +49,12 @@ public final class HtmlDisplayActivity extends Activity {
     return intent;
   }
 
-  public static Intent getHtmlIntent(final String html, final String textToHighlight) {
+  public static Intent getHtmlIntent(final String html, final String textToHighlight, final boolean showOkButton) {
     final Intent intent = new Intent();
     intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(), HtmlDisplayActivity.class.getName());
     intent.putExtra(HTML, html);
     intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight);
+    intent.putExtra(SHOW_OK_BUTTON, showOkButton);
     return intent;
   }
 
@@ -76,8 +77,11 @@ public final class HtmlDisplayActivity extends Activity {
     webView.loadData(html, "text/html", "utf-8");
     
     final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
-    if (textToHighlight != null && "".equals(textToHighlight)) {
-        webView.findAllAsync(textToHighlight);
+    if (textToHighlight != null && !"".equals(textToHighlight)) {
+        Log.d(LOG, "Highlighting text: " + textToHighlight);
+        // This isn't working:
+        webView.findAll(textToHighlight);
+        //webView.showFindDialog(textToHighlight, false);
     }
     
     final Button okButton = (Button) findViewById(R.id.okButton);
@@ -87,6 +91,9 @@ public final class HtmlDisplayActivity extends Activity {
         finish();
       }
     });
+    if (!getIntent().getBooleanExtra(SHOW_OK_BUTTON, true)) {
+        okButton.setVisibility(View.INVISIBLE);
+    }
   }
 
 }

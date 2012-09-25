@@ -41,6 +41,7 @@
   <string name="aboutDictionary">About dictionary…</string> 
   <string name="randomWord">Random word</string> 
   <string name="fontFailure">Font failure: %s</string> 
+  <string name="seeAlso">See also: %s</string> 
   
 
   <!-- About dictionary. -->
