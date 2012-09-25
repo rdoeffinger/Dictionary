@@ -33,6 +33,7 @@ public final class HtmlDisplayActivity extends Activity {
   
   static final String HTML_RES = "html_res";
   static final String HTML = "html";
+  static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
   
   public static Intent getHelpLaunchIntent() {
     final Intent intent = new Intent();
@@ -48,10 +49,11 @@ public final class HtmlDisplayActivity extends Activity {
     return intent;
   }
 
-  public static Intent getHtmlIntent(final String html) {
+  public static Intent getHtmlIntent(final String html, final String textToHighlight) {
     final Intent intent = new Intent();
     intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(), HtmlDisplayActivity.class.getName());
     intent.putExtra(HTML, html);
+    intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight);
     return intent;
   }
 
@@ -72,6 +74,11 @@ public final class HtmlDisplayActivity extends Activity {
     }
     final WebView webView = (WebView) findViewById(R.id.webView);
     webView.loadData(html, "text/html", "utf-8");
+    
+    final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
+    if (textToHighlight != null && "".equals(textToHighlight)) {
+        webView.findAllAsync(textToHighlight);
+    }
     
     final Button okButton = (Button) findViewById(R.id.okButton);
     okButton.setOnClickListener(new OnClickListener() {

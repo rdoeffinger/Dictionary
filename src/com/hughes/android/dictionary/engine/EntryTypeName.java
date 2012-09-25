@@ -29,6 +29,7 @@ public enum EntryTypeName {
   WIKTIONARY_TITLE_MULTI_DETAIL(false, true, WIKTIONARY_TITLE_SINGLE_DETAIL),
   WIKTIONARY_TITLE_MULTI(false, true, WIKTIONARY_TITLE_SINGLE),
   WIKTIONARY_TRANSLITERATION(),
+  // How we file "casa {f}, case {pl}" under "case"
   WIKTIONARY_INFLECTED_FORM_MULTI(false, true, WIKTIONARY_INFLECTD_FORM_SINGLE),
   WIKTIONARY_ENGLISH_DEF_WIKI_LINK(),
   WIKTIONARY_ENGLISH_DEF_OTHER_LANG(),
@@ -41,11 +42,13 @@ public enum EntryTypeName {
   WIKTIONARY_TRANSLATION_WIKI_TEXT(),
   WIKTIONARY_TRANSLATION_OTHER_TEXT(),
 
+  // How we file entries like: "sono: {form of|essere}" under "sono.".
   WIKTIONARY_IS_FORM_OF_SOMETHING_ELSE(false, true, null),
 
   MULTIROW_HEAD_MANY_WORDS(),
   MULTIROW_TAIL_MANY_WORDS(),
   WIKTIONARY_EXAMPLE(),
+  // The next two are how we file entries like: "sono: {form of|essere}" under "essere".
   WIKTIONARY_BASE_FORM_SINGLE(),  // These two should be eligible for removal if the links are otherwise present.
   WIKTIONARY_BASE_FORM_MULTI(false, false, WIKTIONARY_BASE_FORM_SINGLE),
   PART_OF_HYPHENATED(),

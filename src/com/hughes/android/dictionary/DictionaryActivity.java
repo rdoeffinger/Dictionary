@@ -1197,7 +1197,7 @@ public class DictionaryActivity extends ListActivity {
                     public void onClick(View v) {
                         final String html = HtmlEntry.htmlBody(htmlEntries);
                         startActivity(HtmlDisplayActivity.getHtmlIntent(String.format(
-                                "<html><head></head><body>%s</body></html>", html)));
+                                "<html><head></head><body>%s</body></html>", html), text));
                     }
                 });
                 tableRow.addView(button);
