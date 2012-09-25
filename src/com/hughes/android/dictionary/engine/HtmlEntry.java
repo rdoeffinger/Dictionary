@@ -112,7 +112,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     @Override
     public void print(PrintStream out) {
       final HtmlEntry entry = getEntry();
-      out.println(entry);
+      out.println("HtmlEntry (shortened): " + entry.title);
     }
 
     @Override

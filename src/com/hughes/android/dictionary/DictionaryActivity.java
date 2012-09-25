@@ -1162,52 +1162,22 @@ public class DictionaryActivity extends ListActivity {
         }
 
         private TableLayout getView(HtmlEntry.Row row, ViewGroup parent, final TableLayout result) {
-            final Context context = parent.getContext();
-
             final HtmlEntry htmlEntry = row.getEntry();
-
-            // final TableRow tableRow = new TableRow(context);
-            final LinearLayout tableRow = new LinearLayout(context);
-            result.addView(tableRow);
-
-            // Text.
-            final TextView textView = new TextView(context);
-            textView.setText(htmlEntry.title);
-            textView.setLayoutParams(new LinearLayout.LayoutParams(0,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
-            tableRow.addView(textView);
-
-            // Button.
-            final Button button = new Button(context);
-            button.setText("open");
-            button.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.0f));
-            tableRow.addView(button);
-
-            button.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(HtmlDisplayActivity.getHtmlIntent(String.format(
-                            "<html><head></head><body>%s</body></html>", htmlEntry.html)));
-                }
-            });
-
-            return result;
+            return getPossibleHtmlEntryView(htmlEntry.title, false, Collections.singletonList(htmlEntry), parent, result);
         }
 
-        private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
+        private TableLayout getPossibleHtmlEntryView(final String text, final boolean hasMainEntry, final List<HtmlEntry> htmlEntries, ViewGroup parent, final TableLayout result) {
             final Context context = parent.getContext();
             
             final TableRow tableRow = new TableRow(result.getContext());
-            tableRow.setBackgroundResource(row.hasMainEntry ? theme.tokenRowMainBg
+            tableRow.setBackgroundResource(hasMainEntry ? theme.tokenRowMainBg
                     : theme.tokenRowOtherBg);
             tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
             result.addView(tableRow);
             
-            final IndexEntry indexEntry = row.getIndexEntry();
 
             final TextView textView = new TextView(context);
-            textView.setText(indexEntry.token);
+            textView.setText(text);
             // Doesn't work:
             // textView.setTextColor(android.R.color.secondary_text_light);
             textView.setTextAppearance(context, theme.tokenRowFg);
@@ -1219,13 +1189,13 @@ public class DictionaryActivity extends ListActivity {
             tableRow.addView(textView);
 
             
-            if (!indexEntry.htmlEntries.isEmpty()) {
+            if (!htmlEntries.isEmpty()) {
                 final ImageButton button = new ImageButton(context);
                 button.setImageResource(R.drawable.ic_menu_forward);
                 button.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final String html = HtmlEntry.htmlBody(indexEntry.htmlEntries);
+                        final String html = HtmlEntry.htmlBody(htmlEntries);
                         startActivity(HtmlDisplayActivity.getHtmlIntent(String.format(
                                 "<html><head></head><body>%s</body></html>", html)));
                     }
@@ -1237,12 +1207,17 @@ public class DictionaryActivity extends ListActivity {
                 //result.setColumnStretchable(0, true);
                 //result.setColumnStretchable(1, false);
             }
-            
-            
             return result;
+        }
+        
+        private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
+            final IndexEntry indexEntry = row.getIndexEntry();
+            return getPossibleHtmlEntryView(indexEntry.token, row.hasMainEntry, indexEntry.htmlEntries, parent, result);
         }
 
     }
+    
+
 
     static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+");
 
@@ -1357,15 +1332,15 @@ public class DictionaryActivity extends ListActivity {
     }
 
     void setFiltered(final SearchOperation searchOperation) {
-        ((Button) findViewById(R.id.UpButton)).setEnabled(false);
-        ((Button) findViewById(R.id.DownButton)).setEnabled(false);
+        ((ImageButton) findViewById(R.id.UpButton)).setEnabled(false);
+        ((ImageButton) findViewById(R.id.DownButton)).setEnabled(false);
         rowsToShow = searchOperation.multiWordSearchResult;
         setListAdapter(new IndexAdapter(index, rowsToShow, searchOperation.searchTokens));
     }
 
     void clearFiltered() {
-        ((Button) findViewById(R.id.UpButton)).setEnabled(true);
-        ((Button) findViewById(R.id.DownButton)).setEnabled(true);
+        ((ImageButton) findViewById(R.id.UpButton)).setEnabled(true);
+        ((ImageButton) findViewById(R.id.DownButton)).setEnabled(true);
         setListAdapter(new IndexAdapter(index));
         rowsToShow = null;
     }
