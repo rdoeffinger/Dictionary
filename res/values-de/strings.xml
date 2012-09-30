@@ -40,7 +40,8 @@
   <string name="aboutDictionary">Über Wörterbuch…</string> 
   <string name="randomWord">Random Wort</string> 
   <string name="fontFailure">Font failure: %s</string> 
-  <string name="seeAlso">vgl.: %s</string>
+  <string name="seeAlso">vgl.: %1$s (%2$s)</string>
+  <string name="speak">Sprechen</string> 
   
   
   <!-- About dictionary. -->

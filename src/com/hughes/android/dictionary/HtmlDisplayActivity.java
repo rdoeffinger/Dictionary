@@ -92,7 +92,7 @@ public final class HtmlDisplayActivity extends Activity {
       }
     });
     if (!getIntent().getBooleanExtra(SHOW_OK_BUTTON, true)) {
-        okButton.setVisibility(View.INVISIBLE);
+        okButton.setVisibility(Button.GONE);
     }
   }
 

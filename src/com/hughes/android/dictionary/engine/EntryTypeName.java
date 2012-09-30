@@ -26,6 +26,9 @@ public enum EntryTypeName {
   MULTIROW_HEAD_ONE_WORD(true, true, null),
   MULTIROW_TAIL_ONE_WORD(false, true, null),
 
+  SYNONYM_SINGLE(false, true, null),
+  ANTONYM_SINGLE(false, true, null),
+
   WIKTIONARY_TITLE_MULTI_DETAIL(false, true, WIKTIONARY_TITLE_SINGLE_DETAIL),
   WIKTIONARY_TITLE_MULTI(false, true, WIKTIONARY_TITLE_SINGLE),
   WIKTIONARY_TRANSLITERATION(),
@@ -34,6 +37,10 @@ public enum EntryTypeName {
   WIKTIONARY_ENGLISH_DEF_WIKI_LINK(),
   WIKTIONARY_ENGLISH_DEF_OTHER_LANG(),
   WIKTIONARY_ENGLISH_DEF(),
+  
+  SYNONYM_MULTI(false, true, SYNONYM_SINGLE),
+  ANTONYM_MULTI(false, true, ANTONYM_SINGLE),
+  DERIVED_TERM(false, true, null),
 
   TWO_WORDS(),
   THREE_WORDS(),
@@ -48,6 +55,7 @@ public enum EntryTypeName {
   MULTIROW_HEAD_MANY_WORDS(),
   MULTIROW_TAIL_MANY_WORDS(),
   WIKTIONARY_EXAMPLE(),
+
   // The next two are how we file entries like: "sono: {form of|essere}" under "essere".
   WIKTIONARY_BASE_FORM_SINGLE(),  // These two should be eligible for removal if the links are otherwise present.
   WIKTIONARY_BASE_FORM_MULTI(false, false, WIKTIONARY_BASE_FORM_SINGLE),
@@ -56,6 +64,7 @@ public enum EntryTypeName {
   PARENTHESIZED(),
   WIKTIONARY_TRANSLATION_SENSE(),
   SEE_ALSO(), 
+  WIKTIONARY_MENTIONED(false, true, null),
   ;
 
   final boolean mainWord;

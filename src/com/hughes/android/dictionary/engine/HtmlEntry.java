@@ -141,7 +141,9 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     public static String htmlBody(final List<HtmlEntry> htmlEntries) {
         final StringBuilder result = new StringBuilder();
         for (final HtmlEntry htmlEntry : htmlEntries) {
-            result.append(String.format("<h1><a href=\"%s\">%s</a></h1>%s\n", htmlEntry.title, htmlEntry.title, htmlEntry.html));
+            result.append(String.format("<h1><a href=\"%s\">%s</a></h1>\n(%s)\n<p>%s\n", 
+                    htmlEntry.title, htmlEntry.title, htmlEntry.entrySource.name,
+                    htmlEntry.html));
         }
         return result.toString();
     }

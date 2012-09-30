@@ -96,6 +96,7 @@ public class Language {
     isoCodeToResources.put("SA", new LanguageResources("Sanskrit", R.string.SA));
     isoCodeToResources.put("SR", new LanguageResources("Serbian", R.string.SR));
     isoCodeToResources.put("SK", new LanguageResources("Slovak", R.string.SK));
+    isoCodeToResources.put("SK", new LanguageResources("Slovenian", R.string.SL));
     isoCodeToResources.put("SO", new LanguageResources("Somali", R.string.SO));
     isoCodeToResources.put("ES", new LanguageResources("Spanish", R.string.ES));
     isoCodeToResources.put("SW", new LanguageResources("Swahili", R.string.SW));

@@ -24,6 +24,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.Selection;
@@ -84,8 +86,10 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -117,6 +121,9 @@ public class DictionaryActivity extends ListActivity {
 
     // package for test.
     final Handler uiHandler = new Handler();
+    
+    TextToSpeech textToSpeech;
+    volatile boolean ttsReady;
 
     private final Executor searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
@@ -201,6 +208,15 @@ public class DictionaryActivity extends ListActivity {
 
         final Intent intent = getIntent();
         dictFile = new File(intent.getStringExtra(C.DICT_FILE));
+        
+        ttsReady = false;
+        textToSpeech = new TextToSpeech(getApplicationContext(), new OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                ttsReady = true;
+                updateTTSLanuage();
+            }
+        });
 
         try {
             final String name = application.getDictionaryName(dictFile.getName());
@@ -465,6 +481,19 @@ public class DictionaryActivity extends ListActivity {
         // langButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         langButton.setText(index.shortName);
         // }
+        updateTTSLanuage();
+    }
+    
+    private void updateTTSLanuage() {
+        if (!ttsReady) {
+            return;
+        }
+        final Locale locale = new Locale(index.sortLanguage.getIsoCode());
+        Log.d(LOG, "Setting TTS locale to: " + locale);
+        final int ttsResult = textToSpeech.setLanguage(locale);
+        if (ttsResult != TextToSpeech.SUCCESS) {
+            Log.e(LOG, "TTS not available in this language.");
+        }
     }
 
     void onLanguageButton() {
@@ -510,14 +539,19 @@ public class DictionaryActivity extends ListActivity {
         listView.setAdapter(new BaseAdapter() {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                final LinearLayout result = new LinearLayout(parent.getContext());
-
                 final DictionaryInfo dictionaryInfo = getItem(position);
+
+                final LinearLayout result = new LinearLayout(parent.getContext());
+                
                 for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
+                    if (i > 0) {
+                        final TextView dash = new TextView(parent.getContext());
+                        dash.setText("-");
+                        result.addView(dash);
+                    }
+                    
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
                     final Button button = new Button(parent.getContext());
-//                    final String name = application
-//                            .getDictionaryName(dictionaryInfo.uncompressedFilename);
                     button.setText(indexInfo.shortName);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename),
@@ -529,19 +563,21 @@ public class DictionaryActivity extends ListActivity {
                         };
                     };
                     button.setOnClickListener(intentLauncher);
-                    final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.width = 0;
-                    layoutParams.weight = 1.0f;
-                    button.setLayoutParams(layoutParams);
                     result.addView(button);
                     
-                    if (i > 0) {
-                        final TextView dash = new TextView(parent.getContext());
-                        dash.setText("-");
-                        result.addView(dash);
-                    }
                 }
+                
+                final TextView nameView = new TextView(parent.getContext());
+                final String name = application
+                        .getDictionaryName(dictionaryInfo.uncompressedFilename);
+                nameView.setText(name);
+                final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.width = 0;
+                layoutParams.weight = 1.0f;
+                nameView.setLayoutParams(layoutParams);
+                result.addView(nameView);
+
                 return result;
             }
 
@@ -752,16 +788,24 @@ public class DictionaryActivity extends ListActivity {
                         indexToUse = selectedSpannableIndex;
                     }
                     final boolean changeIndex = indexIndex != indexToUse;
-                    setSearchText(selectedText, !changeIndex); // If we're not
-                                                               // changing
-                                                               // index, we have
-                                                               // to
-                                                               // triggerSearch.
+                    // If we're not changing index, we have to trigger search:
+                    setSearchText(selectedText, !changeIndex); 
                     if (changeIndex) {
                         changeIndexGetFocusAndResearch(indexToUse);
                     }
                     // Give focus back to list view because typing is done.
                     getListView().requestFocus();
+                    return false;
+                }
+            });
+        }
+        
+        if (row instanceof TokenRow) {
+            final MenuItem speak = menu.add(R.string.speak);
+            speak.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    textToSpeech.speak(((TokenRow) row).getToken(), TextToSpeech.QUEUE_FLUSH, new HashMap<String, String>());
                     return false;
                 }
             });
@@ -1167,7 +1211,7 @@ public class DictionaryActivity extends ListActivity {
             return result;
         }
 
-        private TableLayout getPossibleHtmlEntryView(final boolean isTokenRow, final String text, final boolean hasMainEntry, final List<HtmlEntry> htmlEntries, final String htmlTextToHighlight, ViewGroup parent, final TableLayout result) {
+        private TableLayout getPossibleLinkToHtmlEntryView(final boolean isTokenRow, final String text, final boolean hasMainEntry, final List<HtmlEntry> htmlEntries, final String htmlTextToHighlight, ViewGroup parent, final TableLayout result) {
             final Context context = parent.getContext();
             
             final TableRow tableRow = new TableRow(result.getContext());
@@ -1216,18 +1260,20 @@ public class DictionaryActivity extends ListActivity {
                 //result.setColumnStretchable(0, true);
                 //result.setColumnStretchable(1, false);
             }
+            result.setLongClickable(true);
             return result;
         }
         
         private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
             final IndexEntry indexEntry = row.getIndexEntry();
-            return getPossibleHtmlEntryView(true, indexEntry.token, row.hasMainEntry, indexEntry.htmlEntries, null, parent, result);
+            return getPossibleLinkToHtmlEntryView(true, indexEntry.token, row.hasMainEntry, indexEntry.htmlEntries, null, parent, result);
         }
         
         private TableLayout getView(HtmlEntry.Row row, ViewGroup parent, final TableLayout result) {
             final HtmlEntry htmlEntry = row.getEntry();
             final TokenRow tokenRow = row.getTokenRow(true);
-            return getPossibleHtmlEntryView(false, getString(R.string.seeAlso, htmlEntry.title), false, Collections.singletonList(htmlEntry), tokenRow.getToken(), parent, result);
+            return getPossibleLinkToHtmlEntryView(false, getString(R.string.seeAlso, htmlEntry.title, htmlEntry.entrySource.getName()), 
+                    false, Collections.singletonList(htmlEntry), tokenRow.getToken(), parent, result);
         }
 
 

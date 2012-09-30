@@ -22,7 +22,7 @@ import java.io.RandomAccessFile;
 
 public abstract class AbstractEntry extends IndexedObject {
   
-  final EntrySource entrySource;
+  public final EntrySource entrySource;
   
   protected AbstractEntry(EntrySource entrySource) {
     super(-1);
