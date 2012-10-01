@@ -1,5 +1,9 @@
 package com.hughes.android.dictionary.engine;
 
+import android.content.Intent;
+
+import com.hughes.android.dictionary.C;
+import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
@@ -12,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntry>, Comparable<HtmlEntry> {
   
-  // Both are HTML escaped already.
+  // Title is not HTML escaped.
   public final String title;
   public String html;
   
@@ -112,7 +116,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     @Override
     public void print(PrintStream out) {
       final HtmlEntry entry = getEntry();
-      out.println("HtmlEntry (shortened): " + entry.title);
+      out.println("See also HtmlEntry:" + entry.title);
     }
 
     @Override
@@ -135,17 +139,34 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
       }
       return RowMatchType.BAG_OF_WORDS_MATCH;
     }
-    
   }
 
-    public static String htmlBody(final List<HtmlEntry> htmlEntries) {
+    public static String htmlBody(final List<HtmlEntry> htmlEntries, final String indexShortName) {
         final StringBuilder result = new StringBuilder();
         for (final HtmlEntry htmlEntry : htmlEntries) {
+            final String titleEscaped = StringUtil.escapeToPureHtmlUnicode(htmlEntry.title);
             result.append(String.format("<h1><a href=\"%s\">%s</a></h1>\n(%s)\n<p>%s\n", 
-                    htmlEntry.title, htmlEntry.title, htmlEntry.entrySource.name,
+                    formatQuickdicUrl(indexShortName, titleEscaped), titleEscaped, htmlEntry.entrySource.name,
                     htmlEntry.html));
         }
         return result.toString();
+    }
+    
+    public static String formatQuickdicUrl(final String indexShortName, final String text) {
+        assert !indexShortName.contains(":");
+        return String.format("qd:%s:%s", indexShortName, text);
+    }
+
+    public static boolean isQuickdicUrl(String url) {
+        return url.startsWith("qd:");
+    }
+    
+    public static void quickdicUrlToIntent(final String url, final Intent intent) {
+        int firstColon = url.indexOf(":");
+        if (firstColon == -1) return;
+        int secondColon = url.indexOf(":", firstColon + 1);
+        if (secondColon == -1) return;
+        intent.putExtra(C.SEARCH_TOKEN, url.substring(secondColon + 1));
     }
 
 }

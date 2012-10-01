@@ -18,10 +18,10 @@ public class C {
 
   static final String DICTIONARY_CONFIGS = "dictionaryConfigs2";
 
-  static final String DICT_FILE = "dictFile";
-  static final String INDEX_INDEX = "indexIndex";
-  static final String SEARCH_TOKEN = "searchToken";
-  static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
+  public static final String DICT_FILE = "dictFile";
+  public static final String INDEX_INDEX = "indexIndex";
+  public static final String SEARCH_TOKEN = "searchToken";
+  public static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
   public static final String SHOW_LOCAL = "showLocal";
 
   public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";

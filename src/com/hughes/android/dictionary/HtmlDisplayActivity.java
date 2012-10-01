@@ -73,8 +73,9 @@ public final class HtmlDisplayActivity extends Activity {
     } else {
       html = getIntent().getStringExtra(HTML);
     }
-    final WebView webView = (WebView) findViewById(R.id.webView);
+    final MyWebView webView = (MyWebView) findViewById(R.id.webView);
     webView.loadData(html, "text/html", "utf-8");
+    webView.activity = this;
     
     final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
     if (textToHighlight != null && !"".equals(textToHighlight)) {

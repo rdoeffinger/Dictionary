@@ -124,6 +124,11 @@ public class Language {
     isoCodeToResources.put("LB", new LanguageResources("Luxembourgish", R.string.LB));
     isoCodeToResources.put("MK", new LanguageResources("Macedonian", R.string.MK));
 
+    isoCodeToResources.put("LO", new LanguageResources("Lao", R.string.LO));
+    isoCodeToResources.put("ML", new LanguageResources("Malayalam", R.string.ML));
+    isoCodeToResources.put("SL", new LanguageResources("Slovenian", R.string.SL));
+    isoCodeToResources.put("TA", new LanguageResources("Tamil", R.string.TA));
+
     // Hack to allow lower-case ISO codes to work:
     for (final String isoCode : new ArrayList<String>(isoCodeToResources.keySet())) {
       isoCodeToResources.put(isoCode.toLowerCase(), isoCodeToResources.get(isoCode));

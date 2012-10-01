@@ -103,8 +103,6 @@ public class DictionaryActivity extends ListActivity {
 
     static final String LOG = "QuickDic";
 
-    private String initialSearchText;
-
     DictionaryApplication application;
 
     File dictFile = null;
@@ -409,15 +407,21 @@ public class DictionaryActivity extends ListActivity {
             finish();
             startActivity(getIntent());
         }
-        if (initialSearchText != null) {
-            setSearchText(initialSearchText, true);
-        }
         showKeyboard();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        super.onActivityResult(requestCode, resultCode, result);
+        if (result != null && result.hasExtra(C.SEARCH_TOKEN)) {
+            Log.d(LOG, "onActivityResult: " + result.toString());
+            jumpToTextFromHyperLink(result.getStringExtra(C.SEARCH_TOKEN), indexIndex);
+        }
     }
 
     private static void setDictionaryPrefs(final Context context, final File dictFile,
@@ -600,7 +604,12 @@ public class DictionaryActivity extends ListActivity {
         dialog.show();
     }
 
-    private void changeIndexGetFocusAndResearch(final int newIndex) {
+    private void changeIndexGetFocusAndResearch(int newIndex) {
+        Log.d(LOG, "Changing index to: " + newIndex);
+        if (newIndex == -1) {
+            Log.e(LOG, "Invalid index.");
+            newIndex = 0;
+        }
         indexIndex = newIndex;
         index = dictionary.indices.get(indexIndex);
         indexAdapter = new IndexAdapter(index);
@@ -766,35 +775,7 @@ public class DictionaryActivity extends ListActivity {
                     selectedSpannableText));
             searchForSelection.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(MenuItem item) {
-                    int indexToUse = -1;
-                    for (int i = 0; i < dictionary.indices.size(); ++i) {
-                        final Index index = dictionary.indices.get(i);
-                        if (indexPrepFinished) {
-                            System.out.println("Doing index lookup: on " + selectedText);
-                            final IndexEntry indexEntry = index.findExact(selectedText);
-                            if (indexEntry != null) {
-                                final TokenRow tokenRow = index.rows.get(indexEntry.startRow)
-                                        .getTokenRow(false);
-                                if (tokenRow != null && tokenRow.hasMainEntry) {
-                                    indexToUse = i;
-                                    break;
-                                }
-                            }
-                        } else {
-                            Log.w(LOG, "Skipping findExact on index " + index.shortName);
-                        }
-                    }
-                    if (indexToUse == -1) {
-                        indexToUse = selectedSpannableIndex;
-                    }
-                    final boolean changeIndex = indexIndex != indexToUse;
-                    // If we're not changing index, we have to trigger search:
-                    setSearchText(selectedText, !changeIndex); 
-                    if (changeIndex) {
-                        changeIndexGetFocusAndResearch(indexToUse);
-                    }
-                    // Give focus back to list view because typing is done.
-                    getListView().requestFocus();
+                    jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
                     return false;
                 }
             });
@@ -810,7 +791,38 @@ public class DictionaryActivity extends ListActivity {
                 }
             });
         }
-
+    }
+    
+    private void jumpToTextFromHyperLink(final String selectedText, final int defaultIndexToUse) {
+        int indexToUse = -1;
+        for (int i = 0; i < dictionary.indices.size(); ++i) {
+            final Index index = dictionary.indices.get(i);
+            if (indexPrepFinished) {
+                System.out.println("Doing index lookup: on " + selectedText);
+                final IndexEntry indexEntry = index.findExact(selectedText);
+                if (indexEntry != null) {
+                    final TokenRow tokenRow = index.rows.get(indexEntry.startRow)
+                            .getTokenRow(false);
+                    if (tokenRow != null && tokenRow.hasMainEntry) {
+                        indexToUse = i;
+                        break;
+                    }
+                }
+            } else {
+                Log.w(LOG, "Skipping findExact on index " + index.shortName);
+            }
+        }
+        if (indexToUse == -1) {
+            indexToUse = defaultIndexToUse;
+        }
+        final boolean changeIndex = indexIndex != indexToUse;
+        // If we're not changing index, we have to trigger search:
+        setSearchText(selectedText, !changeIndex); 
+        if (changeIndex) {
+            changeIndexGetFocusAndResearch(indexToUse);
+        }
+        // Give focus back to list view because typing is done.
+        getListView().requestFocus();
     }
 
     @Override
@@ -963,10 +975,10 @@ public class DictionaryActivity extends ListActivity {
                 }
             }
         }, 20);
-
     }
-
+    
     private final void jumpToRow(final int row) {
+        Log.d(LOG, "jumpToRow: " + row);
         setSelection(row);
         getListView().setSelected(true);
     }
@@ -1022,6 +1034,8 @@ public class DictionaryActivity extends ListActivity {
                             searchFinished(SearchOperation.this);
                         }
                     });
+                } else {
+                    Log.d(LOG, "interrupted, skipping searchFinished.");
                 }
             } catch (Exception e) {
                 Log.e(LOG, "Failure during search (can happen during Activity close.");
@@ -1248,9 +1262,10 @@ public class DictionaryActivity extends ListActivity {
                 button.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final String html = HtmlEntry.htmlBody(htmlEntries);
-                        startActivity(HtmlDisplayActivity.getHtmlIntent(String.format(
-                                "<html><head></head><body>%s</body></html>", html), htmlTextToHighlight, false));
+                        final String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
+                        startActivityForResult(
+                                HtmlDisplayActivity.getHtmlIntent(String.format("<html><head></head><body>%s</body></html>", html), htmlTextToHighlight, false),
+                                0);
                     }
                 });
                 tableRow.addView(button);
