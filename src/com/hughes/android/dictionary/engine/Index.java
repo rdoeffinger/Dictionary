@@ -259,10 +259,10 @@ public final class Index implements RAFSerializable<Index> {
         final int result = windBackCase(token, mid, interrupted);
         return result;
       } else if (comp < 0) {
-        System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
+        // System.out.println("Upper bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
         end = mid;
       } else {
-        System.out.println("Lower bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
+        // System.out.println("Lower bound: " + midEntry + ", norm=" + midEntry.normalizedToken() + ", mid=" + mid);
         start = mid + 1;
       }
     }

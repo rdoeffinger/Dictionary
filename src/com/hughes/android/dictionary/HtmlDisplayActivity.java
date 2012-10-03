@@ -79,9 +79,9 @@ public final class HtmlDisplayActivity extends Activity {
     
     final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
     if (textToHighlight != null && !"".equals(textToHighlight)) {
-        Log.d(LOG, "Highlighting text: " + textToHighlight);
+        Log.d(LOG, "NOT Highlighting text: " + textToHighlight);
         // This isn't working:
-        webView.findAll(textToHighlight);
+        // webView.findAll(textToHighlight);
         //webView.showFindDialog(textToHighlight, false);
     }
     
