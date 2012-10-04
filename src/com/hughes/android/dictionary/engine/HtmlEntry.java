@@ -28,20 +28,23 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
   public HtmlEntry(Dictionary dictionary, RandomAccessFile raf, final int index) throws IOException {
     super(dictionary, raf, index);
     title = raf.readUTF();
-    final boolean compressed = raf.readBoolean();
-    final int length = raf.readInt();
-    final byte[] bytes = new byte[length];
-    raf.readFully(bytes);
+
+    final byte[] bytes = new byte[raf.readInt()];
+    final byte[] zipBytes = new byte[raf.readInt()];
+    raf.read(zipBytes);
+    StringUtil.unzipFully(zipBytes, bytes);
     html = new String(bytes, "UTF-8");
   }
   @Override
   public void write(RandomAccessFile raf) throws IOException {
     super.write(raf);
     raf.writeUTF(title);
-    raf.writeBoolean(false);
+
     final byte[] bytes = html.getBytes("UTF-8");
+    final byte[] zipBytes = StringUtil.zipBytes(bytes);
     raf.writeInt(bytes.length);
-    raf.write(bytes);
+    raf.writeInt(zipBytes.length);
+    raf.write(zipBytes);
   }
 
   @Override
