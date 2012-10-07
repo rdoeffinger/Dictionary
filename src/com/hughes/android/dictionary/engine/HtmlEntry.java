@@ -164,6 +164,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     
     public static String formatQuickdicUrl(final String indexShortName, final String text) {
         assert !indexShortName.contains(":");
+        assert text.length() > 0;
         return String.format("qd:%s:%s", indexShortName, text);
     }
 
