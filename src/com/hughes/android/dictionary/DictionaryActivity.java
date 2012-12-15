@@ -32,6 +32,7 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
@@ -1261,6 +1262,7 @@ public class DictionaryActivity extends ListActivity {
             final TextViewLongClickListener textViewLongClickListenerIndex0 = new TextViewLongClickListener(
                     0);
             textView.setOnLongClickListener(textViewLongClickListenerIndex0);
+            result.setLongClickable(true);
             
             // Doesn't work:
             // textView.setTextColor(android.R.color.secondary_text_light);
@@ -1278,9 +1280,16 @@ public class DictionaryActivity extends ListActivity {
             tableRow.addView(textView);
 
             if (!htmlEntries.isEmpty()) {
-                final ImageButton button = new ImageButton(context);
-                button.setImageResource(R.drawable.ic_menu_forward);
-                button.setOnClickListener(new OnClickListener() {
+                final ClickableSpan clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                    }
+                };
+                ((Spannable) textView.getText()).setSpan(clickableSpan, 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                result.setClickable(true);
+                textView.setClickable(true);
+                textView.setMovementMethod(LinkMovementMethod.getInstance());
+                textView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         final String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
@@ -1291,14 +1300,7 @@ public class DictionaryActivity extends ListActivity {
                                 0);
                     }
                 });
-                tableRow.addView(button);
-                lp = new TableRow.LayoutParams(1);
-                lp.weight = 0.0f;
-                button.setLayoutParams(lp);
-                // result.setColumnStretchable(0, true);
-                // result.setColumnStretchable(1, false);
             }
-            result.setLongClickable(true);
             return result;
         }
 

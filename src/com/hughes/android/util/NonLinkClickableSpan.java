@@ -20,7 +20,7 @@ import android.view.View;
 
 public class NonLinkClickableSpan extends ClickableSpan {
   
-  static NonLinkClickableSpan instance = new NonLinkClickableSpan();
+  public static final NonLinkClickableSpan instance = new NonLinkClickableSpan();
 
   // Won't see these on a long-click.
   @Override

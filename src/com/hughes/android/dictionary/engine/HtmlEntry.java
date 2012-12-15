@@ -1,6 +1,7 @@
 package com.hughes.android.dictionary.engine;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import com.hughes.android.dictionary.C;
 import com.hughes.util.StringUtil;
@@ -11,6 +12,10 @@ import com.ibm.icu.text.Transliterator;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -165,7 +170,11 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     public static String formatQuickdicUrl(final String indexShortName, final String text) {
         assert !indexShortName.contains(":");
         assert text.length() > 0;
-        return String.format("qd:%s:%s", indexShortName, text);
+        try {
+            return String.format("qd:%s:%s", indexShortName, URLEncoder.encode(text, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static boolean isQuickdicUrl(String url) {
@@ -177,7 +186,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         if (firstColon == -1) return;
         int secondColon = url.indexOf(":", firstColon + 1);
         if (secondColon == -1) return;
-        intent.putExtra(C.SEARCH_TOKEN, url.substring(secondColon + 1));
+        intent.putExtra(C.SEARCH_TOKEN, Uri.decode(url.substring(secondColon + 1)));
     }
 
 }

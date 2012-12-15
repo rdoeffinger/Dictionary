@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <string name="app_name">QuickDic</string>
-<string name="titleWithVersion">QuickDic 3.3</string>
+<string name="titleWithVersion">QuickDic 4.0</string>
 <!-- Global. -->
 <string name="about">About QuickDic…</string>
 <string name="preferences">Preferenze…</string>
