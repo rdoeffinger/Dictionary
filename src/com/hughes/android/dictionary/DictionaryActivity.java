@@ -79,6 +79,7 @@ import com.hughes.android.dictionary.engine.TokenRow;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.IntentLauncher;
 import com.hughes.android.util.NonLinkClickableSpan;
+import com.hughes.util.StringUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -1022,7 +1023,7 @@ public class DictionaryActivity extends ListActivity {
         boolean done = false;
 
         SearchOperation(final String searchText, final Index index) {
-            this.searchText = searchText.trim();
+            this.searchText = StringUtil.normalizeWhitespace(searchText);
             this.index = index;
         }
 
@@ -1039,7 +1040,7 @@ public class DictionaryActivity extends ListActivity {
                     searchResult = index.findInsertionPoint(searchText, interrupted);
                 } else {
                     searchTokens = Arrays.asList(searchTokenArray);
-                    multiWordSearchResult = index.multiWordSearch(searchTokens, interrupted);
+                    multiWordSearchResult = index.multiWordSearch(searchText, searchTokens, interrupted);
                 }
                 Log.d(LOG,
                         "searchText=" + searchText + ", searchDuration="

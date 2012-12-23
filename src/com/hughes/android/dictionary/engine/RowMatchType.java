@@ -15,9 +15,8 @@
 package com.hughes.android.dictionary.engine;
 
 public enum RowMatchType {
-  
-  ORDERED_MATCH,
-  BAG_OF_WORDS_MATCH,
-  NO_MATCH
-
+    TITLE_MATCH,
+    ORDERED_MATCH,
+    BAG_OF_WORDS_MATCH,
+    NO_MATCH
 }

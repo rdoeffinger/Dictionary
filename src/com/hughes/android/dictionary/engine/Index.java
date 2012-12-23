@@ -21,6 +21,7 @@ import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.RowBase.RowKey;
 import com.hughes.util.CachingList;
+import com.hughes.util.CollectionUtil;
 import com.hughes.util.TransformingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFSerializable;
@@ -315,7 +316,8 @@ public final class Index implements RAFSerializable<Index> {
   }
   
   
-  public final List<RowBase> multiWordSearch(final List<String> searchTokens, final AtomicBoolean interrupted) {
+  public final List<RowBase> multiWordSearch(
+          final String searchText, final List<String> searchTokens, final AtomicBoolean interrupted) {
     final long startMills = System.currentTimeMillis();
     final List<RowBase> result = new ArrayList<RowBase>();
     
@@ -323,7 +325,7 @@ public final class Index implements RAFSerializable<Index> {
     
     String bestPrefix = null;
     int leastRows = Integer.MAX_VALUE;
-    final StringBuilder regex = new StringBuilder();
+    final StringBuilder searchTokensRegex = new StringBuilder();
     for (int i = 0; i < searchTokens.size(); ++i) {
       if (interrupted.get()) { return null; }
       final String searchToken = searchTokens.get(i);
@@ -345,12 +347,12 @@ public final class Index implements RAFSerializable<Index> {
         }
       }
 
-      if (regex.length() > 0) {
-        regex.append("[\\s]*");
+      if (searchTokensRegex.length() > 0) {
+        searchTokensRegex.append("[\\s]*");
       }
-      regex.append(Pattern.quote(normalized));
+      searchTokensRegex.append(Pattern.quote(normalized));
     }
-    final Pattern pattern = Pattern.compile(regex.toString());
+    final Pattern pattern = Pattern.compile(searchTokensRegex.toString());
     
     if (bestPrefix == null) {
       bestPrefix = searchTokens.get(0);
@@ -367,14 +369,22 @@ public final class Index implements RAFSerializable<Index> {
     }
     
     int matchCount = 0;
-    final Set<RowKey> cachedRowKeys = new HashSet<RowBase.RowKey>();
     
-//    for (final String searchToken : searchTokens) {
-    final String searchToken = bestPrefix;
-    
-    final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
+    final int exactMatchIndex = findInsertionPointIndex(searchText, interrupted);
+    if (exactMatchIndex != -1) {
+        final IndexEntry exactMatch = sortedIndexEntries.get(exactMatchIndex);
+        if (pattern.matcher(exactMatch.token).matches()) {
+            matches.get(RowMatchType.TITLE_MATCH).add(rows.get(exactMatch.startRow));
+        }
+    }
 
-    for (int index = insertionPointIndex; index < sortedIndexEntries.size() && matchCount < MAX_SEARCH_ROWS; ++index) {
+    
+    final String searchToken = bestPrefix;
+    final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
+    final Set<RowKey> rowsAlreadySeen = new HashSet<RowBase.RowKey>();
+    for (int index = insertionPointIndex; 
+            index < sortedIndexEntries.size() && matchCount < MAX_SEARCH_ROWS; 
+            ++index) {
         if (interrupted.get()) { return null; }
         final IndexEntry indexEntry = sortedIndexEntries.get(index);
         if (!indexEntry.normalizedToken.startsWith(searchToken)) {
@@ -384,14 +394,16 @@ public final class Index implements RAFSerializable<Index> {
 //        System.out.println("Searching indexEntry: " + indexEntry.token);
 
         // Extra +1 to skip token row.
-        for (int rowIndex = indexEntry.startRow + 1; rowIndex < indexEntry.startRow + 1 + indexEntry.numRows && rowIndex < rows.size(); ++rowIndex) {
+        for (int rowIndex = indexEntry.startRow + 1; 
+                rowIndex < indexEntry.startRow + 1 + indexEntry.numRows && rowIndex < rows.size(); 
+                ++rowIndex) {
           if (interrupted.get()) { return null; }
           final RowBase row = rows.get(rowIndex);
           final RowBase.RowKey rowKey = row.getRowKey();
-          if (cachedRowKeys.contains(rowKey)) {
+          if (rowsAlreadySeen.contains(rowKey)) {
             continue;
           }
-          cachedRowKeys.add(rowKey);
+          rowsAlreadySeen.add(rowKey);
           final RowMatchType matchType = row.matches(searchTokens, pattern, normalizer(), swapPairEntries);
           if (matchType != RowMatchType.NO_MATCH) {
             matches.get(matchType).add(row);
@@ -409,7 +421,7 @@ public final class Index implements RAFSerializable<Index> {
       result.addAll(ordered);
     }
     
-    //System.out.println("searchDuration: " + (System.currentTimeMillis() - startMills));
+    System.out.println("searchDuration: " + (System.currentTimeMillis() - startMills));
     return result;
   }
   

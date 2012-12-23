@@ -2,7 +2,6 @@ package com.hughes.android.dictionary.engine;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import com.hughes.android.dictionary.C;
 import com.hughes.util.StringUtil;
