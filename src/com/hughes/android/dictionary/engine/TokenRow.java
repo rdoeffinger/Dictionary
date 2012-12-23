@@ -64,7 +64,7 @@ public class TokenRow extends RowBase {
     final String surrounder = hasMainEntry ? "***" : "===";
     out.println(surrounder + getToken() + surrounder);
     for (final HtmlEntry htmlEntry : index.sortedIndexEntries.get(referenceIndex).htmlEntries) {
-        out.println("HtmlEntry: " + htmlEntry.title + " <<<" + htmlEntry.html + ">>>");
+        out.println("HtmlEntry: " + htmlEntry.title + " <<<" + htmlEntry.getHtml() + ">>>");
     }
   }
 

@@ -16,43 +16,49 @@ package com.hughes.android.dictionary;
 
 public class C {
 
-  static final String DICTIONARY_CONFIGS = "dictionaryConfigs2";
+    static final String DICTIONARY_CONFIGS = "dictionaryConfigs2";
 
-  public static final String DICT_FILE = "dictFile";
-  public static final String INDEX_INDEX = "indexIndex";
-  public static final String SEARCH_TOKEN = "searchToken";
-  public static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
-  public static final String SHOW_LOCAL = "showLocal";
+    public static final String DICT_FILE = "dictFile";
+    public static final String INDEX_INDEX = "indexIndex";
+    public static final String SEARCH_TOKEN = "searchToken";
+    public static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
+    public static final String SHOW_LOCAL = "showLocal";
 
-  public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
+    public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
 
-  enum Theme {
-    DEFAULT(R.style.Theme_Default, R.style.Theme_Default_TokenRow_Fg,
-        R.drawable.theme_default_token_row_main_bg,
-        R.drawable.theme_default_token_row_other_bg,
-        R.drawable.theme_default_other_lang_bg),
-        
-    LIGHT(R.style.Theme_Light,
-        R.style.Theme_Light_TokenRow_Fg,
-        R.drawable.theme_light_token_row_main_bg,
-        R.drawable.theme_light_token_row_other_bg,
-        R.drawable.theme_light_other_lang_bg);
+    enum Theme {
+        DEFAULT(R.style.Theme_Default,
+                R.style.Theme_Default_TokenRow_Fg,
+                R.color.theme_default_token_row_fg,
+                R.drawable.theme_default_token_row_main_bg,
+                R.drawable.theme_default_token_row_other_bg,
+                R.drawable.theme_default_other_lang_bg),
 
-    private Theme(final int themeId, final int tokenRowFg,
-        final int tokenRowMainBg, final int tokenRowOtherBg,
-        final int otherLangBg) {
-      this.themeId = themeId;
-      this.tokenRowFg = tokenRowFg;
-      this.tokenRowMainBg = tokenRowMainBg;
-      this.tokenRowOtherBg = tokenRowOtherBg;
-      this.otherLangBg = otherLangBg;
+        LIGHT(R.style.Theme_Light,
+                R.style.Theme_Light_TokenRow_Fg,
+                R.color.theme_light_token_row_fg,
+                R.drawable.theme_light_token_row_main_bg,
+                R.drawable.theme_light_token_row_other_bg,
+                R.drawable.theme_light_other_lang_bg);
+
+        private Theme(final int themeId, final int tokenRowFg,
+                final int tokenRowFgColor,
+                final int tokenRowMainBg, final int tokenRowOtherBg,
+                final int otherLangBg) {
+            this.themeId = themeId;
+            this.tokenRowFg = tokenRowFg;
+            this.tokenRowFgColor = tokenRowFgColor;
+            this.tokenRowMainBg = tokenRowMainBg;
+            this.tokenRowOtherBg = tokenRowOtherBg;
+            this.otherLangBg = otherLangBg;
+        }
+
+        final int themeId;
+        final int tokenRowFg;
+        final int tokenRowFgColor;
+        final int tokenRowMainBg;
+        final int tokenRowOtherBg;
+        final int otherLangBg;
     }
-
-    final int themeId;
-    final int tokenRowFg;
-    final int tokenRowMainBg;
-    final int tokenRowOtherBg;
-    final int otherLangBg;
-  }
 
 }

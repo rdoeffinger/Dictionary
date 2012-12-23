@@ -19,6 +19,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,7 +51,6 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -125,6 +125,8 @@ public class DictionaryActivity extends ListActivity {
 
     TextToSpeech textToSpeech;
     volatile boolean ttsReady;
+    
+    int textColorFg = Color.BLACK;
 
     private final Executor searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
@@ -206,6 +208,7 @@ public class DictionaryActivity extends ListActivity {
 
         application = (DictionaryApplication) getApplication();
         theme = application.getSelectedTheme();
+        textColorFg = getResources().getColor(theme.tokenRowFgColor);
 
         final Intent intent = getIntent();
         dictFile = new File(intent.getStringExtra(C.DICT_FILE));
@@ -218,7 +221,7 @@ public class DictionaryActivity extends ListActivity {
                 updateTTSLanuage();
             }
         });
-
+        
         try {
             final String name = application.getDictionaryName(dictFile.getName());
             this.setTitle("QuickDic: " + name);
@@ -1322,7 +1325,7 @@ public class DictionaryActivity extends ListActivity {
     }
 
     static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+");
-
+    
     private void createTokenLinkSpans(final TextView textView, final Spannable spannable,
             final String text) {
         // Saw from the source code that LinkMovementMethod sets the selection!
@@ -1330,7 +1333,7 @@ public class DictionaryActivity extends ListActivity {
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         final Matcher matcher = CHAR_DASH.matcher(text);
         while (matcher.find()) {
-            spannable.setSpan(new NonLinkClickableSpan(), matcher.start(), matcher.end(),
+            spannable.setSpan(new NonLinkClickableSpan(textColorFg), matcher.start(), matcher.end(),
                     Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         }
     }

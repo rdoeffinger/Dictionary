@@ -2,6 +2,7 @@ package com.hughes.android.dictionary.engine;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import com.hughes.android.dictionary.C;
 import com.hughes.util.StringUtil;
@@ -13,8 +14,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLDecoder;
+import java.lang.ref.SoftReference;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -23,33 +23,36 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
   
   // Title is not HTML escaped.
   public final String title;
+  public final LazyHtmlLoader lazyHtmlLoader;
   public String html;
   
   public HtmlEntry(final EntrySource entrySource, String title) {
     super(entrySource);
     this.title = title;
+    lazyHtmlLoader = null;
   }
   
   public HtmlEntry(Dictionary dictionary, RandomAccessFile raf, final int index) throws IOException {
     super(dictionary, raf, index);
     title = raf.readUTF();
-
-    final byte[] bytes = new byte[raf.readInt()];
-    final byte[] zipBytes = new byte[raf.readInt()];
-    raf.read(zipBytes);
-    StringUtil.unzipFully(zipBytes, bytes);
-    html = new String(bytes, "UTF-8");
+    lazyHtmlLoader = new LazyHtmlLoader(raf);
+    html = null;
   }
+  
   @Override
   public void write(RandomAccessFile raf) throws IOException {
     super.write(raf);
     raf.writeUTF(title);
 
-    final byte[] bytes = html.getBytes("UTF-8");
+    final byte[] bytes = getHtml().getBytes("UTF-8");
     final byte[] zipBytes = StringUtil.zipBytes(bytes);
     raf.writeInt(bytes.length);
     raf.writeInt(zipBytes.length);
     raf.write(zipBytes);
+  }
+  
+  String getHtml() {
+      return html != null ? html : lazyHtmlLoader.getHtml();
   }
 
   @Override
@@ -64,7 +67,6 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     return new Row(this.index, rowIndex, dictionaryIndex);
   }
 
-  
   static final class Serializer implements RAFListSerializer<HtmlEntry> {
     
     final Dictionary dictionary;
@@ -85,7 +87,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
   };
 
   public String getRawText(final boolean compact) {
-    return title + ":\n" + html;
+    return title + ":\n" + getHtml();
   }
 
   
@@ -94,7 +96,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     if (title.compareTo(another.title) != 0) {
       return title.compareTo(another.title);
     }
-    return html.compareTo(another.html);
+    return getHtml().compareTo(another.getHtml());
   }
   
   @Override
@@ -160,9 +162,9 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         final StringBuilder result = new StringBuilder();
         for (final HtmlEntry htmlEntry : htmlEntries) {
             final String titleEscaped = StringUtil.escapeToPureHtmlUnicode(htmlEntry.title);
-            result.append(String.format("<h1><a href=\"%s\">%s</a></h1>\n(%s)\n<p>%s\n", 
-                    formatQuickdicUrl(indexShortName, titleEscaped), titleEscaped, htmlEntry.entrySource.name,
-                    htmlEntry.html));
+            result.append(String.format("<h1><a href=\"%s\">%s</a></h1>\n<p>%s\n", 
+                    formatQuickdicUrl(indexShortName, titleEscaped), titleEscaped,
+                    htmlEntry.getHtml()));
         }
         return result.toString();
     }
@@ -187,6 +189,52 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         int secondColon = url.indexOf(":", firstColon + 1);
         if (secondColon == -1) return;
         intent.putExtra(C.SEARCH_TOKEN, Uri.decode(url.substring(secondColon + 1)));
+    }
+    
+    // --------------------------------------------------------------------
+    
+    public static final class LazyHtmlLoader {
+        final RandomAccessFile raf;
+        final long offset;
+        final int numBytes;
+        final int numZipBytes;
+        
+        // Not sure this volatile is right, but oh well.
+        volatile SoftReference<String> htmlRef = new SoftReference<String>(null);
+        
+        private LazyHtmlLoader(final RandomAccessFile raf) throws IOException {
+            this.raf = raf;
+            numBytes = raf.readInt();
+            numZipBytes = raf.readInt();
+            offset = raf.getFilePointer();
+            raf.skipBytes(numZipBytes);
+        }
+        
+        public String getHtml() {
+            String html = htmlRef.get();
+            if (html != null) {
+                return html;
+            }
+            System.out.println("Loading Html: numBytes=" + numBytes + ", numZipBytes=" + numZipBytes);
+            final byte[] bytes = new byte[numBytes];
+            final byte[] zipBytes = new byte[numZipBytes];
+            synchronized (raf) {
+                try {
+                    raf.seek(offset);
+                    raf.read(zipBytes);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            try {
+                StringUtil.unzipFully(zipBytes, bytes);
+                html = new String(bytes, "UTF-8");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            htmlRef = new SoftReference<String>(html);
+            return html;
+        }
     }
 
 }

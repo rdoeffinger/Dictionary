@@ -19,19 +19,28 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 
 public class NonLinkClickableSpan extends ClickableSpan {
-  
-  public static final NonLinkClickableSpan instance = new NonLinkClickableSpan();
 
-  // Won't see these on a long-click.
-  @Override
-  public void onClick(View widget) {
-  }
+    // The singleton pattern doesn't work here--we need a separate instance for
+    // each span.
 
-  @Override
-  public void updateDrawState(TextPaint ds) {
-    super.updateDrawState(ds);
-    ds.setUnderlineText(false);
-    //ds.setColor(color);
-  }
+    final int color;
+    
+    public NonLinkClickableSpan(int color) {
+        this.color = color;
+    }
+
+    // Won't see these on a long-click.
+    @Override
+    public void onClick(View widget) {
+        // Don't need to do anything.  These spans are just used to see where
+        // the user long-pressed.
+    }
+
+    @Override
+    public void updateDrawState(TextPaint ds) {
+        super.updateDrawState(ds);
+        ds.setUnderlineText(false);
+        ds.setColor(color);
+    }
 
 }
