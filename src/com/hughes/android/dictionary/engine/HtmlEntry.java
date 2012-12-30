@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -160,7 +161,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     public static String htmlBody(final List<HtmlEntry> htmlEntries, final String indexShortName) {
         final StringBuilder result = new StringBuilder();
         for (final HtmlEntry htmlEntry : htmlEntries) {
-            final String titleEscaped = StringUtil.escapeToPureHtmlUnicode(htmlEntry.title);
+            final String titleEscaped = StringUtil.escapeUnicodeToPureHtml(htmlEntry.title);
             result.append(String.format("<h1><a href=\"%s\">%s</a></h1>\n<p>%s\n", 
                     formatQuickdicUrl(indexShortName, titleEscaped), titleEscaped,
                     htmlEntry.getHtml()));
@@ -171,23 +172,19 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     public static String formatQuickdicUrl(final String indexShortName, final String text) {
         assert !indexShortName.contains(":");
         assert text.length() > 0;
-        try {
-            return String.format("qd:%s:%s", indexShortName, URLEncoder.encode(text, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        return String.format("q://d?%s&%s", indexShortName, StringUtil.encodeForUrl(text));
     }
-
+    
     public static boolean isQuickdicUrl(String url) {
-        return url.startsWith("qd:");
+        return url.startsWith("q://d?");
     }
     
     public static void quickdicUrlToIntent(final String url, final Intent intent) {
-        int firstColon = url.indexOf(":");
+        int firstColon = url.indexOf("?");
         if (firstColon == -1) return;
-        int secondColon = url.indexOf(":", firstColon + 1);
+        int secondColon = url.indexOf("&", firstColon + 1);
         if (secondColon == -1) return;
-        intent.putExtra(C.SEARCH_TOKEN, Uri.decode(url.substring(secondColon + 1)));
+        intent.putExtra(C.SEARCH_TOKEN, StringUtil.decodeFromUrl(url.substring(secondColon + 1)));
     }
     
     // --------------------------------------------------------------------

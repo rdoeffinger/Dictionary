@@ -1296,7 +1296,8 @@ public class DictionaryActivity extends ListActivity {
                 textView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
+                        String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
+                        Log.d(LOG, "html=" + html);
                         startActivityForResult(
                                 HtmlDisplayActivity.getHtmlIntent(String.format(
                                         "<html><head></head><body>%s</body></html>", html),

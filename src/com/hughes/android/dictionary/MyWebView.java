@@ -44,13 +44,9 @@ public class MyWebView extends WebView {
         setWebViewClient(webViewClient);
     }
 
-
     @Override
     public void onCreateContextMenu(ContextMenu menu) {
         super.onCreateContextMenu(menu);
     }
-
-    
-    
 
 }
