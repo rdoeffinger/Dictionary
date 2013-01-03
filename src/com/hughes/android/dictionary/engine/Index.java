@@ -305,7 +305,7 @@ public final class Index implements RAFSerializable<Index> {
       if (!indexEntry.normalizedToken.startsWith(normalizedPrefix)) {
         break;
       }
-      rowCount += indexEntry.numRows;
+      rowCount += indexEntry.numRows + indexEntry.htmlEntries.size();
       if (rowCount > maxRows) {
         System.out.println("Giving up, too many words with prefix: " + normalizedPrefix);
         break;
@@ -377,7 +377,6 @@ public final class Index implements RAFSerializable<Index> {
             matches.get(RowMatchType.TITLE_MATCH).add(rows.get(exactMatch.startRow));
         }
     }
-
     
     final String searchToken = bestPrefix;
     final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
