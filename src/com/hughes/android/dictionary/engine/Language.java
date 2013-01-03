@@ -52,11 +52,12 @@ public class Language {
     isoCodeToResources.put("BS", new LanguageResources("Bosnian", R.string.BS));
     isoCodeToResources.put("BG", new LanguageResources("Bulgarian", R.string.BG));
     isoCodeToResources.put("MY", new LanguageResources("Burmese", R.string.MY));
+    isoCodeToResources.put("ZH", new LanguageResources("Chinese", R.string.ZH));
+    isoCodeToResources.put("cmn", new LanguageResources("Mandarin", R.string.cmn));
     isoCodeToResources.put("yue", new LanguageResources("Cantonese", R.string.yue));
     isoCodeToResources.put("CA", new LanguageResources("Catalan", R.string.CA));
     isoCodeToResources.put("HR", new LanguageResources("Croatian", R.string.HR));
     isoCodeToResources.put("CS", new LanguageResources("Czech", R.string.CS));
-    isoCodeToResources.put("ZH", new LanguageResources("Chinese", R.string.ZH));
     isoCodeToResources.put("DA", new LanguageResources("Danish", R.string.DA));
     isoCodeToResources.put("NL", new LanguageResources("Dutch", R.string.NL));
     isoCodeToResources.put("EN", new LanguageResources("English", R.string.EN));
@@ -112,7 +113,6 @@ public class Language {
     isoCodeToResources.put("CI", new LanguageResources("Welsh", R.string.CI));
     isoCodeToResources.put("YI", new LanguageResources("Yiddish", R.string.YI));
     isoCodeToResources.put("ZU", new LanguageResources("Zulu", R.string.ZU));
-
     isoCodeToResources.put("AZ", new LanguageResources("Azeri", R.string.AZ));
     isoCodeToResources.put("EU", new LanguageResources("Basque", R.string.EU));
     isoCodeToResources.put("BR", new LanguageResources("Breton", R.string.BR));
@@ -123,11 +123,11 @@ public class Language {
     isoCodeToResources.put("HT", new LanguageResources("Haitian Creole", R.string.HT));
     isoCodeToResources.put("LB", new LanguageResources("Luxembourgish", R.string.LB));
     isoCodeToResources.put("MK", new LanguageResources("Macedonian", R.string.MK));
-
     isoCodeToResources.put("LO", new LanguageResources("Lao", R.string.LO));
     isoCodeToResources.put("ML", new LanguageResources("Malayalam", R.string.ML));
     isoCodeToResources.put("SL", new LanguageResources("Slovenian", R.string.SL));
     isoCodeToResources.put("TA", new LanguageResources("Tamil", R.string.TA));
+    isoCodeToResources.put("SH", new LanguageResources("Serbo-Croations", R.string.SH));
 
     // Hack to allow lower-case ISO codes to work:
     for (final String isoCode : new ArrayList<String>(isoCodeToResources.keySet())) {

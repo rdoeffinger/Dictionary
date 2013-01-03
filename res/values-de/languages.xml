@@ -11,10 +11,13 @@
   <string name="BG">Bulgarisch</string>
   <string name="MY">Burmesisch</string>
   <string name="CA">Katalanisch</string>
+  <string name="SH">Serbo-Kroatisch</string>
   <string name="HR">Kroatisch</string>
+  <string name="SR">Serbisch</string>
   <string name="CS">Tschechisch</string>
+  <string name="ZH">Chinesisch</string>
+  <string name="cmn">Mandarin</string>
   <string name="yue">Kantonesisch</string>
-  <string name="ZH">Chinesisch (Mandarin)</string>
   <string name="DA">Dänisch</string>
   <string name="NL">Niederländisch</string>
   <string name="EN">Englisch</string>
@@ -52,7 +55,6 @@
   <string name="RO">Rumänisch</string>
   <string name="RU">Russisch</string>
   <string name="SA">Sanskrit</string>
-  <string name="SR">Serbisch</string>
   <string name="SK">Slowakisch</string>
   <string name="SL">Slowenisch</string>
   <string name="SO">Somali</string>
