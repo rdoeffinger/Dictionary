@@ -24,7 +24,7 @@
   <string name="managerFilterText">Filter</string>
   <string name="managerFilterCheckbox">Nur SD-Karte</string>
   
-  <string name="thanksForUpdatingVersion">4.0_de_a</string>
+  <string name="thanksForUpdatingVersion">4.0_de_b</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Suchtext</string>
