@@ -14,12 +14,12 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.util.IndexedObject;
+import com.hughes.util.raf.RAFListSerializer;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
-
-import com.hughes.util.IndexedObject;
-import com.hughes.util.raf.RAFListSerializer;
 
 public class EntrySource extends IndexedObject implements Serializable {
   

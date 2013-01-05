@@ -21,7 +21,6 @@ import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.RowBase.RowKey;
 import com.hughes.util.CachingList;
-import com.hughes.util.CollectionUtil;
 import com.hughes.util.TransformingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFSerializable;

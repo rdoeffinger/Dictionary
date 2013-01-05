@@ -14,9 +14,9 @@
 
 package com.hughes.android.dictionary.engine;
 
-import java.util.Comparator;
-
 import com.ibm.icu.text.Transliterator;
+
+import java.util.Comparator;
 
 public class NormalizeComparator implements Comparator<String> {
   

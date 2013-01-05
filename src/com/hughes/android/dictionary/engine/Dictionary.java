@@ -14,6 +14,12 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.android.dictionary.DictionaryInfo;
+import com.hughes.util.CachingList;
+import com.hughes.util.raf.RAFList;
+import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFSerializable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -21,12 +27,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.hughes.android.dictionary.DictionaryInfo;
-import com.hughes.util.CachingList;
-import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFListSerializer;
-import com.hughes.util.raf.RAFSerializable;
 
 
 public class Dictionary implements RAFSerializable<Dictionary> {

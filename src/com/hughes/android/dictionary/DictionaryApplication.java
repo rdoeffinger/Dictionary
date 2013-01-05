@@ -14,19 +14,6 @@
 
 package com.hughes.android.dictionary;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +32,19 @@ import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
 import com.hughes.util.ListUtil;
 import com.ibm.icu.text.Collator;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class DictionaryApplication extends Application {
   
@@ -278,6 +278,10 @@ public class DictionaryApplication extends Application {
   final Comparator<DictionaryInfo> dictionaryInfoComparator = new Comparator<DictionaryInfo>() {
     @Override
     public int compare(DictionaryInfo d1, DictionaryInfo d2) {
+      // Single-index dictionaries first.
+      if (d1.indexInfos.size() != d2.indexInfos.size()) {
+          return d1.indexInfos.size() - d2.indexInfos.size();
+      }
       return uncompressedFilenameComparator.compare(d1.uncompressedFilename, d2.uncompressedFilename);
     }
   };

@@ -14,6 +14,10 @@
 
 package com.hughes.android.util;
 
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,13 +25,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.hughes.android.dictionary.DictionaryApplication;
-
-import android.app.Application;
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
 
 public class PersistentObjectCache {
 

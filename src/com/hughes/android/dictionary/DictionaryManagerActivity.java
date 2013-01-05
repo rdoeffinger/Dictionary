@@ -14,9 +14,6 @@
 
 package com.hughes.android.dictionary;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
-import com.hughes.android.util.IntentLauncher;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,6 +45,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.util.IntentLauncher;
 
 import java.io.File;
 import java.util.ArrayList;

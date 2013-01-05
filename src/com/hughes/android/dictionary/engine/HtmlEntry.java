@@ -1,7 +1,6 @@
 package com.hughes.android.dictionary.engine;
 
 import android.content.Intent;
-import android.net.Uri;
 
 import com.hughes.android.dictionary.C;
 import com.hughes.util.StringUtil;
@@ -12,10 +11,7 @@ import com.ibm.icu.text.Transliterator;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Pattern;
 
