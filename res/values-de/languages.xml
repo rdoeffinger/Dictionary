@@ -38,6 +38,7 @@
   <string name="GA">Gälisch (Irisch, Schottisch)</string>
   <string name="IT">Italienisch</string>
   <string name="LA">Latin</string>
+  <string name="LO">Lao</string>
   <string name="LV">Lettisch</string>
   <string name="LT">Litauisch</string>
   <string name="JA">Japanisch</string>
@@ -45,6 +46,7 @@
   <string name="KU">Kurdisch</string>
   <string name="MS">Malay</string>
   <string name="MI">Maori</string>
+  <string name="ML">Malayalam</string>
   <string name="MN">Mongolisch</string>
   <string name="NE">Nepali</string>
   <string name="NO">Norwegisch</string>
