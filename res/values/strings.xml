@@ -3,7 +3,7 @@
 
   <string name="app_name">QuickDic</string>
 
-  <string name="titleWithVersion">QuickDic 4.0</string>
+  <string name="titleWithVersion">QuickDic 4.0.1</string>
   
   <!-- Global. -->
   <string name="about">About QuickDic…</string> 
@@ -25,7 +25,7 @@
   <string name="managerFilterCheckbox">Local only</string>
   
 
-  <string name="thanksForUpdatingVersion">4.0_en_b</string>
+  <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
   <!-- DictionaryActivity -->
   <string name="searchText">Search Text</string>
@@ -109,6 +109,10 @@
   <string name="showClearSearchTextButtonTitle">Show \'clear search text\' button</string>
   <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
 
+  <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
+  <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
+  <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
+  
   <string name="themeKey">theme</string>
   <string name="themeTitle">UI theme</string>
   <string name="themeSummary">User-interface color theme.</string>

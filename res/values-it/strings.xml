@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <string name="app_name">QuickDic</string>
-<string name="titleWithVersion">QuickDic 4.0</string>
+<string name="titleWithVersion">QuickDic 4.0.1</string>
 <!-- Global. -->
 <string name="about">About QuickDic…</string>
 <string name="preferences">Preferenze…</string>
@@ -20,7 +20,7 @@ Rilevato problema di font (comune su apparecchi Sony Ericsson), ritorno a font d
 <string name="indexInfo">%1$s: %2$,d parole</string>
 <string name="managerFilterText">Filtra lista</string>
 <string name="managerFilterCheckbox">Solo locali</string>
-<string name="thanksForUpdatingVersion">4.0_it_a</string>
+<string name="thanksForUpdatingVersion">4.0.1_it_a</string>
 <!-- DictionaryActivity -->
 <string name="searchText">Cerca testo</string>
 <string name="selectDictionary">Seleziona dizionario…</string>

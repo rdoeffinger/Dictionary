@@ -189,8 +189,7 @@ public class DictionaryApplication extends Application {
     return new File(getDictDir(), uncompressedFilename);
   }
   
-  
-  
+
   String defaultLangISO2 = Locale.getDefault().getLanguage().toLowerCase();
   String defaultLangName = null;
   final Map<String, String> fileToNameCache = new LinkedHashMap<String, String>();

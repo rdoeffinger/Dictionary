@@ -372,7 +372,7 @@ public final class Index implements RAFSerializable<Index> {
     final int exactMatchIndex = findInsertionPointIndex(searchText, interrupted);
     if (exactMatchIndex != -1) {
         final IndexEntry exactMatch = sortedIndexEntries.get(exactMatchIndex);
-        if (pattern.matcher(exactMatch.token).matches()) {
+        if (pattern.matcher(exactMatch.token).find()) {
             matches.get(RowMatchType.TITLE_MATCH).add(rows.get(exactMatch.startRow));
         }
     }

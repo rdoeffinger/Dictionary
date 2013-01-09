@@ -4,14 +4,12 @@
   <!-- Default: dark theme -->
     
   <style name="Theme.Default" parent="@android:style/Theme.Holo">
-      <item name="android:textColorLink">#0000FF</item>
   </style>
   
   
   <!-- ****************************************************************** -->
 
   <style name="Theme.Light" parent="@android:style/Theme.Holo.Light">
-      <item name="android:textColorLink">#0000FF</item>
   </style>
   
 

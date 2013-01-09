@@ -59,6 +59,14 @@
     android:persistent="true"
   />
 
+  <CheckBoxPreference 
+    android:key="@string/showPrevNextButtonsKey"
+    android:title="@string/showPrevNextButtonsTitle"
+    android:summary="@string/showPrevNextButtonsSummary"
+    android:defaultValue="true"
+    android:persistent="true"
+  />
+  
   <ListPreference 
     android:key="@string/themeKey"
     android:title="@string/themeTitle"

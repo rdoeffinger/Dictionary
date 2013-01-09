@@ -128,6 +128,7 @@ public class DictionaryActivity extends ListActivity {
     volatile boolean ttsReady;
     
     int textColorFg = Color.BLACK;
+    
 
     private final Executor searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
@@ -372,6 +373,12 @@ public class DictionaryActivity extends ListActivity {
                 onUpDownButton(false);
             }
         });
+        upButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.showPrevNextButtonsKey), true) ? View.VISIBLE
+                : View.GONE);
+        downButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.showPrevNextButtonsKey), true) ? View.VISIBLE
+                : View.GONE);
 
 //        getListView().setOnItemSelectedListener(new ListView.OnItemSelectedListener() {
 //            @Override
@@ -487,8 +494,13 @@ public class DictionaryActivity extends ListActivity {
             @Override
             public void run() {
                 Log.d(LOG, "Trying to show soft keyboard.");
+                final boolean searchTextHadFocus = searchText.hasFocus();
+                searchText.requestFocus();
                 final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
+                if (!searchTextHadFocus) {
+                    defocusSearchText();
+                }
             }}, 100);
     }
 
@@ -506,13 +518,15 @@ public class DictionaryActivity extends ListActivity {
     }
 
     private void updateTTSLanuage() {
-        if (!ttsReady) {
+        if (!ttsReady || index == null || textToSpeech == null) {
+            Log.d(LOG, "Can't updateTTSLanguage.");
             return;
         }
         final Locale locale = new Locale(index.sortLanguage.getIsoCode());
         Log.d(LOG, "Setting TTS locale to: " + locale);
         final int ttsResult = textToSpeech.setLanguage(locale);
-        if (ttsResult != TextToSpeech.LANG_AVAILABLE || ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
+        if (ttsResult != TextToSpeech.LANG_AVAILABLE || 
+            ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
             Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult);
         }
     }
@@ -1297,7 +1311,7 @@ public class DictionaryActivity extends ListActivity {
                     @Override
                     public void onClick(View v) {
                         String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
-                        Log.d(LOG, "html=" + html);
+                        //Log.d(LOG, "html=" + html);
                         startActivityForResult(
                                 HtmlDisplayActivity.getHtmlIntent(String.format(
                                         "<html><head></head><body>%s</body></html>", html),
