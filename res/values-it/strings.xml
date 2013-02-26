@@ -101,6 +101,11 @@ Apri il meù contestuale con un solo click (Click lunghi apriranno comunque il m
 <string name="showClearSearchTextButtonSummary">
 Mostra il pulsante per pulire il campo di ricerca. inoltre, per cercare il testo puoi fare click altrove e cominciare a scrivere.
 </string>
+
+  <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
+  <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
+  <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
+
 <string name="themeKey">theme</string>
 <string name="themeTitle">Tema</string>
 <string name="themeSummary">Colore del tema utente.</string>
