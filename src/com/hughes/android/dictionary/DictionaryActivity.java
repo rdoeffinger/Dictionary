@@ -787,6 +787,18 @@ public class DictionaryActivity extends ListActivity {
             }
         });
 
+        final MenuItem share = menu.add("Share");
+        share.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, row.getTokenRow(true).getToken());
+                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, row.getRawText(saveOnlyFirstSubentry));
+                startActivity(shareIntent);
+                return false;
+            }
+        });
+
         final MenuItem copy = menu.add(android.R.string.copy);
         copy.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
