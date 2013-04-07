@@ -20,7 +20,7 @@ Rilevato problema di font (comune su apparecchi Sony Ericsson), ritorno a font d
 <string name="indexInfo">%1$s: %2$,d parole</string>
 <string name="managerFilterText">Filtra lista</string>
 <string name="managerFilterCheckbox">Solo locali</string>
-<string name="thanksForUpdatingVersion">4.0.1_it_a</string>
+<string name="thanksForUpdatingVersion">4.0_it_a</string>
 <!-- DictionaryActivity -->
 <string name="searchText">Cerca testo</string>
 <string name="selectDictionary">Seleziona dizionario…</string>
@@ -94,18 +94,13 @@ Per voci con più sotto-voci, aggiungi solamente la prima alla word list.
 <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
 <string name="clickOpensContextMenuTitle">Premi per aprire il menù contestuale</string>
 <string name="clickOpensContextMenuSummary">
-Apri il meù contestuale con un solo click (Click lunghi apriranno comunque il menù contestuale).
+Apri il meù contestuale con un solo tap (tap lunghi apriranno comunque il menù contestuale).
 </string>
 <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
 <string name="showClearSearchTextButtonTitle">Mostra il pulsante cancella</string>
 <string name="showClearSearchTextButtonSummary">
 Mostra il pulsante per pulire il campo di ricerca. inoltre, per cercare il testo puoi fare click altrove e cominciare a scrivere.
 </string>
-
-  <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
-  <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
-  <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
-
 <string name="themeKey">theme</string>
 <string name="themeTitle">Tema</string>
 <string name="themeSummary">Colore del tema utente.</string>
