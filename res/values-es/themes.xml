@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  
+  <!-- Default: dark theme -->
+    
+  <style name="Theme.Default" parent="@android:style/Theme">
+  </style>
+
+  <style name="Theme.Default.TokenRow.Fg" parent="@style/Theme.Default">
+<!--       <item name="android:textColor">#FFFFFF</item>   -->
+      <item name="android:textColorLink">#00AAFF</item>
+  </style>
+  
+  <color name="theme_default_token_row_fg">#FFFFFF</color>
+  <color name="theme_default_token_row_main_bg">#222222</color>
+  <color name="theme_default_token_row_other_bg">#222222</color>
+  <color name="theme_default_other_lang_bg">#000000</color>
+  
+  
+  <!-- ****************************************************************** -->
+
+  <style name="Theme.Light" parent="@android:style/Theme.Light">
+  </style>
+
+  <style name="Theme.Light.TokenRow.Fg" parent="@style/Theme.Light">
+      <!-- <item name="android:textColor">#000000</item> -->
+      <item name="android:textColorLink">#0000FF</item> 
+  </style>
+  
+  <color name="theme_light_token_row_fg">#000000</color>
+  <color name="theme_light_token_row_main_bg">#EEEEEE</color>
+  <color name="theme_light_token_row_other_bg">#EEEEEE</color>
+  <color name="theme_light_other_lang_bg">#FFFFFF</color>
+  
+</resources>

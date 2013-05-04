@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="app_name">QuickDic</string>
+
+  <string name="titleWithVersion">QuickDic 4.0.1</string>
+  
+  <!-- Global. -->
+  <string name="about">Acerca de QuickDic…</string> 
+  <string name="preferences">Preferencias…</string>
+  <string name="help">Ayuda</string>
+  <string name="reportIssue">Informar de errores…</string>
+  <string name="fontWorkaround">Detectado problema con el tipo de letra (común en dispositivos Sony Ericsson), volviendo al tipo de letra predeterminado del sistema.</string>
+  
+  
+   <!-- DictionaryManagerActivity -->
+  <string name="dictionaryManager">Gestor de Diccionarios</string>
+  <string name="helpText">Mantenga pulsado sobre un diccionario para más opciones.</string>
+  <string name="downloadButton">Descarga (%.1fMB)</string>
+  <string name="updateButton">Actualización (%.1fMB)</string>
+  <string name="moveToTop">Mover al principio</string>
+  <string name="deleteDictionary">Borrar diccionario</string>
+  <string name="indexInfo">%1$s: %2$,d palabras</string>
+  <string name="managerFilterText">Listar filtro</string>
+  <string name="managerFilterCheckbox">Sólo local</string>
+  
+
+  <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
+
+  <!-- DictionaryActivity -->
+  <string name="searchText">Buscar Texto</string>
+  <string name="selectDictionary">Seleccionar diccionario…</string>
+  <string name="switchToLanguage">Cambiar a %s</string>
+  <string name="addToWordList">Agregar palabra a la lista: %s</string>
+  <string name="searchForSelection">Buscar: %s</string>
+  <string name="failedAddingToWordList">Error agregando a la lista de palabras: %s</string>
+  <string name="unzippingDictionary">Descomprimiendo diccionario…</string>
+  <string name="failedToUnzipDictionary">Error descomprimiento disccionario…</string>
+  <string name="invalidDictionary">Diccionario no válido: archivo=%1$s, error=%2$s</string>
+  <string name="noSearchResults">La búsqueda no dio resultados.</string>
+  <string name="aboutDictionary">Acerca del diccionario…</string> 
+  <string name="randomWord">Palabra aleatoria</string> 
+  <string name="fontFailure">Error de tipo de letra: %s</string> 
+  <string name="seeAlso">Vea también: %s</string>
+  <string name="speak">Locución</string>  
+  
+
+  <!-- About dictionary. -->
+  <string name="dictionaryPath">Archivo: %s</string> 
+  <string name="dictionarySize">Tamaño: %,d bytes</string> 
+  <string name="dictionaryCreationTime">Creado: %tc</string> 
+  <string name="indexName">Índice: %s</string> 
+  <string name="mainTokenCount">Cuenta de palabras: %,d</string> 
+  <string name="sources">Fuentes</string> 
+  <string name="sourceInfo">%1$s : %2$,d entradas</string> 
+  
+
+  
+	<!-- About. -->
+  <string name="thadHughes">Thad Hughes</string>
+  <string name="contactMe">Si está usando QuickDic, me encantaría saberlo.
+  Desgraciadamente, no puedo hacerme responsable sobre el contenido del diccionario (sólo el formato), ya que está generado desde otras fuentes.
+Por favor envíe comentarios, sugerencias, informes de error o simplemente un saludo rápido a:</string>
+  <string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+  <string name="webPage">Para más información, vea:</string>
+  <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
+  
+  <string name="license">QuickDic contiene código con derechos de autor de Google y publicado bajo la licencia Apache 2.0.</string>
+  <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
+ 
+ 
+	<!-- Download. -->
+  <string name="openingConnection">Abriendo conexión…</string>
+  <string name="downloading">Descargando: %1$,d of %2$,d bytes.</string>
+  <string name="unzipping">Descomprimiendo: %1$,d of %2$,d bytes.</string>
+  <string name="downloadFinished">Terminado: %,d bytes.</string>
+  <string name="errorDownloadingFile">Error descargando archivo: \n%s</string>  
+
+
+	<!-- Preferences -->
+
+  <string name="quickdicDirectoryKey">quickdicDirectory</string>
+  <string name="quickdicDirectoryTitle">Directorio de QuickDic</string>
+  <string name="quickdicDirectorySummary">El directorio donde QuickDic almacena los diccionarios.</string>
+  <string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
+  
+  <string name="wordListFileKey">wordListFile</string>
+  <string name="wordListFileTitle">Archivo de lista de palabras</string>
+  <string name="wordListFileSummary">El archivo local donde se incluirá la lista de palabras.</string>
+  <string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
+
+  <string name="fontKey">font</string>
+  <string name="fontTitle">Tipo de letra del Diccionario</string>
+  <string name="fontSummary">Tipo de letra usado para mostrar los diccionarios.</string>
+ 
+	<string name="fontSizeKey">fontSize</string>
+  <string name="fontSizeTitle">Tamaño de letra</string>
+  <string name="fontSizeSummary">El tamaño de letra para las filas del diccionario.</string>
+
+  <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
+  <string name="saveOnlyFirstSubentryTitle">Guardar sólo la primera sub-entrada</string>
+  <string name="saveOnlyFirstSubentrySummary">Para entradas con múltimples sub-entradas, escribir sólo la primera a la lista de palabras.</string>
+
+  <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
+  <string name="clickOpensContextMenuTitle">Pulsar abre el menú contextual</string>
+  <string name="clickOpensContextMenuSummary">Abrir el menú contextual pulsando en las entradas (pulsar y mantener siempre abre el menú contextual).</string>
+
+  <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
+  <string name="showClearSearchTextButtonTitle">Mostrar el botón \'limpioar texto de búsqueda\'</string>
+  <string name="showClearSearchTextButtonSummary">Muestra el botón para limpiar el texto de búsqueda. También puedes simplemente mover el foco fuera del texto de búsqueda y empezar a escribir.</string>
+
+  <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
+  <string name="showPrevNextButtonsTitle">Mostrar botones arriba/abajo</string>
+  <string name="showPrevNextButtonsSummary">Mostrar u ocultar los botones de palabra anterior y siguiente en la vista de diccionario.</string>
+  
+  <string name="themeKey">theme</string>
+  <string name="themeTitle">Tema</string>
+  <string name="themeSummary">Color y tema del interfaz de usuario.</string>
+  
+</resources>
