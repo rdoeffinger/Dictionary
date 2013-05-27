@@ -7,7 +7,7 @@
 	
   <!-- Global. -->
   <string name="about">Über QuickDic…</string>
-  <string name="preferences">Einstellungen…</string>
+  <string name="settings">Einstellungen…</string>
   <string name="help">Hilfe</string>
   <string name="reportIssue">Problem melden…</string>
   <string name="fontWorkaround">Detected font problem (common on Sony Ericsson devices), switching back to default font.</string>

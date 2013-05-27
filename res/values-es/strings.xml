@@ -7,7 +7,7 @@
   
   <!-- Global. -->
   <string name="about">Acerca de QuickDic…</string> 
-  <string name="preferences">Preferencias…</string>
+  <string name="settings">Preferencias…</string>
   <string name="help">Ayuda</string>
   <string name="reportIssue">Informar de errores…</string>
   <string name="fontWorkaround">Detectado problema con el tipo de letra (común en dispositivos Sony Ericsson), volviendo al tipo de letra predeterminado del sistema.</string>

@@ -422,8 +422,8 @@ public class DictionaryActivity extends ListActivity {
     protected void onResume() {
         Log.d(LOG, "onResume");
         super.onResume();
-        if (PreferenceActivity.prefsMightHaveChanged) {
-            PreferenceActivity.prefsMightHaveChanged = false;
+        if (SettingsActivity.settingsMightHaveChanged) {
+            SettingsActivity.settingsMightHaveChanged = false;
             finish();
             startActivity(getIntent());
         }

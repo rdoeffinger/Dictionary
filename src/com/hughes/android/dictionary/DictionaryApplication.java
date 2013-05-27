@@ -141,12 +141,12 @@ public class DictionaryApplication extends Application {
       }
     });
 
-    final MenuItem preferences = menu.add(getString(R.string.preferences));
+    final MenuItem preferences = menu.add(getString(R.string.settings));
     preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
-        PreferenceActivity.prefsMightHaveChanged = true;
-        final Intent intent = new Intent().setClassName(PreferenceActivity.class
-            .getPackage().getName(), PreferenceActivity.class.getCanonicalName());
+        SettingsActivity.settingsMightHaveChanged = true;
+        final Intent intent = new Intent().setClassName(SettingsActivity.class
+            .getPackage().getName(), SettingsActivity.class.getCanonicalName());
         context.startActivity(intent);
         return false;
       }

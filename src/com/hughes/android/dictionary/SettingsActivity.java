@@ -16,9 +16,9 @@ package com.hughes.android.dictionary;
 
 import android.os.Bundle;
 
-public class PreferenceActivity extends android.preference.PreferenceActivity {
+public class SettingsActivity extends android.preference.PreferenceActivity {
   
-  static boolean prefsMightHaveChanged = false;
+  static boolean settingsMightHaveChanged = false;
   
   @SuppressWarnings("deprecation")
 @Override
@@ -26,12 +26,11 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
     setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
 
     super.onCreate(savedInstanceState);
-    addPreferencesFromResource(R.xml.preferences);
+    addPreferencesFromResource(R.xml.settings);
   }
 
   @Override
   public void onContentChanged() {
     super.onContentChanged();
   }
-
 }

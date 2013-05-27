@@ -149,8 +149,8 @@ public class DictionaryManagerActivity extends ListActivity {
   protected void onResume() {
     super.onResume();
     
-    if (PreferenceActivity.prefsMightHaveChanged) {
-      PreferenceActivity.prefsMightHaveChanged = false;
+    if (SettingsActivity.settingsMightHaveChanged) {
+      SettingsActivity.settingsMightHaveChanged = false;
       finish();
       startActivity(getIntent());
     }
