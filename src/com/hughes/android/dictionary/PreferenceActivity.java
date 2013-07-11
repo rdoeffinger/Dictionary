@@ -14,19 +14,44 @@
 
 package com.hughes.android.dictionary;
 
+import java.util.List;
+
 import android.os.Bundle;
+import android.preference.ListPreference;
 
 public class PreferenceActivity extends android.preference.PreferenceActivity {
   
   static boolean prefsMightHaveChanged = false;
   
   @SuppressWarnings("deprecation")
-@Override
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
 
+    /**
+     * @author Dominik Köppl
+     * Preference: select default dictionary
+     * As this list is dynamically generated, we have to do it in this fashion
+     */
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.preferences);
+    ListPreference defaultDic = (ListPreference) findPreference(getResources().getString(R.string.defaultDicKey));
+    DictionaryApplication application = (DictionaryApplication) getApplication();
+    List<DictionaryInfo> dicts = application.getUsableDicts();
+    
+	final CharSequence[] entries = new CharSequence[dicts.size()];
+	final CharSequence[] entryvalues = new CharSequence[dicts.size()];
+
+	for(int i = 0; i < entries.length; ++i)
+	{
+		entries[i] = dicts.get(i).dictInfo;
+		entryvalues[i] = dicts.get(i).uncompressedFilename;
+	}
+	
+	defaultDic.setEntries(entries);
+	defaultDic.setEntryValues(entryvalues);
+    
+    
   }
 
   @Override

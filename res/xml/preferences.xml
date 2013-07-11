@@ -1,5 +1,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    
+       <ListPreference 
+    android:key="@string/defaultDicKey"
+    android:title="@string/defaultDicTitle"
+    android:summary="@string/defaultDicSummary"
+    android:persistent="true"
+  />
+    
   <EditTextPreference
     android:key="@string/quickdicDirectoryKey"
     android:title="@string/quickdicDirectoryTitle" 
