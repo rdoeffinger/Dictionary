@@ -1,61 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ScrollView01"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:ignore="HardcodedText" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/LinearLayout02"
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingBottom="10dip" >
-
-            <ImageView
-                android:id="@+id/ImageView01"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/icon"
-                android:contentDescription="icon" />
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|fill_vertical"
-                android:text="@string/titleWithVersion"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-        </LinearLayout>
+            android:drawableLeft="@drawable/icon"
+            android:text="@string/titleWithVersion"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
-            android:id="@+id/copyright"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Copyright 2009-2011 Google Inc." />
+            android:text="Copyright 2009-2013 Google Inc."
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/author"
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingBottom="10dip"
-            android:text="Thad Hughes" />
+            android:text="Thad Hughes"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/emailMe"
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/contactMe" />
-
+            android:text="@string/contactMe"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
         <TextView
             android:id="@+id/email"
             android:layout_width="wrap_content"
@@ -63,8 +50,9 @@
             android:layout_gravity="left"
             android:autoLink="email"
             android:clickable="true"
+            android:text="@string/myEmail"
             android:paddingBottom="10dip"
-            android:text="@string/myEmail" />
+            />
 
         <TextView
             android:id="@+id/webPage"
@@ -79,8 +67,9 @@
             android:layout_gravity="left"
             android:autoLink="web"
             android:clickable="true"
+            android:text="@string/webPageUrl"
             android:paddingBottom="10dip"
-            android:text="@string/webPageUrl" />
+             />
 
         <TextView
             android:id="@+id/license"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -16,12 +17,22 @@
             android:layout_weight="1"
             android:hint="@string/managerFilterText" />
 
-        <CheckBox
-            android:id="@+id/showLocal"
+        <ImageButton
+            android:id="@+id/ClearSearchTextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="@string/managerFilterCheckbox" />
+            android:src="@android:drawable/ic_input_delete" 
+            android:contentDescription="@string/clearSearchText"/>
+
+        <ToggleButton
+            android:id="@+id/showLocal"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="0"
+            android:textOff="@string/managerFilterCheckboxAll"
+            android:textOn="@string/managerFilterCheckboxLocal" />
+
     </LinearLayout>
 
     <ListView
@@ -32,7 +43,8 @@
         android:choiceMode="singleChoice"
         android:clickable="true"
         android:fastScrollEnabled="true"
-        android:focusable="true" />
+        android:focusable="true"
+        tools:listitem="@layout/dictionary_manager_row" />
 
     <TextView
         android:id="@+id/DictionaryListHeader"

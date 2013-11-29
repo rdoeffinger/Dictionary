@@ -37,7 +37,6 @@ public class MyWebView extends WebView {
                     activity.finish();
                     return true;
                 }
-                // TODO Auto-generated method stub
                 return super.shouldOverrideUrlLoading(view, url);
             }
         };

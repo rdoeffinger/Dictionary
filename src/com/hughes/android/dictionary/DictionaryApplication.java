@@ -22,10 +22,10 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Language;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
@@ -124,6 +124,7 @@ public class DictionaryApplication extends Application {
   public void onCreateGlobalOptionsMenu(
       final Context context, final Menu menu) {
     final MenuItem about = menu.add(getString(R.string.about));
+    about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
         final Intent intent = new Intent().setClassName(AboutActivity.class
@@ -134,6 +135,7 @@ public class DictionaryApplication extends Application {
     });
 
     final MenuItem help = menu.add(getString(R.string.help));
+    help.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
         context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent());
@@ -142,6 +144,7 @@ public class DictionaryApplication extends Application {
     });
 
     final MenuItem preferences = menu.add(getString(R.string.settings));
+    preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
         SettingsActivity.settingsMightHaveChanged = true;
@@ -154,6 +157,7 @@ public class DictionaryApplication extends Application {
     
     
     final MenuItem reportIssue = menu.add(getString(R.string.reportIssue));
+    reportIssue.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     reportIssue.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);

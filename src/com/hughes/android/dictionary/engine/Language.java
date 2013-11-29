@@ -39,8 +39,10 @@ public class Language {
     private LanguageResources(final String englishName, int nameId) {
       this(englishName, nameId, 0);
     }
-}
+  }
 
+  // Useful:
+  // http://www.loc.gov/standards/iso639-2/php/code_list.php
   public static final Map<String,LanguageResources> isoCodeToResources = new LinkedHashMap<String,LanguageResources>();
   static {
     isoCodeToResources.put("AF", new LanguageResources("Afrikaans", R.string.AF));

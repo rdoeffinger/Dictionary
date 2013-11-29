@@ -14,7 +14,6 @@
 
 package com.hughes.android.dictionary;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -24,28 +23,25 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.Menu;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 
@@ -53,7 +49,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DictionaryManagerActivity extends ListActivity {
+public class DictionaryManagerActivity extends SherlockListActivity {
 
   static final String LOG = "QuickDic";
   static boolean blockAutoLaunch = false;
@@ -62,7 +58,7 @@ public class DictionaryManagerActivity extends ListActivity {
   Adapter adapter;
   
   EditText filterText;
-  CheckBox showLocal;
+  ToggleButton showLocal;
   
   Handler uiHandler;
   
@@ -86,7 +82,7 @@ public class DictionaryManagerActivity extends ListActivity {
     setContentView(R.layout.dictionary_manager_activity);
     
     filterText = (EditText) findViewById(R.id.filterText);
-    showLocal = (CheckBox) findViewById(R.id.showLocal);
+    showLocal = (ToggleButton) findViewById(R.id.showLocal);
     
     filterText.addTextChangedListener(new TextWatcher() {
       @Override
@@ -101,6 +97,15 @@ public class DictionaryManagerActivity extends ListActivity {
       public void afterTextChanged(Editable s) {
         onFilterTextChanged();
       }
+    });
+    
+    final ImageButton clearSearchText = (ImageButton) findViewById(R.id.ClearSearchTextButton);
+    clearSearchText.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View arg0) {
+            filterText.setText("");
+            filterText.requestFocus();
+        }
     });
     
     showLocal.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -202,10 +207,10 @@ public class DictionaryManagerActivity extends ListActivity {
     final DictionaryInfo dictionaryInfo = adapter.getItem(position);
     
     if (position > 0 && application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
-      final MenuItem moveToTopMenuItem = menu.add(R.string.moveToTop);
-      moveToTopMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      final android.view.MenuItem moveToTopMenuItem = menu.add(R.string.moveToTop);
+      moveToTopMenuItem.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onMenuItemClick(android.view.MenuItem item) {
           application.moveDictionaryToTop(dictionaryInfo);
           setListAdapter(adapter = new Adapter());
           return true;
@@ -213,10 +218,10 @@ public class DictionaryManagerActivity extends ListActivity {
       });
     }
 
-    final MenuItem deleteMenuItem = menu.add(R.string.deleteDictionary);
-    deleteMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+    final android.view.MenuItem deleteMenuItem = menu.add(R.string.deleteDictionary);
+    deleteMenuItem.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
       @Override
-      public boolean onMenuItemClick(MenuItem item) {
+      public boolean onMenuItemClick(android.view.MenuItem item) {
         application.deleteDictionary(dictionaryInfo);
         setListAdapter(adapter = new Adapter());
         return true;
@@ -225,10 +230,10 @@ public class DictionaryManagerActivity extends ListActivity {
 
     final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
     if (downloadable != null) {
-      final MenuItem downloadMenuItem = menu.add(getString(R.string.downloadButton, downloadable.zipBytes/1024.0/1024.0));
-      downloadMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      final android.view.MenuItem downloadMenuItem = menu.add(getString(R.string.downloadButton, downloadable.zipBytes/1024.0/1024.0));
+      downloadMenuItem.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onMenuItemClick(android.view.MenuItem item) {
           final Intent intent = getDownloadIntent(downloadable);
           startActivity(intent);
           setListAdapter(adapter = new Adapter());
@@ -240,10 +245,11 @@ public class DictionaryManagerActivity extends ListActivity {
   }
 
   private Intent getDownloadIntent(final DictionaryInfo downloadable) {
-    final Intent intent = DownloadActivity.getLaunchIntent(downloadable.downloadUrl,
-        application.getPath(downloadable.uncompressedFilename).getPath() + ".zip",
-        downloadable.dictInfo);
-    return intent;
+//      DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+//      DownloadManager.Request request = new DownloadManager.Request(Uri.parse(""));
+//      long id = downloadManager.enqueue(request);
+//      DownloadManager.Query query;
+      return null;
   }
   
   private void onFilterTextChanged() {
@@ -288,7 +294,6 @@ public class DictionaryManagerActivity extends ListActivity {
         }
         if (canShow) {
           dictionaryInfos.add(dictionaryInfo);
-          
         }
       }
     }
@@ -309,58 +314,42 @@ public class DictionaryManagerActivity extends ListActivity {
     }
     
     @Override
-    public View getView(final int position, final View convertView, final ViewGroup parent) {
-      final LinearLayout result;
-      // Android 4.0.3 leaks memory like crazy if we don't do this.
-      if (convertView instanceof LinearLayout) {
-        result = (LinearLayout) convertView;
-        result.removeAllViews();
-      } else {
-        result = new LinearLayout(parent.getContext());
-      }
-      
+    public View getView(final int position, View convertView, final ViewGroup parent) {
+       if (convertView == null) {
+           convertView = LayoutInflater.from(parent.getContext()).inflate(
+                   R.layout.dictionary_manager_row, parent, false);
+       }
+        
       final DictionaryInfo dictionaryInfo = getItem(position);
-      result.setOrientation(LinearLayout.VERTICAL);
 
-      final LinearLayout row = new LinearLayout(parent.getContext());
-      row.setOrientation(LinearLayout.HORIZONTAL);
-      result.addView(row);
-
-      {
-      final TextView textView = new TextView(parent.getContext());
+      final TextView textView = (TextView) convertView.findViewById(R.id.dictionaryName);
       final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
       textView.setText(name);
-      textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
-      row.addView(textView);
-      LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-      layoutParams.weight = 1.0f;
-      textView.setLayoutParams(layoutParams);
-      }
       
+      final Button downloadButton = (Button) convertView.findViewById(R.id.dictionaryDownloadButton);
       final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
-      final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename); 
-      if ((!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename) || updateAvailable) && downloadable != null) {
-        final Button downloadButton = new Button(parent.getContext());
-        downloadButton.setText(getString(updateAvailable ? R.string.updateButton : R.string.downloadButton, downloadable.zipBytes / 1024.0 / 1024.0));
-        final Intent intent = getDownloadIntent(downloadable);
-        downloadButton.setOnClickListener(new IntentLauncher(parent.getContext(), intent));
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        downloadButton.setLayoutParams(layoutParams);
-        row.addView(downloadButton);
+      final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
+      if (updateAvailable) {
+          downloadButton.setCompoundDrawablesWithIntrinsicBounds(
+                              android.R.drawable.ic_menu_add, 
+                          0, 0, 0);
+          downloadButton.setText(getString(R.string.downloadButton, downloadable.zipBytes / 1024.0 / 1024.0));
+      } else if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
+          downloadButton.setCompoundDrawablesWithIntrinsicBounds(
+                  android.R.drawable.ic_menu_add, 
+              0, 0, 0);
+          downloadButton.setText(getString(R.string.downloadButton, downloadable.zipBytes / 1024.0 / 1024.0));
       } else {
-        final ImageView checkMark = new ImageView(parent.getContext());
-        checkMark.setImageResource(R.drawable.btn_check_buttonless_on);
-        row.addView(checkMark);
+          downloadButton.setCompoundDrawablesWithIntrinsicBounds(
+                  android.R.drawable.checkbox_on_background, 
+              0, 0, 0);
+          downloadButton.setText("");
       }
+      final Intent intent = getDownloadIntent(downloadable);
+      downloadButton.setOnClickListener(new IntentLauncher(parent.getContext(), intent));
 
       // Add the information about each index.
-      final LinearLayout row2 = new LinearLayout(parent.getContext());
-      row2.setOrientation(LinearLayout.HORIZONTAL);
-      final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-      row2.setLayoutParams(layoutParams);
-      result.addView(row2);
+      final TextView dictionaryDetails = (TextView) convertView.findViewById(R.id.dictionaryDetails);
       final StringBuilder builder = new StringBuilder();
       for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
         if (builder.length() > 0) {
@@ -368,26 +357,23 @@ public class DictionaryManagerActivity extends ListActivity {
         }
         builder.append(getString(R.string.indexInfo, indexInfo.shortName, indexInfo.mainTokenCount));
       }
-      final TextView indexView = new TextView(parent.getContext());
-      indexView.setText(builder.toString());
-      row2.addView(indexView);
+      dictionaryDetails.setText(builder.toString());
       
-      
-      // Because we have a Button inside a ListView row:
-      // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
-      result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-      result.setClickable(true);
-      result.setFocusable(true);
-      result.setLongClickable(true);
-      result.setBackgroundResource(android.R.drawable.menuitem_background);
-      result.setOnClickListener(new TextView.OnClickListener() {
+//      // Because we have a Button inside a ListView row:
+//      // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
+      //convertView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+      convertView.setClickable(true);
+      convertView.setFocusable(true);
+      convertView.setLongClickable(true);
+//      result.setBackgroundResource(android.R.drawable.menuitem_background);
+      convertView.setOnClickListener(new TextView.OnClickListener() {
         @Override
         public void onClick(View v) {
           DictionaryManagerActivity.this.onClick(position);
         }
       });
       
-      return result;
+      return convertView;
     }
   }
 

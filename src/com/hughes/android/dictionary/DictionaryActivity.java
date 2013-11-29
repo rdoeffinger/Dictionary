@@ -14,8 +14,8 @@
 
 package com.hughes.android.dictionary;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,9 +40,7 @@ import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -50,6 +48,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
@@ -66,6 +65,12 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
+import com.actionbarsherlock.widget.SearchView;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.EntrySource;
@@ -103,7 +108,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DictionaryActivity extends ListActivity {
+public class DictionaryActivity extends SherlockListActivity {
 
     static final String LOG = "QuickDic";
 
@@ -148,6 +153,8 @@ public class DictionaryActivity extends ListActivity {
     EditText searchText;
 
     Button langButton;
+    
+    MenuItem nextWordMenuItem, previousWordMenuItem;
 
     // Never null.
     private File wordList = null;
@@ -361,25 +368,6 @@ public class DictionaryActivity extends ListActivity {
         });
         updateLangButton();
 
-        final View upButton = findViewById(R.id.UpButton);
-        upButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                onUpDownButton(true);
-            }
-        });
-        final View downButton = findViewById(R.id.DownButton);
-        downButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                onUpDownButton(false);
-            }
-        });
-        upButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.showPrevNextButtonsKey), true) ? View.VISIBLE
-                : View.GONE);
-        downButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.showPrevNextButtonsKey), true) ? View.VISIBLE
-                : View.GONE);
-
 //        getListView().setOnItemSelectedListener(new ListView.OnItemSelectedListener() {
 //            @Override
 //            public void onItemSelected(AdapterView<?> adapterView, View arg1, final int position,
@@ -416,6 +404,31 @@ public class DictionaryActivity extends ListActivity {
         Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
 
         setDictionaryPrefs(this, dictFile, indexIndex, searchText.getText().toString());
+        
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        
+        //Inflate the custom view
+//        View customNav = LayoutInflater.from(this).inflate(R.layout.dictionary_search_view, null);
+      SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
+      searchView.setIconifiedByDefault(false);
+      searchView.setQueryHint(getString(R.string.searchText));
+      searchView.setSubmitButtonEnabled(false);
+//      searchView.setMaxWidth(200);
+      searchView.setImeOptions(
+              EditorInfo.IME_ACTION_SEARCH |
+              EditorInfo.IME_FLAG_NO_EXTRACT_UI | 
+              EditorInfo.IME_FLAG_NO_ENTER_ACTION | 
+//              EditorInfo.IME_FLAG_NO_FULLSCREEN |
+              EditorInfo.IME_MASK_ACTION |
+              EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//      searchView.setOnQueryTextListener(this);
+//      menu.add("Search")
+////          .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.abs__ic_search)
+//          .setActionView(searchView)
+//          .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        actionBar.setCustomView(searchView);
+        actionBar.setDisplayShowCustomEnabled(true);        
     }
 
     @Override
@@ -682,9 +695,56 @@ public class DictionaryActivity extends ListActivity {
     // --------------------------------------------------------------------------
 
     final Random random = new Random();
-
+    
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
+        //Create the search view
+//        SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
+//        searchView.setIconifiedByDefault(false);
+//        searchView.setQueryHint(getString(R.string.searchText));
+//        searchView.setSubmitButtonEnabled(false);
+//        searchView.setMaxWidth(200);
+//        searchView.setImeOptions(
+//                EditorInfo.IME_ACTION_SEARCH |
+//                EditorInfo.IME_FLAG_NO_EXTRACT_UI | 
+//                EditorInfo.IME_FLAG_NO_ENTER_ACTION | 
+////                EditorInfo.IME_FLAG_NO_FULLSCREEN |
+//                EditorInfo.IME_MASK_ACTION |
+//                EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+////        searchView.setOnQueryTextListener(this);
+//        menu.add("Search")
+////            .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.abs__ic_search)
+//            .setActionView(searchView)
+//            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        
+        
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.showPrevNextButtonsKey), true)) {
+            // Next word.
+            nextWordMenuItem = menu.add(getString(R.string.nextWord))
+                .setIcon(R.drawable.arrow_down_float);
+            nextWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            nextWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        onUpDownButton(true);
+                        return true;
+                    }
+                });
+    
+            // Previous word.
+            previousWordMenuItem = menu.add(getString(R.string.previousWord))
+                .setIcon(R.drawable.arrow_up_float);
+            previousWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            previousWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        onUpDownButton(false);
+                        return true;
+                    }
+                });
+        }
+
         application.onCreateGlobalOptionsMenu(this, menu);
 
 //        {
@@ -701,6 +761,7 @@ public class DictionaryActivity extends ListActivity {
 
         {
             final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
+            dictionaryList.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
                     startActivity(DictionaryManagerActivity.getLaunchIntent());
@@ -712,6 +773,7 @@ public class DictionaryActivity extends ListActivity {
 
         {
             final MenuItem aboutDictionary = menu.add(getString(R.string.aboutDictionary));
+            aboutDictionary.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             aboutDictionary.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
                     final Context context = getListView().getContext();
@@ -778,18 +840,18 @@ public class DictionaryActivity extends ListActivity {
         AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo) menuInfo;
         final RowBase row = (RowBase) getListAdapter().getItem(adapterContextMenuInfo.position);
 
-        final MenuItem addToWordlist = menu.add(getString(R.string.addToWordList,
+        final android.view.MenuItem addToWordlist = menu.add(getString(R.string.addToWordList,
                 wordList.getName()));
-        addToWordlist.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
+        addToWordlist.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(android.view.MenuItem item) {
                 onAppendToWordList(row);
                 return false;
             }
         });
 
-        final MenuItem share = menu.add("Share");
-        share.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
+        final android.view.MenuItem share = menu.add("Share");
+        share.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(android.view.MenuItem item) {
                 Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, row.getTokenRow(true).getToken());
@@ -799,9 +861,9 @@ public class DictionaryActivity extends ListActivity {
             }
         });
 
-        final MenuItem copy = menu.add(android.R.string.copy);
-        copy.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
+        final android.view.MenuItem copy = menu.add(android.R.string.copy);
+        copy.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(android.view.MenuItem item) {
                 onCopy(row);
                 return false;
             }
@@ -809,10 +871,10 @@ public class DictionaryActivity extends ListActivity {
 
         if (selectedSpannableText != null) {
             final String selectedText = selectedSpannableText;
-            final MenuItem searchForSelection = menu.add(getString(R.string.searchForSelection,
+            final android.view.MenuItem searchForSelection = menu.add(getString(R.string.searchForSelection,
                     selectedSpannableText));
-            searchForSelection.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                public boolean onMenuItemClick(MenuItem item) {
+            searchForSelection.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(android.view.MenuItem item) {
                     jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
                     return false;
                 }
@@ -820,10 +882,10 @@ public class DictionaryActivity extends ListActivity {
         }
 
         if (row instanceof TokenRow && ttsReady) {
-            final MenuItem speak = menu.add(R.string.speak);
-            speak.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            final android.view.MenuItem speak = menu.add(R.string.speak);
+            speak.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
                 @Override
-                public boolean onMenuItemClick(MenuItem item) {
+                public boolean onMenuItemClick(android.view.MenuItem item) {
                     textToSpeech.speak(((TokenRow) row).getToken(), TextToSpeech.QUEUE_FLUSH,
                             new HashMap<String, String>());
                     return false;
@@ -871,6 +933,7 @@ public class DictionaryActivity extends ListActivity {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     void onAppendToWordList(final RowBase row) {
         defocusSearchText();
 
@@ -1465,15 +1528,19 @@ public class DictionaryActivity extends ListActivity {
     }
 
     void setFiltered(final SearchOperation searchOperation) {
-        ((ImageButton) findViewById(R.id.UpButton)).setEnabled(false);
-        ((ImageButton) findViewById(R.id.DownButton)).setEnabled(false);
+        if (nextWordMenuItem != null) {
+            nextWordMenuItem.setEnabled(false);
+            previousWordMenuItem.setEnabled(false);
+        }
         rowsToShow = searchOperation.multiWordSearchResult;
         setListAdapter(new IndexAdapter(index, rowsToShow, searchOperation.searchTokens));
     }
 
     void clearFiltered() {
-        ((ImageButton) findViewById(R.id.UpButton)).setEnabled(true);
-        ((ImageButton) findViewById(R.id.DownButton)).setEnabled(true);
+        if (nextWordMenuItem != null) {
+            nextWordMenuItem.setEnabled(true);
+            previousWordMenuItem.setEnabled(true);
+        }
         setListAdapter(new IndexAdapter(index));
         rowsToShow = null;
     }

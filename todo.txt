@@ -1,0 +1,10 @@
+* Make top of Dictionary activity good
+  * Fit search text alongside other buttons if possible.
+  * List other dictinaries beside 
+  * Make search text work.
+  
+ http://stackoverflow.com/questions/13604506/show-actionbarsherlock-searchview-always-expanded
+  <style name="application_theme" parent="application_base_theme">
+    <item name="searchViewSearchIcon">@android:color/transparent</item>
+    <item name="searchViewCloseIcon">@android:color/transparent</item>
+</style>

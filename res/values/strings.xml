@@ -11,19 +11,19 @@
   <string name="help">Help</string>
   <string name="reportIssue">Report issue…</string>
   <string name="fontWorkaround">Detected font problem (common on Sony Ericsson devices), switching back to default font.</string>
+  <string name="clearSearchText">Clear search text</string>
   
   
    <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
   <string name="helpText">Long-press a dictionary for more options.</string>
-  <string name="downloadButton">Download (%.1fMB)</string>
-  <string name="updateButton">Update (%.1fMB)</string>
+  <string name="downloadButton">%.1fMB</string>
   <string name="moveToTop">Move to top</string>
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="indexInfo">%1$s: %2$,d words</string>
   <string name="managerFilterText">List filter</string>
-  <string name="managerFilterCheckbox">Local only</string>
-  
+  <string name="managerFilterCheckboxAll">All</string>
+  <string name="managerFilterCheckboxLocal">Local</string>
 
   <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
@@ -43,6 +43,8 @@
   <string name="fontFailure">Font failure: %s</string> 
   <string name="seeAlso">See also: %1$s (%2$s)</string> 
   <string name="speak">Speak</string> 
+  <string name="nextWord">Next word</string> 
+  <string name="previousWord">Previous word</string> 
   
 
   <!-- About dictionary. -->

@@ -31,22 +31,8 @@
             style="@style/BorderlessButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/default_padding"
             android:src="@drawable/ic_input_delete" />
 
-        <ImageButton
-            android:id="@+id/DownButton"
-            style="@style/BorderlessButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/arrow_down_float" />
-
-        <ImageButton
-            android:id="@+id/UpButton"
-            style="@style/BorderlessButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/arrow_up_float" />
     </LinearLayout>
 
     <ListView
