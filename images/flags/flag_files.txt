@@ -39,7 +39,7 @@ upload.wikimedia.org/wikipedia/commons/9/94/Flag_of_the_Comoros.svg
 upload.wikimedia.org/wikipedia/commons/6/6f/Flag_of_the_Democratic_Republic_of_the_Congo.svg
 upload.wikimedia.org/wikipedia/commons/9/92/Flag_of_the_Republic_of_the_Congo.svg
 upload.wikimedia.org/wikipedia/commons/f/f2/Flag_of_Costa_Rica.svg
-upload.wikimedia.org/wikipedia/commons/8/86/Flag_of_Cote_d%27Ivoire.svg
+upload.wikimedia.org/wikipedia/commons/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg
 upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg
 upload.wikimedia.org/wikipedia/commons/b/bd/Flag_of_Cuba.svg
 upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_Cyprus.svg
@@ -88,7 +88,6 @@ upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Kenya.svg
 upload.wikimedia.org/wikipedia/commons/d/d3/Flag_of_Kiribati.svg
 upload.wikimedia.org/wikipedia/commons/5/51/Flag_of_North_Korea.svg
 upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg
-upload.wikimedia.org/wikipedia/commons/1/1f/Flag_of_Kosovo.svg
 upload.wikimedia.org/wikipedia/commons/a/aa/Flag_of_Kuwait.svg
 upload.wikimedia.org/wikipedia/commons/c/c7/Flag_of_Kyrgyzstan.svg
 upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Laos.svg
@@ -131,7 +130,6 @@ upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg
 upload.wikimedia.org/wikipedia/commons/d/dd/Flag_of_Oman.svg
 upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg
 upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Palau.svg
-upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Palestine.svg
 upload.wikimedia.org/wikipedia/commons/a/ab/Flag_of_Panama.svg
 upload.wikimedia.org/wikipedia/commons/e/e3/Flag_of_Papua_New_Guinea.svg
 upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Paraguay.svg
@@ -192,7 +190,6 @@ upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Vanuatu.svg
 upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_the_Vatican_City.svg
 upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Venezuela.svg
 upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg
-upload.wikimedia.org/wikipedia/commons/2/26/Flag_of_the_Sahrawi_Arab_Democratic_Republic.svg
 upload.wikimedia.org/wikipedia/commons/8/89/Flag_of_Yemen.svg
 upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Zambia.svg
 upload.wikimedia.org/wikipedia/commons/6/6a/Flag_of_Zimbabwe.svg

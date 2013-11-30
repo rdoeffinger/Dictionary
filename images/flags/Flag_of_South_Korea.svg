@@ -1,1 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="600" viewBox="-72 -48 144 96"><defs><rect id="b1" width="24" height="4" x="-12" y="-2"/><g id="b2"><rect width="11" height="4" x="-12" y="-2"/><rect width="11" height="4" x="1" y="-2"/></g></defs><rect x="-50%" y="-50%" width="100%" height="100%" fill="#fff"/><g transform="rotate(56.31)"><!--arctan(3/2)--><use xlink:href="#b2" transform="translate(0,-38)"/><use xlink:href="#b1" transform="translate(0,-44)"/><use xlink:href="#b2" transform="translate(0,-50)"/><use xlink:href="#b1" transform="translate(0,38)"/><use xlink:href="#b2" transform="translate(0,44)"/><use xlink:href="#b1" transform="translate(0,50)"/></g><g transform="rotate(-56.31)"><!--arctan(-3/2)--><use xlink:href="#b1" transform="translate(0,-38)"/><use xlink:href="#b1" transform="translate(0,-44)"/><use xlink:href="#b1" transform="translate(0,-50)"/><use xlink:href="#b2" transform="translate(0,38)"/><use xlink:href="#b2" transform="translate(0,44)"/><use xlink:href="#b2" transform="translate(0,50)"/><path fill="#c60c30" d="M 0,24 A 24,24 0 0,0 0,-24 A 18,18 0 0,0 0,12"/><path fill="#003478" d="M 0,-24 A 12,12 0 0,0 0,0 A 12,12 0 0,1 0,24 A 24,24 0 0,1 0,-24"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="600" viewBox="-36 -24 72 48">
+<title>Flag of South Korea</title>
+<rect fill="#fff" x="-36" y="-24" width="72" height="48"/>
+<g transform="rotate(-56.3099325)"><!--arctan(-3/2)-->
+<g id="b2"><path id="b" d="M-6-25H6M-6-22H6M-6-19H6" stroke="#000" stroke-width="2"/>
+<use xlink:href="#b" y="44"/></g>
+<path stroke="#fff" stroke-width="1" d="M0,17v10"/>
+<circle fill="#c60c30" r="12"/>
+<path fill="#003478" d="M0-12A6,6 0 0 0 0,0A6,6 0 0 1 0,12A12,12 0 0,1 0-12Z"/></g>
+<g transform="rotate(-123.6900675)"><use xlink:href="#b2"/>
+<path stroke="#fff" stroke-width="1" d="M0-23.5v3M0,17v3.5M0,23.5v3"/></g></svg>

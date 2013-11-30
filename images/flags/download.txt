@@ -1,0 +1,7 @@
+
+
+curl http://commons.wikimedia.org/wiki/Sovereign-state_flags > z
+
+curl http://commons.wikimedia.org/wiki/Sovereign-state_flags | egrep -o 'src="//upload.wikimedia.org/wikipedia/commons/thumb/\w+/\w+/Flag_of_[^/]+.svg' z | sed 's|src="//||' | sed 's|/thumb||' > flag_files.txt
+
+for i in `cat flag_files.txt`; do curl $i -O; done

@@ -38,21 +38,21 @@ height="600" width="1200">
 
 <g id="Southern_Cross">
 <g id="Gamma_Crucis">
-<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,120) scale(40)"/>
+<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,120) scale(45.4)"/>
 <use xlink:href="#Pentagram" fill="#cc142b" transform="translate(900,120) scale(30)"/>
 </g>
 <g transform="rotate(82,900,240)">
 <g id="Delta_Crucis">
-<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,120) rotate(-82) scale(35)"/>
+<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,120) rotate(-82) scale(40.4)"/>
 <use xlink:href="#Pentagram" fill="#cc142b" transform="translate(900,120) rotate(-82) scale(25)"/>
 </g>
 <g id="Beta_Crucis">
-<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,380) rotate(-82) scale(40)"/>
+<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,380) rotate(-82) scale(45.4)"/>
 <use xlink:href="#Pentagram" fill="#cc142b" transform="translate(900,380) rotate(-82) scale(30)"/>
 </g>
 </g>
 <g id="Alpha_Crucis">
-<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,480) scale(45)"/>
+<use xlink:href="#Pentagram" fill="#ffffff" transform="translate(900,480) scale(50.4)"/>
 <use xlink:href="#Pentagram" fill="#cc142b" transform="translate(900,480) scale(35)"/>
 </g>
 </g>

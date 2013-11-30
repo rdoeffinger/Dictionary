@@ -1,19 +1,10 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg>
-<svg width="900" height="600" viewBox="-75 -40 120 80" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-   <rect x="-75" y="-40" width="120" height="80" fill="white"/>
-   <rect x="-45" y="-40" width="90" height="80" fill="#006600"/>
-   <circle r="24" fill="white"/>
-   <circle r="22" cx="-7" cy="-40" fill="#006600" transform="rotate(-41.63353933657,45,-40)"/>
-   <comment>rotation angles = -arctan(8/9)</comment>
-   <g id="star" transform="rotate(-41.63353933657) translate(16,0)" fill="white">
-      <g id="cone">
-         <polygon id="triangle" points="0,0 -8,0 -8,4" transform="translate(8,0) rotate(18)"/>
-         <use xlink:href="#triangle" transform="scale(1,-1)" />
-      </g>
-      <use xlink:href="#cone" transform="rotate(72)" />
-      <use xlink:href="#cone" transform="rotate(-72)" />
-      <use xlink:href="#cone" transform="rotate(144)" />
-      <use xlink:href="#cone" transform="rotate(-144)" />
-   </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="-75 -40 120 80" version="1.1">
+<title>Flag of Pakistan</title>
+  <rect x="-75" y="-40" width="120" height="80" fill="#fff"/>
+  <rect x="-45" y="-40" width="90" height="80" fill="#01411C"/>
+  <circle r="24" fill="#fff"/>
+  <circle r="22" cx="-7" cy="-40" fill="#01411C" transform="rotate(-41.63354, 45, -40)"/>
+<polygon points="0,-513674 301930,415571 -488533,-158734 488533,-158734 -301930,415571" fill="#fff" transform="rotate(-41.63354) translate(16) rotate(18) scale(0.00001557408)"/>
 </svg>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450" height="300" viewBox="0,0 36,24">
 	<rect width="36" height="24" fill="#fff"/>
-	<g fill="#0067c6">
+	<g fill="#005293">
 		<g id="star" transform="translate(9,6)">
 			<g id="c">
 				<path id="t" d="M 0,-3 v 3 h 1.5 z" transform="rotate(18 0,-3)"/>

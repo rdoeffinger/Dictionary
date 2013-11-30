@@ -1,1 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="640" viewBox="0 0 30240 15120"><defs id="defs6"><polygon points="0,-9 1.735535,-3.6038755 7.0364833,-5.6114082 3.8997116,-0.89008374 8.7743512,2.0026884 3.1273259,2.4939592 3.9049537,8.1087198 0,4 -3.9049537,8.1087198 -3.1273259,2.4939592 -8.7743512,2.0026884 -3.8997116,-0.89008374 -7.0364833,-5.6114082 -1.735535,-3.6038755 0,-9 " id="Star7"/><polygon points="0,-9 2.351141,-3.236068 8.5595086,-2.7811529 3.8042261,1.236068 5.2900673,7.2811529 0,4 -5.2900673,7.2811529 -3.8042261,1.236068 -8.5595086,-2.7811529 -2.351141,-3.236068 0,-9 " id="Star5"/></defs><path d="M 0,0 L 30240,0 L 30240,15120 L 0,15120 L 0,0 z" style="fill:#00008b"/><use transform="matrix(252,0,0,252,7560,11340)" id="Commonwealth_Star" style="fill:#fff" xlink:href="#Star7"/><use transform="matrix(120,0,0,120,22680,12600)" id="Star_Alpha_Crucis" style="fill:#fff" xlink:href="#Star7"/><use transform="matrix(120,0,0,120,18900,6615)" id="Star_Beta_Crucis" style="fill:#fff" xlink:href="#Star7"/><use transform="matrix(120,0,0,120,22680,2520)" id="Star_Gamma_Crucis" style="fill:#fff" xlink:href="#Star7"/><use transform="matrix(120,0,0,120,26040,5607)" id="Star_Delta_Crucis" style="fill:#fff" xlink:href="#Star7"/><use transform="matrix(70,0,0,70,24192,8190)" id="Star_Epsilon_Crucis" style="fill:#fff" xlink:href="#Star5"/><path d="M 6300,0 L 8820,0 L 8820,2520 L 15120,2520 L 15120,5040 L 8820,5040 L 8820,7560 L 6300,7560 L 6300,5040 L 0,5040 L 0,2520 L 6300,2520 L 6300,0 z" id="White_Cross" style="fill:#fff"/><path d="M 0,0 L 1690.4674,0 L 15120,6714.7663 L 15120,7560 L 13429.533,7560 L 0,845.2337 L 0,0 z" id="White_Diagonal" style="fill:#fff"/><use transform="matrix(-1,0,0,1,15120,0)" id="White_Diagonal_Flipped" style="fill:#fff" xlink:href="#White_Diagonal"/><path d="M 6804,0 L 8316,0 L 8316,3024 L 15120,3024 L 15120,4536 L 8316,4536 L 8316,7560 L 6804,7560 L 6804,4536 L 0,4536 L 0,3024 L 6804,3024 L 6804,0 z" id="Red_Cross" style="fill:red"/><path d="M 0,0 L 5040,2520 L 3913.0217,2520 L 0,563.48913 L 0,0 z M 15120,0 L 13993.022,0 L 8953.0217,2520 L 10080,2520 L 15120,0 z" id="Red_Diagonals" style="fill:red"/><use transform="matrix(-1,0,0,-1,15120,7560)" id="Red_Diagonals_Rotated" style="fill:red" xlink:href="#Red_Diagonals"/></svg>
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="640" viewBox="0 0 10080 5040">
+<defs>
+<clipPath id="c">
+<path d="M0,0V1.5H7V3H6zM6,0H3V3.5H0V3z"/>
+</clipPath>
+<path id="Star7" d="M0,-360 69.421398,-144.155019 281.459334,-224.456329 155.988466,-35.603349 350.974048,80.107536 125.093037,99.758368 156.198146,324.348792 0,160 -156.198146,324.348792 -125.093037,99.758368 -350.974048,80.107536 -155.988466,-35.603349 -281.459334,-224.456329 -69.421398,-144.155019z"/>
+<path id="Star5" d="M0,-210 54.859957,-75.508253 199.721868,-64.893569 88.765275,28.841586 123.434903,169.893569 0,93.333333 -123.434903,169.893569 -88.765275,28.841586 -199.721868,-64.893569 -54.859957,-75.508253z"/>
+<use id="Cstar" xlink:href="#Star7" transform="scale(2.1)"/>
+</defs>
+<g transform="scale(840)">
+<rect width="12" height="6" fill="#00008b"/>
+<path d="M0,0 6,3M6,0 0,3" stroke="#fff" stroke-width="0.6"/>
+<path d="M0,0 6,3M6,0 0,3" stroke="#f00" stroke-width="0.4" clip-path="url(#c)"/>
+<path d="M3,0V3.5M0,1.5H7" stroke="#fff"/>
+<path d="M3,0V3.5M0,1.5H7" stroke="#f00" stroke-width="0.6"/>
+<path d="M0,3H6V0H8V4H0z" fill="#00008b"/>
+</g>
+<g fill="#fff">
+<use id="Comwlth" xlink:href="#Cstar" x="2520" y="3780"/>
+<use id="αCrucis" xlink:href="#Star7" x="7560" y="4200"/>
+<use id="βCrucis" xlink:href="#Star7" x="6300" y="2205"/>
+<use id="γCrucis" xlink:href="#Star7" x="7560" y="840"/>
+<use id="δCrucis" xlink:href="#Star7" x="8680" y="1869"/>
+<use id="εCrucis" xlink:href="#Star5" x="8064" y="2730"/>
+</g>
+</svg>
