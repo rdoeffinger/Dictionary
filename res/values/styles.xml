@@ -1,4 +1,8 @@
 <resources>
+    
+    <style name="MyActionButtonStyle" parent="Widget.Sherlock.ActionButton">
+        <item name="android:minWidth">28dip</item>
+    </style>
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -14,8 +18,11 @@
             Make search icon magnifying glass disappear:
             http://stackoverflow.com/questions/13604506/show-actionbarsherlock-searchview-always-expanded
         -->
+        <!--
       <item name="searchViewSearchIcon">@android:color/transparent</item>
       <item name="searchViewCloseIcon">@android:color/transparent</item>
+      -->
+      <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
     </style>
     
     <style name="AppBaseThemeDark" parent="Theme.Sherlock">
@@ -28,8 +35,11 @@
             Make search icon magnifying glass disappear:
             http://stackoverflow.com/questions/13604506/show-actionbarsherlock-searchview-always-expanded
         -->
+      <!--
       <item name="searchViewSearchIcon">@android:color/transparent</item>
       <item name="searchViewCloseIcon">@android:color/transparent</item>
+      -->
+        <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
     </style>
 
     <!-- Dark theme -->

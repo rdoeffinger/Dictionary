@@ -54,6 +54,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -351,7 +352,7 @@ public class DictionaryActivity extends SherlockListActivity {
 //            @Override
 //            public void onItemSelected(AdapterView<?> adapterView, View arg1, final int position,
 //                    long id) {
-//                if (!searchText.isFocused()) {
+//                if (!searchText.hasFocus()) {
 //                    if (!isFiltered()) {
 //                        final RowBase row = (RowBase) getListAdapter().getItem(position);
 //                        Log.d(LOG, "onItemSelected: " + row.index());
@@ -389,18 +390,20 @@ public class DictionaryActivity extends SherlockListActivity {
 //        View customNav = LayoutInflater.from(this).inflate(R.layout.dictionary_search_view, null);
       searchView = new SearchView(getSupportActionBar().getThemedContext());
       searchView.setIconifiedByDefault(false);
+//      searchView.setIconified(false);  // puts the magifying glass in the wrong place.
       searchView.setQueryHint(getString(R.string.searchText));
       searchView.setSubmitButtonEnabled(false);
+      final int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+      FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, FrameLayout.LayoutParams.WRAP_CONTENT);
+      searchView.setLayoutParams(lp);
 //      searchView.setMaxWidth(200);
       searchView.setImeOptions(
               EditorInfo.IME_ACTION_SEARCH |
               EditorInfo.IME_FLAG_NO_EXTRACT_UI | 
               EditorInfo.IME_FLAG_NO_ENTER_ACTION | 
-//              EditorInfo.IME_FLAG_NO_FULLSCREEN |
+//              EditorInfo.IME_FLAG_NO_FULLSCREEN |  // Requires API 11
               EditorInfo.IME_MASK_ACTION |
               EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-      searchView.setMinimumWidth((int) 
-              TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics()));
       searchView.setOnQueryTextListener(new OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -1539,7 +1542,7 @@ public class DictionaryActivity extends SherlockListActivity {
             Log.d(LOG, "searchText changed during shutdown, doing nothing.");
             return;
         }
-        if (!searchView.isFocused()) {
+        if (!searchView.hasFocus()) {
             Log.d(LOG, "searchText changed without focus, doing nothing.");
             return;
         }
