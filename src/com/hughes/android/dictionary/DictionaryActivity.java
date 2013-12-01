@@ -71,12 +71,15 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.actionbarsherlock.widget.SearchView;
+import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.EntrySource;
 import com.hughes.android.dictionary.engine.HtmlEntry;
 import com.hughes.android.dictionary.engine.Index;
 import com.hughes.android.dictionary.engine.Index.IndexEntry;
+import com.hughes.android.dictionary.engine.Language;
+import com.hughes.android.dictionary.engine.Language.LanguageResources;
 import com.hughes.android.dictionary.engine.PairEntry;
 import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
@@ -150,10 +153,10 @@ public class DictionaryActivity extends SherlockListActivity {
 
     int fontSizeSp;
 
-    EditText searchText;
+//    EditText searchText;
+    SearchView searchView;
+    ImageView searchHintIcon;
 
-    Button langButton;
-    
     MenuItem nextWordMenuItem, previousWordMenuItem;
 
     // Never null.
@@ -191,10 +194,10 @@ public class DictionaryActivity extends SherlockListActivity {
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(LOG, "onSaveInstanceState: " + searchText.getText().toString());
+        super.onSaveInstanceState(outState);        
+        Log.d(LOG, "onSaveInstanceState: " + searchView.getQuery().toString());
         outState.putInt(C.INDEX_INDEX, indexIndex);
-        outState.putString(C.SEARCH_TOKEN, searchText.getText().toString());
+        outState.putString(C.SEARCH_TOKEN, searchView.getQuery().toString());
     }
 
     @Override
@@ -272,7 +275,7 @@ public class DictionaryActivity extends SherlockListActivity {
                             uiHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    onSearchTextChange(searchText.getText().toString());
+                                    onSearchTextChange(searchView.getQuery().toString());
                                 }
                             });
                         }
@@ -322,51 +325,27 @@ public class DictionaryActivity extends SherlockListActivity {
         }
 
         setContentView(R.layout.dictionary_activity);
-        searchText = (EditText) findViewById(R.id.SearchText);
-        searchText.requestFocus();
-        searchText.addTextChangedListener(searchTextWatcher);
-        searchText.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                Log.d(LOG, "searchText onFocusChange hasFocus=" + hasFocus);
-            }
-        });
+//        searchText = (EditText) findViewById(R.id.SearchText);
+//        searchText.requestFocus();
+//        searchText.addTextChangedListener(searchTextWatcher);
+//        searchText.setOnFocusChangeListener(new OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                Log.d(LOG, "searchText onFocusChange hasFocus=" + hasFocus);
+//            }
+//        });
 
-        // Set the search text from the intent, then the saved state.
-        String text = getIntent().getStringExtra(C.SEARCH_TOKEN);
-        if (savedInstanceState != null) {
-            text = savedInstanceState.getString(C.SEARCH_TOKEN);
-        }
-        if (text == null) {
-            text = "";
-        }
-        setSearchText(text, true);
-        Log.d(LOG, "Trying to restore searchText=" + text);
 
-        final View clearSearchTextButton = findViewById(R.id.ClearSearchTextButton);
-        clearSearchTextButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                onClearSearchTextButton();
-            }
-        });
-        clearSearchTextButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.showClearSearchTextButtonKey), true) ? View.VISIBLE
-                : View.GONE);
-
-        langButton = (Button) findViewById(R.id.LangButton);
-        langButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                onLanguageButton();
-            }
-        });
-        langButton.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                onLanguageButtonLongClick(v.getContext());
-                return true;
-            }
-        });
-        updateLangButton();
+        
+//        final View clearSearchTextButton = findViewById(R.id.ClearSearchTextButton);
+//        clearSearchTextButton.setOnClickListener(new OnClickListener() {
+//            public void onClick(View v) {
+//                onClearSearchTextButton();
+//            }
+//        });
+//        clearSearchTextButton.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
+//                .getBoolean(getString(R.string.showClearSearchTextButtonKey), true) ? View.VISIBLE
+//                : View.GONE);
 
 //        getListView().setOnItemSelectedListener(new ListView.OnItemSelectedListener() {
 //            @Override
@@ -403,14 +382,12 @@ public class DictionaryActivity extends SherlockListActivity {
         // }
         Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
 
-        setDictionaryPrefs(this, dictFile, indexIndex, searchText.getText().toString());
-        
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         
         //Inflate the custom view
 //        View customNav = LayoutInflater.from(this).inflate(R.layout.dictionary_search_view, null);
-      SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
+      searchView = new SearchView(getSupportActionBar().getThemedContext());
       searchView.setIconifiedByDefault(false);
       searchView.setQueryHint(getString(R.string.searchText));
       searchView.setSubmitButtonEnabled(false);
@@ -422,6 +399,59 @@ public class DictionaryActivity extends SherlockListActivity {
 //              EditorInfo.IME_FLAG_NO_FULLSCREEN |
               EditorInfo.IME_MASK_ACTION |
               EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+      searchView.setMinimumWidth((int) 
+              TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics()));
+      searchView.setOnQueryTextListener(new OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            Log.d(LOG, "OnQueryTextListener: onQueryTextSubmit: " + searchView.getQuery());
+            return true;
+        }
+        
+        @Override
+        public boolean onQueryTextChange(String newText) {
+//            if (searchView.hasFocus()) {
+                Log.d(LOG, "OnQueryTextListener: onQueryTextChange: " + searchView.getQuery());
+                // If they were typing to cause the change, update the UI.
+                onSearchTextChange(searchView.getQuery().toString());
+//            }
+            return true;
+        }
+      });
+      
+      // Set the search text from the intent, then the saved state.
+      String text = getIntent().getStringExtra(C.SEARCH_TOKEN);
+      if (savedInstanceState != null) {
+          text = savedInstanceState.getString(C.SEARCH_TOKEN);
+      }
+      if (text == null) {
+          text = "";
+      }
+      setSearchText(text, true);
+      Log.d(LOG, "Trying to restore searchText=" + text);
+      
+      setDictionaryPrefs(this, dictFile, indexIndex, searchView.getQuery().toString());
+      
+      searchHintIcon = (ImageView) searchView.findViewById(R.id.abs__search_mag_icon);
+      searchHintIcon.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View arg0) {
+            onLanguageButton();
+        }
+      });
+      searchHintIcon.setOnLongClickListener(new OnLongClickListener() {
+          @Override
+          public boolean onLongClick(View v) {
+              onLanguageButtonLongClick(v.getContext());
+              return true;
+          }
+      });
+
+
+      
+//      ImageView searchHintIcon = (ImageView) searchView.findViewById(searchView.getContext().getResources().
+//              getIdentifier("android:id/search_mag_icon", null, null));
+//      searchHintIcon.setImageResource(android.R.color.transparent);
 //      searchView.setOnQueryTextListener(this);
 //      menu.add("Search")
 ////          .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.abs__ic_search)
@@ -429,6 +459,8 @@ public class DictionaryActivity extends SherlockListActivity {
 //          .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         actionBar.setCustomView(searchView);
         actionBar.setDisplayShowCustomEnabled(true);        
+
+        updateLangButton();
     }
 
     @Override
@@ -503,32 +535,34 @@ public class DictionaryActivity extends SherlockListActivity {
     }
 
     private void showKeyboard() {
-        searchText.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(LOG, "Trying to show soft keyboard.");
-                final boolean searchTextHadFocus = searchText.hasFocus();
-                searchText.requestFocus();
-                final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
-                if (!searchTextHadFocus) {
-                    defocusSearchText();
-                }
-            }}, 100);
+//        searchText.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.d(LOG, "Trying to show soft keyboard.");
+//                final boolean searchTextHadFocus = searchText.hasFocus();
+//                searchText.requestFocus();
+//                final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
+//                if (!searchTextHadFocus) {
+//                    defocusSearchText();
+//                }
+//            }}, 100);
     }
 
     void updateLangButton() {
-        // final LanguageResources languageResources =
-        // Language.isoCodeToResources.get(index.shortName);
-        // if (languageResources != null && languageResources.flagId != 0) {
-        // langButton.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-        // languageResources.flagId, 0);
-        // } else {
-        // langButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-        langButton.setText(index.shortName);
-        // }
+        final LanguageResources languageResources =
+                Language.isoCodeToResources.get(index.shortName);
+        if (languageResources != null && languageResources.flagId != 0) {
+            searchHintIcon.setImageResource(languageResources.flagId);
+        } else {
+            if (index == dictionary.indices.get(0)) {
+                searchHintIcon.setImageResource(android.R.drawable.ic_media_next);
+            } else {
+                searchHintIcon.setImageResource(android.R.drawable.ic_media_previous);
+            }
+        }
         updateTTSLanuage();
-    }
+     }
 
     private void updateTTSLanuage() {
         if (!ttsReady || index == null || textToSpeech == null) {
@@ -604,7 +638,7 @@ public class DictionaryActivity extends SherlockListActivity {
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(
                                     application.getPath(dictionaryInfo.uncompressedFilename),
-                                    i, searchText.getText().toString())) {
+                                    i, searchView.getQuery().toString())) {
                         @Override
                         protected void onGo() {
                             dialog.dismiss();
@@ -659,10 +693,10 @@ public class DictionaryActivity extends SherlockListActivity {
         index = dictionary.indices.get(indexIndex);
         indexAdapter = new IndexAdapter(index);
         Log.d(LOG, "changingIndex, newLang=" + index.longName);
-        setDictionaryPrefs(this, dictFile, indexIndex, searchText.getText().toString());
+        setDictionaryPrefs(this, dictFile, indexIndex, searchView.getQuery().toString());
         setListAdapter(indexAdapter);
         updateLangButton();
-        setSearchText(searchText.getText().toString(), true);
+        setSearchText(searchView.getQuery().toString(), true);
     }
 
     void onUpDownButton(final boolean up) {
@@ -717,6 +751,21 @@ public class DictionaryActivity extends SherlockListActivity {
 //            .setActionView(searchView)
 //            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         
+//      final ImageView searchHintIcon = 
+//              (ImageView) searchView.findViewById(R.id.abs__search_mag_icon);
+//      searchHintIcon.setImageResource(android.R.id.empty);
+//      searchHintIcon.setAdjustViewBounds(true);
+//      searchHintIcon.setMaxWidth(1);
+//      searchHintIcon.setMaxHeight(1);
+//      searchHintIcon.setVisibility(ImageView.GONE);
+//      searchView.setOnQueryTextFocusChangeListener(new OnFocusChangeListener() {
+//        @Override
+//        public void onFocusChange(View arg0, boolean arg1) {
+//            searchHintIcon.setVisibility(ImageView.GONE);
+//            searchHintIcon.refreshDrawableState();
+//        }
+//      });
+
         
         if (PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.showPrevNextButtonsKey), true)) {
@@ -727,7 +776,7 @@ public class DictionaryActivity extends SherlockListActivity {
             nextWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        onUpDownButton(true);
+                        onUpDownButton(false);
                         return true;
                     }
                 });
@@ -739,7 +788,7 @@ public class DictionaryActivity extends SherlockListActivity {
             previousWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        onUpDownButton(false);
+                        onUpDownButton(true);
                         return true;
                     }
                 });
@@ -988,7 +1037,7 @@ public class DictionaryActivity extends SherlockListActivity {
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (event.getUnicodeChar() != 0) {
-            if (!searchText.hasFocus()) {
+            if (!searchView.hasFocus()) {
                 setSearchText("" + (char) event.getUnicodeChar(), true);
             }
             return true;
@@ -1013,30 +1062,30 @@ public class DictionaryActivity extends SherlockListActivity {
         if (!triggerSearch) {
             getListView().requestFocus();
         }
-        searchText.setText(text);
-        searchText.requestFocus();
+        searchView.setQuery(text, false);
+        searchView.requestFocus();
         moveCursorToRight();
         if (triggerSearch) {
             onSearchTextChange(text);
         }
     }
 
-    private long cursorDelayMillis = 100;
+//    private long cursorDelayMillis = 100;
 
     private void moveCursorToRight() {
-        if (searchText.getLayout() != null) {
-            cursorDelayMillis = 100;
-            // Surprising, but this can crash when you rotate...
-            Selection.moveToRightEdge(searchText.getText(), searchText.getLayout());
-        } else {
-            uiHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    moveCursorToRight();
-                }
-            }, cursorDelayMillis);
-            cursorDelayMillis = Math.min(10 * 1000, 2 * cursorDelayMillis);
-        }
+//        if (searchText.getLayout() != null) {
+//            cursorDelayMillis = 100;
+//            // Surprising, but this can crash when you rotate...
+//            Selection.moveToRightEdge(searchView.getQuery(), searchText.getLayout());
+//        } else {
+//            uiHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    moveCursorToRight();
+//                }
+//            }, cursorDelayMillis);
+//            cursorDelayMillis = Math.min(10 * 1000, 2 * cursorDelayMillis);
+//        }
     }
 
     // --------------------------------------------------------------------------
@@ -1080,13 +1129,13 @@ public class DictionaryActivity extends SherlockListActivity {
     }
 
     private final void jumpToRow(final int row) {
-        final boolean refocusSearchText = searchText.hasFocus();
+        final boolean refocusSearchText = searchView.hasFocus();
         Log.d(LOG, "jumpToRow: " + row + ", refocusSearchText=" + refocusSearchText);
         getListView().requestFocusFromTouch();
         getListView().setSelectionFromTop(row, 0);
         getListView().setSelected(true);
         if (refocusSearchText) {            
-            searchText.requestFocus();
+            searchView.requestFocus();
         }
         //Log.d(LOG, "getSelectedItemPosition():" + getSelectedItemPosition());
     }
@@ -1490,7 +1539,7 @@ public class DictionaryActivity extends SherlockListActivity {
             Log.d(LOG, "searchText changed during shutdown, doing nothing.");
             return;
         }
-        if (!searchText.isFocused()) {
+        if (!searchView.isFocused()) {
             Log.d(LOG, "searchText changed without focus, doing nothing.");
             return;
         }
@@ -1505,10 +1554,10 @@ public class DictionaryActivity extends SherlockListActivity {
 
     private class SearchTextWatcher implements TextWatcher {
         public void afterTextChanged(final Editable searchTextEditable) {
-            if (searchText.hasFocus()) {
-                Log.d(LOG, "SearchTextWatcher: Search text changed with focus: " + searchText.getText());
+            if (searchView.hasFocus()) {
+                Log.d(LOG, "SearchTextWatcher: Search text changed with focus: " + searchView.getQuery());
                 // If they were typing to cause the change, update the UI.
-                onSearchTextChange(searchText.getText().toString());
+                onSearchTextChange(searchView.getQuery().toString());
             }
         }
 
