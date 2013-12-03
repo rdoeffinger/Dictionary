@@ -1,3 +1,13 @@
+* Quick shift to new dictionary.
+  * Use flags.
+* DownloadManager
+  * Use ActionBar.
+  * Redo presentation: on-device first, then available to download.
+  * Use system service for downloads.
+* Application: fix which directory the thing uses: use default SD card instead of what's in prefs.
+
+
+
 * Make top of Dictionary activity good
   * Fit search text alongside other buttons if possible.
   * List other dictinaries beside 

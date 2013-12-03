@@ -104,10 +104,6 @@
   <string name="clickOpensContextMenuTitle">Kontextmenü</string>
   <string name="clickOpensContextMenuSummary">Kontextmenü bereits bei kurzem Klick auf einen Eintrag öffnen.</string>
 
-  <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
-  <string name="showClearSearchTextButtonTitle">Suchtext löschen</string>
-  <string name="showClearSearchTextButtonSummary">Zusätzlichen Knopf zum Löschen des Suchtexts anzeigen. Der Suchtext wird automatisch überschrieben, wenn kein Textcursor sichtbar ist.</string>
-
   <string name="themeKey">theme</string>
   <string name="themeTitle">Farbschema</string>
   <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>

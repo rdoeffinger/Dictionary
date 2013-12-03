@@ -52,14 +52,6 @@
   />
 
   <CheckBoxPreference 
-    android:key="@string/showClearSearchTextButtonKey"
-    android:title="@string/showClearSearchTextButtonTitle"
-    android:summary="@string/showClearSearchTextButtonSummary"
-    android:defaultValue="true"
-    android:persistent="true"
-  />
-
-  <CheckBoxPreference 
     android:key="@string/showPrevNextButtonsKey"
     android:title="@string/showPrevNextButtonsTitle"
     android:summary="@string/showPrevNextButtonsSummary"
