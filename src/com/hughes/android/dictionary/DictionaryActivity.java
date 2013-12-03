@@ -1,5 +1,5 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
-//
+// Some Parts Copyright 2013 Dominik Köppl
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,6 +16,7 @@ package com.hughes.android.dictionary;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,10 +29,7 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.text.ClipboardManager;
-import android.text.Editable;
-import android.text.Selection;
 import android.text.Spannable;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
@@ -40,11 +38,9 @@ import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -53,9 +49,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -215,15 +209,101 @@ public class DictionaryActivity extends SherlockListActivity {
         theme = application.getSelectedTheme();
         textColorFg = getResources().getColor(theme.tokenRowFgColor);
 
+        
+
         final Intent intent = getIntent();
-        dictFile = new File(intent.getStringExtra(C.DICT_FILE));
+        String intentAction = intent.getAction();
+        /**
+         * @author Dominik Köppl
+         * Querying the Intent
+         * com.hughes.action.ACTION_SEARCH_DICT is the advanced query
+         * Arguments:
+         * SearchManager.QUERY -> the phrase to search
+         * from -> language in which the phrase is written
+         * to -> to which language shall be translated
+         */
+        if(intentAction != null && intentAction.equals("com.hughes.action.ACTION_SEARCH_DICT")) 
+        {
+        	String query = intent.getStringExtra(SearchManager.QUERY);
+        	String from = intent.getStringExtra("from");
+        	if(from != null) from = from.toLowerCase(Locale.US);
+        	String to = intent.getStringExtra("to");
+        	if(to != null) to = to.toLowerCase(Locale.US);
+        	if(query != null)
+        	{
+        		getIntent().putExtra(C.SEARCH_TOKEN, query);
+        	}
+        	if(intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null))
+        	{
+        		 Log.d(LOG, "DictSearch: from: " + from + " to " + to);
+        		List<DictionaryInfo> dicts = application.getUsableDicts();
+        		for(DictionaryInfo info : dicts)
+        		{
+        			boolean hasFrom = from == null;
+        			boolean hasTo = to == null;
+        			for(IndexInfo index : info.indexInfos)
+        			{
+        				if(!hasFrom && index.shortName.toLowerCase(Locale.US).equals(from)) hasFrom = true;
+        				if(!hasTo && index.shortName.toLowerCase(Locale.US).equals(to)) hasTo = true;
+        			}
+        			if(hasFrom && hasTo)
+        			{
+        				if(from != null)
+        				{
+        					int which_index = 0;
+                			for(;which_index < info.indexInfos.size(); ++which_index)
+                			{
+                				if(info.indexInfos.get(which_index).shortName.toLowerCase(Locale.US).equals(from))
+                					break;
+                			}
+                			intent.putExtra(C.INDEX_INDEX, which_index);
+                			
+        				}
+        				intent.putExtra(C.DICT_FILE, application.getPath(info.uncompressedFilename).toString());
+        				break;
+        			}
+        		}
+        		
+        	}
+        }
+        /**
+         * @author Dominik Köppl
+         * Querying the Intent
+         * Intent.ACTION_SEARCH is a simple query
+         * Arguments follow from android standard (see documentation)
+         */
+        if (intentAction != null && intentAction.equals(Intent.ACTION_SEARCH)) 
+        {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+    		if(query != null) getIntent().putExtra(C.SEARCH_TOKEN,query);
+        }
+        /**
+         * @author Dominik Köppl
+         * If no dictionary is chosen, use the default dictionary specified in the preferences
+         * If this step does fail (no default directory specified), show a toast and abort.
+         */
+        if(intent.getStringExtra(C.DICT_FILE) == null)
+        {
+        	String dictfile = prefs.getString(getString(R.string.defaultDicKey), null);
+        	if(dictfile != null) intent.putExtra(C.DICT_FILE, application.getPath(dictfile).toString());
+        }
+        String dictFilename = intent.getStringExtra(C.DICT_FILE);
+        
+        if(dictFilename == null)
+        {
+            Toast.makeText(this, getString(R.string.no_dict_file), Toast.LENGTH_LONG).show();
+            startActivity(DictionaryManagerActivity.getLaunchIntent());
+            finish();
+            return;
+        }
+        if(dictFilename != null) dictFile = new File(dictFilename);
 
         ttsReady = false;
         textToSpeech = new TextToSpeech(getApplicationContext(), new OnInitListener() {
             @Override
             public void onInit(int status) {
                 ttsReady = true;
-                updateTTSLanuage();
+                updateTTSLanguage();
             }
         });
         
@@ -406,8 +486,8 @@ public class DictionaryActivity extends SherlockListActivity {
     protected void onResume() {
         Log.d(LOG, "onResume");
         super.onResume();
-        if (SettingsActivity.settingsMightHaveChanged) {
-            SettingsActivity.settingsMightHaveChanged = false;
+        if (PreferenceActivity.prefsMightHaveChanged) {
+            PreferenceActivity.prefsMightHaveChanged = false;
             finish();
             startActivity(getIntent());
         }
@@ -499,10 +579,10 @@ public class DictionaryActivity extends SherlockListActivity {
                 searchHintIcon.setImageResource(android.R.drawable.ic_media_previous);
             }
         }
-        updateTTSLanuage();
+        updateTTSLanguage();
      }
 
-    private void updateTTSLanuage() {
+    private void updateTTSLanguage() {
         if (!ttsReady || index == null || textToSpeech == null) {
             Log.d(LOG, "Can't updateTTSLanguage.");
             return;

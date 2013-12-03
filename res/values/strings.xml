@@ -14,6 +14,10 @@
   <string name="clearSearchText">Clear search text</string>
   
   
+  <string name="no_dict_file">Please specify a default directory in the settings.</string>
+    
+  
+  
    <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
   <string name="helpText">Long-press a dictionary for more options.</string>
@@ -77,9 +81,18 @@
   <string name="unzipping">Unzipping: %1$,d of %2$,d bytes.</string>
   <string name="downloadFinished">Finished: %,d bytes.</string>
   <string name="errorDownloadingFile">Error downloading file: \n%s</string>  
-
+  
+  
+  <string name="search_hint">An unknown word</string>  
+  
+  
 
 	<!-- Preferences -->
+
+  <string name="defaultDicKey">defaultddic</string>
+  <string name="defaultDicTitle">Default Dic</string>
+  <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
+
 
   <string name="quickdicDirectoryKey">quickdicDirectory</string>
   <string name="quickdicDirectoryTitle">QuickDic directory</string>

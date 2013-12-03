@@ -147,9 +147,9 @@ public class DictionaryApplication extends Application {
     preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       public boolean onMenuItemClick(final MenuItem menuItem) {
-        SettingsActivity.settingsMightHaveChanged = true;
-        final Intent intent = new Intent().setClassName(SettingsActivity.class
-            .getPackage().getName(), SettingsActivity.class.getCanonicalName());
+        PreferenceActivity.prefsMightHaveChanged = true;
+        final Intent intent = new Intent().setClassName(PreferenceActivity.class
+            .getPackage().getName(), PreferenceActivity.class.getCanonicalName());
         context.startActivity(intent);
         return false;
       }

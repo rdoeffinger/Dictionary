@@ -154,8 +154,8 @@ public class DictionaryManagerActivity extends SherlockListActivity {
   protected void onResume() {
     super.onResume();
     
-    if (SettingsActivity.settingsMightHaveChanged) {
-      SettingsActivity.settingsMightHaveChanged = false;
+    if (PreferenceActivity.prefsMightHaveChanged) {
+        PreferenceActivity.prefsMightHaveChanged = false;
       finish();
       startActivity(getIntent());
     }
