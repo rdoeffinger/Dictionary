@@ -2,3 +2,4 @@
 /.project
 /bin
 /lint.xml
+.DS_Store
