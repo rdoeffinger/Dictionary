@@ -28,7 +28,5 @@ public class IntentLauncher implements OnClickListener {
   public void onClick(View v) {
     go();
   }
-  
-  
 
 }

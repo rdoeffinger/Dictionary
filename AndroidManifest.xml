@@ -16,14 +16,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
+
     <application
-        android:allowBackup="true"
         android:name=".DictionaryApplication"
+        android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIUa0cU0ZHbBpYXJqm0vVUP5IAjr5D4iUeX7UwiQ" />
@@ -37,7 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-	    	<!--   
+            <!--
             <intent-filter>
 	       	 <action android:name="android.intent.action.SEND" />
 	       	 <category android:name="android.intent.category.DEFAULT" />
@@ -47,38 +46,60 @@
         	        		    	<intent-filter>
             	<action android:name="android.intent.action.SEARCH" />
         	</intent-filter>
-                  -->   	
+            -->
         </activity>
-        
-        
-        <activity android:name=".DictionaryActivity"  android:label="@string/app_name">
-                <!-- @author Dominik Köppl
-     			Added two different intents to catch simple and advanced queries from other extern applications.
-     			-->
-           <intent-filter>
-             <action android:name="android.intent.action.SEARCH" />      
-	       	 <category android:name="android.intent.category.DEFAULT" />
-	    	</intent-filter>
-      	
-                        
-            <intent-filter>
-	       	 <action android:name="com.hughes.action.ACTION_SEARCH_DICT" />
-	       	 <category android:name="android.intent.category.DEFAULT" />
-	    	</intent-filter>
-      	
-         </activity>
-            
-            
-        <activity android:name=".DictionaryEditActivity" />
-        <activity android:name=".AboutActivity" />
-        <activity android:name=".HtmlDisplayActivity" />
-        <activity android:name=".PreferenceActivity" />
         <activity
-            android:name=".DownloadActivity"
-            android:configChanges="keyboardHidden|orientation" />
+            android:name=".DictionaryActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".DictionaryActivity" >
+
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DictionaryActivity" />
+
+            <!--
+           @author Dominik Köppl
+     			Added two different intents to catch simple and advanced queries from other extern applications.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.hughes.action.ACTION_SEARCH_DICT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".DictionaryActivity" >
+
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DictionaryActivity" />
+        </activity>
+        <activity
+            android:name=".HtmlDisplayActivity"
+            android:parentActivityName=".DictionaryActivity" >
+
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DictionaryActivity" />
+        </activity>
+        <activity
+            android:name=".PreferenceActivity"
+            android:parentActivityName=".DictionaryActivity" >
+
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DictionaryActivity" />
+        </activity>
     </application>
 
-    
-        
-    
 </manifest>

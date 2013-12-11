@@ -25,16 +25,17 @@ public class DictionaryInfo implements Serializable {
   public static final class IndexInfo implements Serializable {
     private static final long serialVersionUID = 6524751236198309438L;
 
+    public static final int NUM_CSV_FIELDS = 3;
+
+    public final String shortName;  // Often LangISO.
+    public final int allTokenCount;
+    public final int mainTokenCount;
+    
     public IndexInfo(String shortName, int allTokenCount, int mainTokenCount) {
       this.shortName = shortName;
       this.allTokenCount = allTokenCount;
       this.mainTokenCount = mainTokenCount;
     }
-    public final String shortName;  // Often LangISO.
-    public final int allTokenCount;
-    public final int mainTokenCount;
-    
-    public static final int SIZE = 3;
     
     public StringBuilder append(StringBuilder result) {
       result.append(shortName);
@@ -48,7 +49,6 @@ public class DictionaryInfo implements Serializable {
       allTokenCount = Integer.parseInt(fields[i++]);
       mainTokenCount = Integer.parseInt(fields[i++]);
     }
-
   }
   
   // Stuff populated from the text file.
@@ -89,7 +89,7 @@ public class DictionaryInfo implements Serializable {
     final int size = Integer.parseInt(fields[i++]);
     for (int j = 0; j < size; ++j) {
       indexInfos.add(new IndexInfo(fields, i));
-      i += IndexInfo.SIZE;
+      i += IndexInfo.NUM_CSV_FIELDS;
     }
     dictInfo = fields[i++].replaceAll("\\\\n", "\n");
   }

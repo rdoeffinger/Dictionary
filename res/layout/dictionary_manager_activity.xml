@@ -5,51 +5,77 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent" >
 
-        <EditText
-            android:id="@+id/filterText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/managerFilterText" />
+            android:orientation="vertical" >
 
-        <ImageButton
-            android:id="@+id/ClearSearchTextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:src="@android:drawable/ic_input_delete" 
-            android:contentDescription="@string/clearSearchText"/>
+            <!-- Dictionaries on device -->
 
-        <ToggleButton
-            android:id="@+id/showLocal"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="0"
-            android:textOff="@string/managerFilterCheckboxAll"
-            android:textOn="@string/managerFilterCheckboxLocal" />
+            <LinearLayout
+                android:id="@+id/onDeviceHeaderLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray"
+                android:orientation="horizontal"
+                android:padding="10dip" >
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/onDeviceTextId"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dictionariesOnDevice"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </LinearLayout>
 
-    <ListView
-        android:id="@id/android:list"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1.0"
-        android:choiceMode="singleChoice"
-        android:clickable="true"
-        android:fastScrollEnabled="true"
-        android:focusable="true"
-        tools:listitem="@layout/dictionary_manager_row" />
+            <LinearLayout
+                android:id="@+id/dictionariesOnDeviceGoHere"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="10dip" >
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/DictionaryListHeader"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/helpText" />
+            <!-- Downloadable dictionaries -->
+
+            <LinearLayout
+                android:id="@+id/downloadableHeaderLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray"
+                android:orientation="horizontal"
+                android:padding="10dip" >
+
+                <TextView
+                    android:id="@+id/downloadableTextId"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/downloadableDictionaries"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <ToggleButton
+                    android:id="@+id/hideDownloadable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:textOff="@string/managerShow"
+                    android:textOn="@string/managerHide" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/downloadableDictionariesGoHere"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

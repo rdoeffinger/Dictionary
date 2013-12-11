@@ -2,6 +2,10 @@
     
     <style name="MyActionButtonStyle" parent="Widget.Sherlock.ActionButton">
         <item name="android:minWidth">28dip</item>
+        <!-- 
+        <item name="android:paddingLeft">0dip</item>
+        <item name="android:paddingRight">0dip</item>
+         -->
     </style>
 
     <!--
@@ -72,6 +76,8 @@
     <color name="theme_light_token_row_other_bg">#EEEEEE</color>
     <color name="theme_light_other_lang_bg">#FFFFFF</color>
 
+    <color name="gray">#777777</color>
+    
     <style name="BorderlessButton">
         <item name="android:background">@null</item>
         <item name="android:paddingLeft">4dip</item>

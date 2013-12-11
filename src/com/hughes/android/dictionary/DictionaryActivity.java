@@ -134,7 +134,6 @@ public class DictionaryActivity extends SherlockListActivity {
 
     private SearchOperation currentSearchOperation = null;
 
-
     TextToSpeech textToSpeech;
     volatile boolean ttsReady;
 
@@ -167,13 +166,13 @@ public class DictionaryActivity extends SherlockListActivity {
     public DictionaryActivity() {
     }
 
-    public static Intent getLaunchIntent(final File dictFile, final int indexIndex,
+    public static Intent getLaunchIntent(final File dictFile, final String indexShortName,
             final String searchToken) {
         final Intent intent = new Intent();
         intent.setClassName(DictionaryActivity.class.getPackage().getName(),
                 DictionaryActivity.class.getName());
         intent.putExtra(C.DICT_FILE, dictFile.getPath());
-        intent.putExtra(C.INDEX_INDEX, indexIndex);
+        intent.putExtra(C.INDEX_SHORT_NAME, indexShortName);
         intent.putExtra(C.SEARCH_TOKEN, searchToken);
         return intent;
     }
@@ -182,15 +181,15 @@ public class DictionaryActivity extends SherlockListActivity {
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);        
         Log.d(LOG, "onSaveInstanceState: " + searchView.getQuery().toString());
-        outState.putInt(C.INDEX_INDEX, indexIndex);
+        outState.putString(C.INDEX_SHORT_NAME, index.shortName);
         outState.putString(C.SEARCH_TOKEN, searchView.getQuery().toString());
     }
 
     @Override
-    protected void onRestoreInstanceState(final Bundle outState) {
-        super.onRestoreInstanceState(outState);
-        Log.d(LOG, "onRestoreInstanceState: " + outState.getString(C.SEARCH_TOKEN));
-        onCreate(outState);
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(LOG, "onRestoreInstanceState: " + savedInstanceState.getString(C.SEARCH_TOKEN));
+        onCreate(savedInstanceState);
     }
 
     @Override
@@ -201,15 +200,13 @@ public class DictionaryActivity extends SherlockListActivity {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         
         // Don't auto-launch if this fails.
-        prefs.edit().remove(C.INDEX_INDEX).commit(); 
+        prefs.edit().remove(C.INDEX_SHORT_NAME).commit(); 
 
         setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
 
         application = (DictionaryApplication) getApplication();
         theme = application.getSelectedTheme();
         textColorFg = getResources().getColor(theme.tokenRowFgColor);
-
-        
 
         final Intent intent = getIntent();
         String intentAction = intent.getAction();
@@ -235,8 +232,8 @@ public class DictionaryActivity extends SherlockListActivity {
         	}
         	if(intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null))
         	{
-        		 Log.d(LOG, "DictSearch: from: " + from + " to " + to);
-        		List<DictionaryInfo> dicts = application.getUsableDicts();
+        		Log.d(LOG, "DictSearch: from: " + from + " to " + to);
+        		List<DictionaryInfo> dicts = application.getDictionariesOnDevice();
         		for(DictionaryInfo info : dicts)
         		{
         			boolean hasFrom = from == null;
@@ -256,7 +253,7 @@ public class DictionaryActivity extends SherlockListActivity {
                 				if(info.indexInfos.get(which_index).shortName.toLowerCase(Locale.US).equals(from))
                 					break;
                 			}
-                			intent.putExtra(C.INDEX_INDEX, which_index);
+                			intent.putExtra(C.INDEX_SHORT_NAME, info.indexInfos.get(which_index).shortName);
                 			
         				}
         				intent.putExtra(C.DICT_FILE, application.getPath(info.uncompressedFilename).toString());
@@ -328,9 +325,16 @@ public class DictionaryActivity extends SherlockListActivity {
             finish();
             return;
         }
-        indexIndex = intent.getIntExtra(C.INDEX_INDEX, 0);
-        if (savedInstanceState != null) {
-            indexIndex = savedInstanceState.getInt(C.INDEX_INDEX, indexIndex);
+        String targetIndex = intent.getStringExtra(C.INDEX_SHORT_NAME);
+        if (savedInstanceState != null && savedInstanceState.getString(C.INDEX_SHORT_NAME) != null) {
+            targetIndex = savedInstanceState.getString(C.INDEX_SHORT_NAME);
+        }
+        indexIndex = 0;
+        for (int i = 0; i < dictionary.indices.size(); ++i) {
+            if (dictionary.indices.get(i).shortName.equals(targetIndex)) {
+                indexIndex = i;
+                break;
+            }
         }
         indexIndex %= dictionary.indices.size();
         Log.d(LOG, "Loading index " + indexIndex);
@@ -420,7 +424,7 @@ public class DictionaryActivity extends SherlockListActivity {
         setSearchText(text, true);
         Log.d(LOG, "Trying to restore searchText=" + text);
 
-        setDictionaryPrefs(this, dictFile, indexIndex, searchView.getQuery().toString());
+        setDictionaryPrefs(this, dictFile, index.shortName, searchView.getQuery().toString());
 
         updateLangButton();
     }
@@ -513,11 +517,11 @@ public class DictionaryActivity extends SherlockListActivity {
     }
 
     private static void setDictionaryPrefs(final Context context, final File dictFile,
-            final int indexIndex, final String searchToken) {
+            final String indexShortName, final String searchToken) {
         final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(
                 context).edit();
         prefs.putString(C.DICT_FILE, dictFile.getPath());
-        prefs.putInt(C.INDEX_INDEX, indexIndex);
+        prefs.putString(C.INDEX_SHORT_NAME, indexShortName);
         prefs.putString(C.SEARCH_TOKEN, ""); // Don't need to save search token.
         prefs.commit();
     }
@@ -609,11 +613,9 @@ public class DictionaryActivity extends SherlockListActivity {
         dialog.setContentView(R.layout.select_dictionary_dialog);
         dialog.setTitle(R.string.selectDictionary);
 
-        final List<DictionaryInfo> installedDicts = ((DictionaryApplication) getApplication())
-                .getUsableDicts();
+        final List<DictionaryInfo> installedDicts = application.getDictionariesOnDevice();
 
         ListView listView = (ListView) dialog.findViewById(android.R.id.list);
-
         final Button button = new Button(listView.getContext());
         final String name = getString(R.string.dictionaryManager);
         button.setText(name);
@@ -648,7 +650,7 @@ public class DictionaryActivity extends SherlockListActivity {
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(
                                     application.getPath(dictionaryInfo.uncompressedFilename),
-                                    i, searchView.getQuery().toString())) {
+                                    indexInfo.shortName, searchView.getQuery().toString())) {
                         @Override
                         protected void onGo() {
                             dialog.dismiss();
@@ -689,7 +691,6 @@ public class DictionaryActivity extends SherlockListActivity {
                 return installedDicts.size();
             }
         });
-
         dialog.show();
     }
 
@@ -1011,7 +1012,7 @@ public class DictionaryActivity extends SherlockListActivity {
             indexAdapter = new IndexAdapter(index);
             setListAdapter(indexAdapter);
             Log.d(LOG, "changingIndex, newLang=" + index.longName);
-            setDictionaryPrefs(this, dictFile, indexIndex, searchView.getQuery().toString());
+            setDictionaryPrefs(this, dictFile, index.shortName, searchView.getQuery().toString());
             updateLangButton();
         }
         setSearchText(newSearchText, true);
