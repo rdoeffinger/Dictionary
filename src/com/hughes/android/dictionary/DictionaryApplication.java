@@ -22,11 +22,14 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -70,6 +73,9 @@ public class DictionaryApplication extends Application {
     final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new LinkedHashMap<String, DictionaryInfo>();
   }
   DictionaryConfig dictionaryConfig = null;
+  
+  
+  int languageButtonPixels = 22;
 
 //  static final class DictionaryHistory implements Serializable {
 //    private static final long serialVersionUID = -4842995032541390284L;
@@ -110,6 +116,10 @@ public class DictionaryApplication extends Application {
     Log.d("QuickDic", "Application: onCreate");
     TransliteratorManager.init(null);
     staticInit(getApplicationContext());
+    
+    languageButtonPixels = (int) TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
+
     
     // Load the dictionaries we know about.
     dictionaryConfig = PersistentObjectCache.init(getApplicationContext()).read(
@@ -267,6 +277,7 @@ public class DictionaryApplication extends Application {
           final IndexInfo indexInfo) {
       LanguageResources languageResources = Language.isoCodeToResources.get(indexInfo.shortName);
       View result;
+            
       if (languageResources == null || languageResources.flagId <= 0) {
           Button button = new Button(context);
           button.setText(indexInfo.shortName);
@@ -277,9 +288,12 @@ public class DictionaryApplication extends Application {
           button.setScaleType(ScaleType.FIT_CENTER);
           result = button;
       }
+      result.setMinimumWidth(languageButtonPixels);
+      result.setMinimumHeight(languageButtonPixels * 2 / 3);
       result.setOnClickListener(
               new IntentLauncher(context, 
               DictionaryActivity.getLaunchIntent(getPath(dictionaryInfo.uncompressedFilename), indexInfo.shortName, "")));
+//      result.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
       return result;
   }
 
@@ -401,19 +415,19 @@ public class DictionaryApplication extends Application {
     return result;
   }
   
-  public synchronized List<DictionaryInfo> getAllDictionaries() {
-    final List<DictionaryInfo> result = getDictionariesOnDevice();
-    
-    // The downloadable ones.
-    final Map<String,DictionaryInfo> remaining = new LinkedHashMap<String, DictionaryInfo>(DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO);
-    remaining.keySet().removeAll(dictionaryConfig.dictionaryFilesOrdered);
-    final List<DictionaryInfo> toAddSorted = new ArrayList<DictionaryInfo>(remaining.values());
-    Collections.sort(toAddSorted, dictionaryInfoComparator);
-    result.addAll(toAddSorted);
-    
-    return result;
+  public List<DictionaryInfo> getDownloadableDictionaries() {
+      final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(dictionaryConfig.dictionaryFilesOrdered.size());
+      
+      // The downloadable ones.
+      final Map<String,DictionaryInfo> remaining = new LinkedHashMap<String, DictionaryInfo>(DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO);
+      remaining.keySet().removeAll(dictionaryConfig.dictionaryFilesOrdered);
+      final List<DictionaryInfo> toAddSorted = new ArrayList<DictionaryInfo>(remaining.values());
+      Collections.sort(toAddSorted, dictionaryInfoComparator);
+      result.addAll(toAddSorted);
+      
+      return result;
   }
-
+  
   public synchronized boolean isDictionaryOnDevice(String uncompressedFilename) {
     return dictionaryConfig.uncompressedFilenameToDictionaryInfo.get(uncompressedFilename) != null;
   }

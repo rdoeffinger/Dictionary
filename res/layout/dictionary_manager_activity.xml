@@ -65,8 +65,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:textOff="@string/managerShow"
-                    android:textOn="@string/managerHide" />
+                    android:textOff="@string/managerHide"
+                    android:textOn="@string/managerShow" />
             </LinearLayout>
 
             <LinearLayout

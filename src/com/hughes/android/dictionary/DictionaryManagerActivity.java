@@ -67,7 +67,7 @@ public class DictionaryManagerActivity extends SherlockActivity {
 
     // EditText filterText;
     SearchView filterSearchView;
-    ToggleButton hideDownloadable;
+    ToggleButton showDownloadable;
 
     LinearLayout dictionariesOnDevice;
     LinearLayout downloadableDictionaries;
@@ -125,8 +125,8 @@ public class DictionaryManagerActivity extends SherlockActivity {
         // }
         // });
 
-        hideDownloadable = (ToggleButton) findViewById(R.id.hideDownloadable);
-        hideDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        showDownloadable = (ToggleButton) findViewById(R.id.hideDownloadable);
+        showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 onShowLocalChanged();
@@ -171,7 +171,7 @@ public class DictionaryManagerActivity extends SherlockActivity {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        hideDownloadable.setChecked(prefs.getBoolean(C.SHOW_LOCAL, false));
+        showDownloadable.setChecked(prefs.getBoolean(C.SHOW_DOWNLOADABLE, false));
 
         if (!blockAutoLaunch &&
                 getIntent().getBooleanExtra(C.CAN_AUTO_LAUNCH_DICT, true) &&
@@ -294,10 +294,15 @@ public class DictionaryManagerActivity extends SherlockActivity {
     }
 
     private void onShowLocalChanged() {
-        downloadableDictionaries.setVisibility(hideDownloadable.isChecked() ? View.GONE
-                : View.VISIBLE);
+//        downloadableDictionaries.setVisibility(showDownloadable.isChecked() ? View.GONE
+//                : View.VISIBLE);
+        if (filterSearchView != null) {
+            populateDictionaryLists(filterSearchView.getQuery().toString());
+        } else {
+            populateDictionaryLists("");
+        }
         Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        prefs.putBoolean(C.SHOW_LOCAL, hideDownloadable.isChecked());
+        prefs.putBoolean(C.SHOW_DOWNLOADABLE, showDownloadable.isChecked());
         prefs.commit();
     }
 
@@ -321,135 +326,44 @@ public class DictionaryManagerActivity extends SherlockActivity {
     private void populateDictionaryLists(String filterText) {
         // On device.
         dictionariesOnDevice.removeAllViews();
-        final List<DictionaryInfo> dictionaryInfos = application.getDictionariesOnDevice();
-        for (final DictionaryInfo dictionaryInfo : dictionaryInfos) {
-            View row = LayoutInflater.from(dictionariesOnDevice.getContext()).inflate(
-                    R.layout.dictionary_on_device_row, dictionariesOnDevice, false);
-            final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
-            name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
-            
-            LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
-            final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
-            for (IndexInfo indexInfo : sortedIndexInfos) {
-                final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
-                buttons.addView(button);
+        {
+            final List<DictionaryInfo> dictionaryInfos = application.getDictionariesOnDevice();
+            for (final DictionaryInfo dictionaryInfo : dictionaryInfos) {
+                View row = LayoutInflater.from(dictionariesOnDevice.getContext()).inflate(
+                        R.layout.dictionary_on_device_row, dictionariesOnDevice, false);
+                final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
+                name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
+                
+                LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
+                final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
+                for (IndexInfo indexInfo : sortedIndexInfos) {
+                    final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
+                    buttons.addView(button);
+                }
+                
+                dictionariesOnDevice.addView(row);
             }
-            
-            dictionariesOnDevice.addView(row);
         }
 
         // Downloadable.
-
+        downloadableDictionaries.removeAllViews();
+        if (showDownloadable.isChecked()) {
+            final List<DictionaryInfo> dictionaryInfos = application.getDownloadableDictionaries();
+            for (final DictionaryInfo dictionaryInfo : dictionaryInfos) {
+                View row = LayoutInflater.from(dictionariesOnDevice.getContext()).inflate(
+                        R.layout.dictionary_on_device_row, dictionariesOnDevice, false);
+                final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
+                name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
+                
+                LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
+                final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
+                for (IndexInfo indexInfo : sortedIndexInfos) {
+                    final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
+                    buttons.addView(button);
+                }
+                downloadableDictionaries.addView(row);
+            }
+        }
     }
-
-//    class Adapter extends BaseAdapter {
-//
-//        final List<DictionaryInfo> dictionaryInfos = new ArrayList<DictionaryInfo>();
-//
-//        Adapter() {
-//            final String filter = filterSearchView.getText().toString().trim().toLowerCase();
-//            for (final DictionaryInfo dictionaryInfo : application.getAllDictionaries()) {
-//                boolean canShow = true;
-//                if (hideDownloadable.isChecked()
-//                        && !application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
-//                    canShow = false;
-//                }
-//                if (canShow && filter.length() > 0) {
-//                    if (!application.getDictionaryName(dictionaryInfo.uncompressedFilename)
-//                            .toLowerCase().contains(filter)) {
-//                        canShow = false;
-//                    }
-//                }
-//                if (canShow) {
-//                    dictionaryInfos.add(dictionaryInfo);
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return dictionaryInfos.size();
-//        }
-//
-//        @Override
-//        public DictionaryInfo getItem(int position) {
-//            return dictionaryInfos.get(position);
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return position;
-//        }
-//
-//        @Override
-//        public View getView(final int position, View convertView, final ViewGroup parent) {
-//            if (convertView == null) {
-//                convertView = LayoutInflater.from(parent.getContext()).inflate(
-//                        R.layout.dictionary_manager_row, parent, false);
-//            }
-//
-//            final DictionaryInfo dictionaryInfo = getItem(position);
-//
-//            final TextView textView = (TextView) convertView.findViewById(R.id.dictionaryName);
-//            final String name = application.getDictionaryName(dictionaryInfo.uncompressedFilename);
-//            textView.setText(name);
-//
-//            final Button downloadButton = (Button) convertView
-//                    .findViewById(R.id.dictionaryDownloadButton);
-//            final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
-//            final DictionaryInfo downloadable = application
-//                    .getDownloadable(dictionaryInfo.uncompressedFilename);
-//            if (updateAvailable) {
-//                downloadButton.setCompoundDrawablesWithIntrinsicBounds(
-//                        android.R.drawable.ic_menu_add,
-//                        0, 0, 0);
-//                downloadButton.setText(getString(R.string.downloadButton,
-//                        downloadable.zipBytes / 1024.0 / 1024.0));
-//            } else if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)) {
-//                downloadButton.setCompoundDrawablesWithIntrinsicBounds(
-//                        android.R.drawable.ic_menu_add,
-//                        0, 0, 0);
-//                downloadButton.setText(getString(R.string.downloadButton,
-//                        downloadable.zipBytes / 1024.0 / 1024.0));
-//            } else {
-//                downloadButton.setCompoundDrawablesWithIntrinsicBounds(
-//                        android.R.drawable.checkbox_on_background,
-//                        0, 0, 0);
-//                downloadButton.setText("");
-//            }
-//            final Intent intent = getDownloadIntent(downloadable);
-//            downloadButton.setOnClickListener(new IntentLauncher(parent.getContext(), intent));
-//
-//            // Add the information about each index.
-//            final TextView dictionaryDetails = (TextView) convertView
-//                    .findViewById(R.id.dictionaryDetails);
-//            final StringBuilder builder = new StringBuilder();
-//            for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
-//                if (builder.length() > 0) {
-//                    builder.append(" | ");
-//                }
-//                builder.append(getString(R.string.indexInfo, indexInfo.shortName,
-//                        indexInfo.mainTokenCount));
-//            }
-//            dictionaryDetails.setText(builder.toString());
-//
-//            // // Because we have a Button inside a ListView row:
-//            // //
-//            // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
-//            // convertView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-//            convertView.setClickable(true);
-//            convertView.setFocusable(true);
-//            convertView.setLongClickable(true);
-//            // result.setBackgroundResource(android.R.drawable.menuitem_background);
-//            convertView.setOnClickListener(new TextView.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    DictionaryManagerActivity.this.onClick(position);
-//                }
-//            });
-//
-//            return convertView;
-//        }
-//    }
 
 }

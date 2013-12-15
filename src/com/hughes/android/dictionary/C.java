@@ -22,7 +22,7 @@ public class C {
     public static final String INDEX_SHORT_NAME = "indexShortName";
     public static final String SEARCH_TOKEN = "searchToken";
     public static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
-    public static final String SHOW_LOCAL = "showLocal";
+    public static final String SHOW_DOWNLOADABLE = "showLocal";
 
     public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
 

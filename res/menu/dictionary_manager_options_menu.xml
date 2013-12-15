@@ -4,7 +4,7 @@
     <item android:id="@+id/filterText"
           android:title="@string/managerFilterText"
           android:icon="@drawable/abs__ic_search"
-          android:showAsAction="collapseActionView|ifRoom"
+          android:showAsAction="always"
           android:actionViewClass="com.actionbarsherlock.widget.SearchView" />
         
     <item
