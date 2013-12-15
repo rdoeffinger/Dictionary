@@ -221,6 +221,7 @@ public class DictionaryManagerActivity extends SherlockActivity {
                 return true;
             }
         });
+        filterSearchView.setIconifiedByDefault(false);
 
         application.onCreateGlobalOptionsMenu(this, menu);
         return true;
@@ -338,6 +339,9 @@ public class DictionaryManagerActivity extends SherlockActivity {
                 final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
                 for (IndexInfo indexInfo : sortedIndexInfos) {
                     final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
+                    button.setOnClickListener(
+                            new IntentLauncher(buttons.getContext(), 
+                            DictionaryActivity.getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), indexInfo.shortName, "")));
                     buttons.addView(button);
                 }
                 

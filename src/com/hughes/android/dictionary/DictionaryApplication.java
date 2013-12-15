@@ -290,9 +290,6 @@ public class DictionaryApplication extends Application {
       }
       result.setMinimumWidth(languageButtonPixels);
       result.setMinimumHeight(languageButtonPixels * 2 / 3);
-      result.setOnClickListener(
-              new IntentLauncher(context, 
-              DictionaryActivity.getLaunchIntent(getPath(dictionaryInfo.uncompressedFilename), indexInfo.shortName, "")));
 //      result.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
       return result;
   }

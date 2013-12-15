@@ -638,15 +638,8 @@ public class DictionaryActivity extends SherlockListActivity {
                 final LinearLayout result = new LinearLayout(parent.getContext());
 
                 for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
-                    if (i > 0) {
-                        final TextView dash = new TextView(parent.getContext());
-                        dash.setText("-");
-                        result.addView(dash);
-                    }
-
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
-                    final Button button = new Button(parent.getContext());
-                    button.setText(indexInfo.shortName);
+                    final View button = application.createButton(parent.getContext(), dictionaryInfo, indexInfo);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(
                                     application.getPath(dictionaryInfo.uncompressedFilename),
@@ -659,7 +652,6 @@ public class DictionaryActivity extends SherlockListActivity {
                     };
                     button.setOnClickListener(intentLauncher);
                     result.addView(button);
-
                 }
 
                 final TextView nameView = new TextView(parent.getContext());
@@ -672,7 +664,6 @@ public class DictionaryActivity extends SherlockListActivity {
                 layoutParams.weight = 1.0f;
                 nameView.setLayoutParams(layoutParams);
                 result.addView(nameView);
-
                 return result;
             }
 
