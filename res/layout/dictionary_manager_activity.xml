@@ -5,77 +5,14 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <!-- Dictionaries on device -->
-
-            <LinearLayout
-                android:id="@+id/onDeviceHeaderLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gray"
-                android:orientation="horizontal"
-                android:padding="10dip" >
-
-                <TextView
-                    android:id="@+id/onDeviceTextId"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/dictionariesOnDevice"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/dictionariesOnDeviceGoHere"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="10dip" >
-            </LinearLayout>
-
-            <!-- Downloadable dictionaries -->
-
-            <LinearLayout
-                android:id="@+id/downloadableHeaderLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gray"
-                android:orientation="horizontal"
-                android:padding="10dip" >
-
-                <TextView
-                    android:id="@+id/downloadableTextId"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/downloadableDictionaries"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                <ToggleButton
-                    android:id="@+id/hideDownloadable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    android:textOff="@string/managerHide"
-                    android:textOn="@string/managerShow" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/downloadableDictionariesGoHere"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-            </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+    <ListView
+        android:id="@id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:fastScrollEnabled="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
 
 </LinearLayout>

@@ -37,7 +37,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
     addPreferencesFromResource(R.xml.preferences);
     ListPreference defaultDic = (ListPreference) findPreference(getResources().getString(R.string.defaultDicKey));
     DictionaryApplication application = (DictionaryApplication) getApplication();
-    List<DictionaryInfo> dicts = application.getDictionariesOnDevice();
+    List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
     
 	final CharSequence[] entries = new CharSequence[dicts.size()];
 	final CharSequence[] entryvalues = new CharSequence[dicts.size()];

@@ -200,7 +200,7 @@ public class DictionaryActivity extends SherlockListActivity {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         
         // Don't auto-launch if this fails.
-        prefs.edit().remove(C.INDEX_SHORT_NAME).commit(); 
+        prefs.edit().remove(C.DICT_FILE).commit(); 
 
         setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
 
@@ -233,7 +233,7 @@ public class DictionaryActivity extends SherlockListActivity {
         	if(intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null))
         	{
         		Log.d(LOG, "DictSearch: from: " + from + " to " + to);
-        		List<DictionaryInfo> dicts = application.getDictionariesOnDevice();
+        		List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
         		for(DictionaryInfo info : dicts)
         		{
         			boolean hasFrom = from == null;
@@ -336,7 +336,6 @@ public class DictionaryActivity extends SherlockListActivity {
                 break;
             }
         }
-        indexIndex %= dictionary.indices.size();
         Log.d(LOG, "Loading index " + indexIndex);
         index = dictionary.indices.get(indexIndex);
         setListAdapter(new IndexAdapter(index));
@@ -435,7 +434,7 @@ public class DictionaryActivity extends SherlockListActivity {
         
         searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setIconifiedByDefault(false);
-        // searchView.setIconified(false); // puts the magifying glass in the
+        // searchView.setIconified(false); // puts the magnifying glass in the
         // wrong place.
         searchView.setQueryHint(getString(R.string.searchText));
         searchView.setSubmitButtonEnabled(false);
@@ -613,7 +612,7 @@ public class DictionaryActivity extends SherlockListActivity {
         dialog.setContentView(R.layout.select_dictionary_dialog);
         dialog.setTitle(R.string.selectDictionary);
 
-        final List<DictionaryInfo> installedDicts = application.getDictionariesOnDevice();
+        final List<DictionaryInfo> installedDicts = application.getDictionariesOnDevice(null);
 
         ListView listView = (ListView) dialog.findViewById(android.R.id.list);
         final Button button = new Button(listView.getContext());

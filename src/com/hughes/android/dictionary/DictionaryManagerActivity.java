@@ -14,50 +14,58 @@
 
 package com.hughes.android.dictionary;
 
+import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
-import com.hughes.android.dictionary.engine.Language;
-import com.hughes.android.dictionary.engine.Language.LanguageResources;
 import com.hughes.android.util.IntentLauncher;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-public class DictionaryManagerActivity extends SherlockActivity {
+// Filters
+// Right-click:
+//  Delete, move to top.
+
+public class DictionaryManagerActivity extends SherlockListActivity {
 
     static final String LOG = "QuickDic";
     static boolean blockAutoLaunch = false;
@@ -69,10 +77,25 @@ public class DictionaryManagerActivity extends SherlockActivity {
     SearchView filterSearchView;
     ToggleButton showDownloadable;
 
-    LinearLayout dictionariesOnDevice;
-    LinearLayout downloadableDictionaries;
+    LinearLayout dictionariesOnDeviceHeaderRow;
+    LinearLayout downloadableDictionariesHeaderRow;
 
     Handler uiHandler;
+    
+    Runnable dictionaryUpdater = new Runnable() {
+        @Override
+        public void run() {
+            if (uiHandler == null) {
+                return;
+            }
+            uiHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    setListAdapater();
+                }
+            });
+        }
+    };
 
     public static Intent getLaunchIntent() {
         final Intent intent = new Intent();
@@ -93,8 +116,11 @@ public class DictionaryManagerActivity extends SherlockActivity {
         // UI init.
         setContentView(R.layout.dictionary_manager_activity);
 
-        dictionariesOnDevice = (LinearLayout) findViewById(R.id.dictionariesOnDeviceGoHere);
-        downloadableDictionaries = (LinearLayout) findViewById(R.id.downloadableDictionariesGoHere);
+        dictionariesOnDeviceHeaderRow = (LinearLayout) LayoutInflater.from(getListView().getContext()).inflate(
+                R.layout.dictionaries_on_device_header_row, getListView(), false);
+
+        downloadableDictionariesHeaderRow = (LinearLayout) LayoutInflater.from(getListView().getContext()).inflate(
+                R.layout.downloadable_dictionaries_header_row, getListView(), false);
 
         // filterText = (EditText) findViewById(R.id.filterText);
         //
@@ -125,7 +151,7 @@ public class DictionaryManagerActivity extends SherlockActivity {
         // }
         // });
 
-        showDownloadable = (ToggleButton) findViewById(R.id.hideDownloadable);
+        showDownloadable = (ToggleButton) downloadableDictionariesHeaderRow.findViewById(R.id.hideDownloadable);
         showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -146,6 +172,70 @@ public class DictionaryManagerActivity extends SherlockActivity {
             prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion)
                     .commit();
         }
+        
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                    final long downloadId = intent.getLongExtra(
+                            DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                    final DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(downloadId);
+                    final DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    final Cursor cursor = downloadManager.query(query);
+                    
+                    if (!cursor.moveToFirst()) {
+                        Log.e(LOG, "Couldn't find download.");
+                        return;
+                    }
+                    
+                    final int status = cursor
+                            .getInt(cursor
+                                    .getColumnIndex(DownloadManager.COLUMN_STATUS));
+                    if (DownloadManager.STATUS_SUCCESSFUL != status){
+                    Log.w(LOG, "Download failed: status=" + status + ", reason=" + cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_REASON)));
+                    return;
+                }
+
+                final String dest = cursor
+                        .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                Log.w(LOG, "Download finished: " + dest);
+                final File destFile = new File(Uri.parse(dest).getPath());
+                
+                try {
+                    ZipFile zipFile = new ZipFile(destFile);
+                    final ZipEntry zipEntry = zipFile.entries().nextElement();
+                    Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
+                    final InputStream zipIn = zipFile.getInputStream(zipEntry);
+                    final OutputStream zipOut = new FileOutputStream(new File(application.getDictDir(), zipEntry.getName()));
+                    copyStream(zipIn, zipOut);
+                    destFile.delete();
+                    zipFile.close();
+                    application.backgroundUpdateDictionaries(dictionaryUpdater);
+                } catch (Exception e) {
+                    Log.e(LOG, "Failed to unzip.", e);
+                }
+              }
+            }
+        };
+ 
+        registerReceiver(receiver, new IntentFilter(
+                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        
+        setListAdapater();
+    }
+    
+    private static int copyStream(final InputStream in, final OutputStream out)
+            throws IOException {
+        int bytesRead;
+        final byte[] bytes = new byte[1024 * 16];
+        while ((bytesRead = in.read(bytes)) != -1) {
+            out.write(bytes, 0, bytesRead);
+        }
+        in.close();
+        out.close();
+        return bytesRead;
     }
 
     @Override
@@ -177,30 +267,25 @@ public class DictionaryManagerActivity extends SherlockActivity {
                 getIntent().getBooleanExtra(C.CAN_AUTO_LAUNCH_DICT, true) &&
                 prefs.contains(C.DICT_FILE) &&
                 prefs.contains(C.INDEX_SHORT_NAME)) {
-            Log.d(LOG, "Skipping Dictionary List, going straight to dictionary.");
+            Log.d(LOG, "Skipping DictionaryManager, going straight to dictionary.");
             startActivity(DictionaryActivity.getLaunchIntent(
                     new File(prefs.getString(C.DICT_FILE, "")), prefs.getString(C.INDEX_SHORT_NAME, ""),
                     prefs.getString(C.SEARCH_TOKEN, "")));
             finish();
             return;
         }
+        
+        // Remove the active dictionary from the prefs so we won't autolaunch
+        // next time.
+        final Editor editor = prefs.edit();
+        editor.remove(C.DICT_FILE);
+        editor.remove(C.INDEX_SHORT_NAME);
+        editor.remove(C.SEARCH_TOKEN);
+        editor.commit();
 
-        application.backgroundUpdateDictionaries(new Runnable() {
-            @Override
-            public void run() {
-                if (uiHandler == null) {
-                    return;
-                }
-                uiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        populateDictionaryLists("");
-                    }
-                });
-            }
-        });
+        application.backgroundUpdateDictionaries(dictionaryUpdater);
 
-        populateDictionaryLists("");
+        setListAdapater();
     }
 
     @Override
@@ -217,7 +302,7 @@ public class DictionaryManagerActivity extends SherlockActivity {
             
             @Override
             public boolean onQueryTextChange(String filterText) {
-                populateDictionaryLists(filterText);
+                setListAdapater();
                 return true;
             }
         });
@@ -284,24 +369,10 @@ public class DictionaryManagerActivity extends SherlockActivity {
 //
 //    }
 
-    private Intent getDownloadIntent(final DictionaryInfo downloadable) {
-        // DownloadManager downloadManager = (DownloadManager)
-        // getSystemService(DOWNLOAD_SERVICE);
-        // DownloadManager.Request request = new
-        // DownloadManager.Request(Uri.parse(""));
-        // long id = downloadManager.enqueue(request);
-        // DownloadManager.Query query;
-        return null;
-    }
-
     private void onShowLocalChanged() {
 //        downloadableDictionaries.setVisibility(showDownloadable.isChecked() ? View.GONE
 //                : View.VISIBLE);
-        if (filterSearchView != null) {
-            populateDictionaryLists(filterSearchView.getQuery().toString());
-        } else {
-            populateDictionaryLists("");
-        }
+        setListAdapater();
         Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
         prefs.putBoolean(C.SHOW_DOWNLOADABLE, showDownloadable.isChecked());
         prefs.commit();
@@ -323,51 +394,132 @@ public class DictionaryManagerActivity extends SherlockActivity {
     // startActivity(intent);
     // }
     // }
-
-    private void populateDictionaryLists(String filterText) {
-        // On device.
-        dictionariesOnDevice.removeAllViews();
-        {
-            final List<DictionaryInfo> dictionaryInfos = application.getDictionariesOnDevice();
-            for (final DictionaryInfo dictionaryInfo : dictionaryInfos) {
-                View row = LayoutInflater.from(dictionariesOnDevice.getContext()).inflate(
-                        R.layout.dictionary_on_device_row, dictionariesOnDevice, false);
-                final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
-                name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
-                
-                LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
-                final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
-                for (IndexInfo indexInfo : sortedIndexInfos) {
-                    final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
-                    button.setOnClickListener(
-                            new IntentLauncher(buttons.getContext(), 
-                            DictionaryActivity.getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename), indexInfo.shortName, "")));
-                    buttons.addView(button);
-                }
-                
-                dictionariesOnDevice.addView(row);
+    
+    class MyListAdapter extends BaseAdapter {
+        
+        List<DictionaryInfo> dictionariesOnDevice;
+        List<DictionaryInfo> downloadableDictionaries;
+        
+        private MyListAdapter(final String[] filters) {
+            dictionariesOnDevice = application.getDictionariesOnDevice(filters);
+            if (showDownloadable.isChecked()) {
+                downloadableDictionaries = application.getDownloadableDictionaries(filters);
+            } else {
+                downloadableDictionaries = Collections.emptyList();
             }
         }
 
-        // Downloadable.
-        downloadableDictionaries.removeAllViews();
-        if (showDownloadable.isChecked()) {
-            final List<DictionaryInfo> dictionaryInfos = application.getDownloadableDictionaries();
-            for (final DictionaryInfo dictionaryInfo : dictionaryInfos) {
-                View row = LayoutInflater.from(dictionariesOnDevice.getContext()).inflate(
-                        R.layout.dictionary_on_device_row, dictionariesOnDevice, false);
-                final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
-                name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
-                
-                LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
-                final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
-                for (IndexInfo indexInfo : sortedIndexInfos) {
-                    final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
-                    buttons.addView(button);
-                }
-                downloadableDictionaries.addView(row);
-            }
+        @Override
+        public int getCount() {
+            return 2 + dictionariesOnDevice.size() + downloadableDictionaries.size();
         }
+
+        @Override
+        public Object getItem(int position) {
+            return Integer.valueOf(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView instanceof LinearLayout && 
+                    convertView != dictionariesOnDeviceHeaderRow && 
+                    convertView != downloadableDictionariesHeaderRow) {
+                ((LinearLayout)convertView).removeAllViews();
+            }
+            // Dictionaries on device.
+            if (position == 0) {
+                return dictionariesOnDeviceHeaderRow;
+            }
+            --position;
+            
+            if (position < dictionariesOnDevice.size()) {
+                return createDictionaryRow(dictionariesOnDevice.get(position), 
+                                parent, R.layout.dictionaries_on_device_row, true);
+            }
+            position -= dictionariesOnDevice.size();
+            
+            // Downloadable dictionaries.
+            if (position == 0) {
+                return downloadableDictionariesHeaderRow;
+            }
+            --position;
+            
+            assert position < downloadableDictionaries.size();
+            return createDictionaryRow(downloadableDictionaries.get(position), 
+                            parent, R.layout.downloadable_dictionary_row, false);
+        }
+        
+    }
+    
+
+    private void setListAdapater() {
+        final String filter = filterSearchView == null ? "" : filterSearchView.getQuery().toString();
+        final String[] filters = filter.trim().toLowerCase().split("(\\s|-)+");
+        setListAdapter(new MyListAdapter(filters));
+    }
+
+    private View createDictionaryRow(final DictionaryInfo dictionaryInfo, final ViewGroup parent, 
+            final int viewResource, final boolean canLaunch) {
+        
+        View row = LayoutInflater.from(parent.getContext()).inflate(
+                viewResource, parent, false);
+        final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
+        final TextView details = (TextView) row.findViewById(R.id.dictionaryDetails);
+        name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
+
+        if (!canLaunch) {
+            final Button downloadButton = (Button) row.findViewById(R.id.downloadButton);
+            downloadButton.setText(getString(R.string.downloadButton, dictionaryInfo.zipBytes / 1024.0 / 1024.0));
+            downloadButton.setMinWidth(application.languageButtonPixels * 3 / 2);
+            downloadButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    Request request = new Request(
+                            Uri.parse(dictionaryInfo.downloadUrl));
+                    try {
+                        final String destFile = new File(new URL(dictionaryInfo.downloadUrl).getFile()).getName(); 
+                        Log.d(LOG, "Downloading to: " + destFile);
+                        
+                        request.setDestinationUri(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), destFile)));
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    downloadManager.enqueue(request);
+                }
+            });
+        }
+
+        final StringBuilder builder = new StringBuilder();
+        LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
+        final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
+        for (IndexInfo indexInfo : sortedIndexInfos) {
+            final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
+            buttons.addView(button);
+            
+            if (canLaunch) {
+                button.setOnClickListener(
+                        new IntentLauncher(buttons.getContext(), 
+                        DictionaryActivity.getLaunchIntent(
+                                application.getPath(dictionaryInfo.uncompressedFilename), 
+                                indexInfo.shortName, "")));
+
+            } else {
+                button.setEnabled(false);
+            }
+            if (builder.length() != 0) {
+                builder.append("; ");
+            }
+            builder.append(getString(R.string.indexInfo, indexInfo.shortName, indexInfo.mainTokenCount));
+        }
+        details.setText(builder.toString());
+        
+        return row;
     }
 
 }

@@ -400,28 +400,41 @@ public class DictionaryApplication extends Application {
         }
       }}).start();
   }
+  
+  public boolean matchesFilters(final DictionaryInfo dictionaryInfo, final String[] filters) {
+      if (filters == null) {
+          return true;
+      }
+      for (final String filter : filters) {
+          if (!getDictionaryName(dictionaryInfo.uncompressedFilename).toLowerCase().contains(filter)) {
+              return false;
+          }
+      }
+      return true;
+  }
 
-  public synchronized List<DictionaryInfo> getDictionariesOnDevice() {
+  public synchronized List<DictionaryInfo> getDictionariesOnDevice(String[] filters) {
     final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(dictionaryConfig.dictionaryFilesOrdered.size());
     for (final String uncompressedFilename : dictionaryConfig.dictionaryFilesOrdered) {
       final DictionaryInfo dictionaryInfo = dictionaryConfig.uncompressedFilenameToDictionaryInfo.get(uncompressedFilename);
-      if (dictionaryInfo != null) {
+      if (dictionaryInfo != null && matchesFilters(dictionaryInfo, filters)) {
         result.add(dictionaryInfo);
       }
     }
     return result;
   }
   
-  public List<DictionaryInfo> getDownloadableDictionaries() {
+  public List<DictionaryInfo> getDownloadableDictionaries(String[] filters) {
       final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(dictionaryConfig.dictionaryFilesOrdered.size());
       
-      // The downloadable ones.
-      final Map<String,DictionaryInfo> remaining = new LinkedHashMap<String, DictionaryInfo>(DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO);
+      final Map<String, DictionaryInfo> remaining = new LinkedHashMap<String, DictionaryInfo>(DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO);
       remaining.keySet().removeAll(dictionaryConfig.dictionaryFilesOrdered);
-      final List<DictionaryInfo> toAddSorted = new ArrayList<DictionaryInfo>(remaining.values());
-      Collections.sort(toAddSorted, dictionaryInfoComparator);
-      result.addAll(toAddSorted);
-      
+      for (final DictionaryInfo dictionaryInfo : remaining.values()) {
+          if (matchesFilters(dictionaryInfo, filters)) {
+              result.add(dictionaryInfo);
+          }
+      }
+      Collections.sort(result, dictionaryInfoComparator);
       return result;
   }
   
@@ -430,8 +443,11 @@ public class DictionaryApplication extends Application {
   }
 
   public boolean updateAvailable(final DictionaryInfo dictionaryInfo) {
-    final DictionaryInfo downloadable = DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO.get(dictionaryInfo.uncompressedFilename);
-    return downloadable != null && downloadable.creationMillis > dictionaryInfo.creationMillis;
+    final DictionaryInfo downloadable = 
+            DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO.get(
+                    dictionaryInfo.uncompressedFilename);
+    return downloadable != null && 
+            downloadable.creationMillis > dictionaryInfo.creationMillis;
   }
 
   public DictionaryInfo getDownloadable(final String uncompressedFilename) {

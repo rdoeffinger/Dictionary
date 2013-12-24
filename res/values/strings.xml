@@ -11,11 +11,8 @@
   <string name="help">Help</string>
   <string name="reportIssue">Report issue…</string>
   <string name="fontWorkaround">Detected font problem (common on Sony Ericsson devices), switching back to default font.</string>
-  <string name="clearSearchText">Clear search text</string>
-  
   
   <string name="no_dict_file">Please specify a default directory in the settings.</string>
-    
   
   
    <!-- DictionaryManagerActivity -->

@@ -10,21 +10,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
+        <LinearLayout
+            android:id="@+id/dictionaryLauncherButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingRight="5dip" >
+        </LinearLayout>
+
         <TextView
             android:id="@+id/dictionaryName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="English-German"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             tools:ignore="HardcodedText" />
 
         <Button
-            android:id="@+id/dictionaryDownloadButton"
+            android:id="@+id/downloadButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:drawableLeft="@android:drawable/ic_menu_add"
+            android:drawableRight="@drawable/ic_action_download"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/downloadButton" />
     </LinearLayout>
 
