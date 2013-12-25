@@ -77,7 +77,7 @@ public class Language {
     isoCodeToResources.put("IS", new LanguageResources("Icelandic", R.string.IS, R.drawable.flag_of_iceland));
     isoCodeToResources.put("ID", new LanguageResources("Indonesian", R.string.ID, R.drawable.flag_of_indonesia));
     isoCodeToResources.put("GA", new LanguageResources("Irish", R.string.GA, R.drawable.flag_of_ireland));
-    isoCodeToResources.put("GD", new LanguageResources("Scottish Gaelic", R.string.GD));
+    isoCodeToResources.put("GD", new LanguageResources("Scottish Gaelic", R.string.GD, R.drawable.flag_of_scotland));
     isoCodeToResources.put("GV", new LanguageResources("Manx", R.string.GV, R.drawable.flag_of_the_isle_of_man));
     isoCodeToResources.put("IT", new LanguageResources("Italian", R.string.IT, R.drawable.flag_of_italy));
     isoCodeToResources.put("LA", new LanguageResources("Latin", R.string.LA));

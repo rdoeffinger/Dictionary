@@ -97,7 +97,6 @@
   <string name="wordListFileKey">wordListFile</string>
   <string name="wordListFileTitle">Word list file</string>
   <string name="wordListFileSummary">The local file where the word list will be appended.</string>
-  <string name="wordListFileDefault">/sdcard/quickDic/wordList.txt</string>
 
   <string name="fontKey">font</string>
   <string name="fontTitle">Dictionary font</string>

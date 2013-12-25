@@ -1,3 +1,2 @@
 * Contributions from:
-* Unable to read quickdic dir message.
 * HtmlEntries inline, expandable.

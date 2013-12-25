@@ -403,7 +403,7 @@ public class DictionaryActivity extends SherlockListActivity {
 
         // Cache some prefs.
         wordList = new File(prefs.getString(getString(R.string.wordListFileKey),
-                getString(R.string.wordListFileDefault)));
+                new File(application.getDictDir(), "wordList.txt").getAbsolutePath()));
         saveOnlyFirstSubentry = prefs.getBoolean(getString(R.string.saveOnlyFirstSubentryKey),
                 false);
         clickOpensContextMenu = prefs.getBoolean(getString(R.string.clickOpensContextMenuKey),
