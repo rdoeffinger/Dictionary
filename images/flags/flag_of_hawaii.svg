@@ -1,0 +1,29 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg>
+<svg version="1.1" baseProfile="full" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify"
+   id="Flag_of_Hawaii"
+   viewBox="-13.125 -7.5 26.25 15"
+   width="1200" height="600">
+
+  <defs>
+    <clipPath id="border">
+      <rect x="-13.125" y="-7.5" width="26.25" height="15"/>
+    </clipPath>
+  </defs>
+	<rect x="-15" y="-7.5" width="30" height="15" fill="#CF142B"/>
+	<path d="M -15,-6.5625 H 15" stroke-width="1.875" stroke="white" />
+	<g id="blwh">
+		<path d="M -15,-2.8125 H 15" stroke-width="1.875" stroke="#00247D" />
+		<path d="M -15,-0.9375 H 15" stroke-width="1.875" stroke="white" />
+	</g>
+	<use transform="translate(0,5.625)" xlink:href="#blwh" />  
+	<g transform="matrix(0.5,0,0,0.5,-8.4375,-3.75)" clip-path="url(#border)">
+    <circle r="16" fill="#00247D"/>
+    <path d="M -17.5,-10 L 17.5,10 M -17.5,10 L 17.5,-10" stroke-width="3" stroke="white" id="diags_white"/>
+    <path d="M -17.5,-10 L 17.5,10 M -17.5,10 L 17.5,-10" stroke-width="2" stroke="#CF142B" id="diags_red"/>
+    <path stroke="none" fill="white" d="M 0,0 l 17.5,10 h -2.25 l -17.5,-10 M 0,0 l 17.5,-10 h 2.25 l -17.5,10 M 0,0 l -17.5,10 h -2.25 l 17.5,-10 M 0,0 l -17.5,-10 h 2.25 l 17.5,10" id="eraser_white"/>
+<comment>I think the above two lines give the simplest way to make the diagonals</comment>
+    <path d="M -17.5,0 H 17.5 M 0,-10 V 10" stroke-width="5" stroke="white" id="cross_white"/>
+    <path d="M -17.5,0 H 17.5 M 0,-10 V 10" stroke-width="3" stroke="#CF142B" id="cross_red"/>
+  </g>
+</svg>
