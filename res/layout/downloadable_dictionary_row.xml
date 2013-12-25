@@ -18,6 +18,9 @@
             android:paddingRight="5dip" >
         </LinearLayout>
 
+        <!--
+        http://stackoverflow.com/questions/11243867/android-last-line-of-textview-cut-off 
+         -->
         <TextView
             android:id="@+id/dictionaryName"
             android:layout_width="0dp"
