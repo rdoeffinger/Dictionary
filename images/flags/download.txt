@@ -6,3 +6,5 @@ echo http://upload.wikimedia.org/wikipedia/commons/e/ef/Flag_of_Hawaii.svg >> fl
 for i in `cat flag_files.txt`; do curl $i -O; done
 
 for i in *.svg; do mv $i `echo $i | tr '[:upper:]' '[:lower:]' | sed 's/%..//g' | sed 's/[^a-z0-9_]/_/g' `; done
+
+for i in *.svg *.png; do convert $i -resize 66x66 ../flags_png/${i/svg/png}; done

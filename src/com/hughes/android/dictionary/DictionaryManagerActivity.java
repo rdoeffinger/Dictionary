@@ -29,13 +29,17 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -61,7 +65,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-// Filters
 // Right-click:
 //  Delete, move to top.
 
@@ -71,9 +74,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
     static boolean blockAutoLaunch = false;
 
     DictionaryApplication application;
-//    Adapter adapter;
 
-    // EditText filterText;
     SearchView filterSearchView;
     ToggleButton showDownloadable;
 
@@ -94,6 +95,65 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                     setListAdapater();
                 }
             });
+        }
+    };
+    
+    final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                final long downloadId = intent.getLongExtra(
+                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                final DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(downloadId);
+                final DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                final Cursor cursor = downloadManager.query(query);
+
+                if (!cursor.moveToFirst()) {
+                    Log.e(LOG, "Couldn't find download.");
+                    return;
+                }
+
+                final String dest = cursor
+                        .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                final int status = cursor
+                        .getInt(cursor
+                                .getColumnIndex(DownloadManager.COLUMN_STATUS));
+                if (DownloadManager.STATUS_SUCCESSFUL != status) {
+                    Log.w(LOG,
+                            "Download failed: status=" + status +
+                                    ", reason=" + cursor.getString(cursor
+                                            .getColumnIndex(DownloadManager.COLUMN_REASON)));
+                    Toast.makeText(context, getString(R.string.downloadFailed, dest),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Log.w(LOG, "Download finished: " + dest);
+                final File localZipFile = new File(Uri.parse(dest).getPath());
+
+                try {
+                    ZipFile zipFile = new ZipFile(localZipFile);
+                    final ZipEntry zipEntry = zipFile.entries().nextElement();
+                    Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
+                    final InputStream zipIn = zipFile.getInputStream(zipEntry);
+                    final OutputStream zipOut = new FileOutputStream(
+                            new File(application.getDictDir(), zipEntry.getName()));
+                    copyStream(zipIn, zipOut);
+                    zipFile.close();
+                    application.backgroundUpdateDictionaries(dictionaryUpdater);
+                    Toast.makeText(context, getString(R.string.downloadFinished, dest),
+                            Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(context, getString(R.string.downloadFailed, dest),
+                            Toast.LENGTH_LONG).show();
+                    Log.e(LOG, "Failed to unzip.", e);
+                } finally {
+                    localZipFile.delete();
+                }
+            }
         }
     };
 
@@ -122,35 +182,6 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         downloadableDictionariesHeaderRow = (LinearLayout) LayoutInflater.from(getListView().getContext()).inflate(
                 R.layout.downloadable_dictionaries_header_row, getListView(), false);
 
-        // filterText = (EditText) findViewById(R.id.filterText);
-        //
-        // filterText.addTextChangedListener(new TextWatcher() {
-        // @Override
-        // public void onTextChanged(CharSequence s, int start, int before, int
-        // count) {
-        // }
-        //
-        // @Override
-        // public void beforeTextChanged(CharSequence s, int start, int count,
-        // int after) {
-        // }
-        //
-        // @Override
-        // public void afterTextChanged(Editable s) {
-        // onFilterTextChanged();
-        // }
-        // });
-
-        // final ImageButton clearSearchText = (ImageButton)
-        // findViewById(R.id.ClearSearchTextButton);
-        // clearSearchText.setOnClickListener(new View.OnClickListener() {
-        // @Override
-        // public void onClick(View arg0) {
-        // filterText.setText("");
-        // filterText.requestFocus();
-        // }
-        // });
-
         showDownloadable = (ToggleButton) downloadableDictionariesHeaderRow.findViewById(R.id.hideDownloadable);
         showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
@@ -158,9 +189,6 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                 onShowLocalChanged();
             }
         });
-
-        // ContextMenu.
-        // registerForContextMenu(getListView());
 
         blockAutoLaunch = false;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -173,57 +201,17 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                     .commit();
         }
         
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                final String action = intent.getAction();
-                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    final long downloadId = intent.getLongExtra(
-                            DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                    final DownloadManager.Query query = new DownloadManager.Query();
-                    query.setFilterById(downloadId);
-                    final DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                    final Cursor cursor = downloadManager.query(query);
-                    
-                    if (!cursor.moveToFirst()) {
-                        Log.e(LOG, "Couldn't find download.");
-                        return;
-                    }
-                    
-                    final int status = cursor
-                            .getInt(cursor
-                                    .getColumnIndex(DownloadManager.COLUMN_STATUS));
-                    if (DownloadManager.STATUS_SUCCESSFUL != status){
-                    Log.w(LOG, "Download failed: status=" + status + ", reason=" + cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_REASON)));
-                    return;
-                }
-
-                final String dest = cursor
-                        .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                Log.w(LOG, "Download finished: " + dest);
-                final File destFile = new File(Uri.parse(dest).getPath());
-                
-                try {
-                    ZipFile zipFile = new ZipFile(destFile);
-                    final ZipEntry zipEntry = zipFile.entries().nextElement();
-                    Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
-                    final InputStream zipIn = zipFile.getInputStream(zipEntry);
-                    final OutputStream zipOut = new FileOutputStream(new File(application.getDictDir(), zipEntry.getName()));
-                    copyStream(zipIn, zipOut);
-                    destFile.delete();
-                    zipFile.close();
-                    application.backgroundUpdateDictionaries(dictionaryUpdater);
-                } catch (Exception e) {
-                    Log.e(LOG, "Failed to unzip.", e);
-                }
-              }
-            }
-        };
- 
-        registerReceiver(receiver, new IntentFilter(
+         
+        registerReceiver(broadcastReceiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         
         setListAdapater();
+        registerForContextMenu(getListView());
+    }
+    
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(broadcastReceiver);
     }
     
     private static int copyStream(final InputStream in, final OutputStream out)
@@ -312,66 +300,50 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         return true;
     }
 
-        // @Override
-        // public void onCreateContextMenu(final ContextMenu menu, final View
-        // view,
-        // final ContextMenuInfo menuInfo) {
-        // super.onCreateContextMenu(menu, view, menuInfo);
-        //
-        // final AdapterContextMenuInfo adapterContextMenuInfo =
-        // (AdapterContextMenuInfo) menuInfo;
-        // final int position = adapterContextMenuInfo.position;
-        // final DictionaryInfo dictionaryInfo = adapter.getItem(position);
-        //
-        // if (position > 0 &&
-        // application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename))
-        // {
-        // final android.view.MenuItem moveToTopMenuItem =
-        // menu.add(R.string.moveToTop);
-        // moveToTopMenuItem.setOnMenuItemClickListener(new
-        // android.view.MenuItem.OnMenuItemClickListener() {
-        // @Override
-        // public boolean onMenuItemClick(android.view.MenuItem item) {
-        // application.moveDictionaryToTop(dictionaryInfo);
-        // setListAdapter(adapter = new Adapter());
-        // return true;
-        // }
-        // });
-        // }
-//
-//        final android.view.MenuItem deleteMenuItem = menu.add(R.string.deleteDictionary);
-//        deleteMenuItem
-//                .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-//                    @Override
-//                    public boolean onMenuItemClick(android.view.MenuItem item) {
-//                        application.deleteDictionary(dictionaryInfo);
-//                        setListAdapter(adapter = new Adapter());
-//                        return true;
-//                    }
-//                });
-//
-//        final DictionaryInfo downloadable = application
-//                .getDownloadable(dictionaryInfo.uncompressedFilename);
-//        if (downloadable != null) {
-//            final android.view.MenuItem downloadMenuItem = menu.add(getString(
-//                    R.string.downloadButton, downloadable.zipBytes / 1024.0 / 1024.0));
-//            downloadMenuItem
-//                    .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-//                        @Override
-//                        public boolean onMenuItemClick(android.view.MenuItem item) {
-//                            final Intent intent = getDownloadIntent(downloadable);
-//                            startActivity(intent);
-//                            setListAdapter(adapter = new Adapter());
-//                            return true;
-//                        }
-//                    });
-//        }
-//
-//    }
+    @Override
+    public void onCreateContextMenu(final ContextMenu menu, final View view,
+            final ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+        Log.d(LOG, "onCreateContextMenu, " + menuInfo);
+
+        final AdapterContextMenuInfo adapterContextMenuInfo =
+                (AdapterContextMenuInfo) menuInfo;
+        final int position = adapterContextMenuInfo.position;
+        final MyListAdapter.Row row = (MyListAdapter.Row) getListAdapter().getItem(position);
+        
+        if (row.dictionaryInfo == null) {
+            return;
+        }
+
+        if (position > 0 && row.onDevice) {
+            final android.view.MenuItem moveToTopMenuItem =
+                    menu.add(R.string.moveToTop);
+            moveToTopMenuItem.setOnMenuItemClickListener(new
+                    android.view.MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(android.view.MenuItem item) {
+                            application.moveDictionaryToTop(row.dictionaryInfo);
+                            setListAdapater();
+                            return true;
+                        }
+                    });
+        }
+
+        if (row.onDevice) {
+            final android.view.MenuItem deleteMenuItem = menu.add(R.string.deleteDictionary);
+            deleteMenuItem
+                    .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(android.view.MenuItem item) {
+                            application.deleteDictionary(row.dictionaryInfo);
+                            setListAdapater();
+                            return true;
+                        }
+                });
+        }
+    }
 
     private void onShowLocalChanged() {
-//        downloadableDictionaries.setVisibility(showDownloadable.isChecked() ? View.GONE
-//                : View.VISIBLE);
         setListAdapater();
         Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
         prefs.putBoolean(C.SHOW_DOWNLOADABLE, showDownloadable.isChecked());
@@ -395,10 +367,22 @@ public class DictionaryManagerActivity extends SherlockListActivity {
     // }
     // }
     
+    
     class MyListAdapter extends BaseAdapter {
-        
+
         List<DictionaryInfo> dictionariesOnDevice;
         List<DictionaryInfo> downloadableDictionaries;
+        
+        class Row {
+            DictionaryInfo dictionaryInfo;
+            boolean onDevice;
+            
+            private Row(DictionaryInfo dictinoaryInfo, boolean onDevice) {
+                this.dictionaryInfo = dictinoaryInfo;
+                this.onDevice = onDevice;
+            }
+        }
+
         
         private MyListAdapter(final String[] filters) {
             dictionariesOnDevice = application.getDictionariesOnDevice(filters);
@@ -415,8 +399,24 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         }
 
         @Override
-        public Object getItem(int position) {
-            return Integer.valueOf(position);
+        public Row getItem(int position) {
+            if (position == 0) {
+                return new Row(null, true);
+            }
+            position -= 1;
+            
+            if (position < dictionariesOnDevice.size()) {
+                return new Row(dictionariesOnDevice.get(position), true);
+            }
+            position -= dictionariesOnDevice.size();
+            
+            if (position == 0) {
+                return new Row(null, false);
+            }
+            position -= 1;
+            
+            assert position < downloadableDictionaries.size();
+            return new Row(downloadableDictionaries.get(position), false);
         }
 
         @Override
@@ -431,32 +431,26 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                     convertView != downloadableDictionariesHeaderRow) {
                 ((LinearLayout)convertView).removeAllViews();
             }
-            // Dictionaries on device.
-            if (position == 0) {
-                return dictionariesOnDeviceHeaderRow;
-            }
-            --position;
             
-            if (position < dictionariesOnDevice.size()) {
-                return createDictionaryRow(dictionariesOnDevice.get(position), 
-                                parent, R.layout.dictionaries_on_device_row, true);
-            }
-            position -= dictionariesOnDevice.size();
+            final Row row = getItem(position);
             
-            // Downloadable dictionaries.
-            if (position == 0) {
+            if (row.onDevice) {
+                if (row.dictionaryInfo == null) {
+                    return dictionariesOnDeviceHeaderRow;
+                }
+                return createDictionaryRow(row.dictionaryInfo, 
+                        parent, R.layout.dictionaries_on_device_row, true);
+            }
+            
+            if (row.dictionaryInfo == null) {
                 return downloadableDictionariesHeaderRow;
             }
-            --position;
-            
-            assert position < downloadableDictionaries.size();
-            return createDictionaryRow(downloadableDictionaries.get(position), 
-                            parent, R.layout.downloadable_dictionary_row, false);
+            return createDictionaryRow(row.dictionaryInfo, 
+                    parent, R.layout.downloadable_dictionary_row, false);
         }
         
     }
     
-
     private void setListAdapater() {
         final String filter = filterSearchView == null ? "" : filterSearchView.getQuery().toString();
         final String[] filters = filter.trim().toLowerCase().split("(\\s|-)+");
@@ -518,6 +512,11 @@ public class DictionaryManagerActivity extends SherlockListActivity {
             builder.append(getString(R.string.indexInfo, indexInfo.shortName, indexInfo.mainTokenCount));
         }
         details.setText(builder.toString());
+        
+        row.setClickable(true);
+        row.setFocusable(true);
+        row.setLongClickable(true);
+        row.setBackgroundResource(android.R.drawable.menuitem_background);
         
         return row;
     }

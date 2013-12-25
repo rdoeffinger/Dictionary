@@ -25,6 +25,7 @@
             android:layout_weight="1"
             android:text="English-German"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_vertical"
             tools:ignore="HardcodedText" />
 
         <Button

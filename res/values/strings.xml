@@ -75,15 +75,8 @@
  
  
 	<!-- Download. -->
-  <string name="openingConnection">Opening connection…</string>
-  <string name="downloading">Downloading: %1$,d of %2$,d bytes.</string>
-  <string name="unzipping">Unzipping: %1$,d of %2$,d bytes.</string>
-  <string name="downloadFinished">Finished: %,d bytes.</string>
-  <string name="errorDownloadingFile">Error downloading file: \n%s</string>  
-  
-  
-  <string name="search_hint">An unknown word</string>  
-  
+  <string name="downloadFinished">Download finished: \n%s.</string>
+  <string name="downloadFailed">Download failed: \n%s.</string>  
   
 
 	<!-- Preferences -->

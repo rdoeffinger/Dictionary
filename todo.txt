@@ -1,20 +1,3 @@
-* Quick shift to new dictionary.
-  * Use flags.
-* DownloadManager
-  * Use ActionBar.
-  * Redo presentation: on-device first, then available to download.
-  * Use system service for downloads.
 * Application: fix which directory the thing uses: use default SD card instead of what's in prefs.
-
-
-
-* Make top of Dictionary activity good
-  * Fit search text alongside other buttons if possible.
-  * List other dictinaries beside 
-  * Make search text work.
-  
- http://stackoverflow.com/questions/13604506/show-actionbarsherlock-searchview-always-expanded
-  <style name="application_theme" parent="application_base_theme">
-    <item name="searchViewSearchIcon">@android:color/transparent</item>
-    <item name="searchViewCloseIcon">@android:color/transparent</item>
-</style>
+* Show download button when dictionaries can be updated.
+* Text rows are too tall.
