@@ -46,7 +46,7 @@
   
   <!-- About dictionary. -->
   <string name="dictionaryPath">Datei: %s</string> 
-  <string name="dictionarySize">Grosse: %,d bytes</string> 
+  <string name="dictionarySize">Größe: %,d bytes</string> 
   <string name="dictionaryCreationTime">Hergestellt: %tc</string> 
   <string name="indexName">Index: %s</string> 
   <string name="mainTokenCount">Wortzahl: %,d</string> 
@@ -73,7 +73,7 @@
   <string name="openingConnection">Verbindungsaufbau…</string>
   <string name="downloading">Herunterladen: %1$,d von %2$,d Bytes.</string>
   <string name="unzipping">Entpackung: %1$,d von %2$,d Bytes.</string>
-  <string name="downloadFinished">Fertig: %,d Bytes.</string>
+  <string name="downloadFinished">Fertig: \n%s.</string>
   <string name="errorDownloadingFile">"Fehler beim Herunterladen: \n%s"</string>
 
 	<!-- Preferences -->

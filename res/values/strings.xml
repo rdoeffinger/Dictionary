@@ -21,12 +21,22 @@
   <string name="noDictionariesOnDevice">No dictionaries on device</string>
   <string name="downloadableDictionaries">Downloadable dictionaries</string>
   <string name="downloadButton">%.1fMB</string>
+  <string name="updateAvailable">UPDATE!</string>
   <string name="moveToTop">Move to top</string>
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="indexInfo">%1$s: %2$,d words</string>
   <string name="managerFilterText">List filter</string>
   <string name="managerShow">Show</string>
   <string name="managerHide">Hide</string>
+  
+  <string name="error">Error</string>
+  <string name="unableToReadDictionaryDir">Unable to read dictionary directory: \n%1$s\n\nAndroid external storage directory: \n%2$s</string>
+  
+  <!-- Download. -->
+  <string name="downloadFinished">Download finished: \n%s.</string>
+  <string name="downloadFailed">Download failed: \n%s.</string>  
+  
+  
 
   <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
@@ -59,7 +69,6 @@
   <string name="sources">Sources</string> 
   <string name="sourceInfo">%1$s : %2$,d entries</string> 
   
-
   
 	<!-- About. -->
   <string name="thadHughes">Thad Hughes</string>
@@ -74,11 +83,6 @@
   <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
  
  
-	<!-- Download. -->
-  <string name="downloadFinished">Download finished: \n%s.</string>
-  <string name="downloadFailed">Download failed: \n%s.</string>  
-  
-
 	<!-- Preferences -->
 
   <string name="defaultDicKey">defaultddic</string>
@@ -88,8 +92,7 @@
 
   <string name="quickdicDirectoryKey">quickdicDirectory</string>
   <string name="quickdicDirectoryTitle">QuickDic directory</string>
-  <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries.</string>
-  <string name="quickdicDirectoryDefault">/sdcard/quickDic/</string>
+  <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries (empty for default quickDic folder on external storage).</string>
   
   <string name="wordListFileKey">wordListFile</string>
   <string name="wordListFileTitle">Word list file</string>
@@ -111,10 +114,6 @@
   <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
   <string name="clickOpensContextMenuTitle">Click opens context menu</string>
   <string name="clickOpensContextMenuSummary">Open context menu for clicks on entries (long-click will always open-context menu).</string>
-
-  <string name="showClearSearchTextButtonKey">showClearSearchTextButton</string>
-  <string name="showClearSearchTextButtonTitle">Show \'clear search text\' button</string>
-  <string name="showClearSearchTextButtonSummary">Show the button to clear the search text. You can also just move focus away from search text and start typing.</string>
 
   <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
   <string name="showPrevNextButtonsTitle">Show up/down buttons</string>

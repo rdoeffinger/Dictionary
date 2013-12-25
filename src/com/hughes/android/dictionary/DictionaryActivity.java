@@ -196,7 +196,7 @@ public class DictionaryActivity extends SherlockListActivity {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(LOG, "onCreate:" + this);
         super.onCreate(savedInstanceState);
-
+        
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         
         // Don't auto-launch if this fails.

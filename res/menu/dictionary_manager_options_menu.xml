@@ -7,10 +7,4 @@
           android:showAsAction="always"
           android:actionViewClass="com.actionbarsherlock.widget.SearchView" />
         
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/settings"/>
-
 </menu>

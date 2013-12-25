@@ -14,6 +14,8 @@
 
 package com.hughes.android.dictionary;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.content.BroadcastReceiver;
@@ -39,6 +41,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
@@ -165,6 +168,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         return intent;
     }
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
 
@@ -172,15 +176,17 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         Log.d(LOG, "onCreate:" + this);
 
         application = (DictionaryApplication) getApplication();
-
+        
+        blockAutoLaunch = false;
+        
         // UI init.
         setContentView(R.layout.dictionary_manager_activity);
 
         dictionariesOnDeviceHeaderRow = (LinearLayout) LayoutInflater.from(getListView().getContext()).inflate(
-                R.layout.dictionaries_on_device_header_row, getListView(), false);
+                R.layout.dictionary_manager_header_row_on_device, getListView(), false);
 
         downloadableDictionariesHeaderRow = (LinearLayout) LayoutInflater.from(getListView().getContext()).inflate(
-                R.layout.downloadable_dictionaries_header_row, getListView(), false);
+                R.layout.dictionary_manager_header_row_downloadable, getListView(), false);
 
         showDownloadable = (ToggleButton) downloadableDictionariesHeaderRow.findViewById(R.id.hideDownloadable);
         showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -190,7 +196,6 @@ public class DictionaryManagerActivity extends SherlockListActivity {
             }
         });
 
-        blockAutoLaunch = false;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
         if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(
@@ -207,10 +212,24 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         
         setListAdapater();
         registerForContextMenu(getListView());
+        
+        final File dictDir = application.getDictDir();
+        if (!dictDir.canRead() || !dictDir.canExecute()) {
+            blockAutoLaunch = true;
+            
+            AlertDialog.Builder builder = new AlertDialog.Builder(getListView().getContext());
+            builder.setTitle(getString(R.string.error));
+            builder.setMessage(getString(
+                    R.string.unableToReadDictionaryDir, 
+                    dictDir.getAbsolutePath(), 
+                    Environment.getExternalStorageDirectory()));
+            builder.create().show();
+        }
     }
     
     @Override
     public void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(broadcastReceiver);
     }
     
@@ -429,6 +448,8 @@ public class DictionaryManagerActivity extends SherlockListActivity {
             if (convertView instanceof LinearLayout && 
                     convertView != dictionariesOnDeviceHeaderRow && 
                     convertView != downloadableDictionariesHeaderRow) {
+                /* This is done to try to avoid leaking memory that used to 
+                 * happen on Android 4.0.3 */
                 ((LinearLayout)convertView).removeAllViews();
             }
             
@@ -438,15 +459,13 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                 if (row.dictionaryInfo == null) {
                     return dictionariesOnDeviceHeaderRow;
                 }
-                return createDictionaryRow(row.dictionaryInfo, 
-                        parent, R.layout.dictionaries_on_device_row, true);
+                return createDictionaryRow(row.dictionaryInfo, parent, true);
             }
             
             if (row.dictionaryInfo == null) {
                 return downloadableDictionariesHeaderRow;
             }
-            return createDictionaryRow(row.dictionaryInfo, 
-                    parent, R.layout.downloadable_dictionary_row, false);
+            return createDictionaryRow(row.dictionaryInfo, parent, false);
         }
         
     }
@@ -457,41 +476,36 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         setListAdapter(new MyListAdapter(filters));
     }
 
-    private View createDictionaryRow(final DictionaryInfo dictionaryInfo, final ViewGroup parent, 
-            final int viewResource, final boolean canLaunch) {
+    private View createDictionaryRow(final DictionaryInfo dictionaryInfo, 
+            final ViewGroup parent, final boolean canLaunch) {
         
         View row = LayoutInflater.from(parent.getContext()).inflate(
-                viewResource, parent, false);
+                R.layout.dictionary_manager_row, parent, false);
         final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
         final TextView details = (TextView) row.findViewById(R.id.dictionaryDetails);
         name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
 
-        if (!canLaunch) {
-            final Button downloadButton = (Button) row.findViewById(R.id.downloadButton);
-            downloadButton.setText(getString(R.string.downloadButton, dictionaryInfo.zipBytes / 1024.0 / 1024.0));
+        final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
+        final Button downloadButton = (Button) row.findViewById(R.id.downloadButton);
+        if (!canLaunch || updateAvailable) {
+            downloadButton.setText(getString(R.string.downloadButton, application.getDownloadable(dictionaryInfo.uncompressedFilename).zipBytes / 1024.0 / 1024.0));
             downloadButton.setMinWidth(application.languageButtonPixels * 3 / 2);
             downloadButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                    Request request = new Request(
-                            Uri.parse(dictionaryInfo.downloadUrl));
-                    try {
-                        final String destFile = new File(new URL(dictionaryInfo.downloadUrl).getFile()).getName(); 
-                        Log.d(LOG, "Downloading to: " + destFile);
-                        
-                        request.setDestinationUri(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), destFile)));
-                    } catch (MalformedURLException e) {
-                        throw new RuntimeException(e);
-                    }
-                    downloadManager.enqueue(request);
+                    downloadDictionary(dictionaryInfo);
                 }
             });
+        } else {
+            downloadButton.setVisibility(View.INVISIBLE);
         }
 
-        final StringBuilder builder = new StringBuilder();
         LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
         final List<IndexInfo> sortedIndexInfos = application.sortedIndexInfos(dictionaryInfo.indexInfos);
+        final StringBuilder builder = new StringBuilder();
+        if (updateAvailable) {
+            builder.append(getString(R.string.updateButton));
+        }
         for (IndexInfo indexInfo : sortedIndexInfos) {
             final View button = application.createButton(buttons.getContext(), dictionaryInfo, indexInfo);
             buttons.addView(button);
@@ -519,6 +533,21 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         row.setBackgroundResource(android.R.drawable.menuitem_background);
         
         return row;
+    }
+    
+    private void downloadDictionary(final DictionaryInfo dictionaryInfo) {
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        Request request = new Request(
+                Uri.parse(dictionaryInfo.downloadUrl));
+        try {
+            final String destFile = new File(new URL(dictionaryInfo.downloadUrl).getFile()).getName(); 
+            Log.d(LOG, "Downloading to: " + destFile);
+            
+            request.setDestinationUri(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), destFile)));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        downloadManager.enqueue(request);
     }
 
 }

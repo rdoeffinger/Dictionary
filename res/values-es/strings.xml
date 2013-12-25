@@ -24,6 +24,9 @@
   <string name="managerFilterText">Listar filtro</string>
   <string name="managerFilterCheckbox">Sólo local</string>
   
+  <!-- Download. -->
+  <string name="downloadFinished">Terminado: \n%s.</string>
+  <string name="downloadFailed">Error descargando archivo: \n%s</string>  
 
   <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
@@ -68,14 +71,6 @@ Por favor envíe comentarios, sugerencias, informes de error o simplemente un sa
   <string name="license">QuickDic contiene código con derechos de autor de Google y publicado bajo la licencia Apache 2.0.</string>
   <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
  
- 
-	<!-- Download. -->
-  <string name="openingConnection">Abriendo conexión…</string>
-  <string name="downloading">Descargando: %1$,d of %2$,d bytes.</string>
-  <string name="unzipping">Descomprimiendo: %1$,d of %2$,d bytes.</string>
-  <string name="downloadFinished">Terminado: %,d bytes.</string>
-  <string name="errorDownloadingFile">Error descargando archivo: \n%s</string>  
-
 
 	<!-- Preferences -->
 
@@ -115,6 +110,6 @@ Por favor envíe comentarios, sugerencias, informes de error o simplemente un sa
   
   <string name="themeKey">theme</string>
   <string name="themeTitle">Tema</string>
-  <string name="themeSummary">Color y tema del interfaz de usuario.</string>
+  <string name="themeSummary">Color y tema de la interfaz de usuario.</string>
   
 </resources>

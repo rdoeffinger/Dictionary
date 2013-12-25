@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -119,7 +120,6 @@ public class DictionaryApplication extends Application {
     
     languageButtonPixels = (int) TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
-
     
     // Load the dictionaries we know about.
     dictionaryConfig = PersistentObjectCache.init(getApplicationContext()).read(
@@ -191,14 +191,17 @@ public class DictionaryApplication extends Application {
   }
   
   public synchronized File getDictDir() {
-    // This metaphore doesn't work, because we've already reset prefsMightHaveChanged.
+    // This metaphor doesn't work, because we've already reset prefsMightHaveChanged.
 //    if (dictDir == null || PreferenceActivity.prefsMightHaveChanged) {
       final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-      final String dir = prefs.getString(getString(R.string.quickdicDirectoryKey), getString(R.string.quickdicDirectoryDefault));
+      final File defaultDictDir = new File(Environment.getExternalStorageDirectory(), "quickDic");
+      String dir = prefs.getString(getString(R.string.quickdicDirectoryKey), defaultDictDir.getAbsolutePath());
+      if (dir.isEmpty()) {
+          dir = defaultDictDir.getAbsolutePath();
+      }
       dictDir = new File(dir);
       dictDir.mkdirs();
-//    }
-    return dictDir;
+      return dictDir;
   }
   
   public C.Theme getSelectedTheme() {

@@ -11,7 +11,7 @@
     android:key="@string/quickdicDirectoryKey"
     android:title="@string/quickdicDirectoryTitle" 
     android:summary="@string/quickdicDirectorySummary"
-    android:defaultValue="@string/quickdicDirectoryDefault"
+    android:defaultValue=""
     android:persistent="true"
   />
 

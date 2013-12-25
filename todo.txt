@@ -1,3 +1,3 @@
-* Application: fix which directory the thing uses: use default SD card instead of what's in prefs.
-* Show download button when dictionaries can be updated.
-* Text rows are too tall.
+* Contributions from:
+* Unable to read quickdic dir message.
+* HtmlEntries inline, expandable.

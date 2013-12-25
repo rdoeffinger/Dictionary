@@ -67,8 +67,8 @@ QuickDic contiene codice con copyright di Google e rilasciato sotto licenza Apac
 <string name="openingConnection">Apertura connessione…</string>
 <string name="downloading">Downloading: %1$,d of %2$,d bytes.</string>
 <string name="unzipping">Decompressione: %1$,d of %2$,d bytes.</string>
-<string name="downloadFinished">Terminato: %,d bytes.</string>
-<string name="errorDownloadingFile">Errore nel dowload del file: \n%s</string>
+<string name="downloadFinished">Terminato: \n%s.</string>
+<string name="downloadFailed">Errore nel dowload del file: \n%s</string>
 <!-- Preferences -->
 <string name="quickdicDirectoryKey">QuickDic Directory</string>
 <string name="quickdicDirectoryTitle">QuickDic Directory</string>

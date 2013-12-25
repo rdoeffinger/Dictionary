@@ -14,6 +14,7 @@
   <string name="CA">Catalán</string>
   <string name="CS">Checo</string>
   <string name="ZH">Chino (Mandarín)</string>
+  <string name="cmn">Mandarín</string>
   <string name="DA">Danés</string>
   <string name="NL">Holandés</string>
   <string name="EN">Inglés</string>
@@ -22,6 +23,7 @@
   <string name="FI">Finés</string>
   <string name="FR">Francés</string>
   <string name="GD">Gaélico escocés</string>
+  <string name="GV">Manx</string>
   <string name="DE">Alemán</string>
   <string name="EL">Griego</string>
   <string name="grc">Griego Antiguo</string>
