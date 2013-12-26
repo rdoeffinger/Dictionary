@@ -71,6 +71,23 @@
             android:paddingBottom="10dip"
              />
 
+         <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/contributionsFrom" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:autoLink="web"
+            android:clickable="true"
+            android:text="Dominik Köppl, Uwe Trottmann, Michael Vogel, Fabio"
+            android:paddingBottom="10dip"
+             />
+        
         <TextView
             android:id="@+id/license"
             android:layout_width="wrap_content"

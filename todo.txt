@@ -1,3 +1,2 @@
 * Back button in top left
-* Contributions from:
 * HtmlEntries inline, expandable.
