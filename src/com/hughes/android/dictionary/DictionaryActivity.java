@@ -426,6 +426,7 @@ public class DictionaryActivity extends SherlockListActivity {
         setDictionaryPrefs(this, dictFile, index.shortName, searchView.getQuery().toString());
 
         updateLangButton();
+        searchView.requestFocus();
     }
 
     private void onCreateSetupActionBarAndSearchView() {
@@ -466,6 +467,7 @@ public class DictionaryActivity extends SherlockListActivity {
             }
         };
         searchView.setOnQueryTextListener(onQueryTextListener);
+        searchView.setFocusable(true);
 
         searchHintIcon = (ImageView) searchView.findViewById(R.id.abs__search_mag_icon);
         searchHintIcon.setOnClickListener(new OnClickListener() {
@@ -556,18 +558,23 @@ public class DictionaryActivity extends SherlockListActivity {
     // --------------------------------------------------------------------------
 
     private void showKeyboard() {
-//        searchText.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.d(LOG, "Trying to show soft keyboard.");
-//                final boolean searchTextHadFocus = searchText.hasFocus();
-//                searchText.requestFocus();
-//                final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                manager.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
-//                if (!searchTextHadFocus) {
-//                    defocusSearchText();
-//                }
-//            }}, 100);
+        // For some reason, this doesn't always work the first time.
+        // One way to replicate the problem:
+        // Press the "task switch" button repeatedly to pause and resume 
+        for (int delay = 1; delay <= 101; delay += 100) {
+            searchView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(LOG, "Trying to show soft keyboard.");
+                    final boolean searchTextHadFocus = searchView.hasFocus();
+                    searchView.requestFocusFromTouch();
+                    final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    manager.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
+                    if (!searchTextHadFocus) {
+                        defocusSearchText();
+                    }
+                }}, delay);
+        }
     }
 
     void updateLangButton() {
@@ -600,6 +607,10 @@ public class DictionaryActivity extends SherlockListActivity {
     }
 
     void onLanguageButtonClick() {
+        if (dictionary.indices.size() == 1) {
+            // No need to work to switch indices.
+            return;
+        }
         if (currentSearchOperation != null) {
             currentSearchOperation.interrupted.set(true);
             currentSearchOperation = null;
@@ -903,15 +914,15 @@ public class DictionaryActivity extends SherlockListActivity {
         if (indexToUse == -1) {
             indexToUse = defaultIndexToUse;
         }
-        // Without this extra indirection, the call to jumpToRow that this
-        // invokes didn't actually have any effect.
+        // Without this extra delay, the call to jumpToRow that this
+        // invokes doesn't always actually have any effect.
         final int actualIndexToUse = indexToUse;
-        getListView().post(new Runnable() {
+        getListView().postDelayed(new Runnable() {
             @Override
             public void run() {
                 setIndexAndSearchText(actualIndexToUse, selectedText);
             }
-        });
+        }, 100);
     }
     
     /**

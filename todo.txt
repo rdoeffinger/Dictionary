@@ -1,2 +1,3 @@
+* Internationalize strings.
 * Back button in top left
 * HtmlEntries inline, expandable.
