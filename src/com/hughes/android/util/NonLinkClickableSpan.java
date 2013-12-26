@@ -24,7 +24,7 @@ public class NonLinkClickableSpan extends ClickableSpan {
     // each span.
 
     final int color;
-    
+
     public NonLinkClickableSpan(int color) {
         this.color = color;
     }
@@ -32,7 +32,7 @@ public class NonLinkClickableSpan extends ClickableSpan {
     // Won't see these on a long-click.
     @Override
     public void onClick(View widget) {
-        // Don't need to do anything.  These spans are just used to see where
+        // Don't need to do anything. These spans are just used to see where
         // the user long-pressed.
     }
 

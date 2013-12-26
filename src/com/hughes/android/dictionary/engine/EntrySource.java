@@ -22,56 +22,52 @@ import java.io.RandomAccessFile;
 import java.io.Serializable;
 
 public class EntrySource extends IndexedObject implements Serializable {
-  
-  private static final long serialVersionUID = -1323165134846120269L;
-  
-  final String name;
-  int numEntries;
-  
-  public EntrySource(final int index, final String name, int numEntries) {
-    super(index);
-    this.name = name;
-    this.numEntries = numEntries;
-  }
-  
-  @Override
-  public String toString() {
-    return name;
-  }
-  
-  
 
+    private static final long serialVersionUID = -1323165134846120269L;
 
-  public int getNumEntries() {
-    return numEntries;
-  }
+    final String name;
+    int numEntries;
 
-  public String getName() {
-    return name;
-  }
-
-
-  public static final class Serializer implements RAFListSerializer<EntrySource> {
-    
-    final Dictionary dictionary;
-    
-    Serializer(Dictionary dictionary) {
-      this.dictionary = dictionary;
+    public EntrySource(final int index, final String name, int numEntries) {
+        super(index);
+        this.name = name;
+        this.numEntries = numEntries;
     }
 
     @Override
-    public EntrySource read(RandomAccessFile raf, int readIndex)
-        throws IOException {
-      final String name = raf.readUTF();
-      final int numEntries = dictionary.dictFileVersion >= 3 ? raf.readInt() : 0;
-      return new EntrySource(readIndex, name, numEntries);
+    public String toString() {
+        return name;
     }
 
-    @Override
-    public void write(RandomAccessFile raf, EntrySource t) throws IOException {
-      raf.writeUTF(t.name);
-      raf.writeInt(t.numEntries);
-    }    
-  };
-  
+    public int getNumEntries() {
+        return numEntries;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public static final class Serializer implements RAFListSerializer<EntrySource> {
+
+        final Dictionary dictionary;
+
+        Serializer(Dictionary dictionary) {
+            this.dictionary = dictionary;
+        }
+
+        @Override
+        public EntrySource read(RandomAccessFile raf, int readIndex)
+                throws IOException {
+            final String name = raf.readUTF();
+            final int numEntries = dictionary.dictFileVersion >= 3 ? raf.readInt() : 0;
+            return new EntrySource(readIndex, name, numEntries);
+        }
+
+        @Override
+        public void write(RandomAccessFile raf, EntrySource t) throws IOException {
+            raf.writeUTF(t.name);
+            raf.writeInt(t.numEntries);
+        }
+    };
+
 }

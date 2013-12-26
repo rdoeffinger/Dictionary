@@ -19,32 +19,32 @@ import com.hughes.util.IndexedObject;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-
 public abstract class AbstractEntry extends IndexedObject {
-  
-  public final EntrySource entrySource;
-  
-  protected AbstractEntry(EntrySource entrySource) {
-    super(-1);
-    this.entrySource = entrySource;
-  }
 
-  public AbstractEntry(Dictionary dictionary, RandomAccessFile raf, final int index) throws IOException {
-    super(index);
-    if (dictionary.dictFileVersion >= 1) {
-      final int entrySouceIdx = raf.readShort();
-      this.entrySource = dictionary.sources.get(entrySouceIdx);
-    } else {
-      this.entrySource = null;
+    public final EntrySource entrySource;
+
+    protected AbstractEntry(EntrySource entrySource) {
+        super(-1);
+        this.entrySource = entrySource;
     }
-  }
 
-  public void write(RandomAccessFile raf) throws IOException {
-    raf.writeShort(entrySource.index());
-  }
+    public AbstractEntry(Dictionary dictionary, RandomAccessFile raf, final int index)
+            throws IOException {
+        super(index);
+        if (dictionary.dictFileVersion >= 1) {
+            final int entrySouceIdx = raf.readShort();
+            this.entrySource = dictionary.sources.get(entrySouceIdx);
+        } else {
+            this.entrySource = null;
+        }
+    }
 
-  public abstract void addToDictionary(final Dictionary dictionary);
+    public void write(RandomAccessFile raf) throws IOException {
+        raf.writeShort(entrySource.index());
+    }
 
-  public abstract RowBase CreateRow(int rowIndex, Index dictionaryIndex);
+    public abstract void addToDictionary(final Dictionary dictionary);
+
+    public abstract RowBase CreateRow(int rowIndex, Index dictionaryIndex);
 
 }

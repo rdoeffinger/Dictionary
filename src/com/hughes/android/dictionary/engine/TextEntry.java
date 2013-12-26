@@ -25,79 +25,80 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntry> {
-  
-  final String text;
-  
-  public TextEntry(final Dictionary dictionary, final RandomAccessFile raf, final int index) throws IOException {
-    super(dictionary, raf, index);
-    text = raf.readUTF();
-    throw new RuntimeException();
-  }
-  @Override
-  public void write(RandomAccessFile raf) throws IOException {
-    super.write(raf);
-    raf.writeUTF(text);
-  }
-  
-  static final class Serializer implements RAFListSerializer<TextEntry> {
-    
-    final Dictionary dictionary;
-    
-    Serializer(Dictionary dictionary) {
-      this.dictionary = dictionary;
+
+    final String text;
+
+    public TextEntry(final Dictionary dictionary, final RandomAccessFile raf, final int index)
+            throws IOException {
+        super(dictionary, raf, index);
+        text = raf.readUTF();
+        throw new RuntimeException();
     }
 
     @Override
-    public TextEntry read(RandomAccessFile raf, final int index) throws IOException {
-      return new TextEntry(dictionary, raf, index);
+    public void write(RandomAccessFile raf) throws IOException {
+        super.write(raf);
+        raf.writeUTF(text);
+    }
+
+    static final class Serializer implements RAFListSerializer<TextEntry> {
+
+        final Dictionary dictionary;
+
+        Serializer(Dictionary dictionary) {
+            this.dictionary = dictionary;
+        }
+
+        @Override
+        public TextEntry read(RandomAccessFile raf, final int index) throws IOException {
+            return new TextEntry(dictionary, raf, index);
+        }
+
+        @Override
+        public void write(RandomAccessFile raf, TextEntry t) throws IOException {
+            t.write(raf);
+        }
+    };
+
+    @Override
+    public void addToDictionary(final Dictionary dictionary) {
+        assert index == -1;
+        dictionary.textEntries.add(this);
+        index = dictionary.textEntries.size() - 1;
     }
 
     @Override
-    public void write(RandomAccessFile raf, TextEntry t) throws IOException {
-      t.write(raf);
-    }
-  };
-
-  
-  @Override
-  public void addToDictionary(final Dictionary dictionary) {
-    assert index == -1;
-    dictionary.textEntries.add(this);
-    index = dictionary.textEntries.size() - 1;
-  }
-  
-  @Override
-  public RowBase CreateRow(int rowIndex, Index dictionaryIndex) {
-    throw new UnsupportedOperationException("TextEntry's don't really exist.");
-  }
-
-  public static class Row extends RowBase {
-    
-    Row(final RandomAccessFile raf, final int thisRowIndex,
-        final Index index) throws IOException {
-      super(raf, thisRowIndex, index);
-    }
-    
-    public TextEntry getEntry() {
-      return index.dict.textEntries.get(referenceIndex);
-    }
-    
-    @Override
-    public void print(PrintStream out) {
-      out.println("  " + getEntry().text);
+    public RowBase CreateRow(int rowIndex, Index dictionaryIndex) {
+        throw new UnsupportedOperationException("TextEntry's don't really exist.");
     }
 
-    @Override
-    public String getRawText(boolean compact) {
-      return getEntry().text;
-    }
-    
-    @Override
-    public RowMatchType matches(final List<String> searchTokens, final Pattern orderedMatchPattern, Transliterator normalizer, boolean swapPairEntries) {
-      return null;
-    }
-  }
+    public static class Row extends RowBase {
 
+        Row(final RandomAccessFile raf, final int thisRowIndex,
+                final Index index) throws IOException {
+            super(raf, thisRowIndex, index);
+        }
 
+        public TextEntry getEntry() {
+            return index.dict.textEntries.get(referenceIndex);
+        }
+
+        @Override
+        public void print(PrintStream out) {
+            out.println("  " + getEntry().text);
+        }
+
+        @Override
+        public String getRawText(boolean compact) {
+            return getEntry().text;
+        }
+
+        @Override
+        public RowMatchType matches(final List<String> searchTokens,
+                final Pattern orderedMatchPattern, Transliterator normalizer,
+                boolean swapPairEntries) {
+            return null;
+        }
+    }
 
 }

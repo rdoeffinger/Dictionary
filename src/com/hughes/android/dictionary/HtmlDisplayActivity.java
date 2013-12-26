@@ -25,75 +25,78 @@ import android.widget.Button;
 import com.hughes.util.StringUtil;
 
 public final class HtmlDisplayActivity extends Activity {
-    
-  static final String LOG = "QuickDic";
 
-  
-  static final String HTML_RES = "html_res";
-  static final String HTML = "html";
-  static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
-  static final String SHOW_OK_BUTTON = "showOKButton";
-  
-  public static Intent getHelpLaunchIntent() {
-    final Intent intent = new Intent();
-    intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(), HtmlDisplayActivity.class.getName());
-    intent.putExtra(HTML_RES, R.raw.help);
-    return intent;
-  }
+    static final String LOG = "QuickDic";
 
-  public static Intent getWhatsNewLaunchIntent() {
-    final Intent intent = new Intent();
-    intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(), HtmlDisplayActivity.class.getName());
-    intent.putExtra(HTML_RES, R.raw.whats_new);
-    return intent;
-  }
+    static final String HTML_RES = "html_res";
+    static final String HTML = "html";
+    static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
+    static final String SHOW_OK_BUTTON = "showOKButton";
 
-  public static Intent getHtmlIntent(final String html, final String textToHighlight, final boolean showOkButton) {
-    final Intent intent = new Intent();
-    intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(), HtmlDisplayActivity.class.getName());
-    intent.putExtra(HTML, html);
-    intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight);
-    intent.putExtra(SHOW_OK_BUTTON, showOkButton);
-    return intent;
-  }
-
-  /** Called when the activity is first created. */
-  @Override
-  public void onCreate(final Bundle savedInstanceState) {
-    setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
-
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.html_display_activity);
-    
-    final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
-    final String html;
-    if (htmlRes != -1) {
-      html = StringUtil.readToString(getResources().openRawResource(htmlRes));
-    } else {
-      html = getIntent().getStringExtra(HTML);
+    public static Intent getHelpLaunchIntent() {
+        final Intent intent = new Intent();
+        intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(),
+                HtmlDisplayActivity.class.getName());
+        intent.putExtra(HTML_RES, R.raw.help);
+        return intent;
     }
-    final MyWebView webView = (MyWebView) findViewById(R.id.webView);
-    webView.loadData(html, "text/html", "utf-8");
-    webView.activity = this;
-    
-    final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
-    if (textToHighlight != null && !"".equals(textToHighlight)) {
-        Log.d(LOG, "NOT Highlighting text: " + textToHighlight);
-        // This isn't working:
-        // webView.findAll(textToHighlight);
-        //webView.showFindDialog(textToHighlight, false);
+
+    public static Intent getWhatsNewLaunchIntent() {
+        final Intent intent = new Intent();
+        intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(),
+                HtmlDisplayActivity.class.getName());
+        intent.putExtra(HTML_RES, R.raw.whats_new);
+        return intent;
     }
-    
-    final Button okButton = (Button) findViewById(R.id.okButton);
-    okButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        finish();
-      }
-    });
-    if (!getIntent().getBooleanExtra(SHOW_OK_BUTTON, true)) {
-        okButton.setVisibility(Button.GONE);
+
+    public static Intent getHtmlIntent(final String html, final String textToHighlight,
+            final boolean showOkButton) {
+        final Intent intent = new Intent();
+        intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(),
+                HtmlDisplayActivity.class.getName());
+        intent.putExtra(HTML, html);
+        intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight);
+        intent.putExtra(SHOW_OK_BUTTON, showOkButton);
+        return intent;
     }
-  }
+
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.html_display_activity);
+
+        final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
+        final String html;
+        if (htmlRes != -1) {
+            html = StringUtil.readToString(getResources().openRawResource(htmlRes));
+        } else {
+            html = getIntent().getStringExtra(HTML);
+        }
+        final MyWebView webView = (MyWebView) findViewById(R.id.webView);
+        webView.loadData(html, "text/html", "utf-8");
+        webView.activity = this;
+
+        final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
+        if (textToHighlight != null && !"".equals(textToHighlight)) {
+            Log.d(LOG, "NOT Highlighting text: " + textToHighlight);
+            // This isn't working:
+            // webView.findAll(textToHighlight);
+            // webView.showFindDialog(textToHighlight, false);
+        }
+
+        final Button okButton = (Button) findViewById(R.id.okButton);
+        okButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        if (!getIntent().getBooleanExtra(SHOW_OK_BUTTON, true)) {
+            okButton.setVisibility(Button.GONE);
+        }
+    }
 
 }

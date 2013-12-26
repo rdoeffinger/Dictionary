@@ -19,15 +19,15 @@ import android.os.Bundle;
 
 public final class AboutActivity extends Activity {
 
-  public static final String CURRENT_DICT_INFO = "currentDictInfo";
+    public static final String CURRENT_DICT_INFO = "currentDictInfo";
 
-  /** Called when the activity is first created. */
-  @Override
-  public void onCreate(final Bundle savedInstanceState) {
-    setTheme(((DictionaryApplication)getApplication()).getSelectedTheme().themeId);
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
 
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.about_activity);
-  }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.about_activity);
+    }
 
 }

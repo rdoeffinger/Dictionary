@@ -24,59 +24,61 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class TokenRow extends RowBase {
-  
-  public final boolean hasMainEntry;
-  
-  TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Index index, final boolean hasMainEntry) throws IOException {
-    super(raf, thisRowIndex, index);
-    this.hasMainEntry = hasMainEntry;
-  }
 
-  TokenRow(final int referenceIndex, final int thisRowIndex, final Index index, final boolean hasMainEntry) {
-    super(referenceIndex, thisRowIndex, index);
-    this.hasMainEntry = hasMainEntry;
-  }
-  
-  public String toString() {
-    return getToken() + "@" + referenceIndex;
-  }
+    public final boolean hasMainEntry;
 
-  @Override
-  public TokenRow getTokenRow(final boolean search) {
-    return this;
-  }
-
-  @Override
-  public void setTokenRow(TokenRow tokenRow) {
-    throw new RuntimeException("Shouldn't be setting TokenRow's TokenRow!");
-  }
-  
-  public String getToken() {
-    return getIndexEntry().token;
-  }
-  
-  public IndexEntry getIndexEntry() {
-      return index.sortedIndexEntries.get(referenceIndex);
-  }
-
-  @Override
-  public void print(final PrintStream out) {
-    final String surrounder = hasMainEntry ? "***" : "===";
-    out.println(surrounder + getToken() + surrounder);
-    for (final HtmlEntry htmlEntry : index.sortedIndexEntries.get(referenceIndex).htmlEntries) {
-        out.println("HtmlEntry: " + htmlEntry.title + " <<<" + htmlEntry.getHtml() + ">>>");
+    TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Index index,
+            final boolean hasMainEntry) throws IOException {
+        super(raf, thisRowIndex, index);
+        this.hasMainEntry = hasMainEntry;
     }
-  }
 
-  @Override
-  public String getRawText(boolean compact) {
-    return getToken();
-  }
+    TokenRow(final int referenceIndex, final int thisRowIndex, final Index index,
+            final boolean hasMainEntry) {
+        super(referenceIndex, thisRowIndex, index);
+        this.hasMainEntry = hasMainEntry;
+    }
 
-  @Override
-  public RowMatchType matches(List<String> searchTokens, final Pattern orderedMatchPattern, Transliterator normalizer, boolean swapPairEntries) {
-    return RowMatchType.NO_MATCH;
-  }
+    public String toString() {
+        return getToken() + "@" + referenceIndex;
+    }
 
+    @Override
+    public TokenRow getTokenRow(final boolean search) {
+        return this;
+    }
+
+    @Override
+    public void setTokenRow(TokenRow tokenRow) {
+        throw new RuntimeException("Shouldn't be setting TokenRow's TokenRow!");
+    }
+
+    public String getToken() {
+        return getIndexEntry().token;
+    }
+
+    public IndexEntry getIndexEntry() {
+        return index.sortedIndexEntries.get(referenceIndex);
+    }
+
+    @Override
+    public void print(final PrintStream out) {
+        final String surrounder = hasMainEntry ? "***" : "===";
+        out.println(surrounder + getToken() + surrounder);
+        for (final HtmlEntry htmlEntry : index.sortedIndexEntries.get(referenceIndex).htmlEntries) {
+            out.println("HtmlEntry: " + htmlEntry.title + " <<<" + htmlEntry.getHtml() + ">>>");
+        }
+    }
+
+    @Override
+    public String getRawText(boolean compact) {
+        return getToken();
+    }
+
+    @Override
+    public RowMatchType matches(List<String> searchTokens, final Pattern orderedMatchPattern,
+            Transliterator normalizer, boolean swapPairEntries) {
+        return RowMatchType.NO_MATCH;
+    }
 
 }

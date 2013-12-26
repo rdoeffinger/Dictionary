@@ -124,7 +124,7 @@ public class DictionaryActivity extends SherlockListActivity {
     List<RowBase> rowsToShow = null; // if not null, just show these rows.
 
     final Handler uiHandler = new Handler();
-    
+
     private final Executor searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
@@ -179,7 +179,7 @@ public class DictionaryActivity extends SherlockListActivity {
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);        
+        super.onSaveInstanceState(outState);
         Log.d(LOG, "onSaveInstanceState: " + searchView.getQuery().toString());
         outState.putString(C.INDEX_SHORT_NAME, index.shortName);
         outState.putString(C.SEARCH_TOKEN, searchView.getQuery().toString());
@@ -196,11 +196,11 @@ public class DictionaryActivity extends SherlockListActivity {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(LOG, "onCreate:" + this);
         super.onCreate(savedInstanceState);
-        
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        
+
         // Don't auto-launch if this fails.
-        prefs.edit().remove(C.DICT_FILE).commit(); 
+        prefs.edit().remove(C.DICT_FILE).commit();
 
         setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
 
@@ -211,89 +211,97 @@ public class DictionaryActivity extends SherlockListActivity {
         final Intent intent = getIntent();
         String intentAction = intent.getAction();
         /**
-         * @author Dominik Köppl
-         * Querying the Intent
-         * com.hughes.action.ACTION_SEARCH_DICT is the advanced query
-         * Arguments:
-         * SearchManager.QUERY -> the phrase to search
-         * from -> language in which the phrase is written
-         * to -> to which language shall be translated
+         * @author Dominik Köppl Querying the Intent
+         *         com.hughes.action.ACTION_SEARCH_DICT is the advanced query
+         *         Arguments: SearchManager.QUERY -> the phrase to search from
+         *         -> language in which the phrase is written to -> to which
+         *         language shall be translated
          */
-        if(intentAction != null && intentAction.equals("com.hughes.action.ACTION_SEARCH_DICT")) 
-        {
-        	String query = intent.getStringExtra(SearchManager.QUERY);
-        	String from = intent.getStringExtra("from");
-        	if(from != null) from = from.toLowerCase(Locale.US);
-        	String to = intent.getStringExtra("to");
-        	if(to != null) to = to.toLowerCase(Locale.US);
-        	if(query != null)
-        	{
-        		getIntent().putExtra(C.SEARCH_TOKEN, query);
-        	}
-        	if(intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null))
-        	{
-        		Log.d(LOG, "DictSearch: from: " + from + " to " + to);
-        		List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
-        		for(DictionaryInfo info : dicts)
-        		{
-        			boolean hasFrom = from == null;
-        			boolean hasTo = to == null;
-        			for(IndexInfo index : info.indexInfos)
-        			{
-        				if(!hasFrom && index.shortName.toLowerCase(Locale.US).equals(from)) hasFrom = true;
-        				if(!hasTo && index.shortName.toLowerCase(Locale.US).equals(to)) hasTo = true;
-        			}
-        			if(hasFrom && hasTo)
-        			{
-        				if(from != null)
-        				{
-        					int which_index = 0;
-                			for(;which_index < info.indexInfos.size(); ++which_index)
-                			{
-                				if(info.indexInfos.get(which_index).shortName.toLowerCase(Locale.US).equals(from))
-                					break;
-                			}
-                			intent.putExtra(C.INDEX_SHORT_NAME, info.indexInfos.get(which_index).shortName);
-                			
-        				}
-        				intent.putExtra(C.DICT_FILE, application.getPath(info.uncompressedFilename).toString());
-        				break;
-        			}
-        		}
-        		
-        	}
-        }
-        /**
-         * @author Dominik Köppl
-         * Querying the Intent
-         * Intent.ACTION_SEARCH is a simple query
-         * Arguments follow from android standard (see documentation)
-         */
-        if (intentAction != null && intentAction.equals(Intent.ACTION_SEARCH)) 
+        if (intentAction != null && intentAction.equals("com.hughes.action.ACTION_SEARCH_DICT"))
         {
             String query = intent.getStringExtra(SearchManager.QUERY);
-    		if(query != null) getIntent().putExtra(C.SEARCH_TOKEN,query);
+            String from = intent.getStringExtra("from");
+            if (from != null)
+                from = from.toLowerCase(Locale.US);
+            String to = intent.getStringExtra("to");
+            if (to != null)
+                to = to.toLowerCase(Locale.US);
+            if (query != null)
+            {
+                getIntent().putExtra(C.SEARCH_TOKEN, query);
+            }
+            if (intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null))
+            {
+                Log.d(LOG, "DictSearch: from: " + from + " to " + to);
+                List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
+                for (DictionaryInfo info : dicts)
+                {
+                    boolean hasFrom = from == null;
+                    boolean hasTo = to == null;
+                    for (IndexInfo index : info.indexInfos)
+                    {
+                        if (!hasFrom && index.shortName.toLowerCase(Locale.US).equals(from))
+                            hasFrom = true;
+                        if (!hasTo && index.shortName.toLowerCase(Locale.US).equals(to))
+                            hasTo = true;
+                    }
+                    if (hasFrom && hasTo)
+                    {
+                        if (from != null)
+                        {
+                            int which_index = 0;
+                            for (; which_index < info.indexInfos.size(); ++which_index)
+                            {
+                                if (info.indexInfos.get(which_index).shortName.toLowerCase(
+                                        Locale.US).equals(from))
+                                    break;
+                            }
+                            intent.putExtra(C.INDEX_SHORT_NAME,
+                                    info.indexInfos.get(which_index).shortName);
+
+                        }
+                        intent.putExtra(C.DICT_FILE, application.getPath(info.uncompressedFilename)
+                                .toString());
+                        break;
+                    }
+                }
+
+            }
         }
         /**
-         * @author Dominik Köppl
-         * If no dictionary is chosen, use the default dictionary specified in the preferences
-         * If this step does fail (no default directory specified), show a toast and abort.
+         * @author Dominik Köppl Querying the Intent Intent.ACTION_SEARCH is a
+         *         simple query Arguments follow from android standard (see
+         *         documentation)
          */
-        if(intent.getStringExtra(C.DICT_FILE) == null)
+        if (intentAction != null && intentAction.equals(Intent.ACTION_SEARCH))
         {
-        	String dictfile = prefs.getString(getString(R.string.defaultDicKey), null);
-        	if(dictfile != null) intent.putExtra(C.DICT_FILE, application.getPath(dictfile).toString());
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            if (query != null)
+                getIntent().putExtra(C.SEARCH_TOKEN, query);
+        }
+        /**
+         * @author Dominik Köppl If no dictionary is chosen, use the default
+         *         dictionary specified in the preferences If this step does
+         *         fail (no default directory specified), show a toast and
+         *         abort.
+         */
+        if (intent.getStringExtra(C.DICT_FILE) == null)
+        {
+            String dictfile = prefs.getString(getString(R.string.defaultDicKey), null);
+            if (dictfile != null)
+                intent.putExtra(C.DICT_FILE, application.getPath(dictfile).toString());
         }
         String dictFilename = intent.getStringExtra(C.DICT_FILE);
-        
-        if(dictFilename == null)
+
+        if (dictFilename == null)
         {
             Toast.makeText(this, getString(R.string.no_dict_file), Toast.LENGTH_LONG).show();
             startActivity(DictionaryManagerActivity.getLaunchIntent());
             finish();
             return;
         }
-        if(dictFilename != null) dictFile = new File(dictFilename);
+        if (dictFilename != null)
+            dictFile = new File(dictFilename);
 
         ttsReady = false;
         textToSpeech = new TextToSpeech(getApplicationContext(), new OnInitListener() {
@@ -303,7 +311,7 @@ public class DictionaryActivity extends SherlockListActivity {
                 updateTTSLanguage();
             }
         });
-        
+
         try {
             final String name = application.getDictionaryName(dictFile.getName());
             this.setTitle("QuickDic: " + name);
@@ -411,7 +419,7 @@ public class DictionaryActivity extends SherlockListActivity {
         Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
 
         onCreateSetupActionBarAndSearchView();
-        
+
         // Set the search text from the intent, then the saved state.
         String text = getIntent().getStringExtra(C.SEARCH_TOKEN);
         if (savedInstanceState != null) {
@@ -432,7 +440,7 @@ public class DictionaryActivity extends SherlockListActivity {
     private void onCreateSetupActionBarAndSearchView() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
-        
+
         searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setIconifiedByDefault(false);
         // searchView.setIconified(false); // puts the magnifying glass in the
@@ -560,7 +568,7 @@ public class DictionaryActivity extends SherlockListActivity {
     private void showKeyboard() {
         // For some reason, this doesn't always work the first time.
         // One way to replicate the problem:
-        // Press the "task switch" button repeatedly to pause and resume 
+        // Press the "task switch" button repeatedly to pause and resume
         for (int delay = 1; delay <= 101; delay += 100) {
             searchView.postDelayed(new Runnable() {
                 @Override
@@ -573,7 +581,8 @@ public class DictionaryActivity extends SherlockListActivity {
                     if (!searchTextHadFocus) {
                         defocusSearchText();
                     }
-                }}, delay);
+                }
+            }, delay);
         }
     }
 
@@ -590,7 +599,7 @@ public class DictionaryActivity extends SherlockListActivity {
             }
         }
         updateTTSLanguage();
-     }
+    }
 
     private void updateTTSLanguage() {
         if (!ttsReady || index == null || textToSpeech == null) {
@@ -600,8 +609,8 @@ public class DictionaryActivity extends SherlockListActivity {
         final Locale locale = new Locale(index.sortLanguage.getIsoCode());
         Log.d(LOG, "Setting TTS locale to: " + locale);
         final int ttsResult = textToSpeech.setLanguage(locale);
-        if (ttsResult != TextToSpeech.LANG_AVAILABLE || 
-            ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
+        if (ttsResult != TextToSpeech.LANG_AVAILABLE ||
+                ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
             Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult);
         }
     }
@@ -615,7 +624,7 @@ public class DictionaryActivity extends SherlockListActivity {
             currentSearchOperation.interrupted.set(true);
             currentSearchOperation = null;
         }
-        setIndexAndSearchText((indexIndex + 1) % dictionary.indices.size(), 
+        setIndexAndSearchText((indexIndex + 1) % dictionary.indices.size(),
                 searchView.getQuery().toString());
     }
 
@@ -650,7 +659,8 @@ public class DictionaryActivity extends SherlockListActivity {
 
                 for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
-                    final View button = application.createButton(parent.getContext(), dictionaryInfo, indexInfo);
+                    final View button = application.createButton(parent.getContext(),
+                            dictionaryInfo, indexInfo);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(
                                     application.getPath(dictionaryInfo.uncompressedFilename),
@@ -726,35 +736,35 @@ public class DictionaryActivity extends SherlockListActivity {
     // --------------------------------------------------------------------------
 
     final Random random = new Random();
-    
+
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        
+
         if (PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.showPrevNextButtonsKey), true)) {
             // Next word.
             nextWordMenuItem = menu.add(getString(R.string.nextWord))
-                .setIcon(R.drawable.arrow_down_float);
+                    .setIcon(R.drawable.arrow_down_float);
             nextWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             nextWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        onUpDownButton(false);
-                        return true;
-                    }
-                });
-    
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    onUpDownButton(false);
+                    return true;
+                }
+            });
+
             // Previous word.
             previousWordMenuItem = menu.add(getString(R.string.previousWord))
-                .setIcon(R.drawable.arrow_up_float);
+                    .setIcon(R.drawable.arrow_up_float);
             previousWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             previousWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        onUpDownButton(true);
-                        return true;
-                    }
-                });
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    onUpDownButton(true);
+                    return true;
+                }
+            });
         }
 
         application.onCreateGlobalOptionsMenu(this, menu);
@@ -839,20 +849,23 @@ public class DictionaryActivity extends SherlockListActivity {
 
         final android.view.MenuItem addToWordlist = menu.add(getString(R.string.addToWordList,
                 wordList.getName()));
-        addToWordlist.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(android.view.MenuItem item) {
-                onAppendToWordList(row);
-                return false;
-            }
-        });
+        addToWordlist
+                .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(android.view.MenuItem item) {
+                        onAppendToWordList(row);
+                        return false;
+                    }
+                });
 
         final android.view.MenuItem share = menu.add("Share");
         share.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
             public boolean onMenuItemClick(android.view.MenuItem item) {
                 Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, row.getTokenRow(true).getToken());
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, row.getRawText(saveOnlyFirstSubentry));
+                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, row.getTokenRow(true)
+                        .getToken());
+                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+                        row.getRawText(saveOnlyFirstSubentry));
                 startActivity(shareIntent);
                 return false;
             }
@@ -868,14 +881,16 @@ public class DictionaryActivity extends SherlockListActivity {
 
         if (selectedSpannableText != null) {
             final String selectedText = selectedSpannableText;
-            final android.view.MenuItem searchForSelection = menu.add(getString(R.string.searchForSelection,
+            final android.view.MenuItem searchForSelection = menu.add(getString(
+                    R.string.searchForSelection,
                     selectedSpannableText));
-            searchForSelection.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
-                    return false;
-                }
-            });
+            searchForSelection
+                    .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(android.view.MenuItem item) {
+                            jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
+                            return false;
+                        }
+                    });
         }
 
         if (row instanceof TokenRow && ttsReady) {
@@ -924,7 +939,7 @@ public class DictionaryActivity extends SherlockListActivity {
             }
         }, 100);
     }
-    
+
     /**
      * Called when user clicks outside of search text, so that they can start
      * typing again immediately.
@@ -937,7 +952,7 @@ public class DictionaryActivity extends SherlockListActivity {
 
         // Visual indication that a new keystroke will clear the search text.
         // Doesn't seem to work unless earchText has focus.
-//        searchView.selectAll();
+        // searchView.selectAll();
     }
 
     @Override
@@ -1009,7 +1024,7 @@ public class DictionaryActivity extends SherlockListActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-    
+
     private void setIndexAndSearchText(int newIndex, String newSearchText) {
         Log.d(LOG, "Changing index to: " + newIndex);
         if (newIndex == -1) {
@@ -1040,21 +1055,22 @@ public class DictionaryActivity extends SherlockListActivity {
         }
     }
 
-//    private long cursorDelayMillis = 100;
+    // private long cursorDelayMillis = 100;
     private void moveCursorToRight() {
-//        if (searchText.getLayout() != null) {
-//            cursorDelayMillis = 100;
-//            // Surprising, but this can crash when you rotate...
-//            Selection.moveToRightEdge(searchView.getQuery(), searchText.getLayout());
-//        } else {
-//            uiHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    moveCursorToRight();
-//                }
-//            }, cursorDelayMillis);
-//            cursorDelayMillis = Math.min(10 * 1000, 2 * cursorDelayMillis);
-//        }
+        // if (searchText.getLayout() != null) {
+        // cursorDelayMillis = 100;
+        // // Surprising, but this can crash when you rotate...
+        // Selection.moveToRightEdge(searchView.getQuery(),
+        // searchText.getLayout());
+        // } else {
+        // uiHandler.postDelayed(new Runnable() {
+        // @Override
+        // public void run() {
+        // moveCursorToRight();
+        // }
+        // }, cursorDelayMillis);
+        // cursorDelayMillis = Math.min(10 * 1000, 2 * cursorDelayMillis);
+        // }
     }
 
     // --------------------------------------------------------------------------
@@ -1099,7 +1115,7 @@ public class DictionaryActivity extends SherlockListActivity {
 
     private final void jumpToRow(final int row) {
         Log.d(LOG, "jumpToRow: " + row + ", refocusSearchText=" + false);
-//        getListView().requestFocusFromTouch();
+        // getListView().requestFocusFromTouch();
         getListView().setSelectionFromTop(row, 0);
         getListView().setSelected(true);
     }
@@ -1142,7 +1158,8 @@ public class DictionaryActivity extends SherlockListActivity {
                     searchResult = index.findInsertionPoint(searchText, interrupted);
                 } else {
                     searchTokens = Arrays.asList(searchTokenArray);
-                    multiWordSearchResult = index.multiWordSearch(searchText, searchTokens, interrupted);
+                    multiWordSearchResult = index.multiWordSearch(searchText, searchTokens,
+                            interrupted);
                 }
                 Log.d(LOG,
                         "searchText=" + searchText + ", searchDuration="
@@ -1369,7 +1386,7 @@ public class DictionaryActivity extends SherlockListActivity {
                     0);
             textView.setOnLongClickListener(textViewLongClickListenerIndex0);
             result.setLongClickable(true);
-            
+
             // Doesn't work:
             // textView.setTextColor(android.R.color.secondary_text_light);
             textView.setTypeface(typeface);
@@ -1391,7 +1408,8 @@ public class DictionaryActivity extends SherlockListActivity {
                     public void onClick(View widget) {
                     }
                 };
-                ((Spannable) textView.getText()).setSpan(clickableSpan, 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                ((Spannable) textView.getText()).setSpan(clickableSpan, 0, text.length(),
+                        Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 result.setClickable(true);
                 textView.setClickable(true);
                 textView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -1399,7 +1417,7 @@ public class DictionaryActivity extends SherlockListActivity {
                     @Override
                     public void onClick(View v) {
                         String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
-                        //Log.d(LOG, "html=" + html);
+                        // Log.d(LOG, "html=" + html);
                         startActivityForResult(
                                 HtmlDisplayActivity.getHtmlIntent(String.format(
                                         "<html><head></head><body>%s</body></html>", html),
@@ -1429,7 +1447,7 @@ public class DictionaryActivity extends SherlockListActivity {
     }
 
     static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+");
-    
+
     private void createTokenLinkSpans(final TextView textView, final Spannable spannable,
             final String text) {
         // Saw from the source code that LinkMovementMethod sets the selection!
@@ -1437,7 +1455,8 @@ public class DictionaryActivity extends SherlockListActivity {
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         final Matcher matcher = CHAR_DASH.matcher(text);
         while (matcher.find()) {
-            spannable.setSpan(new NonLinkClickableSpan(textColorFg), matcher.start(), matcher.end(),
+            spannable.setSpan(new NonLinkClickableSpan(textColorFg), matcher.start(),
+                    matcher.end(),
                     Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         }
     }
@@ -1503,10 +1522,10 @@ public class DictionaryActivity extends SherlockListActivity {
             Log.d(LOG, "searchText changed during shutdown, doing nothing.");
             return;
         }
-//        if (!searchView.hasFocus()) {
-//            Log.d(LOG, "searchText changed without focus, doing nothing.");
-//            return;
-//        }
+        // if (!searchView.hasFocus()) {
+        // Log.d(LOG, "searchText changed without focus, doing nothing.");
+        // return;
+        // }
         Log.d(LOG, "onSearchTextChange: " + text);
         if (currentSearchOperation != null) {
             Log.d(LOG, "Interrupting currentSearchOperation.");

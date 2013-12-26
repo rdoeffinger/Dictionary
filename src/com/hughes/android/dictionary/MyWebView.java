@@ -1,3 +1,4 @@
+
 package com.hughes.android.dictionary;
 
 import android.app.Activity;
@@ -12,20 +13,20 @@ import android.webkit.WebViewClient;
 import com.hughes.android.dictionary.engine.HtmlEntry;
 
 public class MyWebView extends WebView {
-    
+
     static final String LOG = "MyWebView";
-    
+
     HtmlDisplayActivity activity;
 
     public MyWebView(Context context) {
         super(context);
     }
-    
+
     public MyWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getSettings().setSupportZoom(true);
         getSettings().setBuiltInZoomControls(true);
-        
+
         final WebViewClient webViewClient = new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

@@ -1,3 +1,4 @@
+
 package com.hughes.android.util;
 
 import android.content.Context;
@@ -6,27 +7,26 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class IntentLauncher implements OnClickListener {
-  
-  final Context context;
-  final Intent intent;
-  
-  public IntentLauncher(final Context context, final Intent intent) {
-    this.context = context;
-    this.intent = intent;
-  }
 
-  protected void onGo() {
-  }
+    final Context context;
+    final Intent intent;
 
+    public IntentLauncher(final Context context, final Intent intent) {
+        this.context = context;
+        this.intent = intent;
+    }
 
-  private void go() {
-    onGo();
-    context.startActivity(intent);
-  }
+    protected void onGo() {
+    }
 
-  @Override
-  public void onClick(View v) {
-    go();
-  }
+    private void go() {
+        onGo();
+        context.startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        go();
+    }
 
 }

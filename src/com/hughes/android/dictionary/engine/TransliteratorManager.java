@@ -21,51 +21,53 @@ import java.util.List;
 
 public class TransliteratorManager {
 
-  private static boolean starting = false;
-  private static boolean ready = false;
-  
-  // Whom to notify when we're all set up and ready to go.
-  private static List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
-  
-  public static synchronized boolean init(final Callback callback) {
-    if (ready) {
-      return true;
-    }
-    if (callback != null) {
-      callbacks.add(callback);
-    }
-    if (!starting) {
-      starting = true;
-      new Thread(init).start();
-    }
-    return false;
-  }
-  
-  private static final Runnable init = new Runnable() {
-    @Override
-    public void run() {
-      System.out.println("Starting Transliterator load.");
-      final String transliterated = 
-        Transliterator.createFromRules("", ":: Any-Latin; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;", 
-            Transliterator.FORWARD).transliterate("Îñţérñåţîöñåļîžåţîờñ");
-      if (!"internationalization".equals(transliterated)) {
-        System.out.println("Wrong transliteratation: " + transliterated);
-      }
+    private static boolean starting = false;
+    private static boolean ready = false;
 
-      final List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
-      synchronized (TransliteratorManager.class) {
-        callbacks.addAll(TransliteratorManager.callbacks);
-        ready = true;
-      }
-      for (final Callback callback : callbacks) {
-        callback.onTransliteratorReady();
-      }
+    // Whom to notify when we're all set up and ready to go.
+    private static List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
+
+    public static synchronized boolean init(final Callback callback) {
+        if (ready) {
+            return true;
+        }
+        if (callback != null) {
+            callbacks.add(callback);
+        }
+        if (!starting) {
+            starting = true;
+            new Thread(init).start();
+        }
+        return false;
     }
-  };
-  
-  
-  public interface Callback {
-    void onTransliteratorReady();
-  }
+
+    private static final Runnable init = new Runnable() {
+        @Override
+        public void run() {
+            System.out.println("Starting Transliterator load.");
+            final String transliterated =
+                    Transliterator
+                            .createFromRules(
+                                    "",
+                                    ":: Any-Latin; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;",
+                                    Transliterator.FORWARD).transliterate("Îñţérñåţîöñåļîžåţîờñ");
+            if (!"internationalization".equals(transliterated)) {
+                System.out.println("Wrong transliteratation: " + transliterated);
+            }
+
+            final List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
+            synchronized (TransliteratorManager.class) {
+                callbacks.addAll(TransliteratorManager.callbacks);
+                ready = true;
+            }
+            for (final Callback callback : callbacks) {
+                callback.onTransliteratorReady();
+            }
+        }
+    };
+
+    public interface Callback {
+        void onTransliteratorReady();
+    }
 
 }
