@@ -348,24 +348,6 @@ public class DictionaryManagerActivity extends SherlockListActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-//        MenuInflater inflater = getSupportMenuInflater();
-//        inflater.inflate(R.menu.dictionary_manager_options_menu, menu);
-//        
-//        filterSearchView = (SearchView) menu.findItem(R.id.filterText).getActionView();
-//        filterSearchView.setOnQueryTextListener(new OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return true;
-//            }
-//            
-//            @Override
-//            public boolean onQueryTextChange(String filterText) {
-//                setListAdapater();
-//                return true;
-//            }
-//        });
-//        filterSearchView.setIconifiedByDefault(false);
-
         application.onCreateGlobalOptionsMenu(this, menu);
         return true;
     }
@@ -420,24 +402,6 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         prefs.commit();
     }
 
-//    @Override
-//    private void onClick(int index) {
-//        final DictionaryInfo dictionaryInfo = adapter.getItem(index);
-//        final DictionaryInfo downloadable =
-//                application.getDownloadable(dictionaryInfo.uncompressedFilename);
-//        if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)
-//                && downloadable != null) {
-//            final Intent intent = getDownloadIntent(downloadable);
-//            startActivity(intent);
-//        } else {
-//            final Intent intent =
-//                    DictionaryActivity.getLaunchIntent(
-//                            application.getPath(dictionaryInfo.uncompressedFilename),
-//                            0, "");
-//            startActivity(intent);
-//        }
-//    }    
-    
     class MyListAdapter extends BaseAdapter {
 
         List<DictionaryInfo> dictionariesOnDevice;
