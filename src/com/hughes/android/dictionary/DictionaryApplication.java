@@ -77,7 +77,7 @@ public class DictionaryApplication extends Application {
 
     DictionaryConfig dictionaryConfig = null;
 
-    int languageButtonPixels = 22;
+    int languageButtonPixels = -1;
 
     // static final class DictionaryHistory implements Serializable {
     // private static final long serialVersionUID = -4842995032541390284L;

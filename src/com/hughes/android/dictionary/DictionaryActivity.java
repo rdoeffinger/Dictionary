@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,12 +38,14 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -51,6 +54,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -440,6 +444,8 @@ public class DictionaryActivity extends SherlockListActivity {
     private void onCreateSetupActionBarAndSearchView() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
         searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setIconifiedByDefault(false);
@@ -478,6 +484,12 @@ public class DictionaryActivity extends SherlockListActivity {
         searchView.setFocusable(true);
 
         searchHintIcon = (ImageView) searchView.findViewById(R.id.abs__search_mag_icon);
+        // http://stackoverflow.com/questions/2521959/how-to-scale-an-image-in-imageview-to-keep-the-aspect-ratio
+        searchHintIcon.setLayoutParams(new LinearLayout.LayoutParams(
+                application.languageButtonPixels * 3 / 4, LayoutParams.WRAP_CONTENT));
+        searchHintIcon.setScaleType(ScaleType.FIT_CENTER);
+        searchHintIcon.setAdjustViewBounds(true);
+        searchHintIcon.setPadding(1, application.languageButtonPixels / 8, 1, 0);
         searchHintIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -684,6 +696,7 @@ public class DictionaryActivity extends SherlockListActivity {
                 layoutParams.width = 0;
                 layoutParams.weight = 1.0f;
                 nameView.setLayoutParams(layoutParams);
+                nameView.setGravity(Gravity.CENTER_VERTICAL);
                 result.addView(nameView);
                 return result;
             }
