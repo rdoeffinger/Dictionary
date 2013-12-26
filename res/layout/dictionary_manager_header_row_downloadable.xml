@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@color/gray"
         android:orientation="horizontal"
-        android:padding="10dip" >
+        android:padding="0dip" >
 
         <TextView
             android:id="@+id/downloadableTextId"

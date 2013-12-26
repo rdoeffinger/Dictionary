@@ -20,7 +20,7 @@
 	  android:key="@string/wordListFileKey"
     android:title="@string/wordListFileTitle" 
     android:summary="@string/wordListFileSummary"
-		android:defaultValue="@string/wordListFileDefault"
+		android:defaultValue=""
     android:persistent="true"
 	/>
  

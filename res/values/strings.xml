@@ -1,121 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="app_name">QuickDic</string>
+    <string name="app_name">QuickDic</string>
+    <string name="titleWithVersion">QuickDic 5.0.0</string>
+    <string name="thanksForUpdatingVersion">4.0.1_de_b</string>
 
-  <string name="titleWithVersion">QuickDic 5.0.0</string>
-  
-  <!-- Global. -->
-  <string name="about">About QuickDic…</string> 
-  <string name="settings">Settings…</string>
-  <string name="help">Help</string>
-  <string name="reportIssue">Report issue…</string>
-  
-  <string name="no_dict_file">Please specify a default directory in the settings.</string>
-  
-  
-   <!-- DictionaryManagerActivity -->
-  <string name="dictionaryManager">Dictionary manager</string>
-  <string name="dictionariesOnDevice">Dictionaries on device</string>
-  <string name="downloadableDictionaries">Downloadable dictionaries</string>
-  <string name="downloadButton">%.1fMB</string>
-  <string name="updateAvailable">UPDATE!</string>
-  <string name="moveToTop">Move to top</string>
-  <string name="deleteDictionary">Delete dictionary</string>
-  <string name="indexInfo">%1$s: %2$,d words</string>
-  <string name="managerShow">Show</string>
-  <string name="managerHide">Hide</string>
-  
-  <string name="error">Error</string>
-  <string name="unableToReadDictionaryDir">Unable to read dictionary directory: \n%1$s\n\nAndroid external storage directory: \n%2$s</string>
-  
-  <!-- Download. -->
-  <string name="downloadFailed">Download failed: \n%s.</string>  
-  <string name="unzippingDictionary">Unzipping dictionary: \n%s</string>
-  <string name="unzippingFailed">Unzipping failed: \n%s</string>
-  <string name="installationFinished">Installation finished: \n%s.</string>
-  
-  
+    <!-- Global. -->
+    <string name="about">About QuickDic…</string>
+    <string name="settings">Settings…</string>
+    <string name="help">Help</string>
+    <string name="reportIssue">Report issue…</string>
+    <string name="no_dict_file">Please specify a default directory in the settings.</string>
 
-  <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">Dictionary manager</string>
+    <string name="dictionariesOnDevice">Dictionaries on device</string>
+    <string name="downloadableDictionaries">Downloadable dictionaries</string>
+    <string name="downloadButton">%.1fMB</string>
+    <string name="updateAvailable">UPDATE!</string>
+    <string name="moveToTop">Move to top</string>
+    <string name="deleteDictionary">Delete dictionary</string>
+    <string name="indexInfo">%1$s: %2$,d words</string>
+    <string name="managerShow">Show</string>
+    <string name="managerHide">Hide</string>
+    <string name="error">Error</string>
+    <string name="unableToReadDictionaryDir">Unable to read dictionary directory: \n%1$s\n\nAndroid external storage directory: \n%2$s</string>
 
-  <!-- DictionaryActivity -->
-  <string name="searchText">Search Text</string>
-  <string name="selectDictionary">Select dictionary…</string>
-  <string name="addToWordList">Add to word list: %s</string>
-  <string name="searchForSelection">Search: %s</string>
-  <string name="failedAddingToWordList">Failure adding to word list: %s</string>
-  <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
-  <string name="noSearchResults">No search results.</string>
-  <string name="aboutDictionary">About dictionary…</string> 
-  <string name="fontFailure">Font failure: %s</string> 
-  <string name="seeAlso">See also: %1$s (%2$s)</string> 
-  <string name="speak">Speak</string> 
-  <string name="nextWord">Next word</string> 
-  <string name="previousWord">Previous word</string> 
-  
+    <!-- Download. -->
+    <string name="downloadFailed">Download failed: \n%s.</string>
+    <string name="unzippingDictionary">Unzipping dictionary: \n%s</string>
+    <string name="unzippingFailed">Unzipping failed: \n%s</string>
+    <string name="installationFinished">Installation finished: \n%s.</string>
 
-  <!-- About dictionary. -->
-  <string name="dictionaryPath">File: %s</string> 
-  <string name="dictionarySize">Size: %,d bytes</string> 
-  <string name="dictionaryCreationTime">Created: %tc</string> 
-  <string name="indexName">Index: %s</string> 
-  <string name="mainTokenCount">Word count: %,d</string> 
-  <string name="sources">Sources</string> 
-  <string name="sourceInfo">%1$s : %2$,d entries</string> 
-  
-  
-	<!-- About. -->
-  <string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.
+    <!-- DictionaryActivity -->
+    <string name="searchText">Search Text</string>
+    <string name="selectDictionary">Select dictionary…</string>
+    <string name="addToWordList">Add to word list: %s</string>
+    <string name="searchForSelection">Search: %s</string>
+    <string name="failedAddingToWordList">Failure adding to word list: %s</string>
+    <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
+    <string name="noSearchResults">No search results.</string>
+    <string name="aboutDictionary">About dictionary…</string>
+    <string name="fontFailure">Font failure: %s</string>
+    <string name="seeAlso">See also: %1$s (%2$s)</string>
+    <string name="speak">Speak</string>
+    <string name="nextWord">Next word</string>
+    <string name="previousWord">Previous word</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">File: %s</string>
+    <string name="dictionarySize">Size: %,d bytes</string>
+    <string name="dictionaryCreationTime">Created: %tc</string>
+    <string name="indexName">Index: %s</string>
+    <string name="mainTokenCount">Word count: %,d</string>
+    <string name="sources">Sources</string>
+    <string name="sourceInfo">%1$s : %2$,d entries</string>
+
+    <!-- About. -->
+    <string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.
   Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources.
   Please send comments, suggestions, bug reports, or just a quick hello to:</string>
-  <string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
-  <string name="webPage">For more information, see:</string>
-  <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
-  <string name="contributionsFrom">Contributions from:</string>
-  
-  <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
-  <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
- 
- 
-	<!-- Preferences -->
+    <string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+    <string name="webPage">For more information, see:</string>
+    <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
+    <string name="contributionsFrom">Contributions from:</string>
+    <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
+    <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
 
-  <string name="defaultDicKey">defaultddic</string>
-  <string name="defaultDicTitle">Default Dic</string>
-  <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
+    <!-- Preferences -->
 
-  <string name="quickdicDirectoryKey">quickdicDirectory</string>
-  <string name="quickdicDirectoryTitle">QuickDic directory</string>
-  <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries (empty for default quickDic folder on external storage).</string>
-  
-  <string name="wordListFileKey">wordListFile</string>
-  <string name="wordListFileTitle">Word list file</string>
-  <string name="wordListFileSummary">The local file where the word list will be appended.</string>
+    <string name="defaultDicKey">defaultddic</string>
+    <string name="defaultDicTitle">Default Dic</string>
+    <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
+    <string name="quickdicDirectoryKey">quickdicDirectory</string>
+    <string name="quickdicDirectoryTitle">QuickDic directory</string>
+    <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries (empty for default quickDic folder on external storage).</string>
+    <string name="wordListFileKey">wordListFile</string>
+    <string name="wordListFileTitle">Word list file</string>
+    <string name="wordListFileSummary">The local file where the word list will be appended.</string>
+    <string name="fontKey">font</string>
+    <string name="fontTitle">Dictionary font</string>
+    <string name="fontSummary">Font used to display dictionaries.</string>
+    <string name="fontSizeKey">fontSize</string>
+    <string name="fontSizeTitle">Font size</string>
+    <string name="fontSizeSummary">The size of the font for dictionary rows.</string>
+    <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
+    <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
+    <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
+    <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
+    <string name="clickOpensContextMenuTitle">Click opens context menu</string>
+    <string name="clickOpensContextMenuSummary">Open context menu for clicks on entries (long-click will always open-context menu).</string>
+    <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
+    <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
+    <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
+    <string name="themeKey">theme</string>
+    <string name="themeTitle">UI theme</string>
+    <string name="themeSummary">User-interface color theme.</string>
 
-  <string name="fontKey">font</string>
-  <string name="fontTitle">Dictionary font</string>
-  <string name="fontSummary">Font used to display dictionaries.</string>
- 
-	<string name="fontSizeKey">fontSize</string>
-  <string name="fontSizeTitle">Font size</string>
-  <string name="fontSizeSummary">The size of the font for dictionary rows.</string>
-
-  <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
-  <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
-  <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
-
-  <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
-  <string name="clickOpensContextMenuTitle">Click opens context menu</string>
-  <string name="clickOpensContextMenuSummary">Open context menu for clicks on entries (long-click will always open-context menu).</string>
-
-  <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
-  <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
-  <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
-  
-  <string name="themeKey">theme</string>
-  <string name="themeTitle">UI theme</string>
-  <string name="themeSummary">User-interface color theme.</string>
-  
-  <string name="emptyString"></string>
-  
 </resources>

@@ -530,7 +530,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                 .sortedIndexInfos(dictionaryInfo.indexInfos);
         final StringBuilder builder = new StringBuilder();
         if (updateAvailable) {
-            builder.append(getString(R.string.updateButton));
+            builder.append(getString(R.string.updateAvailable));
         }
         for (IndexInfo indexInfo : sortedIndexInfos) {
             final View button = application.createButton(buttons.getContext(), dictionaryInfo,
