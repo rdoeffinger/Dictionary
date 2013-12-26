@@ -760,9 +760,9 @@ public class DictionaryActivity extends SherlockListActivity {
         application.onCreateGlobalOptionsMenu(this, menu);
 
         {
-            final MenuItem dictionaryList = menu.add(getString(R.string.dictionaryManager));
-            dictionaryList.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-            dictionaryList.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            final MenuItem dictionaryManager = menu.add(getString(R.string.dictionaryManager));
+            dictionaryManager.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            dictionaryManager.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
                     startActivity(DictionaryManagerActivity.getLaunchIntent());
                     finish();
@@ -990,8 +990,8 @@ public class DictionaryActivity extends SherlockListActivity {
         if (event.getUnicodeChar() != 0) {
             if (!searchView.hasFocus()) {
                 setSearchText("" + (char) event.getUnicodeChar(), true);
+                searchView.requestFocus();
             }
-            searchView.requestFocus();
             return true;
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {

@@ -31,16 +31,21 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -48,6 +53,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -225,7 +231,52 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                     Environment.getExternalStorageDirectory()));
             builder.create().show();
         }
+        
+        onCreateSetupActionBar();
     }
+    
+    private void onCreateSetupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        
+        filterSearchView = new SearchView(getSupportActionBar().getThemedContext());
+        filterSearchView.setIconifiedByDefault(false);
+        // filterSearchView.setIconified(false); // puts the magnifying glass in the
+        // wrong place.
+        filterSearchView.setQueryHint(getString(R.string.searchText));
+        filterSearchView.setSubmitButtonEnabled(false);
+        final int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300,
+                getResources().getDisplayMetrics());
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        filterSearchView.setLayoutParams(lp);
+        filterSearchView.setImeOptions(
+                EditorInfo.IME_ACTION_SEARCH |
+                        EditorInfo.IME_FLAG_NO_EXTRACT_UI |
+                        EditorInfo.IME_FLAG_NO_ENTER_ACTION |
+                        // EditorInfo.IME_FLAG_NO_FULLSCREEN | // Requires API
+                        // 11
+                        EditorInfo.IME_MASK_ACTION |
+                        EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        
+        filterSearchView.setOnQueryTextListener(new OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+            
+            @Override
+            public boolean onQueryTextChange(String filterText) {
+                setListAdapater();
+                return true;
+            }
+        });
+        filterSearchView.setFocusable(true);
+
+        actionBar.setCustomView(filterSearchView);
+        actionBar.setDisplayShowCustomEnabled(true);
+    }
+
     
     @Override
     public void onDestroy() {
@@ -297,23 +348,23 @@ public class DictionaryManagerActivity extends SherlockListActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.dictionary_manager_options_menu, menu);
-        
-        filterSearchView = (SearchView) menu.findItem(R.id.filterText).getActionView();
-        filterSearchView.setOnQueryTextListener(new OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return true;
-            }
-            
-            @Override
-            public boolean onQueryTextChange(String filterText) {
-                setListAdapater();
-                return true;
-            }
-        });
-        filterSearchView.setIconifiedByDefault(false);
+//        MenuInflater inflater = getSupportMenuInflater();
+//        inflater.inflate(R.menu.dictionary_manager_options_menu, menu);
+//        
+//        filterSearchView = (SearchView) menu.findItem(R.id.filterText).getActionView();
+//        filterSearchView.setOnQueryTextListener(new OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return true;
+//            }
+//            
+//            @Override
+//            public boolean onQueryTextChange(String filterText) {
+//                setListAdapater();
+//                return true;
+//            }
+//        });
+//        filterSearchView.setIconifiedByDefault(false);
 
         application.onCreateGlobalOptionsMenu(this, menu);
         return true;
