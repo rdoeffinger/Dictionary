@@ -33,6 +33,7 @@ public class MyWebView extends WebView {
                     Log.d(LOG, "Handling Quickdic URL: " + url);
                     final Intent result = new Intent();
                     HtmlEntry.quickdicUrlToIntent(url, result);
+                    Log.d(LOG, "SEARCH_TOKEN=" + result.getStringExtra(C.SEARCH_TOKEN));
                     activity.setResult(Activity.RESULT_OK, result);
                     activity.finish();
                     return true;

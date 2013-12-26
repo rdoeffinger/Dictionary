@@ -369,23 +369,23 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         prefs.commit();
     }
 
-    // private void onClick(int index) {
-    // final DictionaryInfo dictionaryInfo = adapter.getItem(index);
-    // final DictionaryInfo downloadable =
-    // application.getDownloadable(dictionaryInfo.uncompressedFilename);
-    // if
-    // (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)
-    // && downloadable != null) {
-    // final Intent intent = getDownloadIntent(downloadable);
-    // startActivity(intent);
-    // } else {
-    // final Intent intent =
-    // DictionaryActivity.getLaunchIntent(application.getPath(dictionaryInfo.uncompressedFilename),
-    // 0, "");
-    // startActivity(intent);
-    // }
-    // }
-    
+//    @Override
+//    private void onClick(int index) {
+//        final DictionaryInfo dictionaryInfo = adapter.getItem(index);
+//        final DictionaryInfo downloadable =
+//                application.getDownloadable(dictionaryInfo.uncompressedFilename);
+//        if (!application.isDictionaryOnDevice(dictionaryInfo.uncompressedFilename)
+//                && downloadable != null) {
+//            final Intent intent = getDownloadIntent(downloadable);
+//            startActivity(intent);
+//        } else {
+//            final Intent intent =
+//                    DictionaryActivity.getLaunchIntent(
+//                            application.getPath(dictionaryInfo.uncompressedFilename),
+//                            0, "");
+//            startActivity(intent);
+//        }
+//    }    
     
     class MyListAdapter extends BaseAdapter {
 
@@ -527,9 +527,20 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         }
         details.setText(builder.toString());
         
-        row.setClickable(true);
-        row.setFocusable(true);
-        row.setLongClickable(true);
+        if (canLaunch) {
+            row.setClickable(true);
+            row.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new IntentLauncher(parent.getContext(), 
+                            DictionaryActivity.getLaunchIntent(
+                                    application.getPath(dictionaryInfo.uncompressedFilename), 
+                                    dictionaryInfo.indexInfos.get(0).shortName, ""));
+                }
+            });
+            row.setFocusable(true);
+            row.setLongClickable(true);
+        }
         row.setBackgroundResource(android.R.drawable.menuitem_background);
         
         return row;

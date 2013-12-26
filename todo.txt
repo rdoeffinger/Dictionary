@@ -1,2 +1,4 @@
+* Clicking link in HTML view doesn't trigger search.
+* Back button in top left
 * Contributions from:
 * HtmlEntries inline, expandable.

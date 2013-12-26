@@ -1,6 +1,7 @@
 package com.hughes.android.dictionary.engine;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.hughes.android.dictionary.C;
 import com.hughes.util.StringUtil;
@@ -159,7 +160,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         for (final HtmlEntry htmlEntry : htmlEntries) {
             final String titleEscaped = StringUtil.escapeUnicodeToPureHtml(htmlEntry.title);
             result.append(String.format("<h1><a href=\"%s\">%s</a></h1>\n<p>%s\n", 
-                    formatQuickdicUrl(indexShortName, titleEscaped), titleEscaped,
+                    formatQuickdicUrl(indexShortName, htmlEntry.title), titleEscaped,
                     htmlEntry.getHtml()));
         }
         return result.toString();
