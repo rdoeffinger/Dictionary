@@ -604,7 +604,8 @@ public class DictionaryActivity extends SherlockListActivity {
             currentSearchOperation.interrupted.set(true);
             currentSearchOperation = null;
         }
-        setIndexAndSearchText((indexIndex + 1) % dictionary.indices.size(), searchView.getQuery().toString());
+        setIndexAndSearchText((indexIndex + 1) % dictionary.indices.size(), 
+                searchView.getQuery().toString());
     }
 
     void onLanguageButtonLongClick(final Context context) {
@@ -902,7 +903,15 @@ public class DictionaryActivity extends SherlockListActivity {
         if (indexToUse == -1) {
             indexToUse = defaultIndexToUse;
         }
-        setIndexAndSearchText(indexToUse, selectedText);
+        // Without this extra indirection, the call to jumpToRow that this
+        // invokes didn't actually have any effect.
+        final int actualIndexToUse = indexToUse;
+        getListView().post(new Runnable() {
+            @Override
+            public void run() {
+                setIndexAndSearchText(actualIndexToUse, selectedText);
+            }
+        });
     }
     
     /**
@@ -1009,14 +1018,13 @@ public class DictionaryActivity extends SherlockListActivity {
     }
 
     private void setSearchText(final String text, final boolean triggerSearch) {
-        if (!triggerSearch) {
-            searchView.setOnQueryTextListener(null);
-        }
+        Log.d(LOG, "setSearchText, text=" + text + ", triggerSearch=" + triggerSearch);
+        // Disable the listener, because sometimes it doesn't work.
+        searchView.setOnQueryTextListener(null);
         searchView.setQuery(text, false);
         moveCursorToRight();
-        if (!triggerSearch) {
-            searchView.setOnQueryTextListener(onQueryTextListener);            
-        } else {
+        searchView.setOnQueryTextListener(onQueryTextListener);
+        if (triggerSearch) {
             onQueryTextListener.onQueryTextChange(text);
         }
     }

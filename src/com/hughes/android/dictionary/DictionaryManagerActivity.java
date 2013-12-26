@@ -529,15 +529,10 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         
         if (canLaunch) {
             row.setClickable(true);
-            row.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new IntentLauncher(parent.getContext(), 
+            row.setOnClickListener(new IntentLauncher(parent.getContext(), 
                             DictionaryActivity.getLaunchIntent(
                                     application.getPath(dictionaryInfo.uncompressedFilename), 
-                                    dictionaryInfo.indexInfos.get(0).shortName, ""));
-                }
-            });
+                                    dictionaryInfo.indexInfos.get(0).shortName, "")));
             row.setFocusable(true);
             row.setLongClickable(true);
         }
