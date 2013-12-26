@@ -3,14 +3,13 @@
 
   <string name="app_name">QuickDic</string>
 
-  <string name="titleWithVersion">QuickDic 4.0.1</string>
+  <string name="titleWithVersion">QuickDic 5.0.0</string>
   
   <!-- Global. -->
   <string name="about">About QuickDic…</string> 
   <string name="settings">Settings…</string>
   <string name="help">Help</string>
   <string name="reportIssue">Report issue…</string>
-  <string name="fontWorkaround">Detected font problem (common on Sony Ericsson devices), switching back to default font.</string>
   
   <string name="no_dict_file">Please specify a default directory in the settings.</string>
   
@@ -18,14 +17,12 @@
    <!-- DictionaryManagerActivity -->
   <string name="dictionaryManager">Dictionary manager</string>
   <string name="dictionariesOnDevice">Dictionaries on device</string>
-  <string name="noDictionariesOnDevice">No dictionaries on device</string>
   <string name="downloadableDictionaries">Downloadable dictionaries</string>
   <string name="downloadButton">%.1fMB</string>
   <string name="updateAvailable">UPDATE!</string>
   <string name="moveToTop">Move to top</string>
   <string name="deleteDictionary">Delete dictionary</string>
   <string name="indexInfo">%1$s: %2$,d words</string>
-  <string name="managerFilterText">List filter</string>
   <string name="managerShow">Show</string>
   <string name="managerHide">Hide</string>
   
@@ -33,8 +30,10 @@
   <string name="unableToReadDictionaryDir">Unable to read dictionary directory: \n%1$s\n\nAndroid external storage directory: \n%2$s</string>
   
   <!-- Download. -->
-  <string name="downloadFinished">Download finished: \n%s.</string>
   <string name="downloadFailed">Download failed: \n%s.</string>  
+  <string name="unzippingDictionary">Unzipping dictionary: \n%s</string>
+  <string name="unzippingFailed">Unzipping failed: \n%s</string>
+  <string name="installationFinished">Installation finished: \n%s.</string>
   
   
 
@@ -43,16 +42,12 @@
   <!-- DictionaryActivity -->
   <string name="searchText">Search Text</string>
   <string name="selectDictionary">Select dictionary…</string>
-  <string name="switchToLanguage">Switch to %s</string>
   <string name="addToWordList">Add to word list: %s</string>
   <string name="searchForSelection">Search: %s</string>
   <string name="failedAddingToWordList">Failure adding to word list: %s</string>
-  <string name="unzippingDictionary">Unzipping dictionary…</string>
-  <string name="failedToUnzipDictionary">Failed to unzip dictionary…</string>
   <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
   <string name="noSearchResults">No search results.</string>
   <string name="aboutDictionary">About dictionary…</string> 
-  <string name="randomWord">Random word</string> 
   <string name="fontFailure">Font failure: %s</string> 
   <string name="seeAlso">See also: %1$s (%2$s)</string> 
   <string name="speak">Speak</string> 
@@ -71,7 +66,6 @@
   
   
 	<!-- About. -->
-  <string name="thadHughes">Thad Hughes</string>
   <string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.
   Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources.
   Please send comments, suggestions, bug reports, or just a quick hello to:</string>
@@ -89,7 +83,6 @@
   <string name="defaultDicKey">defaultddic</string>
   <string name="defaultDicTitle">Default Dic</string>
   <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
-
 
   <string name="quickdicDirectoryKey">quickdicDirectory</string>
   <string name="quickdicDirectoryTitle">QuickDic directory</string>

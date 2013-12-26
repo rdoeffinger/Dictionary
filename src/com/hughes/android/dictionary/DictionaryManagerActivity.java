@@ -15,7 +15,6 @@
 package com.hughes.android.dictionary;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.content.BroadcastReceiver;
@@ -37,26 +36,22 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
@@ -141,22 +136,29 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                 }
 
                 Log.w(LOG, "Download finished: " + dest);
+                Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
+                        Toast.LENGTH_LONG).show();
+                
+                
                 final File localZipFile = new File(Uri.parse(dest).getPath());
-
                 try {
                     ZipFile zipFile = new ZipFile(localZipFile);
                     final ZipEntry zipEntry = zipFile.entries().nextElement();
                     Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
                     final InputStream zipIn = zipFile.getInputStream(zipEntry);
-                    final OutputStream zipOut = new FileOutputStream(
-                            new File(application.getDictDir(), zipEntry.getName()));
+                    File targetFile = new File(application.getDictDir(), zipEntry.getName());
+                    if (targetFile.exists()) {
+                        targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", "bak.quickdic")));
+                        targetFile = new File(application.getDictDir(), zipEntry.getName());
+                    }
+                    final OutputStream zipOut = new FileOutputStream(targetFile);
                     copyStream(zipIn, zipOut);
                     zipFile.close();
                     application.backgroundUpdateDictionaries(dictionaryUpdater);
-                    Toast.makeText(context, getString(R.string.downloadFinished, dest),
+                    Toast.makeText(context, getString(R.string.installationFinished, dest),
                             Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(context, getString(R.string.downloadFailed, dest),
+                    Toast.makeText(context, getString(R.string.unzippingFailed, dest),
                             Toast.LENGTH_LONG).show();
                     Log.e(LOG, "Failed to unzip.", e);
                 } finally {

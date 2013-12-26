@@ -3,7 +3,7 @@
 
 	<string name="app_name">QuickDic</string>
 
-	<string name="titleWithVersion">QuickDic 4.0.1</string>
+	<string name="titleWithVersion">QuickDic 5.0.0</string>
 	
   <!-- Global. -->
   <string name="about">Über QuickDic…</string>
@@ -22,8 +22,8 @@
   <string name="deleteDictionary">Wörterbuch entfernen</string>
   <string name="indexInfo">%1$s: %2$,d Wörter</string>
   <string name="managerFilterText">Filter</string>
-  <string name="managerFilterCheckbox">Nur SD-Karte</string>
-  
+  <string name="managerFilterCheckbox">Nur SD-Karte</string>  
+
   <string name="thanksForUpdatingVersion">4.0.1_de_b</string>
 
   <!-- DictionaryActivity -->
