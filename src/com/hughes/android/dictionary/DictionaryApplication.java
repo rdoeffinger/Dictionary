@@ -71,7 +71,7 @@ public class DictionaryApplication extends Application {
         final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new LinkedHashMap<String, DictionaryInfo>();
         
         /**
-         * Sometimes a deserialized version of this datastructure isn't valid.
+         * Sometimes a deserialized version of this data structure isn't valid.
          * @return
          */
         boolean isValid() {
