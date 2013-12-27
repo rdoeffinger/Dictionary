@@ -439,6 +439,9 @@ public class DictionaryActivity extends SherlockListActivity {
 
         updateLangButton();
         searchView.requestFocus();
+
+        // http://stackoverflow.com/questions/2833057/background-listview-becomes-black-when-scrolling
+        getListView().setCacheColorHint(0);
     }
 
     private void onCreateSetupActionBarAndSearchView() {
@@ -1365,7 +1368,10 @@ public class DictionaryActivity extends SherlockListActivity {
             result.setClickable(true);
             result.setFocusable(true);
             result.setLongClickable(true);
-            result.setBackgroundResource(android.R.drawable.menuitem_background);
+//            result.setBackgroundResource(android.R.drawable.menuitem_background);
+            
+            result.setBackgroundResource(theme.normalRowBg);
+
             result.setOnClickListener(new TextView.OnClickListener() {
                 @Override
                 public void onClick(View v) {

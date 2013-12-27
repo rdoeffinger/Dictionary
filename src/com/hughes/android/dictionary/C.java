@@ -32,25 +32,25 @@ public class C {
                 R.color.theme_default_token_row_fg,
                 R.drawable.theme_default_token_row_main_bg,
                 R.drawable.theme_default_token_row_other_bg,
-                R.drawable.theme_default_other_lang_bg),
+                R.drawable.theme_default_normal_row_bg),
 
         LIGHT(R.style.Theme_Light,
                 R.style.Theme_Light_TokenRow_Fg,
                 R.color.theme_light_token_row_fg,
                 R.drawable.theme_light_token_row_main_bg,
                 R.drawable.theme_light_token_row_other_bg,
-                R.drawable.theme_light_other_lang_bg);
+                R.drawable.theme_light_normal_row_bg);
 
         private Theme(final int themeId, final int tokenRowFg,
                 final int tokenRowFgColor,
                 final int tokenRowMainBg, final int tokenRowOtherBg,
-                final int otherLangBg) {
+                final int normalRowBg) {
             this.themeId = themeId;
             this.tokenRowFg = tokenRowFg;
             this.tokenRowFgColor = tokenRowFgColor;
             this.tokenRowMainBg = tokenRowMainBg;
             this.tokenRowOtherBg = tokenRowOtherBg;
-            this.otherLangBg = otherLangBg;
+            this.normalRowBg = normalRowBg;
         }
 
         final int themeId;
@@ -58,7 +58,7 @@ public class C {
         final int tokenRowFgColor;
         final int tokenRowMainBg;
         final int tokenRowOtherBg;
-        final int otherLangBg;
+        final int normalRowBg;
     }
 
 }
