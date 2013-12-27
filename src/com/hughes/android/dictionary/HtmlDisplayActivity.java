@@ -14,7 +14,6 @@
 
 package com.hughes.android.dictionary;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,9 +21,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.hughes.util.StringUtil;
 
-public final class HtmlDisplayActivity extends Activity {
+public final class HtmlDisplayActivity extends SherlockActivity {
 
     static final String LOG = "QuickDic";
 
@@ -67,6 +68,9 @@ public final class HtmlDisplayActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.html_display_activity);
+        
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
         final String html;

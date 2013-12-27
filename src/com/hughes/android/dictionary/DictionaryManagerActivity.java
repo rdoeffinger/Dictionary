@@ -96,7 +96,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    setListAdapater();
+                    setMyListAdapater();
                 }
             });
         }
@@ -148,7 +148,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                     final InputStream zipIn = zipFile.getInputStream(zipEntry);
                     File targetFile = new File(application.getDictDir(), zipEntry.getName());
                     if (targetFile.exists()) {
-                        targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", "bak.quickdic")));
+                        targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
                         targetFile = new File(application.getDictDir(), zipEntry.getName());
                     }
                     final OutputStream zipOut = new FileOutputStream(targetFile);
@@ -203,7 +203,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onShowLocalChanged();
+                onShowDownloadableChanged();
             }
         });
 
@@ -220,7 +220,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         registerReceiver(broadcastReceiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        setListAdapater();
+        setMyListAdapater();
         registerForContextMenu(getListView());
 
         final File dictDir = application.getDictDir();
@@ -272,7 +272,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
 
             @Override
             public boolean onQueryTextChange(String filterText) {
-                setListAdapater();
+                setMyListAdapater();
                 return true;
             }
         });
@@ -323,7 +323,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        showDownloadable.setChecked(prefs.getBoolean(C.SHOW_DOWNLOADABLE, false));
+        showDownloadable.setChecked(prefs.getBoolean(C.SHOW_DOWNLOADABLE, true));
 
         if (!blockAutoLaunch &&
                 getIntent().getBooleanExtra(C.CAN_AUTO_LAUNCH_DICT, true) &&
@@ -348,7 +348,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
 
         application.backgroundUpdateDictionaries(dictionaryUpdater);
 
-        setListAdapater();
+        setMyListAdapater();
     }
 
     @Override
@@ -380,7 +380,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                         @Override
                         public boolean onMenuItemClick(android.view.MenuItem item) {
                             application.moveDictionaryToTop(row.dictionaryInfo);
-                            setListAdapater();
+                            setMyListAdapater();
                             return true;
                         }
                     });
@@ -393,15 +393,15 @@ public class DictionaryManagerActivity extends SherlockListActivity {
                         @Override
                         public boolean onMenuItemClick(android.view.MenuItem item) {
                             application.deleteDictionary(row.dictionaryInfo);
-                            setListAdapater();
+                            setMyListAdapater();
                             return true;
                         }
                     });
         }
     }
 
-    private void onShowLocalChanged() {
-        setListAdapater();
+    private void onShowDownloadableChanged() {
+        setMyListAdapater();
         Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
         prefs.putBoolean(C.SHOW_DOWNLOADABLE, showDownloadable.isChecked());
         prefs.commit();
@@ -491,7 +491,7 @@ public class DictionaryManagerActivity extends SherlockListActivity {
 
     }
 
-    private void setListAdapater() {
+    private void setMyListAdapater() {
         final String filter = filterSearchView == null ? "" : filterSearchView.getQuery()
                 .toString();
         final String[] filters = filter.trim().toLowerCase().split("(\\s|-)+");
@@ -510,15 +510,16 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
         final Button downloadButton = (Button) row.findViewById(R.id.downloadButton);
         if (!canLaunch || updateAvailable) {
+            final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
             downloadButton
                     .setText(getString(
                             R.string.downloadButton,
-                            application.getDownloadable(dictionaryInfo.uncompressedFilename).zipBytes / 1024.0 / 1024.0));
+                            downloadable.zipBytes / 1024.0 / 1024.0));
             downloadButton.setMinWidth(application.languageButtonPixels * 3 / 2);
             downloadButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    downloadDictionary(dictionaryInfo);
+                    downloadDictionary(downloadable.downloadUrl);
                 }
             });
         } else {
@@ -569,12 +570,12 @@ public class DictionaryManagerActivity extends SherlockListActivity {
         return row;
     }
 
-    private void downloadDictionary(final DictionaryInfo dictionaryInfo) {
+    private void downloadDictionary(final String downloadUrl) {
         DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         Request request = new Request(
-                Uri.parse(dictionaryInfo.downloadUrl));
+                Uri.parse(downloadUrl));
         try {
-            final String destFile = new File(new URL(dictionaryInfo.downloadUrl).getFile())
+            final String destFile = new File(new URL(downloadUrl).getFile())
                     .getName();
             Log.d(LOG, "Downloading to: " + destFile);
 

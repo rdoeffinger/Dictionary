@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hughes.android.dictionary"
     android:installLocation="auto"
-    android:versionCode="23"
-    android:versionName="4.0.1" >
+    android:versionCode="24"
+    android:versionName="5.0.0" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -60,7 +60,7 @@
 
             <!--
            @author Dominik Köppl
-     			Added two different intents to catch simple and advanced queries from other extern applications.
+     			Added two different intents to catch simple and advanced queries from other external applications.
             -->
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

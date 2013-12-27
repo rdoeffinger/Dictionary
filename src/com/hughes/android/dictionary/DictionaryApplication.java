@@ -25,12 +25,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -38,9 +35,8 @@ import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Language;
-import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.dictionary.engine.Language.LanguageResources;
-import com.hughes.android.util.IntentLauncher;
+import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
 import com.hughes.util.ListUtil;
 import com.ibm.icu.text.Collator;
@@ -73,20 +69,19 @@ public class DictionaryApplication extends Application {
         final List<String> dictionaryFilesOrdered = new ArrayList<String>();
 
         final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new LinkedHashMap<String, DictionaryInfo>();
+        
+        /**
+         * Sometimes a deserialized version of this datastructure isn't valid.
+         * @return
+         */
+        boolean isValid() {
+            return uncompressedFilenameToDictionaryInfo != null && dictionaryFilesOrdered != null;
+        }
     }
 
     DictionaryConfig dictionaryConfig = null;
 
     int languageButtonPixels = -1;
-
-    // static final class DictionaryHistory implements Serializable {
-    // private static final long serialVersionUID = -4842995032541390284L;
-    // // User-ordered list, persisted, just the ones that are/have been
-    // present.
-    // final List<DictionaryLink> dictionaryLinks = new
-    // ArrayList<DictionaryLink>();
-    // }
-    // DictionaryHistory dictionaryHistory = null;
 
     static synchronized void staticInit(final Context context) {
         if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO != null) {
@@ -127,6 +122,9 @@ public class DictionaryApplication extends Application {
         dictionaryConfig = PersistentObjectCache.init(getApplicationContext()).read(
                 C.DICTIONARY_CONFIGS, DictionaryConfig.class);
         if (dictionaryConfig == null) {
+            dictionaryConfig = new DictionaryConfig();
+        }
+        if (!dictionaryConfig.isValid()) {
             dictionaryConfig = new DictionaryConfig();
         }
 
