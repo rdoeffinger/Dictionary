@@ -84,7 +84,7 @@
             android:layout_gravity="left"
             android:autoLink="web"
             android:clickable="true"
-            android:text="Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio"
+            android:text="Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano"
             android:paddingBottom="10dip"
              />
         

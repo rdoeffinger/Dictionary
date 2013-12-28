@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,7 +44,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -53,6 +51,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -147,7 +146,7 @@ public class DictionaryActivity extends SherlockListActivity {
     int fontSizeSp;
 
     SearchView searchView;
-    ImageView searchHintIcon;
+    ImageButton languageButton;
     SearchView.OnQueryTextListener onQueryTextListener;
 
     MenuItem nextWordMenuItem, previousWordMenuItem;
@@ -449,17 +448,43 @@ public class DictionaryActivity extends SherlockListActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
+        
+        final LinearLayout customSearchView = new LinearLayout(getSupportActionBar().getThemedContext());
+        
+        final int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300,
+                getResources().getDisplayMetrics());
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                width, ViewGroup.LayoutParams.WRAP_CONTENT);
+        customSearchView.setLayoutParams(layoutParams);
 
-        searchView = new SearchView(getSupportActionBar().getThemedContext());
+        languageButton = new ImageButton(customSearchView.getContext());
+        languageButton.setMinimumWidth(application.languageButtonPixels);
+        languageButton.setMinimumHeight(application.languageButtonPixels * 2 / 3);
+        languageButton.setScaleType(ScaleType.FIT_CENTER);
+        languageButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                onLanguageButtonClick();
+            }
+        });
+        languageButton.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onLanguageButtonLongClick(v.getContext());
+                return true;
+            }
+        });
+        customSearchView.addView(languageButton);
+
+        searchView = new SearchView(customSearchView.getContext());
         searchView.setIconifiedByDefault(false);
         // searchView.setIconified(false); // puts the magnifying glass in the
         // wrong place.
         searchView.setQueryHint(getString(R.string.searchText));
         searchView.setSubmitButtonEnabled(false);
-        final int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300,
-                getResources().getDisplayMetrics());
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width,
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
+        lp.weight = 1;
         searchView.setLayoutParams(lp);
         searchView.setImeOptions(
                 EditorInfo.IME_ACTION_SEARCH |
@@ -485,28 +510,16 @@ public class DictionaryActivity extends SherlockListActivity {
         };
         searchView.setOnQueryTextListener(onQueryTextListener);
         searchView.setFocusable(true);
+        customSearchView.addView(searchView);
 
-        searchHintIcon = (ImageView) searchView.findViewById(R.id.abs__search_mag_icon);
-        // http://stackoverflow.com/questions/2521959/how-to-scale-an-image-in-imageview-to-keep-the-aspect-ratio
-        searchHintIcon.setLayoutParams(new LinearLayout.LayoutParams(
-                application.languageButtonPixels * 3 / 4, LayoutParams.WRAP_CONTENT));
-        searchHintIcon.setScaleType(ScaleType.FIT_CENTER);
+        // Clear the searchHint icon so that it takes as little space as possible.
+        ImageView searchHintIcon = (ImageView) searchView.findViewById(R.id.abs__search_mag_icon);
+        searchHintIcon.setBackgroundResource(android.R.color.transparent);
+        searchHintIcon.setLayoutParams(new LinearLayout.LayoutParams(1, 1));
         searchHintIcon.setAdjustViewBounds(true);
-        searchHintIcon.setPadding(1, application.languageButtonPixels / 8, 1, 0);
-        searchHintIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                onLanguageButtonClick();
-            }
-        });
-        searchHintIcon.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                onLanguageButtonLongClick(v.getContext());
-                return true;
-            }
-        });
-        actionBar.setCustomView(searchView);
+        searchHintIcon.setPadding(0, 0, 0, 0);
+        
+        actionBar.setCustomView(customSearchView);
         actionBar.setDisplayShowCustomEnabled(true);
     }
 
@@ -605,12 +618,12 @@ public class DictionaryActivity extends SherlockListActivity {
         final LanguageResources languageResources =
                 Language.isoCodeToResources.get(index.shortName);
         if (languageResources != null && languageResources.flagId != 0) {
-            searchHintIcon.setImageResource(languageResources.flagId);
+            languageButton.setImageResource(languageResources.flagId);
         } else {
             if (indexIndex % 2 == 0) {
-                searchHintIcon.setImageResource(android.R.drawable.ic_media_next);
+                languageButton.setImageResource(android.R.drawable.ic_media_next);
             } else {
-                searchHintIcon.setImageResource(android.R.drawable.ic_media_previous);
+                languageButton.setImageResource(android.R.drawable.ic_media_previous);
             }
         }
         updateTTSLanguage();
