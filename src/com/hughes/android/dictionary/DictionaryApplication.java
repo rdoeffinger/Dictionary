@@ -193,17 +193,24 @@ public class DictionaryApplication extends Application {
     public synchronized File getDictDir() {
         // This metaphor doesn't work, because we've already reset
         // prefsMightHaveChanged.
-        // if (dictDir == null || PreferenceActivity.prefsMightHaveChanged) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final File defaultDictDir = new File(Environment.getExternalStorageDirectory(), "quickDic");
-        String dir = prefs.getString(getString(R.string.quickdicDirectoryKey),
-                defaultDictDir.getAbsolutePath());
+        String dir = prefs.getString(getString(R.string.quickdicDirectoryKey), "");
         if (dir.isEmpty()) {
+            final File defaultDictDir = new File(Environment.getExternalStorageDirectory(), "quickDic");
             dir = defaultDictDir.getAbsolutePath();
         }
         dictDir = new File(dir);
         dictDir.mkdirs();
         return dictDir;
+    }
+
+    public File getWordListFile() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String file = prefs.getString(getString(R.string.wordListFileKey), "");
+        if (file.isEmpty()) {
+            return new File(getDictDir(), "wordList.txt");
+        }
+        return new File(file);
     }
 
     public C.Theme getSelectedTheme() {

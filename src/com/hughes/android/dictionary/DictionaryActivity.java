@@ -413,8 +413,7 @@ public class DictionaryActivity extends SherlockListActivity {
         registerForContextMenu(getListView());
 
         // Cache some prefs.
-        wordList = new File(prefs.getString(getString(R.string.wordListFileKey),
-                new File(application.getDictDir(), "wordList.txt").getAbsolutePath()));
+        wordList = application.getWordListFile();
         saveOnlyFirstSubentry = prefs.getBoolean(getString(R.string.saveOnlyFirstSubentryKey),
                 false);
         clickOpensContextMenu = prefs.getBoolean(getString(R.string.clickOpensContextMenuKey),
@@ -920,6 +919,8 @@ public class DictionaryActivity extends SherlockListActivity {
                             return false;
                         }
                     });
+            // Rats, this won't be shown:
+            searchForSelection.setIcon(R.drawable.abs__ic_search);
         }
 
         if (row instanceof TokenRow && ttsReady) {
@@ -1008,7 +1009,7 @@ public class DictionaryActivity extends SherlockListActivity {
             final PrintWriter out = new PrintWriter(new FileWriter(wordList, true));
             out.println(rawText.toString());
             out.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(LOG, "Unable to append to " + wordList.getAbsolutePath(), e);
             Toast.makeText(this,
                     getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()),

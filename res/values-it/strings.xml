@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">QuickDic</string>
-    <string name="titleWithVersion">QuickDic 5.0.0</string>
-    <string name="thanksForUpdatingVersion">5.0.0</string>
+    <string name="titleWithVersion">QuickDic 5.0.1</string>
+    <string name="thanksForUpdatingVersion">5.0.1</string>
     
     <!-- Global. -->
     <string name="about">About QuickDic…</string>
@@ -13,17 +13,17 @@
     <string name="no_dict_file">Please specify a default directory in the settings.</string>
     
     <!-- DictionaryManagerActivity -->
-    <string name="dictionaryManager">Gestione Dizionari</string>
-    <string name="dictionariesOnDevice">Dictionaries on device</string>
-    <string name="downloadableDictionaries">Downloadable dictionaries</string>
+    <string name="dictionaryManager">Gestione dizionari</string>
+    <string name="dictionariesOnDevice">Dizionari sul dispositivo</string>
+    <string name="downloadableDictionaries">Dizionari scaricabili</string>
     <string name="downloadButton">%.1fMB</string>
-    <string name="updateAvailable">UPDATE!</string>
+    <string name="updateAvailable">Aggiornare!</string>
     <string name="moveToTop">Sposta in alto</string>
     <string name="deleteDictionary">Cancella dizionario</string>
     <string name="indexInfo">%1$s: %2$,d parole</string>
-    <string name="managerShow">Show</string>
-    <string name="managerHide">Hide</string>
-    <string name="error">Error</string>
+    <string name="managerShow">Mostra</string>
+    <string name="managerHide">Nascondi</string>
+    <string name="error">Errore</string>
     <string name="unableToReadDictionaryDir">Unable to read dictionary directory: \n%1$s\n\nAndroid external storage directory: \n%2$s</string>
 
     <!-- Download. -->

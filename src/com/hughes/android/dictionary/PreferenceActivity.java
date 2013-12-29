@@ -16,8 +16,10 @@ package com.hughes.android.dictionary;
 
 import java.util.List;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.PreferenceManager;
 
 public class PreferenceActivity extends android.preference.PreferenceActivity {
 
@@ -26,7 +28,16 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
+        final DictionaryApplication application = (DictionaryApplication) getApplication();
+        setTheme(application.getSelectedTheme().themeId);
+        
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getString(getString(R.string.quickdicDirectoryKey), "").equals("")) {
+            prefs.edit().putString(getString(R.string.quickdicDirectoryKey), application.getDictDir().getAbsolutePath()).commit();
+        }
+        if (prefs.getString(getString(R.string.wordListFileKey), "").equals("")) {
+            prefs.edit().putString(getString(R.string.wordListFileKey), application.getWordListFile().getAbsolutePath()).commit();
+        }
 
         /**
          * @author Dominik Köppl Preference: select default dictionary As this
@@ -37,7 +48,6 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
         ListPreference defaultDic = (ListPreference) findPreference(getResources().getString(
                 R.string.defaultDicKey));
-        DictionaryApplication application = (DictionaryApplication) getApplication();
         List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
 
         final CharSequence[] entries = new CharSequence[dicts.size()];
