@@ -197,6 +197,11 @@ public class DictionaryActivity extends SherlockListActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // This needs to be before super.onCreate, otherwise ActionbarSherlock
+        // doesn't makes the background of the actionbar white when you're
+        // in the dark theme.
+        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
+
         Log.d(LOG, "onCreate:" + this);
         super.onCreate(savedInstanceState);
 
@@ -205,7 +210,6 @@ public class DictionaryActivity extends SherlockListActivity {
         // Don't auto-launch if this fails.
         prefs.edit().remove(C.DICT_FILE).commit();
 
-        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
 
         application = (DictionaryApplication) getApplication();
         theme = application.getSelectedTheme();
@@ -439,7 +443,7 @@ public class DictionaryActivity extends SherlockListActivity {
         searchView.requestFocus();
 
         // http://stackoverflow.com/questions/2833057/background-listview-becomes-black-when-scrolling
-        getListView().setCacheColorHint(0);
+//        getListView().setCacheColorHint(0);
     }
 
     private void onCreateSetupActionBarAndSearchView() {
@@ -475,7 +479,7 @@ public class DictionaryActivity extends SherlockListActivity {
         });
         customSearchView.addView(languageButton);
 
-        searchView = new SearchView(customSearchView.getContext());
+        searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setIconifiedByDefault(false);
         // searchView.setIconified(false); // puts the magnifying glass in the
         // wrong place.

@@ -1,11 +1,11 @@
 <resources>
-    
+
     <style name="MyActionButtonStyle" parent="Widget.Sherlock.ActionButton">
         <item name="android:minWidth">28dip</item>
-        <!-- 
+        <!--
         <item name="android:paddingLeft">0dip</item>
         <item name="android:paddingRight">0dip</item>
-         -->
+        -->
     </style>
 
     <!--
@@ -13,6 +13,7 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseThemeLight" parent="Theme.Sherlock.Light">
+
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -25,10 +26,10 @@
         <!--
       <item name="searchViewSearchIcon">@android:color/transparent</item>
       <item name="searchViewCloseIcon">@android:color/transparent</item>
-      -->
-      <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
+        -->
+        <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
     </style>
-    
+
     <style name="AppBaseThemeDark" parent="Theme.Sherlock">
         <!--
             Theme customizations available in newer API levels can go in
@@ -39,10 +40,10 @@
             Make search icon magnifying glass disappear:
             http://stackoverflow.com/questions/13604506/show-actionbarsherlock-searchview-always-expanded
         -->
-      <!--
+        <!--
       <item name="searchViewSearchIcon">@android:color/transparent</item>
       <item name="searchViewCloseIcon">@android:color/transparent</item>
-      -->
+        -->
         <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
     </style>
 
@@ -51,6 +52,7 @@
     <style name="Theme.Default" parent="AppBaseThemeDark"></style>
 
     <style name="Theme.Default.TokenRow.Fg" parent="Theme.Default">
+
         <!-- <item name="android:textColor">#FFFFFF</item> -->
         <item name="android:textColorLink">#00AAFF</item>
     </style>
@@ -62,11 +64,13 @@
 
     <!-- ****************************************************************** -->
 
+
     <!-- Light theme -->
 
     <style name="Theme.Light" parent="AppBaseThemeLight"></style>
 
     <style name="Theme.Light.TokenRow.Fg" parent="Theme.Light">
+
         <!-- <item name="android:textColor">#000000</item> -->
         <item name="android:textColorLink">#0000FF</item>
     </style>
@@ -75,9 +79,8 @@
     <color name="theme_light_token_row_main_bg">#EEEEEE</color>
     <color name="theme_light_token_row_other_bg">#EEEEEE</color>
     <color name="theme_light_normal_row_bg">#FFFFFF</color>
-
     <color name="gray">#777777</color>
-    
+
     <style name="BorderlessButton">
         <item name="android:background">@null</item>
         <item name="android:paddingLeft">4dip</item>
