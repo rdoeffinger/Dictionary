@@ -197,6 +197,7 @@ public class Language {
                 R.drawable.flag_of_slovenia));
         isoCodeToResources.put("TA", new LanguageResources("Tamil", R.string.TA));
         isoCodeToResources.put("SH", new LanguageResources("Serbo-Croatian", R.string.SH));
+        isoCodeToResources.put("SD", new LanguageResources("Sindhi", R.string.SD, R.drawable.flag_of_sindhi));
 
         // Hack to allow lower-case ISO codes to work:
         for (final String isoCode : new ArrayList<String>(isoCodeToResources.keySet())) {

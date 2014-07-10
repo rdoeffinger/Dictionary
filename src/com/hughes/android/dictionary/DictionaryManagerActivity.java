@@ -178,6 +178,8 @@ public class DictionaryManagerActivity extends SherlockListActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // This must be first, otherwise the actiona bar doesn't get
+        // styled properly.
         setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
 
         super.onCreate(savedInstanceState);
