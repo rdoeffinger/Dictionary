@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
 
+import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -311,7 +312,7 @@ public class DictionaryApplication extends Application {
     public void onCreateGlobalOptionsMenu(
             final Context context, final Menu menu) {
         final MenuItem about = menu.add(getString(R.string.about));
-        about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        MenuItemCompat.setShowAsAction(about, MenuItem.SHOW_AS_ACTION_NEVER);
         about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent().setClassName(AboutActivity.class
@@ -322,7 +323,7 @@ public class DictionaryApplication extends Application {
         });
 
         final MenuItem help = menu.add(getString(R.string.help));
-        help.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        MenuItemCompat.setShowAsAction(help, MenuItem.SHOW_AS_ACTION_NEVER);
         help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent());
@@ -331,7 +332,7 @@ public class DictionaryApplication extends Application {
         });
 
         final MenuItem preferences = menu.add(getString(R.string.settings));
-        preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        MenuItemCompat.setShowAsAction(preferences, MenuItem.SHOW_AS_ACTION_NEVER);
         preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 PreferenceActivity.prefsMightHaveChanged = true;
@@ -343,7 +344,7 @@ public class DictionaryApplication extends Application {
         });
 
         final MenuItem reportIssue = menu.add(getString(R.string.reportIssue));
-        reportIssue.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        MenuItemCompat.setShowAsAction(reportIssue, MenuItem.SHOW_AS_ACTION_NEVER);
         reportIssue.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent(Intent.ACTION_VIEW);

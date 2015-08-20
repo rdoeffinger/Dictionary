@@ -65,6 +65,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -795,7 +796,7 @@ public class DictionaryActivity extends ActionBarActivity {
             // Next word.
             nextWordMenuItem = menu.add(getString(R.string.nextWord))
                     .setIcon(R.drawable.arrow_down_float);
-            nextWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            MenuItemCompat.setShowAsAction(nextWordMenuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
             nextWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -807,7 +808,7 @@ public class DictionaryActivity extends ActionBarActivity {
             // Previous word.
             previousWordMenuItem = menu.add(getString(R.string.previousWord))
                     .setIcon(R.drawable.arrow_up_float);
-            previousWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            MenuItemCompat.setShowAsAction(previousWordMenuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
             previousWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -821,7 +822,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
         {
             final MenuItem dictionaryManager = menu.add(getString(R.string.dictionaryManager));
-            dictionaryManager.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            MenuItemCompat.setShowAsAction(dictionaryManager, MenuItem.SHOW_AS_ACTION_NEVER);
             dictionaryManager.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
                     startActivity(DictionaryManagerActivity.getLaunchIntent());
@@ -833,7 +834,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
         {
             final MenuItem aboutDictionary = menu.add(getString(R.string.aboutDictionary));
-            aboutDictionary.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            MenuItemCompat.setShowAsAction(aboutDictionary, MenuItem.SHOW_AS_ACTION_NEVER);
             aboutDictionary.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
                     final Context context = getListView().getContext();
