@@ -3,8 +3,7 @@
 
     <string name="app_name">QuickDic</string>
     <string name="titleWithVersion">QuickDic 5.0.1</string>
-    <string name="thanksForUpdatingVersion">5.0.1</string>
-    
+
     <!-- Global. -->
     <string name="about">À propos de QuickDic</string>
     <string name="settings">Configuration</string>

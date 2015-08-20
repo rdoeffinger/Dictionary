@@ -1,6 +1,8 @@
 
 package com.hughes.android.dictionary;
 
+import com.hughes.util.StringUtil;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

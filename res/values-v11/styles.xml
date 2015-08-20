@@ -1,23 +1,19 @@
 <resources>
     
-    <style name="AppBaseThemeLight" parent="Theme.Sherlock.Light">
+    <style name="AppBaseThemeLight" parent="@style/Theme.AppCompat.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-      <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
-      <item name="android:actionButtonStyle">@style/MyActionButtonStyle</item>
     </style>
     
-    <style name="AppBaseThemeDark" parent="Theme.Sherlock">
+    <style name="AppBaseThemeDark" parent="@style/Theme.AppCompat">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
-        <item name="android:actionButtonStyle">@style/MyActionButtonStyle</item>
     </style>
 
     <style name="BorderlessButton">

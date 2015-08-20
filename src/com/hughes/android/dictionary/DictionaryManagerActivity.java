@@ -45,15 +45,17 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.widget.SearchView;
-import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.view.Menu;
+import android.widget.ListAdapter;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 
@@ -72,10 +74,24 @@ import java.util.zip.ZipFile;
 // Right-click:
 //  Delete, move to top.
 
-public class DictionaryManagerActivity extends SherlockListActivity {
+public class DictionaryManagerActivity extends ActionBarActivity {
 
     static final String LOG = "QuickDic";
     static boolean blockAutoLaunch = false;
+
+    private ListView listView;
+    private ListView getListView() {
+        if (listView == null) {
+            listView = (ListView)findViewById(android.R.id.list);
+        }
+        return listView;
+    }
+    private void setListAdapter(ListAdapter adapter) {
+        getListView().setAdapter(adapter);
+    }
+    private ListAdapter getListAdapter() {
+        return getListView().getAdapter();
+    }
 
     DictionaryApplication application;
 

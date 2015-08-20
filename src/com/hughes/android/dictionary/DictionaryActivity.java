@@ -47,7 +47,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -63,13 +65,13 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
-import com.actionbarsherlock.widget.SearchView;
-import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.EntrySource;
@@ -109,7 +111,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DictionaryActivity extends SherlockListActivity {
+public class DictionaryActivity extends ActionBarActivity {
 
     static final String LOG = "QuickDic";
 
@@ -144,6 +146,22 @@ public class DictionaryActivity extends SherlockListActivity {
     C.Theme theme = C.Theme.LIGHT;
     int textColorFg = Color.BLACK;
     int fontSizeSp;
+
+    private ListView listView;
+    private ListView getListView() {
+        if (listView == null) {
+            listView = (ListView)findViewById(android.R.id.list);
+        }
+        return listView;
+    }
+
+    private void setListAdapter(ListAdapter adapter) {
+        getListView().setAdapter(adapter);
+    }
+
+    private ListAdapter getListAdapter() {
+        return getListView().getAdapter();
+    }
 
     SearchView searchView;
     ImageButton languageButton;
@@ -460,6 +478,13 @@ public class DictionaryActivity extends SherlockListActivity {
                 width, ViewGroup.LayoutParams.WRAP_CONTENT);
         customSearchView.setLayoutParams(layoutParams);
 
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int row, long id) {
+                onListItemClick(getListView(), view, row, id);
+            }
+        });
+
         languageButton = new ImageButton(customSearchView.getContext());
         languageButton.setMinimumWidth(application.languageButtonPixels);
         languageButton.setMinimumHeight(application.languageButtonPixels * 2 / 3);
@@ -515,13 +540,6 @@ public class DictionaryActivity extends SherlockListActivity {
         searchView.setFocusable(true);
         customSearchView.addView(searchView);
 
-        // Clear the searchHint icon so that it takes as little space as possible.
-        ImageView searchHintIcon = (ImageView) searchView.findViewById(R.id.abs__search_mag_icon);
-        searchHintIcon.setBackgroundResource(android.R.color.transparent);
-        searchHintIcon.setLayoutParams(new LinearLayout.LayoutParams(1, 1));
-        searchHintIcon.setAdjustViewBounds(true);
-        searchHintIcon.setPadding(0, 0, 0, 0);
-        
         actionBar.setCustomView(customSearchView);
         actionBar.setDisplayShowCustomEnabled(true);
     }
@@ -619,7 +637,7 @@ public class DictionaryActivity extends SherlockListActivity {
 
     void updateLangButton() {
         final LanguageResources languageResources =
-                Language.isoCodeToResources.get(index.shortName);
+                DictionaryApplication.isoCodeToResources.get(index.shortName);
         if (languageResources != null && languageResources.flagId != 0) {
             languageButton.setImageResource(languageResources.flagId);
         } else {
@@ -924,7 +942,7 @@ public class DictionaryActivity extends SherlockListActivity {
                         }
                     });
             // Rats, this won't be shown:
-            searchForSelection.setIcon(R.drawable.abs__ic_search);
+            //searchForSelection.setIcon(R.drawable.abs__ic_search);
         }
 
         if (row instanceof TokenRow && ttsReady) {
@@ -989,7 +1007,6 @@ public class DictionaryActivity extends SherlockListActivity {
         // searchView.selectAll();
     }
 
-    @Override
     protected void onListItemClick(ListView l, View v, int row, long id) {
         defocusSearchText();
         if (clickOpensContextMenu && dictRaf != null) {

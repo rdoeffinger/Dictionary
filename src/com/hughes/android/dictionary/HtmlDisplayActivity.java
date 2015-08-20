@@ -21,11 +21,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import com.hughes.util.StringUtil;
 
-public final class HtmlDisplayActivity extends SherlockActivity {
+public final class HtmlDisplayActivity extends ActionBarActivity {
 
     static final String LOG = "QuickDic";
 
