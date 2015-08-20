@@ -1,8 +1,6 @@
 
 package com.hughes.android.dictionary;
 
-import com.hughes.util.StringUtil;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.hughes.android.dictionary.engine.HtmlEntry;
+import com.hughes.util.StringUtil;
 
 public class MyWebView extends WebView {
 

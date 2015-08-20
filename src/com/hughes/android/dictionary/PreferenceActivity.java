@@ -14,12 +14,12 @@
 
 package com.hughes.android.dictionary;
 
-import java.util.List;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
+
+import java.util.List;
 
 public class PreferenceActivity extends android.preference.PreferenceActivity {
 

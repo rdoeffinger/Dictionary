@@ -1,7 +1,6 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.android.dictionary.C;
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;

@@ -14,10 +14,8 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.android.dictionary.R;
 import com.ibm.icu.text.Collator;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
