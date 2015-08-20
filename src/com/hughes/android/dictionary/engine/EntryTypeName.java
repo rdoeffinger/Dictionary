@@ -70,12 +70,12 @@ public enum EntryTypeName {
     final boolean overridesStopList;
     final EntryTypeName singleWordInstance;
 
-    private EntryTypeName() {
+    EntryTypeName() {
         this(false, false, null);
     }
 
-    private EntryTypeName(final boolean mainWord, final boolean overridesStopList,
-            final EntryTypeName singleWordInstance) {
+    EntryTypeName(final boolean mainWord, final boolean overridesStopList,
+                  final EntryTypeName singleWordInstance) {
         this.mainWord = mainWord;
         this.overridesStopList = overridesStopList;
         this.singleWordInstance = singleWordInstance == null ? this : singleWordInstance;

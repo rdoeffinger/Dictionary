@@ -153,7 +153,7 @@ public final class Index implements RAFSerializable<Index> {
         }
         RAFList.write(raf, sortedIndexEntries, indexEntrySerializer);
         new SerializableSerializer<Set<String>>().write(raf, stoplist);
-        UniformRAFList.write(raf, (Collection<RowBase>) rows, new RowBase.Serializer(this), 5 /*
+        UniformRAFList.write(raf, rows, new RowBase.Serializer(this), 5 /*
                                                                                                * bytes
                                                                                                * per
                                                                                                * entry

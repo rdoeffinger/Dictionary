@@ -484,7 +484,6 @@ public class DictionaryApplication extends Application {
     public synchronized void deleteDictionary(final DictionaryInfo dictionaryInfo) {
         while (dictionaryConfig.dictionaryFilesOrdered.remove(dictionaryInfo.uncompressedFilename)) {
         }
-        ;
         dictionaryConfig.uncompressedFilenameToDictionaryInfo
                 .remove(dictionaryInfo.uncompressedFilename);
         getPath(dictionaryInfo.uncompressedFilename).delete();

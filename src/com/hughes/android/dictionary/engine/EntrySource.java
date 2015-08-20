@@ -68,6 +68,6 @@ public class EntrySource extends IndexedObject implements Serializable {
             raf.writeUTF(t.name);
             raf.writeInt(t.numEntries);
         }
-    };
+    }
 
 }

@@ -695,7 +695,7 @@ public class DictionaryActivity extends ActionBarActivity {
             protected void onGo() {
                 dialog.dismiss();
                 DictionaryActivity.this.finish();
-            };
+            }
         };
         button.setOnClickListener(intentLauncher);
         listView.addHeaderView(button);
@@ -719,7 +719,7 @@ public class DictionaryActivity extends ActionBarActivity {
                         protected void onGo() {
                             dialog.dismiss();
                             DictionaryActivity.this.finish();
-                        };
+                        }
                     };
                     button.setOnClickListener(intentLauncher);
                     result.addView(button);

@@ -81,7 +81,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         public void write(RandomAccessFile raf, HtmlEntry t) throws IOException {
             t.write(raf);
         }
-    };
+    }
 
     public String getRawText(final boolean compact) {
         return title + ":\n" + getHtml();

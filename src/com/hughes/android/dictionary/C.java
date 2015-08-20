@@ -41,10 +41,10 @@ public class C {
                 R.drawable.theme_light_token_row_other_bg,
                 R.drawable.theme_light_normal_row_bg);
 
-        private Theme(final int themeId, final int tokenRowFg,
-                final int tokenRowFgColor,
-                final int tokenRowMainBg, final int tokenRowOtherBg,
-                final int normalRowBg) {
+        Theme(final int themeId, final int tokenRowFg,
+              final int tokenRowFgColor,
+              final int tokenRowMainBg, final int tokenRowOtherBg,
+              final int normalRowBg) {
             this.themeId = themeId;
             this.tokenRowFg = tokenRowFg;
             this.tokenRowFgColor = tokenRowFgColor;

@@ -58,7 +58,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
         public void write(RandomAccessFile raf, TextEntry t) throws IOException {
             t.write(raf);
         }
-    };
+    }
 
     @Override
     public void addToDictionary(final Dictionary dictionary) {

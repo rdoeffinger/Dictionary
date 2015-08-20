@@ -79,7 +79,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         public void write(RandomAccessFile raf, PairEntry t) throws IOException {
             t.write(raf);
         }
-    };
+    }
 
     @Override
     public void addToDictionary(final Dictionary dictionary) {
