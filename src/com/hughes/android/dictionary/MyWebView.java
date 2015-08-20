@@ -18,6 +18,16 @@ public class MyWebView extends WebView {
 
     HtmlDisplayActivity activity;
 
+    public static void quickdicUrlToIntent(final String url, final Intent intent) {
+        int firstColon = url.indexOf("?");
+        if (firstColon == -1)
+            return;
+        int secondColon = url.indexOf("&", firstColon + 1);
+        if (secondColon == -1)
+            return;
+        intent.putExtra(C.SEARCH_TOKEN, StringUtil.decodeFromUrl(url.substring(secondColon + 1)));
+    }
+
     public MyWebView(Context context) {
         super(context);
     }
@@ -33,7 +43,7 @@ public class MyWebView extends WebView {
                 if (HtmlEntry.isQuickdicUrl(url)) {
                     Log.d(LOG, "Handling Quickdic URL: " + url);
                     final Intent result = new Intent();
-                    HtmlEntry.quickdicUrlToIntent(url, result);
+                    quickdicUrlToIntent(url, result);
                     Log.d(LOG, "SEARCH_TOKEN=" + result.getStringExtra(C.SEARCH_TOKEN));
                     activity.setResult(Activity.RESULT_OK, result);
                     activity.finish();

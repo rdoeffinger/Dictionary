@@ -1,9 +1,6 @@
 
 package com.hughes.android.dictionary.engine;
 
-import android.content.Intent;
-import android.util.Log;
-
 import com.hughes.android.dictionary.C;
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
@@ -177,16 +174,6 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
 
     public static boolean isQuickdicUrl(String url) {
         return url.startsWith("q://d?");
-    }
-
-    public static void quickdicUrlToIntent(final String url, final Intent intent) {
-        int firstColon = url.indexOf("?");
-        if (firstColon == -1)
-            return;
-        int secondColon = url.indexOf("&", firstColon + 1);
-        if (secondColon == -1)
-            return;
-        intent.putExtra(C.SEARCH_TOKEN, StringUtil.decodeFromUrl(url.substring(secondColon + 1)));
     }
 
     // --------------------------------------------------------------------
