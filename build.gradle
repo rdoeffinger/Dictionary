@@ -20,6 +20,14 @@ dependencies {
 android {
     compileSdkVersion 21
     buildToolsVersion "22.0.1"
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
+        release {
+            minifyEnabled true
+        }
+    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
