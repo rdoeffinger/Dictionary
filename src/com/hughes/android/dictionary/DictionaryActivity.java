@@ -143,7 +143,7 @@ public class DictionaryActivity extends ActionBarActivity {
     volatile boolean ttsReady;
 
     Typeface typeface;
-    C.Theme theme = C.Theme.LIGHT;
+    DictionaryApplication.Theme theme = DictionaryApplication.Theme.LIGHT;
     int textColorFg = Color.BLACK;
     int fontSizeSp;
 

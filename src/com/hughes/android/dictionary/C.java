@@ -26,39 +26,4 @@ public class C {
 
     public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
 
-    enum Theme {
-        DEFAULT(R.style.Theme_Default,
-                R.style.Theme_Default_TokenRow_Fg,
-                R.color.theme_default_token_row_fg,
-                R.drawable.theme_default_token_row_main_bg,
-                R.drawable.theme_default_token_row_other_bg,
-                R.drawable.theme_default_normal_row_bg),
-
-        LIGHT(R.style.Theme_Light,
-                R.style.Theme_Light_TokenRow_Fg,
-                R.color.theme_light_token_row_fg,
-                R.drawable.theme_light_token_row_main_bg,
-                R.drawable.theme_light_token_row_other_bg,
-                R.drawable.theme_light_normal_row_bg);
-
-        Theme(final int themeId, final int tokenRowFg,
-              final int tokenRowFgColor,
-              final int tokenRowMainBg, final int tokenRowOtherBg,
-              final int normalRowBg) {
-            this.themeId = themeId;
-            this.tokenRowFg = tokenRowFg;
-            this.tokenRowFgColor = tokenRowFgColor;
-            this.tokenRowMainBg = tokenRowMainBg;
-            this.tokenRowOtherBg = tokenRowOtherBg;
-            this.normalRowBg = normalRowBg;
-        }
-
-        final int themeId;
-        final int tokenRowFg;
-        final int tokenRowFgColor;
-        final int tokenRowMainBg;
-        final int tokenRowOtherBg;
-        final int normalRowBg;
-    }
-
 }
