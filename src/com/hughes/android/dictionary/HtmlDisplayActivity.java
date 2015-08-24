@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -34,27 +35,21 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
     static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
     static final String SHOW_OK_BUTTON = "showOKButton";
 
-    public static Intent getHelpLaunchIntent() {
-        final Intent intent = new Intent();
-        intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(),
-                HtmlDisplayActivity.class.getName());
+    public static Intent getHelpLaunchIntent(Context c) {
+        final Intent intent = new Intent(c, HtmlDisplayActivity.class);
         intent.putExtra(HTML_RES, R.raw.help);
         return intent;
     }
 
-    public static Intent getWhatsNewLaunchIntent() {
-        final Intent intent = new Intent();
-        intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(),
-                HtmlDisplayActivity.class.getName());
+    public static Intent getWhatsNewLaunchIntent(Context c) {
+        final Intent intent = new Intent(c, HtmlDisplayActivity.class);
         intent.putExtra(HTML_RES, R.raw.whats_new);
         return intent;
     }
 
-    public static Intent getHtmlIntent(final String html, final String textToHighlight,
+    public static Intent getHtmlIntent(Context c, final String html, final String textToHighlight,
             final boolean showOkButton) {
-        final Intent intent = new Intent();
-        intent.setClassName(HtmlDisplayActivity.class.getPackage().getName(),
-                HtmlDisplayActivity.class.getName());
+        final Intent intent = new Intent(c, HtmlDisplayActivity.class);
         intent.putExtra(HTML, html);
         intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight);
         intent.putExtra(SHOW_OK_BUTTON, showOkButton);

@@ -350,8 +350,7 @@ public class DictionaryApplication extends Application {
         MenuItemCompat.setShowAsAction(about, MenuItem.SHOW_AS_ACTION_NEVER);
         about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
-                final Intent intent = new Intent().setClassName(AboutActivity.class
-                        .getPackage().getName(), AboutActivity.class.getCanonicalName());
+                final Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                 context.startActivity(intent);
                 return false;
             }
@@ -361,7 +360,7 @@ public class DictionaryApplication extends Application {
         MenuItemCompat.setShowAsAction(help, MenuItem.SHOW_AS_ACTION_NEVER);
         help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
-                context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent());
+                context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent(getApplicationContext()));
                 return false;
             }
         });
@@ -371,8 +370,7 @@ public class DictionaryApplication extends Application {
         preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 PreferenceActivity.prefsMightHaveChanged = true;
-                final Intent intent = new Intent().setClassName(PreferenceActivity.class
-                        .getPackage().getName(), PreferenceActivity.class.getCanonicalName());
+                final Intent intent = new Intent(getApplicationContext(), PreferenceActivity.class);
                 context.startActivity(intent);
                 return false;
             }

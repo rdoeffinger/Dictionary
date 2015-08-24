@@ -187,11 +187,9 @@ public class DictionaryActivity extends ActionBarActivity {
     public DictionaryActivity() {
     }
 
-    public static Intent getLaunchIntent(final File dictFile, final String indexShortName,
+    public static Intent getLaunchIntent(Context c, final File dictFile, final String indexShortName,
             final String searchToken) {
-        final Intent intent = new Intent();
-        intent.setClassName(DictionaryActivity.class.getPackage().getName(),
-                DictionaryActivity.class.getName());
+        final Intent intent = new Intent(c, DictionaryActivity.class);
         intent.putExtra(C.DICT_FILE, dictFile.getPath());
         intent.putExtra(C.INDEX_SHORT_NAME, indexShortName);
         intent.putExtra(C.SEARCH_TOKEN, searchToken);
@@ -321,7 +319,7 @@ public class DictionaryActivity extends ActionBarActivity {
         if (dictFilename == null)
         {
             Toast.makeText(this, getString(R.string.no_dict_file), Toast.LENGTH_LONG).show();
-            startActivity(DictionaryManagerActivity.getLaunchIntent());
+            startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
             finish();
             return;
         }
@@ -354,7 +352,7 @@ public class DictionaryActivity extends ActionBarActivity {
             }
             Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()),
                     Toast.LENGTH_LONG).show();
-            startActivity(DictionaryManagerActivity.getLaunchIntent());
+            startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
             finish();
             return;
         }
@@ -689,7 +687,7 @@ public class DictionaryActivity extends ActionBarActivity {
         final String name = getString(R.string.dictionaryManager);
         button.setText(name);
         final IntentLauncher intentLauncher = new IntentLauncher(listView.getContext(),
-                DictionaryManagerActivity.getLaunchIntent()) {
+                DictionaryManagerActivity.getLaunchIntent(getApplicationContext())) {
             @Override
             protected void onGo() {
                 dialog.dismiss();
@@ -711,7 +709,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     final View button = application.createButton(parent.getContext(),
                             dictionaryInfo, indexInfo);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
-                            getLaunchIntent(
+                            getLaunchIntent(getApplicationContext(),
                                     application.getPath(dictionaryInfo.uncompressedFilename),
                                     indexInfo.shortName, searchView.getQuery().toString())) {
                         @Override
@@ -824,7 +822,7 @@ public class DictionaryActivity extends ActionBarActivity {
             MenuItemCompat.setShowAsAction(dictionaryManager, MenuItem.SHOW_AS_ACTION_NEVER);
             dictionaryManager.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
-                    startActivity(DictionaryManagerActivity.getLaunchIntent());
+                    startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
                     finish();
                     return false;
                 }
@@ -1473,7 +1471,7 @@ public class DictionaryActivity extends ActionBarActivity {
                         String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
                         // Log.d(LOG, "html=" + html);
                         startActivityForResult(
-                                HtmlDisplayActivity.getHtmlIntent(String.format(
+                                HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
                                         "<html><head></head><body>%s</body></html>", html),
                                         htmlTextToHighlight, false),
                                 0);

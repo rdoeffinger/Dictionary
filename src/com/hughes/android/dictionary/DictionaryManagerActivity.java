@@ -184,10 +184,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         }
     };
 
-    public static Intent getLaunchIntent() {
-        final Intent intent = new Intent();
-        intent.setClassName(DictionaryManagerActivity.class.getPackage().getName(),
-                DictionaryManagerActivity.class.getName());
+    public static Intent getLaunchIntent(Context c) {
+        final Intent intent = new Intent(c, DictionaryManagerActivity.class);
         intent.putExtra(C.CAN_AUTO_LAUNCH_DICT, false);
         return intent;
     }
@@ -230,7 +228,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(
                 thanksForUpdatingLatestVersion)) {
             blockAutoLaunch = true;
-            startActivity(HtmlDisplayActivity.getWhatsNewLaunchIntent());
+            startActivity(HtmlDisplayActivity.getWhatsNewLaunchIntent(getApplicationContext()));
             prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion)
                     .commit();
         }
@@ -348,7 +346,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 prefs.contains(C.DICT_FILE) &&
                 prefs.contains(C.INDEX_SHORT_NAME)) {
             Log.d(LOG, "Skipping DictionaryManager, going straight to dictionary.");
-            startActivity(DictionaryActivity.getLaunchIntent(
+            startActivity(DictionaryActivity.getLaunchIntent(getApplicationContext(),
                     new File(prefs.getString(C.DICT_FILE, "")),
                     prefs.getString(C.INDEX_SHORT_NAME, ""),
                     prefs.getString(C.SEARCH_TOKEN, "")));
@@ -559,7 +557,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             if (canLaunch) {
                 button.setOnClickListener(
                         new IntentLauncher(buttons.getContext(),
-                                DictionaryActivity.getLaunchIntent(
+                                DictionaryActivity.getLaunchIntent(getApplicationContext(),
                                         application.getPath(dictionaryInfo.uncompressedFilename),
                                         indexInfo.shortName, "")));
 
@@ -577,7 +575,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (canLaunch) {
             row.setClickable(true);
             row.setOnClickListener(new IntentLauncher(parent.getContext(),
-                    DictionaryActivity.getLaunchIntent(
+                    DictionaryActivity.getLaunchIntent(getApplicationContext(),
                             application.getPath(dictionaryInfo.uncompressedFilename),
                             dictionaryInfo.indexInfos.get(0).shortName, "")));
             row.setFocusable(true);
