@@ -226,6 +226,7 @@ public class DictionaryActivity extends ActionBarActivity {
         // Don't auto-launch if this fails.
         prefs.edit().remove(C.DICT_FILE).commit();
 
+        setContentView(R.layout.dictionary_activity);
 
         application = (DictionaryApplication) getApplication();
         theme = application.getSelectedTheme();
@@ -426,8 +427,6 @@ public class DictionaryActivity extends ActionBarActivity {
         } catch (NumberFormatException e) {
             fontSizeSp = 14;
         }
-
-        setContentView(R.layout.dictionary_activity);
 
         // ContextMenu.
         registerForContextMenu(getListView());
