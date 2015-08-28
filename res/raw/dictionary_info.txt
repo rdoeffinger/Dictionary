@@ -77,4 +77,4 @@ EN-VI.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-d
 EN-YI.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/EN-YI.quickdic.v006.zip	1440718700535	2210982	1247226	2	EN	5773	2023	YI	7142	3909	(EN)Wiktionary-based EN-YI dictionary.
 EN-ZH.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/EN-ZH.quickdic.v006.zip	1440708261471	26769262	17392158	2	EN	24436	0	ZH	61678	58269	(EN)Wiktionary-based EN-ZH dictionary.
 EN-ZU.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/EN-ZU.quickdic.v006.zip	1440736043202	404988	194189	2	EN	1901	609	ZU	1021	945	(EN)Wiktionary-based EN-ZU dictionary.
-EN.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/EN.quickdic.v006.zip	1440682898491	175006373	141653837	1	EN	537467	347782	Wiktionary-based EN dictionary.
+EN.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/EN.quickdic.v006.zip	1440682898491	175006373	64028642	1	EN	537467	347782	Wiktionary-based EN dictionary.
