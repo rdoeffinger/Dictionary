@@ -408,6 +408,12 @@ public class DictionaryActivity extends ActionBarActivity {
         String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.ttf.jpg");
         if ("SYSTEM".equals(fontName)) {
             typeface = Typeface.DEFAULT;
+	} else if ("SERIF".equals(fontName)) {
+            typeface = Typeface.SERIF;
+	} else if ("SANS_SERIF".equals(fontName)) {
+            typeface = Typeface.SANS_SERIF;
+	} else if ("MONOSPACE".equals(fontName)) {
+            typeface = Typeface.MONOSPACE;
         } else {
             try {
                 typeface = Typeface.createFromAsset(getAssets(), fontName);

@@ -4,11 +4,17 @@
   <string-array name="fontKeys">
     <item>FreeSerif.ttf.jpg</item>
     <item>SYSTEM</item>
+    <item>SERIF</item>
+    <item>SANS_SERIF</item>
+    <item>MONOSPACE</item>
   </string-array>
 
   <string-array name="fonts">
     <item>FreeSerif</item>
     <item>System standard</item>
+    <item>System serif</item>
+    <item>System sans-serif</item>
+    <item>System monospace</item>
   </string-array>
     
   <string-array name="themeKeys">
