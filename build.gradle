@@ -12,9 +12,24 @@ apply plugin: 'com.android.application'
 repositories {
     jcenter()
 }
+configurations {
+    smallicu
+}
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.ibm.icu:icu4j:55.1'
+    // Note: you can just replace "smallicu" by compile
+    // and remove the "compile files" part if you do not
+    // care about the size of the apk
+    smallicu 'com.ibm.icu:icu4j:55.1'
+    compile files('build/icu4j-55.1.small.jar') {
+        builtBy 'makesmallicu'
+    }
+}
+
+task makesmallicu (dependsOn: configurations.smallicu) << {
+    exec {
+        commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "build/icu4j-55.1.small.jar"
+    }
 }
 
 android {
