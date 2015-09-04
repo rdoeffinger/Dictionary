@@ -61,7 +61,7 @@
      Leider kann ich keine Verantwortung für die Wörterbücher (außer Formatierung) nehmen, weil sie aus anderen Quellen erzeugt werden.
      Danke an Michael Vogel für Hilfe mit dem Icon und den deutschen Übersetzungen.
      Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:</string>
-    <string name="myEmail" formatted="false">thad.hughes@gmail.com</string>
+    <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">Weitere Informationen finden Sie unter:</string>
     <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
     <string name="contributionsFrom">Contributions from:</string>

@@ -382,7 +382,7 @@ public class DictionaryApplication extends Application {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri
-                        .parse("http://code.google.com/p/quickdic-dictionary/issues/entry"));
+                        .parse("http://github.com/rdoeffinger/Dictionary/issues"));
                 context.startActivity(intent);
                 return false;
             }
