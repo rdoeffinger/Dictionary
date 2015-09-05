@@ -471,7 +471,7 @@ public class DictionaryActivity extends ActionBarActivity {
         final int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300,
                 getResources().getDisplayMetrics());
         final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                width, ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         customSearchView.setLayoutParams(layoutParams);
 
         listView.setOnItemClickListener(new OnItemClickListener() {
