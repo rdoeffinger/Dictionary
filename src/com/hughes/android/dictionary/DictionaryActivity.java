@@ -205,13 +205,6 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.d(LOG, "onRestoreInstanceState: " + savedInstanceState.getString(C.SEARCH_TOKEN));
-        onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         // This needs to be before super.onCreate, otherwise ActionbarSherlock
         // doesn't makes the background of the actionbar white when you're
