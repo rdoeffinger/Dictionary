@@ -7,6 +7,7 @@ DE-HE.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-d
 DE-HU.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/DE-HU.quickdic.v006.zip	1357252622440	3043998	1405961	2	DE	14871	14106	HU	14283	13039	Wikitionary-based DE-HU dictionary.
 DE-IT.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/DE-IT.quickdic.v006.zip	1357249521092	11745968	8106562	2	DE	22278	21215	IT	27229	25229	Wikitionary-based DE-IT dictionary.
 DE-LA.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/DE-LA.quickdic.v006.zip	1357252888771	3373110	2405006	2	DE	6693	6358	LA	10235	9092	Wikitionary-based DE-LA dictionary.
+DE-NL.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/DE-NL.quickdic.v006.zip	1357252978660	3158718	1032123	2	DE	20006	18962	NL	18031	16991	Wikitionary-based DE-NL dictionary.
 DE-SV.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/DE-SV.quickdic.v006.zip	1357253286485	4490723	2487428	2	DE	17894	16891	SV	17406	15892	Wikitionary-based DE-SV dictionary.
 DE-TR.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/DE-TR.quickdic.v006.zip	1357253378516	1928300	658637	2	DE	13149	12286	TR	10869	8610	Wikitionary-based DE-TR dictionary.
 DE.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.1-dictionaries/DE.quickdic.v006.zip	1440752883070	172881354	146688771	1	DE	321964	281272	Wiktionary-based DE dictionary.
