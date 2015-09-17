@@ -398,7 +398,7 @@ public class DictionaryActivity extends ActionBarActivity {
             }
         }).start();
 
-        String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.ttf.jpg");
+        String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.otf.jpg");
         if ("SYSTEM".equals(fontName)) {
             typeface = Typeface.DEFAULT;
 	} else if ("SERIF".equals(fontName)) {
