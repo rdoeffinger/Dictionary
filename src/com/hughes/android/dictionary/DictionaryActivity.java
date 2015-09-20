@@ -408,6 +408,9 @@ public class DictionaryActivity extends ActionBarActivity {
 	} else if ("MONOSPACE".equals(fontName)) {
             typeface = Typeface.MONOSPACE;
         } else {
+            if ("FreeSerif.ttf.jpg".equals(fontName)) {
+                fontName = "FreeSerif.otf.jpg";
+            }
             try {
                 typeface = Typeface.createFromAsset(getAssets(), fontName);
             } catch (Exception e) {

@@ -2,7 +2,7 @@
 <resources>
 
   <string-array name="fontKeys">
-    <item>FreeSerif.ttf.jpg</item>
+    <item>FreeSerif.otf.jpg</item>
     <item>SYSTEM</item>
     <item>SERIF</item>
     <item>SANS_SERIF</item>

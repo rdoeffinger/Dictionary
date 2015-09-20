@@ -29,7 +29,7 @@
     android:title="@string/fontTitle"
     android:summary="@string/fontSummary"
     android:persistent="true"
-    android:defaultValue="FreeSerif.ttf.jpg"
+    android:defaultValue="FreeSerif.otf.jpg"
     android:entries="@array/fonts"
     android:entryValues="@array/fontKeys"
   />
