@@ -146,8 +146,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                             "Download failed: status=" + status +
                                     ", reason=" + cursor.getString(cursor
                                             .getColumnIndex(DownloadManager.COLUMN_REASON)));
-                    Toast.makeText(context, getString(R.string.downloadFailed, dest),
-                            Toast.LENGTH_LONG).show();
+                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.downloadFailed, dest)).setNeutralButton("Close", null).show();
                     return;
                 }
 
@@ -174,8 +173,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     Toast.makeText(context, getString(R.string.installationFinished, dest),
                             Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(context, getString(R.string.unzippingFailed, dest),
-                            Toast.LENGTH_LONG).show();
+                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.unzippingFailed, dest)).setNeutralButton("Close", null).show();
                     Log.e(LOG, "Failed to unzip.", e);
                 } finally {
                     localZipFile.delete();
@@ -249,6 +247,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     R.string.unableToReadDictionaryDir,
                     dictDir.getAbsolutePath(),
                     Environment.getExternalStorageDirectory()));
+            builder.setNeutralButton("Close", null);
             builder.create().show();
         }
 
