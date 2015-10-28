@@ -8,94 +8,94 @@
     <string name="about">À propos de QuickDic</string>
     <string name="settings">Configuration</string>
     <string name="help">Aide</string>
-    <string name="reportIssue">Problem melden</string>
-    <string name="no_dict_file">S\'il vous plaît spécifier un répertoire par défaut dans les réglages.</string>
+    <string name="reportIssue">Signaler un problème…</string>
+    <string name="no_dict_file">Merci de spécifier un répertoire par défaut dans les réglages.</string>
 
     <!-- DictionaryManagerActivity -->
-    <string name="dictionaryManager">Liste de dictionnaire</string>
-    <string name="dictionariesOnDevice">Dictionnaire disponible</string>
-    <string name="downloadableDictionaries">Dictionnaire à télecharger</string>
+    <string name="dictionaryManager">Gestion des dictionnaires</string>
+    <string name="dictionariesOnDevice">Dictionnaires téléchargés</string>
+    <string name="downloadableDictionaries">Dictionnaire disponibles</string>
     <string name="downloadButton">%.1fMB</string>
-    <string name="updateAvailable">mise à jour disponible!</string>
-    <string name="moveToTop">Faites glisser vers le haut</string>
-    <string name="deleteDictionary">Supprimer dictionnaire</string>
-    <string name="indexInfo">%1$s: %2$,d Mots</string>
-    <string name="managerShow">\'Afficher</string>
+    <string name="updateAvailable">Mise à jour disponible !</string>
+    <string name="moveToTop">Remonter en haut</string>
+    <string name="deleteDictionary">Supprimer le dictionnaire</string>
+    <string name="indexInfo">%1$s : %2$,d mots</string>
+    <string name="managerShow">Afficher</string>
     <string name="managerHide">Masquer</string>
     <string name="error">Erreur</string>
-    <string name="unableToReadDictionaryDir">Impossible de lire le dictionnaire du répertoire: \n%1$s\n\nAndroid répertoire de stockage externe: \n%2$s</string>
+    <string name="unableToReadDictionaryDir">Impossible de lire le dictionnaire du répertoire : \n%1$s\n\nRépertoire Android de stockage externe : \n%2$s</string>
 
     <!-- Download. -->
-    <string name="downloadFailed">Le téléchargement a échoué: \n%s.</string>
-    <string name="unzippingDictionary">Décompression en cours: \n%s</string>
-    <string name="unzippingFailed">La décompression a échoué: \n%s</string>
-    <string name="installationFinished">Installation finished: \n%s.</string>
+    <string name="downloadFailed">Le téléchargement a échoué : \n%s.</string>
+    <string name="unzippingDictionary">Décompression en cours : \n%s</string>
+    <string name="unzippingFailed">La décompression a échoué : \n%s</string>
+    <string name="installationFinished">Installation terminée : \n%s.</string>
     <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
     <!-- DictionaryActivity -->
-    <string name="searchText">texte à rechercher</string>
-    <string name="selectDictionary">Choisir un Dictionnaire</string>
-    <string name="addToWordList">ajouter à la liste de mots: %s</string>
-    <string name="searchForSelection">Rechercher: %s</string>
-    <string name="failedAddingToWordList">Erreur pendant l\'ajout a la liste: %s</string>
-    <string name="invalidDictionary">dictionnaire incorrect: fichier=%1$s, erreur=%2$s</string>
-    <string name="noSearchResults">Aucun résultats.</string>
-    <string name="aboutDictionary">À propos du dictionnaire</string>
-    <string name="fontFailure">défaillance de la police: %s</string>
-    <string name="seeAlso">vgl.: %1$s (%2$s)</string>
-    <string name="speak">parler</string>
-    <string name="nextWord">mot suivant</string>
-    <string name="previousWord">mot précédent</string>
+    <string name="searchText">Rechercher…</string>
+    <string name="selectDictionary">Choisir un dictionnaire…</string>
+    <string name="addToWordList">Ajouter à la liste de mots : %s</string>
+    <string name="searchForSelection">Rechercher : %s</string>
+    <string name="failedAddingToWordList">Erreur pendant l\'ajout à la liste : %s</string>
+    <string name="invalidDictionary">Dictionnaire incorrect: fichier=%1$s, erreur=%2$s</string>
+    <string name="noSearchResults">Aucun résultat.</string>
+    <string name="aboutDictionary">À propos du dictionnaire…</string>
+    <string name="fontFailure">Erreur de la police : %s</string>
+    <string name="seeAlso">Voir aussi : %1$s (%2$s)</string>
+    <string name="speak">Parler</string>
+    <string name="nextWord">Mot suivant</string>
+    <string name="previousWord">Mot précédent</string>
     
     <!-- About dictionary. -->
-    <string name="dictionaryPath">fichier: %s</string>
-    <string name="dictionarySize">taille: %,d bytes</string>
-    <string name="dictionaryCreationTime">crée: %tc</string>
-    <string name="indexName">Index: %s</string>
-    <string name="mainTokenCount">Nombre de mots: %,d</string>
+    <string name="dictionaryPath">Fichier : %s</string>
+    <string name="dictionarySize">Taille : %,d bytes</string>
+    <string name="dictionaryCreationTime">Créé : %tc</string>
+    <string name="indexName">Index : %s</string>
+    <string name="mainTokenCount">Nombre de mots : %,d</string>
     <string name="sources">Source</string>
-    <string name="sourceInfo">%1$s : %2$,d Entrées</string>
+    <string name="sourceInfo">%1$s : %2$,d entrées</string>
 
     <!-- About. -->
-    <string name="contactMe">     Sie vous utilisée Quickdic, j\'aimerais bien avoir votre feedback.
-     Étant donnée que le dictionnaire proviennent de sources esternes, je ne peux malheureusement pas être responsable de son contenu(en dehors de la mise en forme).
-     Merci à Michael Vogel pour les Icons et la traduction allemande, sans oublier Justice Nanhou pour la traduction Française.
-     S\'il vous plait envoyer vos commentaires, Bugs, propositions ou alors juste un petit bonjour à:</string>
+    <string name="contactMe">Si vous utilisez Quickdic, j\'aimerai avoir votre retour !
+     Étant donné que le dictionnaire provient de sources externes, je ne suis pas responsable de son contenu (en dehors de la mise en forme).
+     Merci à Michael Vogel pour les icônes et la traduction allemande, sans oublier Justice Nanhou pour la traduction Française.
+     Merci d'envoyer vos commentaires, bugs, propositions ou alors juste un petit bonjour à :</string>
     <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
-    <string name="webPage">vous trouverez plus d\'information sur cette page :</string>
+    <string name="webPage">Vous trouverez plus d\'informations sur cette page :</string>
     <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
-    <string name="contributionsFrom">Contribution de:</string>
+    <string name="contributionsFrom">Contributions de :</string>
     <string name="license">QuickDic contient du code sous copyright de Google et publié sous la licence Apache 2.0.</string>
     <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
 
     <!-- Preferences -->
 
     <string name="defaultDicKey">defaultddic</string>
-    <string name="defaultDicTitle">Default Dic</string>
-    <string name="defaultDicSummary">Le répertoire choisi par défaut quand rien d\'autre n\'a été mentionné.</string>
+    <string name="defaultDicTitle">Dictionnaire par défaut</string>
+    <string name="defaultDicSummary">Dictionnaire utilisé par défaut/string>
     <string name="quickdicDirectoryKey">quickdicDirectory</string>
     <string name="quickdicDirectoryTitle">Repertoire QuickDic</string>
-    <string name="quickdicDirectorySummary">Le repertoire dans lequel Quickdic enrégistre les dictionnaires.</string>
+    <string name="quickdicDirectorySummary">Repertoire dans lequel QuickDic enrégistre les dictionnaires</string>
     <string name="wordListFileKey">wordListFile</string>
     <string name="wordListFileTitle">Entrées du dictionnaire</string>
-    <string name="wordListFileSummary">Fichier local, où les entrées du dictionnaire seront ajoutées.</string>
+    <string name="wordListFileSummary">Fichier où les entrées du dictionnaire sont ajoutées</string>
     <string name="fontKey">font</string>
-    <string name="fontTitle">police du dictionnaire</string>
-    <string name="fontSummary">Définition du dictionnaire texte.</string>
+    <string name="fontTitle">Police du dictionnaire</string>
+    <string name="fontSummary">Police de caractère utilisée</string>
     <string name="fontSizeKey">fontSize</string>
-    <string name="fontSizeTitle">taille de la plice</string>
-    <string name="fontSizeSummary">taille de la police pour les entrées du dictionnaire.</string>
+    <string name="fontSizeTitle">Taille de la police</string>
+    <string name="fontSizeSummary">Taille de la police de caractère</string>
     <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
-    <string name="saveOnlyFirstSubentryTitle">Export-Filter</string>
-    <string name="saveOnlyFirstSubentrySummary">Pour les entrées avec plusieurs sous-entrées, seulement écrire le premier à la liste de mots.</string>
+    <string name="saveOnlyFirstSubentryTitle">Ne conserver que la première entrée</string>
+    <string name="saveOnlyFirstSubentrySummary">Pour les mots avec plusieurs sous-entrées, ne conserver que le premier dans la liste</string>
     <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
-    <string name="clickOpensContextMenuTitle">clic pour ouvrir le menu contextuel</string>
-    <string name="clickOpensContextMenuSummary">Ouvrez le menu contextuel en cliquant sur les entrées (long clic sera toujours le menu en plein contexte).</string>
+    <string name="clickOpensContextMenuTitle">Un clic ouvre le menu contextuel</string>
+    <string name="clickOpensContextMenuSummary">Un clic sur une entrée ouvre le menu contextuel (un clic long ouvre toujours le menu contextuel)</string>
     <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
-    <string name="showPrevNextButtonsTitle">afficher bouttons de navigation</string>
-    <string name="showPrevNextButtonsSummary">Afficher ou masquer les boutons mot suivant/précédant dans le dictionnaire.</string>
-    <string name="themeKey">theme</string>
-    <string name="themeTitle">UI theme</string>
-    <string name="themeSummary">choisir un thème de couleur de l\'interface utilisateur.</string>
+    <string name="showPrevNextButtonsTitle">Boutons de navigation</string>
+    <string name="showPrevNextButtonsSummary">Afficher ou masquer les boutons mot suivant/précédant dans le dictionnaire</string>
+    <string name="themeKey">thème</string>
+    <string name="themeTitle">Thème</string>
+    <string name="themeSummary">Thème de couleurs de l\'interface utilisateur</string>
    
 </resources>
