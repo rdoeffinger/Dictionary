@@ -21,14 +21,14 @@ dependencies {
     // and remove the "compile files" part if you do not
     // care about the size of the apk
     smallicu 'com.ibm.icu:icu4j:55.1'
-    compile files('build/icu4j-55.1.small.jar') {
+    compile files("$buildDir/icu4j-55.1.small.jar") {
         builtBy 'makesmallicu'
     }
 }
 
 task makesmallicu (dependsOn: configurations.smallicu) << {
     exec {
-        commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "build/icu4j-55.1.small.jar"
+        commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-55.1.small.jar"
     }
 }
 
