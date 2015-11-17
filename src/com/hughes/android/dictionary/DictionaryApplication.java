@@ -406,7 +406,7 @@ public class DictionaryApplication extends Application {
              getApplicationContext().getExternalFilesDirs(null);
         }
         if (!dictDir.isDirectory() || !dictDir.canWrite()) {
-            String dirs = " " + Environment.getExternalStoragePublicDirectory(null);
+            String dirs = " " + Environment.getExternalStorageDirectory();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 File[] files = getApplicationContext().getExternalFilesDirs(null);
                 for (File f : files) {
