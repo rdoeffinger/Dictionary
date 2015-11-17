@@ -605,7 +605,7 @@ public class DictionaryApplication extends Application {
                                 file.getName(), dictionaryInfo);
                     }
                 } else {
-                    Log.w(LOG, "dictDir is not a diretory: " + getDictDir().getPath());
+                    Log.w(LOG, "dictDir is not a directory: " + getDictDir().getPath());
                 }
                 if (!toAddSorted.isEmpty()) {
                     Collections.sort(toAddSorted, uncompressedFilenameComparator);
