@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
+import android.widget.Toast;
 
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
@@ -400,6 +402,21 @@ public class DictionaryApplication extends Application {
         }
         dictDir = new File(dir);
         dictDir.mkdirs();
+        if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+             getApplicationContext().getExternalFilesDirs(null);
+        }
+        if (!dictDir.isDirectory() || !dictDir.canWrite()) {
+            String dirs = " " + Environment.getExternalStoragePublicDirectory(null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                File[] files = getApplicationContext().getExternalFilesDirs(null);
+                for (File f : files) {
+                    dirs += " " + f.getAbsolutePath();
+                }
+            } else {
+                dirs += " " + getApplicationContext().getExternalFilesDir(null).getAbsolutePath();
+            }
+            Toast.makeText(getApplicationContext(), "Chosen directory not writeable, try one of" + dirs, Toast.LENGTH_LONG).show();
+        }
         return dictDir;
     }
 
