@@ -26,10 +26,13 @@ dependencies {
     }
 }
 
-task makesmallicu (dependsOn: configurations.smallicu) << {
-    exec {
-        commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-55.1.small.jar"
-    }
+task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
+    inputs.file "mksmallicu.sh"
+    inputs.file "${configurations.smallicu.resolve()[0]}"
+    outputs.dir "$buildDir"
+    outputs.file "$buildDir/icu4j-55.1.small.jar"
+    new File("$buildDir").mkdirs()
+    commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-55.1.small.jar"
 }
 
 android {
