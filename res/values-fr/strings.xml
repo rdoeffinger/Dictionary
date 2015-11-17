@@ -60,7 +60,7 @@
     <string name="contactMe">Si vous utilisez Quickdic, j\'aimerai avoir votre retour !
      Étant donné que le dictionnaire provient de sources externes, je ne suis pas responsable de son contenu (en dehors de la mise en forme).
      Merci à Michael Vogel pour les icônes et la traduction allemande, sans oublier Justice Nanhou pour la traduction Française.
-     Merci d'envoyer vos commentaires, bugs, propositions ou alors juste un petit bonjour à :</string>
+     Merci d\'envoyer vos commentaires, bugs, propositions ou alors juste un petit bonjour à :</string>
     <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">Vous trouverez plus d\'informations sur cette page :</string>
     <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
@@ -72,7 +72,7 @@
 
     <string name="defaultDicKey">defaultddic</string>
     <string name="defaultDicTitle">Dictionnaire par défaut</string>
-    <string name="defaultDicSummary">Dictionnaire utilisé par défaut/string>
+    <string name="defaultDicSummary">Dictionnaire utilisé par défaut</string>
     <string name="quickdicDirectoryKey">quickdicDirectory</string>
     <string name="quickdicDirectoryTitle">Repertoire QuickDic</string>
     <string name="quickdicDirectorySummary">Repertoire dans lequel QuickDic enrégistre les dictionnaires</string>
@@ -97,5 +97,4 @@
     <string name="themeKey">thème</string>
     <string name="themeTitle">Thème</string>
     <string name="themeSummary">Thème de couleurs de l\'interface utilisateur</string>
-   
 </resources>
