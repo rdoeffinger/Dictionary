@@ -66,7 +66,19 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
 
         defaultDic.setEntries(entries);
         defaultDic.setEntryValues(entryvalues);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -96,7 +108,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
                     dirs += "\n" + externalFilesDir;
             }
             new AlertDialog.Builder(this).setTitle(getString(R.string.error))
-                .setMessage("Chosen directory not writeable, try one of" + dirs)
+                .setMessage(getString(R.string.chosenNotWritable) + dirs)
                     .setNeutralButton("Close", null).show();
         }
     }

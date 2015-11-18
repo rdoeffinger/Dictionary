@@ -31,6 +31,7 @@
     <string name="unzippingDictionary">Unzipping dictionary: \n%s</string>
     <string name="unzippingFailed">Unzipping failed: \n%s</string>
     <string name="installationFinished">Installation finished: \n%s.</string>
+    <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Search Text</string>
@@ -96,5 +97,6 @@
     <string name="themeKey">theme</string>
     <string name="themeTitle">UI theme</string>
     <string name="themeSummary">User-interface color theme.</string>
+    <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
 
 </resources>

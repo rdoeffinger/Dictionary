@@ -173,7 +173,11 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     Toast.makeText(context, getString(R.string.installationFinished, dest),
                             Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.unzippingFailed, dest)).setNeutralButton("Close", null).show();
+                    String msg = getString(R.string.unzippingFailed, dest);
+                    if (!application.getDictDir().canWrite()) {
+                        msg = getString(R.string.notWritable, application.getDictDir().getAbsolutePath());
+                    }
+                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
                     Log.e(LOG, "Failed to unzip.", e);
                 } finally {
                     localZipFile.delete();
