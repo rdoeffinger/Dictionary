@@ -31,6 +31,7 @@
     <string name="unzippingDictionary">Descomprimiendo diccionario: \n%s</string>
     <string name="unzippingFailed">Error descomprimiento disccionario: \n%s</string>
     <string name="installationFinished">Terminado: \n%s.</string>
+    <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Buscar Texto</string>
@@ -96,5 +97,6 @@ Por favor envíe comentarios, sugerencias, informes de error o simplemente un sa
     <string name="themeKey">theme</string>
     <string name="themeTitle">Tema</string>
     <string name="themeSummary">Color y tema de la interfaz de usuario.</string>
+    <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
     
 </resources>

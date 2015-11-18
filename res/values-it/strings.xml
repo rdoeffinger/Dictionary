@@ -31,6 +31,7 @@
     <string name="unzippingDictionary">Decompressione dizionario: \n%s</string>
     <string name="unzippingFailed">Decompressione dizionario fallita: \n%s</string>
     <string name="installationFinished">Terminato: \n%s.</string>
+    <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Cerca testo</string>
@@ -99,5 +100,6 @@ segnalazioni di bug o semplicemente un breve saluto a:</string>
     <string name="themeKey">theme</string>
     <string name="themeTitle">Tema</string>
     <string name="themeSummary">Colore del tema utente.</string>
+    <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
 
 </resources>

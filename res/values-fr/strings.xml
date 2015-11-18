@@ -30,6 +30,7 @@
     <string name="unzippingDictionary">Décompression en cours : \n%s</string>
     <string name="unzippingFailed">La décompression a échoué : \n%s</string>
     <string name="installationFinished">Installation terminée : \n%s.</string>
+    <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
     <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
     <!-- DictionaryActivity -->
@@ -97,4 +98,5 @@
     <string name="themeKey">thème</string>
     <string name="themeTitle">Thème</string>
     <string name="themeSummary">Thème de couleurs de l\'interface utilisateur</string>
+    <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
 </resources>
