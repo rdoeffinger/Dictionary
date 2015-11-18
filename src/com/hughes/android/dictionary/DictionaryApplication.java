@@ -405,18 +405,6 @@ public class DictionaryApplication extends Application {
         if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
              getApplicationContext().getExternalFilesDirs(null);
         }
-        if (!dictDir.isDirectory() || !dictDir.canWrite()) {
-            String dirs = " " + Environment.getExternalStorageDirectory();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                File[] files = getApplicationContext().getExternalFilesDirs(null);
-                for (File f : files) {
-                    dirs += " " + f.getAbsolutePath();
-                }
-            } else {
-                dirs += " " + getApplicationContext().getExternalFilesDir(null).getAbsolutePath();
-            }
-            Toast.makeText(getApplicationContext(), "Chosen directory not writeable, try one of" + dirs, Toast.LENGTH_LONG).show();
-        }
         return dictDir;
     }
 

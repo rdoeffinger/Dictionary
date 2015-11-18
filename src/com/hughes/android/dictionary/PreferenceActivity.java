@@ -14,14 +14,19 @@
 
 package com.hughes.android.dictionary;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Build;
+import android.os.Environment;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 
+import java.io.File;
 import java.util.List;
 
-public class PreferenceActivity extends android.preference.PreferenceActivity {
+public class PreferenceActivity extends android.preference.PreferenceActivity
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     static boolean prefsMightHaveChanged = false;
 
@@ -61,10 +66,38 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
 
         defaultDic.setEntries(entries);
         defaultDic.setEntryValues(entryvalues);
+
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onContentChanged() {
         super.onContentChanged();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences p, String v) {
+        final DictionaryApplication application = (DictionaryApplication)getApplication();
+        File dictDir = application.getDictDir();
+        if (!dictDir.isDirectory() || !dictDir.canWrite()) {
+            String dirs = "";
+            String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+            if (new File(externalDir).canWrite())
+                dirs += "\n" + externalDir + "/quickDic";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                File[] files = getApplicationContext().getExternalFilesDirs(null);
+                for (File f : files) {
+                    if (f.canWrite())
+                        dirs += "\n" + f.getAbsolutePath();
+                }
+            } else {
+                String externalFilesDir = getApplicationContext().getExternalFilesDir(null).getAbsolutePath();
+                if (new File(externalFilesDir).canWrite())
+                    dirs += "\n" + externalFilesDir;
+            }
+            new AlertDialog.Builder(this).setTitle(getString(R.string.error))
+                .setMessage("Chosen directory not writeable, try one of" + dirs)
+                    .setNeutralButton("Close", null).show();
+        }
     }
 }
