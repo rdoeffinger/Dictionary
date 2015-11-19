@@ -91,7 +91,8 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
     public void onSharedPreferenceChanged(SharedPreferences p, String v) {
         final DictionaryApplication application = (DictionaryApplication)getApplication();
         File dictDir = application.getDictDir();
-        if (!dictDir.isDirectory() || !dictDir.canWrite()) {
+        if (!dictDir.isDirectory() || !dictDir.canWrite() ||
+            !application.checkFileCreate(dictDir)) {
             String dirs = "";
             String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
             if (new File(externalDir).canWrite())

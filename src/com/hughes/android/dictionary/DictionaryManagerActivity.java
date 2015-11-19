@@ -174,8 +174,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                             Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     String msg = getString(R.string.unzippingFailed, dest);
-                    if (!application.getDictDir().canWrite()) {
-                        msg = getString(R.string.notWritable, application.getDictDir().getAbsolutePath());
+                    File dir = application.getDictDir();
+                    if (!dir.canWrite() || !application.checkFileCreate(dir)) {
+                        msg = getString(R.string.notWritable, dir.getAbsolutePath());
                     }
                     new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
                     Log.e(LOG, "Failed to unzip.", e);

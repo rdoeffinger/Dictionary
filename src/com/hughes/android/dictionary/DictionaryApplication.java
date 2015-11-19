@@ -408,6 +408,17 @@ public class DictionaryApplication extends Application {
         return dictDir;
     }
 
+    static public boolean checkFileCreate(File dir) {
+        boolean res = false;
+        File testfile = new File(dir, "quickdic_writetest");
+        try {
+            testfile.delete();
+            res = testfile.createNewFile() & testfile.delete();
+        } catch (Exception e) {
+        }
+        return res;
+    }
+
     public File getWordListFile() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String file = prefs.getString(getString(R.string.wordListFileKey), "");
