@@ -15,7 +15,9 @@
 package com.hughes.android.dictionary;
 
 import android.app.Activity;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
+import android.widget.TextView;
 
 public final class AboutActivity extends Activity {
 
@@ -28,6 +30,14 @@ public final class AboutActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_activity);
+        String ver = "???";
+        try {
+            PackageInfo p = getPackageManager().getPackageInfo(getPackageName(), 0);
+            ver = p.versionName + " (ID " + p.versionCode + ")";
+        } catch (Exception e) {
+        }
+        TextView titleView = (TextView)findViewById(R.id.titleText);
+        titleView.setText("QuickDic " + ver);
     }
 
 }

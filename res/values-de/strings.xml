@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">QuickDic</string>
-    <string name="titleWithVersion">QuickDic 5.1.0</string>
 
     <!-- Global. -->
     <string name="about">Über QuickDic…</string>

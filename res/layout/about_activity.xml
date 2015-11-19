@@ -10,12 +10,11 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:drawableLeft="@drawable/icon"
-            android:text="@string/titleWithVersion"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
