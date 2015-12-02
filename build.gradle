@@ -36,6 +36,8 @@ task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
     commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-55.1.small.jar"
 }
 
+def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "../Util"
+
 android {
     compileSdkVersion 22
     buildToolsVersion "23.0.1"
@@ -51,7 +53,7 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src', '../Util/src']
+            java.srcDirs = ['src', utildir + "/src"]
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
