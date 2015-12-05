@@ -19,12 +19,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.hughes.util.StringUtil;
+
+import java.io.UnsupportedEncodingException;
 
 public final class HtmlDisplayActivity extends ActionBarActivity {
 
@@ -68,14 +71,21 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
-        final String html;
+        String html;
         if (htmlRes != -1) {
             html = StringUtil.readToString(getResources().openRawResource(htmlRes));
         } else {
             html = getIntent().getStringExtra(HTML);
         }
         final MyWebView webView = (MyWebView) findViewById(R.id.webView);
-        webView.loadData(html, "text/html", "utf-8");
+        try {
+            // No way to get pure UTF-8 data into WebView
+            html = Base64.encodeToString(html.getBytes("UTF-8"), Base64.DEFAULT);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        // Use loadURL to allow specifying a charset
+        webView.loadUrl("data:text/html;charset=utf-8;base64," + html);
         webView.activity = this;
 
         final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
