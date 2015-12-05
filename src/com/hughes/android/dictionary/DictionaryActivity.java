@@ -1575,6 +1575,11 @@ public class DictionaryActivity extends ActionBarActivity {
             Log.d(LOG, "searchText changed during shutdown, doing nothing.");
             return;
         }
+
+        // Hide search icon once text is entered
+        searchView.setIconifiedByDefault(text.length() > 0);
+        searchView.setIconified(false);
+
         // if (!searchView.hasFocus()) {
         // Log.d(LOG, "searchText changed without focus, doing nothing.");
         // return;
