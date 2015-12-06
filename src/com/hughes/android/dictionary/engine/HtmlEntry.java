@@ -6,6 +6,8 @@ import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
@@ -27,7 +29,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         lazyHtmlLoader = null;
     }
 
-    public HtmlEntry(Dictionary dictionary, RandomAccessFile raf, final int index)
+    public HtmlEntry(Dictionary dictionary, DataInput raf, final int index)
             throws IOException {
         super(dictionary, raf, index);
         title = raf.readUTF();
@@ -36,7 +38,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
     }
 
     @Override
-    public void write(RandomAccessFile raf) throws IOException {
+    public void write(DataOutput raf) throws IOException {
         super.write(raf);
         raf.writeUTF(title);
 
@@ -72,12 +74,12 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         }
 
         @Override
-        public HtmlEntry read(RandomAccessFile raf, final int index) throws IOException {
+        public HtmlEntry read(DataInput raf, final int index) throws IOException {
             return new HtmlEntry(dictionary, raf, index);
         }
 
         @Override
-        public void write(RandomAccessFile raf, HtmlEntry t) throws IOException {
+        public void write(DataOutput raf, HtmlEntry t) throws IOException {
             t.write(raf);
         }
     }
@@ -105,7 +107,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
 
         boolean isExpanded = false;
 
-        Row(final RandomAccessFile raf, final int thisRowIndex,
+        Row(final DataInput raf, final int thisRowIndex,
                 final Index index) throws IOException {
             super(raf, thisRowIndex, index);
         }
@@ -186,8 +188,8 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         // Not sure this volatile is right, but oh well.
         volatile SoftReference<String> htmlRef = new SoftReference<String>(null);
 
-        private LazyHtmlLoader(final RandomAccessFile raf) throws IOException {
-            this.raf = raf;
+        private LazyHtmlLoader(final DataInput inp) throws IOException {
+            raf = (RandomAccessFile)inp;
             numBytes = raf.readInt();
             numZipBytes = raf.readInt();
             offset = raf.getFilePointer();

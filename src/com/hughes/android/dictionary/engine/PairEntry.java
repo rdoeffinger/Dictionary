@@ -18,9 +18,10 @@ import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -40,7 +41,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         this.pairs.add(new Pair(lang1, lang2));
     }
 
-    public PairEntry(final Dictionary dictionary, final RandomAccessFile raf, final int index)
+    public PairEntry(final Dictionary dictionary, final DataInput raf, final int index)
             throws IOException {
         super(dictionary, raf, index);
         final int size = raf.readInt();
@@ -51,7 +52,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     }
 
     @Override
-    public void write(RandomAccessFile raf) throws IOException {
+    public void write(DataOutput raf) throws IOException {
         super.write(raf);
         // TODO: this could be a short.
         raf.writeInt(pairs.size());
@@ -71,12 +72,12 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         }
 
         @Override
-        public PairEntry read(RandomAccessFile raf, int index) throws IOException {
+        public PairEntry read(DataInput raf, int index) throws IOException {
             return new PairEntry(dictionary, raf, index);
         }
 
         @Override
-        public void write(RandomAccessFile raf, PairEntry t) throws IOException {
+        public void write(DataOutput raf, PairEntry t) throws IOException {
             t.write(raf);
         }
     }
@@ -97,7 +98,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
 
     public static class Row extends RowBase {
 
-        Row(final RandomAccessFile raf, final int thisRowIndex,
+        Row(final DataInput raf, final int thisRowIndex,
                 final Index index) throws IOException {
             super(raf, thisRowIndex, index);
         }

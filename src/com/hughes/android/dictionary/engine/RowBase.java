@@ -18,9 +18,10 @@ import com.hughes.util.IndexedObject;
 import com.hughes.util.raf.RAFListSerializer;
 import com.ibm.icu.text.Transliterator;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ public abstract class RowBase extends IndexedObject {
      */
     private TokenRow tokenRow = null;
 
-    RowBase(final RandomAccessFile raf, final int thisRowIndex, final Index index)
+    RowBase(final DataInput raf, final int thisRowIndex, final Index index)
             throws IOException {
         super(thisRowIndex);
         this.index = index;
@@ -147,7 +148,7 @@ public abstract class RowBase extends IndexedObject {
         }
 
         @Override
-        public RowBase read(RandomAccessFile raf, final int listIndex) throws IOException {
+        public RowBase read(DataInput raf, final int listIndex) throws IOException {
             final byte rowType = raf.readByte();
             if (rowType == 0) {
                 return new PairEntry.Row(raf, listIndex, index);
@@ -162,7 +163,7 @@ public abstract class RowBase extends IndexedObject {
         }
 
         @Override
-        public void write(RandomAccessFile raf, RowBase t) throws IOException {
+        public void write(DataOutput raf, RowBase t) throws IOException {
             if (t instanceof PairEntry.Row) {
                 raf.writeByte(0);
             } else if (t instanceof TokenRow) {

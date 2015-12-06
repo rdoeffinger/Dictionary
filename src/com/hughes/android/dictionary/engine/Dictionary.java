@@ -20,6 +20,8 @@ import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -104,7 +106,8 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     }
 
     @Override
-    public void write(RandomAccessFile raf) throws IOException {
+    public void write(DataOutput out) throws IOException {
+        RandomAccessFile raf = (RandomAccessFile)out;
         raf.writeInt(dictFileVersion);
         raf.writeLong(creationMillis);
         raf.writeUTF(dictInfo);
@@ -118,26 +121,26 @@ public class Dictionary implements RAFSerializable<Dictionary> {
 
     private final RAFListSerializer<Index> indexSerializer = new RAFListSerializer<Index>() {
         @Override
-        public Index read(RandomAccessFile raf, final int readIndex) throws IOException {
+        public Index read(DataInput raf, final int readIndex) throws IOException {
             return new Index(Dictionary.this, raf);
         }
 
         @Override
-        public void write(RandomAccessFile raf, Index t) throws IOException {
+        public void write(DataOutput raf, Index t) throws IOException {
             t.write(raf);
         }
     };
 
     final RAFListSerializer<HtmlEntry> htmlEntryIndexSerializer = new RAFListSerializer<HtmlEntry>() {
         @Override
-        public void write(RandomAccessFile raf, HtmlEntry t) throws IOException {
+        public void write(DataOutput raf, HtmlEntry t) throws IOException {
             if (t.index() == -1)
                 throw new IndexOutOfBoundsException();
             raf.writeInt(t.index());
         }
 
         @Override
-        public HtmlEntry read(RandomAccessFile raf, int readIndex) throws IOException {
+        public HtmlEntry read(DataInput raf, int readIndex) throws IOException {
             return htmlEntries.get(raf.readInt());
         }
     };

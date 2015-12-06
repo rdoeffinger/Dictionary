@@ -17,8 +17,9 @@ package com.hughes.android.dictionary.engine;
 import com.hughes.util.IndexedObject;
 import com.hughes.util.raf.RAFListSerializer;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.io.Serializable;
 
 public class EntrySource extends IndexedObject implements Serializable {
@@ -56,7 +57,7 @@ public class EntrySource extends IndexedObject implements Serializable {
         }
 
         @Override
-        public EntrySource read(RandomAccessFile raf, int readIndex)
+        public EntrySource read(DataInput raf, int readIndex)
                 throws IOException {
             final String name = raf.readUTF();
             final int numEntries = dictionary.dictFileVersion >= 3 ? raf.readInt() : 0;
@@ -64,7 +65,7 @@ public class EntrySource extends IndexedObject implements Serializable {
         }
 
         @Override
-        public void write(RandomAccessFile raf, EntrySource t) throws IOException {
+        public void write(DataOutput raf, EntrySource t) throws IOException {
             raf.writeUTF(t.name);
             raf.writeInt(t.numEntries);
         }

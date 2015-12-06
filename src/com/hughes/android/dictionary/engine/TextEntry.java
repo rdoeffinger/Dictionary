@@ -18,9 +18,10 @@ import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -28,7 +29,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
 
     final String text;
 
-    public TextEntry(final Dictionary dictionary, final RandomAccessFile raf, final int index)
+    public TextEntry(final Dictionary dictionary, final DataInput raf, final int index)
             throws IOException {
         super(dictionary, raf, index);
         text = raf.readUTF();
@@ -36,7 +37,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     }
 
     @Override
-    public void write(RandomAccessFile raf) throws IOException {
+    public void write(DataOutput raf) throws IOException {
         super.write(raf);
         raf.writeUTF(text);
     }
@@ -50,12 +51,12 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
         }
 
         @Override
-        public TextEntry read(RandomAccessFile raf, final int index) throws IOException {
+        public TextEntry read(DataInput raf, final int index) throws IOException {
             return new TextEntry(dictionary, raf, index);
         }
 
         @Override
-        public void write(RandomAccessFile raf, TextEntry t) throws IOException {
+        public void write(DataOutput raf, TextEntry t) throws IOException {
             t.write(raf);
         }
     }
@@ -74,7 +75,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
 
     public static class Row extends RowBase {
 
-        Row(final RandomAccessFile raf, final int thisRowIndex,
+        Row(final DataInput raf, final int thisRowIndex,
                 final Index index) throws IOException {
             super(raf, thisRowIndex, index);
         }

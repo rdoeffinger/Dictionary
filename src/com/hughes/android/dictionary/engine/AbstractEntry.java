@@ -16,8 +16,9 @@ package com.hughes.android.dictionary.engine;
 
 import com.hughes.util.IndexedObject;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 public abstract class AbstractEntry extends IndexedObject {
 
@@ -28,7 +29,7 @@ public abstract class AbstractEntry extends IndexedObject {
         this.entrySource = entrySource;
     }
 
-    public AbstractEntry(Dictionary dictionary, RandomAccessFile raf, final int index)
+    public AbstractEntry(Dictionary dictionary, DataInput raf, final int index)
             throws IOException {
         super(index);
         if (dictionary.dictFileVersion >= 1) {
@@ -39,7 +40,7 @@ public abstract class AbstractEntry extends IndexedObject {
         }
     }
 
-    public void write(RandomAccessFile raf) throws IOException {
+    public void write(DataOutput raf) throws IOException {
         raf.writeShort(entrySource.index());
     }
 

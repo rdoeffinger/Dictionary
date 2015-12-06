@@ -31,6 +31,8 @@ import com.hughes.util.raf.UniformRAFList;
 import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.Transliterator;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
@@ -115,8 +117,9 @@ public final class Index implements RAFSerializable<Index> {
         return new NormalizeComparator(normalizer(), sortLanguage.getCollator());
     }
 
-    public Index(final Dictionary dict, final RandomAccessFile raf) throws IOException {
+    public Index(final Dictionary dict, final DataInput inp) throws IOException {
         this.dict = dict;
+        RandomAccessFile raf = (RandomAccessFile)inp;
         shortName = raf.readUTF();
         longName = raf.readUTF();
         final String languageCode = raf.readUTF();
@@ -142,7 +145,8 @@ public final class Index implements RAFSerializable<Index> {
     }
 
     @Override
-    public void write(final RandomAccessFile raf) throws IOException {
+    public void write(final DataOutput out) throws IOException {
+        RandomAccessFile raf = (RandomAccessFile)out;
         raf.writeUTF(shortName);
         raf.writeUTF(longName);
         raf.writeUTF(sortLanguage.getIsoCode());
@@ -168,12 +172,12 @@ public final class Index implements RAFSerializable<Index> {
 
     private final RAFSerializer<IndexEntry> indexEntrySerializer = new RAFSerializer<IndexEntry>() {
         @Override
-        public IndexEntry read(RandomAccessFile raf) throws IOException {
+        public IndexEntry read(DataInput raf) throws IOException {
             return new IndexEntry(Index.this, raf);
         }
 
         @Override
-        public void write(RandomAccessFile raf, IndexEntry t) throws IOException {
+        public void write(DataOutput raf, IndexEntry t) throws IOException {
             t.write(raf);
         }
     };
@@ -198,8 +202,9 @@ public final class Index implements RAFSerializable<Index> {
             this.htmlEntries = new ArrayList<HtmlEntry>();
         }
 
-        public IndexEntry(final Index index, final RandomAccessFile raf) throws IOException {
+        public IndexEntry(final Index index, final DataInput inp) throws IOException {
             this.index = index;
+            RandomAccessFile raf = (RandomAccessFile)inp;
             token = raf.readUTF();
             startRow = raf.readInt();
             numRows = raf.readInt();
@@ -214,7 +219,8 @@ public final class Index implements RAFSerializable<Index> {
             }
         }
 
-        public void write(RandomAccessFile raf) throws IOException {
+        public void write(DataOutput out) throws IOException {
+            RandomAccessFile raf = (RandomAccessFile)out;
             raf.writeUTF(token);
             raf.writeInt(startRow);
             raf.writeInt(numRows);

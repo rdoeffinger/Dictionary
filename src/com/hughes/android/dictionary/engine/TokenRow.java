@@ -17,9 +17,9 @@ package com.hughes.android.dictionary.engine;
 import com.hughes.android.dictionary.engine.Index.IndexEntry;
 import com.ibm.icu.text.Transliterator;
 
+import java.io.DataInput;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -27,7 +27,7 @@ public class TokenRow extends RowBase {
 
     public final boolean hasMainEntry;
 
-    TokenRow(final RandomAccessFile raf, final int thisRowIndex, final Index index,
+    TokenRow(final DataInput raf, final int thisRowIndex, final Index index,
             final boolean hasMainEntry) throws IOException {
         super(raf, thisRowIndex, index);
         this.hasMainEntry = hasMainEntry;
