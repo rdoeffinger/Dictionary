@@ -16,7 +16,7 @@ configurations {
     smallicu
 }
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
     // Note: you can just replace "smallicu" by compile
     // and remove the "compile files" part if you do not
     // care about the size of the apk
@@ -39,7 +39,7 @@ task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
 def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "../Util"
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "23.0.1"
     buildTypes {
         debug {
