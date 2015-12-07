@@ -16,6 +16,7 @@ package com.hughes.android.dictionary.engine;
 
 import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.util.CachingList;
+import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
@@ -34,7 +35,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
 
     static final int CACHE_SIZE = 5000;
 
-    static final int CURRENT_DICT_VERSION = 6;
+    static final int CURRENT_DICT_VERSION = 7;
     static final String END_OF_DICTIONARY = "END OF DICTIONARY";
 
     // persisted
@@ -75,25 +76,25 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         // disrupts the offset.
         try {
             final RAFList<EntrySource> rafSources = RAFList.create(raf, new EntrySource.Serializer(
-                    this), raf.getFilePointer());
+                    this), raf.getFilePointer(), dictFileVersion);
             sources = new ArrayList<EntrySource>(rafSources);
             raf.seek(rafSources.getEndOffset());
 
             pairEntries = CachingList.create(
-                    RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer()),
+                    RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictFileVersion >= 7 ? 64 : 1, dictFileVersion >= 7),
                     CACHE_SIZE);
             textEntries = CachingList.create(
-                    RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer()),
+                    RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
                     CACHE_SIZE);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
-                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer()),
+                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
                         CACHE_SIZE);
             } else {
                 htmlEntries = Collections.emptyList();
             }
             indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer,
-                    raf.getFilePointer()));
+                    raf.getFilePointer(), dictFileVersion));
         } catch (RuntimeException e) {
             final IOException ioe = new IOException("RuntimeException loading dictionary");
             ioe.initCause(e);
@@ -111,11 +112,17 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         raf.writeInt(dictFileVersion);
         raf.writeLong(creationMillis);
         raf.writeUTF(dictInfo);
+        System.out.println("sources start: " + raf.getFilePointer());
         RAFList.write(raf, sources, new EntrySource.Serializer(this));
-        RAFList.write(raf, pairEntries, new PairEntry.Serializer(this));
+        System.out.println("pair start: " + raf.getFilePointer());
+        RAFList.write(raf, pairEntries, new PairEntry.Serializer(this), 64, true);
+        System.out.println("text start: " + raf.getFilePointer());
         RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
+        System.out.println("html start: " + raf.getFilePointer());
         RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this));
+        System.out.println("indices start: " + raf.getFilePointer());
         RAFList.write(raf, indices, indexSerializer);
+        System.out.println("end: " + raf.getFilePointer());
         raf.writeUTF(END_OF_DICTIONARY);
     }
 

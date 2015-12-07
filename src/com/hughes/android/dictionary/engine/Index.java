@@ -22,6 +22,7 @@ import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.RowBase.RowKey;
 import com.hughes.util.CachingList;
+import com.hughes.util.StringUtil;
 import com.hughes.util.TransformingList;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFSerializable;
@@ -36,6 +37,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -133,7 +135,8 @@ public final class Index implements RAFSerializable<Index> {
             mainTokenCount = raf.readInt();
         }
         sortedIndexEntries = CachingList.create(
-                RAFList.create(raf, indexEntrySerializer, raf.getFilePointer()), CACHE_SIZE);
+                RAFList.create(raf, indexEntrySerializer, raf.getFilePointer(), dict.dictFileVersion,
+                dict.dictFileVersion >= 7 ? 16 : 1, dict.dictFileVersion >= 7), CACHE_SIZE);
         if (dict.dictFileVersion >= 4) {
             stoplist = new SerializableSerializer<Set<String>>().read(raf);
         } else {
@@ -155,7 +158,7 @@ public final class Index implements RAFSerializable<Index> {
         if (dict.dictFileVersion >= 2) {
             raf.writeInt(mainTokenCount);
         }
-        RAFList.write(raf, sortedIndexEntries, indexEntrySerializer);
+        RAFList.write(raf, sortedIndexEntries, indexEntrySerializer, 16, true);
         new SerializableSerializer<Set<String>>().write(raf, stoplist);
         UniformRAFList.write(raf, rows, new RowBase.Serializer(this), 5 /*
                                                                                                * bytes
@@ -188,7 +191,8 @@ public final class Index implements RAFSerializable<Index> {
         private final String normalizedToken;
         public final int startRow;
         public final int numRows; // doesn't count the token row!
-        public final List<HtmlEntry> htmlEntries;
+        public List<HtmlEntry> htmlEntries;
+        private int[] htmlEntryIndices;
 
         public IndexEntry(final Index index, final String token, final String normalizedToken,
                 final int startRow, final int numRows) {
@@ -202,34 +206,56 @@ public final class Index implements RAFSerializable<Index> {
             this.htmlEntries = new ArrayList<HtmlEntry>();
         }
 
-        public IndexEntry(final Index index, final DataInput inp) throws IOException {
+        public IndexEntry(final Index index, final DataInput raf) throws IOException {
             this.index = index;
-            RandomAccessFile raf = (RandomAccessFile)inp;
             token = raf.readUTF();
-            startRow = raf.readInt();
-            numRows = raf.readInt();
+            if (index.dict.dictFileVersion >= 7) {
+                startRow = StringUtil.readVarInt(raf);
+                numRows = StringUtil.readVarInt(raf);
+            } else {
+                startRow = raf.readInt();
+                numRows = raf.readInt();
+            }
             final boolean hasNormalizedForm = raf.readBoolean();
             normalizedToken = hasNormalizedForm ? raf.readUTF() : token;
-            if (index.dict.dictFileVersion >= 6) {
+            htmlEntryIndices = null;
+            if (index.dict.dictFileVersion >= 7) {
+                int size = StringUtil.readVarInt(raf);
+                htmlEntryIndices = new int[size];
+                for (int i = 0; i < size; ++i) {
+                    htmlEntryIndices[i] = StringUtil.readVarInt(raf);
+                }
+                this.htmlEntries = CachingList.create(new AbstractList<HtmlEntry>() {
+                    @Override
+                    public HtmlEntry get(int i) {
+                        return index.dict.htmlEntries.get(htmlEntryIndices[i]);
+                    }
+                    @Override
+                    public int size() {
+                        return htmlEntryIndices.length;
+                    }
+                    }, 1);
+            } else if (index.dict.dictFileVersion >= 6) {
                 this.htmlEntries = CachingList.create(
-                        RAFList.create(raf, index.dict.htmlEntryIndexSerializer,
-                                raf.getFilePointer()), 1);
+                        RAFList.create((RandomAccessFile)raf, index.dict.htmlEntryIndexSerializer,
+                                ((RandomAccessFile)raf).getFilePointer(), index.dict.dictFileVersion), 1);
             } else {
                 this.htmlEntries = Collections.emptyList();
             }
         }
 
-        public void write(DataOutput out) throws IOException {
-            RandomAccessFile raf = (RandomAccessFile)out;
+        public void write(DataOutput raf) throws IOException {
             raf.writeUTF(token);
-            raf.writeInt(startRow);
-            raf.writeInt(numRows);
+            StringUtil.writeVarInt(raf, startRow);
+            StringUtil.writeVarInt(raf, numRows);
             final boolean hasNormalizedForm = !token.equals(normalizedToken);
             raf.writeBoolean(hasNormalizedForm);
             if (hasNormalizedForm) {
                 raf.writeUTF(normalizedToken);
             }
-            RAFList.write(raf, htmlEntries, index.dict.htmlEntryIndexSerializer);
+            StringUtil.writeVarInt(raf, htmlEntries.size());
+            for (HtmlEntry e : htmlEntries)
+                StringUtil.writeVarInt(raf, e.index());
         }
 
         public String toString() {

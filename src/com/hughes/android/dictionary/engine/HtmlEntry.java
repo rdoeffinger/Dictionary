@@ -33,7 +33,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
             throws IOException {
         super(dictionary, raf, index);
         title = raf.readUTF();
-        lazyHtmlLoader = new LazyHtmlLoader(raf);
+        lazyHtmlLoader = new LazyHtmlLoader(raf, dictionary.dictFileVersion);
         html = null;
     }
 
@@ -44,8 +44,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
 
         final byte[] bytes = getHtml().getBytes("UTF-8");
         final byte[] zipBytes = StringUtil.zipBytes(bytes);
-        raf.writeInt(bytes.length);
-        raf.writeInt(zipBytes.length);
+        StringUtil.writeVarInt(raf, zipBytes.length);
         raf.write(zipBytes);
     }
 
@@ -188,10 +187,15 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         // Not sure this volatile is right, but oh well.
         volatile SoftReference<String> htmlRef = new SoftReference<String>(null);
 
-        private LazyHtmlLoader(final DataInput inp) throws IOException {
+        private LazyHtmlLoader(final DataInput inp, int version) throws IOException {
             raf = (RandomAccessFile)inp;
-            numBytes = raf.readInt();
-            numZipBytes = raf.readInt();
+            if (version >= 7) {
+                numBytes = -1;
+                numZipBytes = StringUtil.readVarInt(raf);
+            } else {
+                numBytes = raf.readInt();
+                numZipBytes = raf.readInt();
+            }
             offset = raf.getFilePointer();
             raf.skipBytes(numZipBytes);
         }
@@ -203,7 +207,6 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
             }
             System.out.println("Loading Html: numBytes=" + numBytes + ", numZipBytes="
                     + numZipBytes);
-            final byte[] bytes = new byte[numBytes];
             final byte[] zipBytes = new byte[numZipBytes];
             synchronized (raf) {
                 try {
@@ -214,7 +217,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
                 }
             }
             try {
-                StringUtil.unzipFully(zipBytes, bytes);
+                final byte[] bytes = StringUtil.unzipFully(zipBytes, numBytes);
                 html = new String(bytes, "UTF-8");
             } catch (IOException e) {
                 throw new RuntimeException(e);

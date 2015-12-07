@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
@@ -44,7 +45,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     public PairEntry(final Dictionary dictionary, final DataInput raf, final int index)
             throws IOException {
         super(dictionary, raf, index);
-        final int size = raf.readInt();
+        final int size = StringUtil.readVarInt(raf);
         pairs = new ArrayList<PairEntry.Pair>(size);
         for (int i = 0; i < size; ++i) {
             pairs.add(new Pair(raf.readUTF(), raf.readUTF()));
@@ -54,8 +55,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     @Override
     public void write(DataOutput raf) throws IOException {
         super.write(raf);
-        // TODO: this could be a short.
-        raf.writeInt(pairs.size());
+        StringUtil.writeVarInt(raf, pairs.size());
         for (int i = 0; i < pairs.size(); ++i) {
             assert pairs.get(i).lang1.length() > 0;
             raf.writeUTF(pairs.get(i).lang1);
