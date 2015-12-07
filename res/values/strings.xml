@@ -62,7 +62,7 @@
   Please send comments, suggestions, bug reports, or just a quick hello to:</string>
     <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">For more information, see:</string>
-    <string name="webPageUrl">http://code.google.com/p/quickdic-dictionary/</string>
+    <string name="webPageUrl">https://github.com/rdoeffinger/Dictionary/releases/</string>
     <string name="contributionsFrom">Contributions from:</string>
     <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
     <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
