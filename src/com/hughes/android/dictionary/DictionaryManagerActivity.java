@@ -529,8 +529,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
         final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
         final Button downloadButton = (Button) row.findViewById(R.id.downloadButton);
+        final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
         if (!canLaunch || updateAvailable) {
-            final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
             downloadButton
                     .setText(getString(
                             R.string.downloadButton,
@@ -574,6 +574,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             builder.append(getString(R.string.indexInfo, indexInfo.shortName,
                     indexInfo.mainTokenCount));
         }
+        builder.append("; ");
+        builder.append(getString(R.string.downloadButton, downloadable.uncompressedBytes / 1024.0 / 1024.0));
         details.setText(builder.toString());
 
         if (canLaunch) {
