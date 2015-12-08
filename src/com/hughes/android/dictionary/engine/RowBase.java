@@ -42,11 +42,11 @@ public abstract class RowBase extends IndexedObject {
      */
     private TokenRow tokenRow = null;
 
-    RowBase(final DataInput raf, final int thisRowIndex, final Index index)
+    RowBase(final DataInput raf, final int thisRowIndex, final Index index, final int extra)
             throws IOException {
         super(thisRowIndex);
         this.index = index;
-        this.referenceIndex = raf.readInt(); // what this points to.
+        this.referenceIndex = extra == -1 ? raf.readInt() : ((extra << 24) + raf.readUnsignedShort()); // what this points to.
     }
 
     public RowBase(final int referenceIndex, final int thisRowIndex, final Index index) {
@@ -149,32 +149,40 @@ public abstract class RowBase extends IndexedObject {
 
         @Override
         public RowBase read(DataInput raf, final int listIndex) throws IOException {
-            final byte rowType = raf.readByte();
+            int rowType = raf.readUnsignedByte();
+            int extra = -1;
+            if (rowType >= 0x20) {
+                extra = rowType & 0x1f;
+                rowType = (rowType >> 5) - 1;
+            }
             if (rowType == 0) {
-                return new PairEntry.Row(raf, listIndex, index);
+                return new PairEntry.Row(raf, listIndex, index, extra);
             } else if (rowType == 1 || rowType == 3) {
-                return new TokenRow(raf, listIndex, index, /* hasMainEntry */rowType == 1);
+                return new TokenRow(raf, listIndex, index, /* hasMainEntry */rowType == 1, extra);
             } else if (rowType == 2) {
-                return new TextEntry.Row(raf, listIndex, index);
+                return new TextEntry.Row(raf, listIndex, index, extra);
             } else if (rowType == 4) {
-                return new HtmlEntry.Row(raf, listIndex, index);
+                return new HtmlEntry.Row(raf, listIndex, index, extra);
             }
             throw new RuntimeException("Invalid rowType:" + rowType);
         }
 
         @Override
         public void write(DataOutput raf, RowBase t) throws IOException {
+            int type = 0;
             if (t instanceof PairEntry.Row) {
-                raf.writeByte(0);
+                type = 0;
             } else if (t instanceof TokenRow) {
                 final TokenRow tokenRow = (TokenRow) t;
-                raf.writeByte(tokenRow.hasMainEntry ? 1 : 3);
+                type = tokenRow.hasMainEntry ? 1 : 3;
             } else if (t instanceof TextEntry.Row) {
-                raf.writeByte(2);
+                type = 2;
             } else if (t instanceof HtmlEntry.Row) {
-                raf.writeByte(4);
+                type = 4;
             }
-            raf.writeInt(t.referenceIndex);
+            assert t.referenceIndex < (1 << 21);
+            raf.writeByte(((type + 1) << 5) + (t.referenceIndex >> 24));
+            raf.writeShort(t.referenceIndex);
         }
     }
 

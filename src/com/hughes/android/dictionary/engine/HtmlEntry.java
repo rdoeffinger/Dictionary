@@ -107,8 +107,8 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         boolean isExpanded = false;
 
         Row(final DataInput raf, final int thisRowIndex,
-                final Index index) throws IOException {
-            super(raf, thisRowIndex, index);
+                final Index index, int extra) throws IOException {
+            super(raf, thisRowIndex, index, extra);
         }
 
         Row(final int referenceIndex, final int thisRowIndex,

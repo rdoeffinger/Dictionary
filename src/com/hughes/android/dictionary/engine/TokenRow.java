@@ -28,8 +28,8 @@ public class TokenRow extends RowBase {
     public final boolean hasMainEntry;
 
     TokenRow(final DataInput raf, final int thisRowIndex, final Index index,
-            final boolean hasMainEntry) throws IOException {
-        super(raf, thisRowIndex, index);
+            final boolean hasMainEntry, int extra) throws IOException {
+        super(raf, thisRowIndex, index, extra);
         this.hasMainEntry = hasMainEntry;
     }
 

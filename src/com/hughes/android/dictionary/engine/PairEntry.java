@@ -99,8 +99,8 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     public static class Row extends RowBase {
 
         Row(final DataInput raf, final int thisRowIndex,
-                final Index index) throws IOException {
-            super(raf, thisRowIndex, index);
+                final Index index, int extra) throws IOException {
+            super(raf, thisRowIndex, index, extra);
         }
 
         Row(final int referenceIndex, final int thisRowIndex,

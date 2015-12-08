@@ -76,8 +76,8 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     public static class Row extends RowBase {
 
         Row(final DataInput raf, final int thisRowIndex,
-                final Index index) throws IOException {
-            super(raf, thisRowIndex, index);
+                final Index index, int extra) throws IOException {
+            super(raf, thisRowIndex, index, extra);
         }
 
         public TextEntry getEntry() {
