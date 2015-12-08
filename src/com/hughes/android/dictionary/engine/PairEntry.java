@@ -45,7 +45,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     public PairEntry(final Dictionary dictionary, final DataInput raf, final int index)
             throws IOException {
         super(dictionary, raf, index);
-        final int size = StringUtil.readVarInt(raf);
+        final int size = dictionary.dictFileVersion >= 7 ? StringUtil.readVarInt(raf) : raf.readInt();
         pairs = new ArrayList<PairEntry.Pair>(size);
         for (int i = 0; i < size; ++i) {
             pairs.add(new Pair(raf.readUTF(), raf.readUTF()));
