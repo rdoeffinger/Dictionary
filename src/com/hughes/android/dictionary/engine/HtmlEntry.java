@@ -11,6 +11,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -33,7 +34,7 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
             throws IOException {
         super(dictionary, raf, index);
         title = raf.readUTF();
-        lazyHtmlLoader = new LazyHtmlLoader(raf, dictionary.dictFileVersion);
+        lazyHtmlLoader = new LazyHtmlLoader(raf, dictionary.htmlData, index);
         html = null;
     }
 
@@ -46,6 +47,24 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         final byte[] zipBytes = StringUtil.zipBytes(bytes);
         StringUtil.writeVarInt(raf, zipBytes.length);
         raf.write(zipBytes);
+    }
+
+    public void writeBase(DataOutput raf) throws IOException {
+        super.write(raf);
+        raf.writeUTF(title);
+    }
+
+    public void writeData(DataOutput raf) throws IOException {
+        final byte[] bytes = getHtml().getBytes("UTF-8");
+        StringUtil.writeVarInt(raf, bytes.length);
+        raf.write(bytes);
+    }
+
+    public static byte[] readData(DataInput raf) throws IOException {
+        int len = StringUtil.readVarInt(raf);
+        final byte[] bytes = new byte[len];
+        raf.readFully(bytes);
+        return bytes;
     }
 
     String getHtml() {
@@ -79,7 +98,32 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
 
         @Override
         public void write(DataOutput raf, HtmlEntry t) throws IOException {
-            t.write(raf);
+            t.writeBase(raf);
+        }
+    }
+
+    static final class DataSerializer implements RAFListSerializer<HtmlEntry> {
+        @Override
+        public HtmlEntry read(DataInput raf, final int index) throws IOException {
+            assert false;
+            return null;
+        }
+
+        @Override
+        public void write(DataOutput raf, HtmlEntry t) throws IOException {
+            t.writeData(raf);
+        }
+    }
+
+    static final class DataDeserializer implements RAFListSerializer<byte[]> {
+        @Override
+        public byte[] read(DataInput raf, final int index) throws IOException {
+            return HtmlEntry.readData(raf);
+        }
+
+        @Override
+        public void write(DataOutput raf, byte[] t) throws IOException {
+            assert false;
         }
     }
 
@@ -183,19 +227,25 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         final long offset;
         final int numBytes;
         final int numZipBytes;
+        final List<byte[]> data;
+        final int index;
 
         // Not sure this volatile is right, but oh well.
         volatile SoftReference<String> htmlRef = new SoftReference<String>(null);
 
-        private LazyHtmlLoader(final DataInput inp, int version) throws IOException {
-            raf = (RandomAccessFile)inp;
-            if (version >= 7) {
-                numBytes = -1;
-                numZipBytes = StringUtil.readVarInt(raf);
-            } else {
-                numBytes = raf.readInt();
-                numZipBytes = raf.readInt();
+        private LazyHtmlLoader(final DataInput inp, List<byte[]> data, int index) throws IOException {
+            this.data = data;
+            this.index = index;
+            if (data != null) {
+                this.raf = null;
+                this.offset = 0;
+                this.numBytes = -1;
+                this.numZipBytes = -1;
+                return;
             }
+            raf = (RandomAccessFile)inp;
+            numBytes = raf.readInt();
+            numZipBytes = raf.readInt();
             offset = raf.getFilePointer();
             raf.skipBytes(numZipBytes);
         }
@@ -203,6 +253,15 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         public String getHtml() {
             String html = htmlRef.get();
             if (html != null) {
+                return html;
+            }
+            if (data != null) {
+                try {
+                    html = new String(data.get(index), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+                htmlRef = new SoftReference<String>(html);
                 return html;
             }
             System.out.println("Loading Html: numBytes=" + numBytes + ", numZipBytes="

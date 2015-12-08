@@ -45,6 +45,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     public final List<PairEntry> pairEntries;
     public final List<TextEntry> textEntries;
     public final List<HtmlEntry> htmlEntries;
+    public final List<byte[]> htmlData;
     public final List<EntrySource> sources;
     public final List<Index> indices;
 
@@ -60,6 +61,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         pairEntries = new ArrayList<PairEntry>();
         textEntries = new ArrayList<TextEntry>();
         htmlEntries = new ArrayList<HtmlEntry>();
+        htmlData = null;
         sources = new ArrayList<EntrySource>();
         indices = new ArrayList<Index>();
     }
@@ -88,10 +90,15 @@ public class Dictionary implements RAFSerializable<Dictionary> {
                     CACHE_SIZE);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
-                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
+                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictFileVersion >= 7 ? 64 : 1, dictFileVersion >= 7),
                         CACHE_SIZE);
             } else {
                 htmlEntries = Collections.emptyList();
+            }
+            if (dictFileVersion >= 7) {
+                htmlData = RAFList.create(raf, new HtmlEntry.DataDeserializer(), raf.getFilePointer(), dictFileVersion, 16, true);
+            } else {
+                htmlData = null;
             }
             indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer,
                     raf.getFilePointer(), dictFileVersion));
@@ -119,7 +126,9 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         System.out.println("text start: " + raf.getFilePointer());
         RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
         System.out.println("html start: " + raf.getFilePointer());
-        RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this));
+        RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this), 64, true);
+        assert htmlData == null;
+        RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 16, true);
         System.out.println("indices start: " + raf.getFilePointer());
         RAFList.write(raf, indices, indexSerializer);
         System.out.println("end: " + raf.getFilePointer());

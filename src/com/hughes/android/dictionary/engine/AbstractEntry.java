@@ -15,6 +15,7 @@
 package com.hughes.android.dictionary.engine;
 
 import com.hughes.util.IndexedObject;
+import com.hughes.util.StringUtil;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -33,7 +34,7 @@ public abstract class AbstractEntry extends IndexedObject {
             throws IOException {
         super(index);
         if (dictionary.dictFileVersion >= 1) {
-            final int entrySouceIdx = raf.readShort();
+            final int entrySouceIdx = dictionary.dictFileVersion >= 7 ? StringUtil.readVarInt(raf) : raf.readShort();
             this.entrySource = dictionary.sources.get(entrySouceIdx);
         } else {
             this.entrySource = null;
@@ -41,7 +42,7 @@ public abstract class AbstractEntry extends IndexedObject {
     }
 
     public void write(DataOutput raf) throws IOException {
-        raf.writeShort(entrySource.index());
+        StringUtil.writeVarInt(raf, entrySource.index());
     }
 
     public abstract void addToDictionary(final Dictionary dictionary);
