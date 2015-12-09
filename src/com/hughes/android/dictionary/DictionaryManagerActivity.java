@@ -574,8 +574,10 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             builder.append(getString(R.string.indexInfo, indexInfo.shortName,
                     indexInfo.mainTokenCount));
         }
-        builder.append("; ");
-        builder.append(getString(R.string.downloadButton, downloadable.uncompressedBytes / 1024.0 / 1024.0));
+        if (downloadable != null) {
+            builder.append("; ");
+            builder.append(getString(R.string.downloadButton, downloadable.uncompressedBytes / 1024.0 / 1024.0));
+        }
         details.setText(builder.toString());
 
         if (canLaunch) {
