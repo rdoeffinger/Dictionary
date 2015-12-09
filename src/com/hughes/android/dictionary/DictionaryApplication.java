@@ -61,6 +61,13 @@ public class DictionaryApplication extends Application {
 
     static final String LOG = "QuickDicApp";
 
+    // If set to false, avoid use of ICU collator
+    // Works well enough for most european languages,
+    // gives faster startup and avoids crashes on some
+    // devices due to Dalvik bugs (e.g. ARMv6, S5570i, CM11).
+    // Leave it enabled by default for correctness.
+    static public final boolean USE_COLLATOR = true;
+
     // Static, determined by resources (and locale).
     // Unordered.
     static Map<String, DictionaryInfo> DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO = null;
@@ -539,7 +546,7 @@ public class DictionaryApplication extends Application {
         PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
-    final Collator collator = Collator.getInstance();
+    final Comparator collator = USE_COLLATOR ? Collator.getInstance() : String.CASE_INSENSITIVE_ORDER;
     final Comparator<String> uncompressedFilenameComparator = new Comparator<String>() {
         @Override
         public int compare(String uncompressedFilename1, String uncompressedFilename2) {
