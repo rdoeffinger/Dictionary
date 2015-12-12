@@ -1100,6 +1100,11 @@ public class DictionaryActivity extends ActionBarActivity {
         searchView.setQuery(text, false);
         moveCursorToRight();
         searchView.setOnQueryTextListener(onQueryTextListener);
+
+        // Hide search icon once text is entered
+        searchView.setIconifiedByDefault(text.length() > 0);
+        searchView.setIconified(false);
+
         if (triggerSearch) {
             onQueryTextListener.onQueryTextChange(text);
         }
