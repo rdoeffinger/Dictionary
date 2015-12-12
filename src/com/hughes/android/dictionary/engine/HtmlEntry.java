@@ -3,7 +3,6 @@ package com.hughes.android.dictionary.engine;
 
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
-import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
 
 import java.io.DataInput;
@@ -16,8 +15,7 @@ import java.lang.ref.SoftReference;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntry>,
-        Comparable<HtmlEntry> {
+public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 
     // Title is not HTML escaped.
     public final String title;
@@ -36,17 +34,6 @@ public class HtmlEntry extends AbstractEntry implements RAFSerializable<HtmlEntr
         title = raf.readUTF();
         lazyHtmlLoader = new LazyHtmlLoader(raf, dictionary.htmlData, index);
         html = null;
-    }
-
-    @Override
-    public void write(DataOutput raf) throws IOException {
-        super.write(raf);
-        raf.writeUTF(title);
-
-        final byte[] bytes = getHtml().getBytes("UTF-8");
-        final byte[] zipBytes = StringUtil.zipBytes(bytes);
-        StringUtil.writeVarInt(raf, zipBytes.length);
-        raf.write(zipBytes);
     }
 
     public void writeBase(DataOutput raf) throws IOException {
