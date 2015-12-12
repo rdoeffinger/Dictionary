@@ -33,6 +33,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.Toolbar;
 import android.text.ClipboardManager;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
@@ -540,6 +541,10 @@ public class DictionaryActivity extends ActionBarActivity {
 
         actionBar.setCustomView(customSearchView);
         actionBar.setDisplayShowCustomEnabled(true);
+
+	// Avoid wasting space on large left inset
+        Toolbar tb = (Toolbar)customSearchView.getParent();
+        tb.setContentInsetsRelative(0, 0);
     }
 
     @Override
