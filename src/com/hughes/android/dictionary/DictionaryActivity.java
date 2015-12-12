@@ -509,9 +509,6 @@ public class DictionaryActivity extends ActionBarActivity {
         // wrong place.
         searchView.setQueryHint(getString(R.string.searchText));
         searchView.setSubmitButtonEnabled(false);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
-                FrameLayout.LayoutParams.WRAP_CONTENT, 1);
-        searchView.setLayoutParams(lp);
         searchView.setImeOptions(
                 EditorInfo.IME_ACTION_SEARCH |
                         EditorInfo.IME_FLAG_NO_EXTRACT_UI |
@@ -536,7 +533,9 @@ public class DictionaryActivity extends ActionBarActivity {
         };
         searchView.setOnQueryTextListener(onQueryTextListener);
         searchView.setFocusable(true);
-        customSearchView.addView(searchView);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
+                FrameLayout.LayoutParams.WRAP_CONTENT, 1);
+        customSearchView.addView(searchView, lp);
 
         actionBar.setCustomView(customSearchView);
         actionBar.setDisplayShowCustomEnabled(true);
