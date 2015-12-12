@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class PersistentObjectCache {
     private final File dir;
     private final Map<String, Object> objects = new LinkedHashMap<String, Object>();
 
-    public synchronized <T> T read(final String filename, final Class<T> resultClass) {
+    public synchronized <T extends Serializable> T read(final String filename, final Class<T> resultClass) {
         try {
             Object object = (objects.get(filename));
             if (object != null) {
@@ -58,7 +59,7 @@ public class PersistentObjectCache {
         }
     }
 
-    public synchronized void write(final String filename, final Object object) {
+    public synchronized void write(final String filename, final Serializable object) {
         objects.put(filename, object);
         final File dest = new File(dir, filename);
         try {
