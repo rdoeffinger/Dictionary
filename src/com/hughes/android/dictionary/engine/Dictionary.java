@@ -150,9 +150,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     final RAFListSerializer<HtmlEntry> htmlEntryIndexSerializer = new RAFListSerializer<HtmlEntry>() {
         @Override
         public void write(DataOutput raf, HtmlEntry t) throws IOException {
-            if (t.index() == -1)
-                throw new IndexOutOfBoundsException();
-            raf.writeInt(t.index());
+            assert false;
         }
 
         @Override
