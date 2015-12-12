@@ -136,8 +136,8 @@ public final class Index implements RAFSerializable<Index> {
             mainTokenCount = raf.readInt();
         }
         sortedIndexEntries = CachingList.create(
-                RAFList.create(raf, indexEntrySerializer, raf.getFilePointer(), dict.dictFileVersion,
-                dict.dictFileVersion >= 7 ? 16 : 1, dict.dictFileVersion >= 7), CACHE_SIZE);
+                RAFList.create(raf, indexEntrySerializer, raf.getFilePointer(),
+                               dict.dictFileVersion), CACHE_SIZE);
         if (dict.dictFileVersion >= 7) {
             int count = StringUtil.readVarInt(raf);
             stoplist = new HashSet<String>(count);
@@ -165,7 +165,7 @@ public final class Index implements RAFSerializable<Index> {
         if (dict.dictFileVersion >= 2) {
             raf.writeInt(mainTokenCount);
         }
-        RAFList.write(raf, sortedIndexEntries, indexEntrySerializer, 16, true);
+        RAFList.write(raf, sortedIndexEntries, indexEntrySerializer, 32, true);
         StringUtil.writeVarInt(raf, stoplist.size());
         for (String i : stoplist) {
             raf.writeUTF(i);

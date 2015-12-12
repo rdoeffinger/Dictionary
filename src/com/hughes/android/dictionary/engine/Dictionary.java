@@ -83,20 +83,20 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             raf.seek(rafSources.getEndOffset());
 
             pairEntries = CachingList.create(
-                    RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictFileVersion >= 7 ? 64 : 1, dictFileVersion >= 7),
+                    RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
                     CACHE_SIZE);
             textEntries = CachingList.create(
                     RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
                     CACHE_SIZE);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
-                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictFileVersion >= 7 ? 64 : 1, dictFileVersion >= 7),
+                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
                         CACHE_SIZE);
             } else {
                 htmlEntries = Collections.emptyList();
             }
             if (dictFileVersion >= 7) {
-                htmlData = RAFList.create(raf, new HtmlEntry.DataDeserializer(), raf.getFilePointer(), dictFileVersion, 16, true);
+                htmlData = RAFList.create(raf, new HtmlEntry.DataDeserializer(), raf.getFilePointer(), dictFileVersion);
             } else {
                 htmlData = null;
             }
@@ -128,7 +128,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         System.out.println("html start: " + raf.getFilePointer());
         RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this), 64, true);
         assert htmlData == null;
-        RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 16, true);
+        RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 128, true);
         System.out.println("indices start: " + raf.getFilePointer());
         RAFList.write(raf, indices, indexSerializer);
         System.out.println("end: " + raf.getFilePointer());
