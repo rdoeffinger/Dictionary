@@ -634,8 +634,13 @@ public class DictionaryApplication extends Application {
                     newDictionaryConfig.dictionaryFilesOrdered.addAll(toAddSorted);
                 }
 
-                PersistentObjectCache.getInstance()
-                        .write(C.DICTIONARY_CONFIGS, newDictionaryConfig);
+                try {
+                    PersistentObjectCache.getInstance()
+                                 .write(C.DICTIONARY_CONFIGS, newDictionaryConfig);
+                } catch (Exception e) {
+                    Log.e(LOG, "Failed persisting dictionary configs", e);
+                }
+
                 synchronized (this) {
                     dictionaryConfig = newDictionaryConfig;
                 }
