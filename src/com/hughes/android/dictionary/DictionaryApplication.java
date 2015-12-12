@@ -65,8 +65,9 @@ public class DictionaryApplication extends Application {
     // Works well enough for most european languages,
     // gives faster startup and avoids crashes on some
     // devices due to Dalvik bugs (e.g. ARMv6, S5570i, CM11).
-    // Leave it enabled by default for correctness.
-    static public final boolean USE_COLLATOR = true;
+    // Leave it enabled by default for correctness except
+    // for my known broken development/performance test device config.
+    static public final boolean USE_COLLATOR = !android.os.Build.FINGERPRINT.equals("Samsung/cm_tassve/tassve:4.4.4/KTU84Q/20150211:userdebug/release-keys");
 
     // Static, determined by resources (and locale).
     // Unordered.
