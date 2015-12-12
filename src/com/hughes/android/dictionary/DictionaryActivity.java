@@ -487,8 +487,6 @@ public class DictionaryActivity extends ActionBarActivity {
         });
 
         languageButton = new ImageButton(customSearchView.getContext());
-        languageButton.setMinimumWidth(application.languageButtonPixels);
-        languageButton.setMinimumHeight(application.languageButtonPixels * 2 / 3);
         languageButton.setScaleType(ScaleType.FIT_CENTER);
         languageButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -503,7 +501,9 @@ public class DictionaryActivity extends ActionBarActivity {
                 return true;
             }
         });
-        customSearchView.addView(languageButton);
+        languageButton.setAdjustViewBounds(true);
+        LinearLayout.LayoutParams lpb = new LinearLayout.LayoutParams(application.languageButtonPixels, LinearLayout.LayoutParams.MATCH_PARENT);
+        customSearchView.addView(languageButton, lpb);
 
         searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setIconifiedByDefault(false);

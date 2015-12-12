@@ -33,6 +33,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
@@ -525,10 +526,7 @@ public class DictionaryApplication extends Application {
             button.setScaleType(ScaleType.FIT_CENTER);
             result = button;
         }
-        result.setMinimumWidth(languageButtonPixels);
-        result.setMinimumHeight(languageButtonPixels * 2 / 3);
-        // result.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-        // LayoutParams.WRAP_CONTENT));
+        result.setLayoutParams(new LinearLayout.LayoutParams(languageButtonPixels, LinearLayout.LayoutParams.MATCH_PARENT));
         return result;
     }
 
