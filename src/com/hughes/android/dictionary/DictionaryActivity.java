@@ -368,6 +368,7 @@ public class DictionaryActivity extends ActionBarActivity {
         // Pre-load the collators.
         new Thread(new Runnable() {
             public void run() {
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                 final long startMillis = System.currentTimeMillis();
                 try {
                     TransliteratorManager.init(new TransliteratorManager.Callback() {
