@@ -20,11 +20,8 @@ import com.hughes.util.raf.RAFListSerializer;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.Serializable;
 
-public class EntrySource extends IndexedObject implements Serializable {
-
-    private static final long serialVersionUID = -1323165134846120269L;
+public class EntrySource extends IndexedObject {
 
     final String name;
     int numEntries;
