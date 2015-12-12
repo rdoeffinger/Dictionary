@@ -510,8 +510,7 @@ public class DictionaryActivity extends ActionBarActivity {
         searchView.setQueryHint(getString(R.string.searchText));
         searchView.setSubmitButtonEnabled(false);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
-        lp.weight = 1;
+                FrameLayout.LayoutParams.WRAP_CONTENT, 1);
         searchView.setLayoutParams(lp);
         searchView.setImeOptions(
                 EditorInfo.IME_ACTION_SEARCH |
