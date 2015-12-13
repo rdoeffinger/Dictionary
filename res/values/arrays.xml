@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string-array name="fontKeys">
+  <string-array name="fontKeys" translatable="false">
     <item>FreeSerif.otf.jpg</item>
     <item>SYSTEM</item>
     <item>SERIF</item>
@@ -16,8 +16,8 @@
     <item>System sans-serif</item>
     <item>System monospace</item>
   </string-array>
-    
-  <string-array name="themeKeys">
+
+  <string-array name="themeKeys" translatable="false">
     <item>themeLight</item>
     <item>themeDefault</item>
   </string-array>
