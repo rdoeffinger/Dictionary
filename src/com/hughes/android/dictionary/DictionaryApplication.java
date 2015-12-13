@@ -528,7 +528,7 @@ public class DictionaryApplication extends Application {
             button.setScaleType(ScaleType.FIT_CENTER);
             result = button;
         }
-        result.setLayoutParams(new LinearLayout.LayoutParams(languageButtonPixels, LinearLayout.LayoutParams.MATCH_PARENT));
+        result.setLayoutParams(new LinearLayout.LayoutParams(languageButtonPixels, languageButtonPixels * 2 / 3));
         return result;
     }
 

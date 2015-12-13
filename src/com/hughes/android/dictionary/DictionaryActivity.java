@@ -713,7 +713,6 @@ public class DictionaryActivity extends ActionBarActivity {
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
                     final View button = application.createButton(parent.getContext(),
                             dictionaryInfo, indexInfo);
-                    button.setLayoutParams(new LinearLayout.LayoutParams(application.languageButtonPixels, application.languageButtonPixels * 2 / 3));
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(getApplicationContext(),
                                     application.getPath(dictionaryInfo.uncompressedFilename),
