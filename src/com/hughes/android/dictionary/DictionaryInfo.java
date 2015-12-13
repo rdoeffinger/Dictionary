@@ -74,7 +74,7 @@ public class DictionaryInfo implements Serializable {
         for (final IndexInfo indexInfo : indexInfos) {
             indexInfo.append(result.append("\t"));
         }
-        result.append("\t").append(dictInfo.replaceAll("\n", "\\\\n"));
+        result.append("\t").append(dictInfo.replace("\n", "\\\\n"));
         return result;
     }
 
@@ -91,7 +91,7 @@ public class DictionaryInfo implements Serializable {
             indexInfos.add(new IndexInfo(fields, i));
             i += IndexInfo.NUM_CSV_FIELDS;
         }
-        dictInfo = fields[i++].replaceAll("\\\\n", "\n");
+        dictInfo = fields[i++].replace("\\\\n", "\n");
     }
 
     @Override
