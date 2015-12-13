@@ -194,7 +194,10 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             raf.close();
             return dictionaryInfo;
         } catch (IOException e) {
-            return null;
+            final DictionaryInfo dictionaryInfo = new DictionaryInfo();
+            dictionaryInfo.uncompressedFilename = file.getName();
+            dictionaryInfo.uncompressedBytes = file.length();
+            return dictionaryInfo;
         } finally {
             if (raf != null) {
                 try {

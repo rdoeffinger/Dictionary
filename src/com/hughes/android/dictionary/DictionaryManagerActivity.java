@@ -519,7 +519,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     private View createDictionaryRow(final DictionaryInfo dictionaryInfo,
-            final ViewGroup parent, final boolean canLaunch) {
+            final ViewGroup parent, boolean canLaunch) {
 
         View row = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.dictionary_manager_row, parent, false);
@@ -530,7 +530,12 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
         final Button downloadButton = (Button) row.findViewById(R.id.downloadButton);
         final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
-        if (!canLaunch || updateAvailable) {
+        boolean broken = false;
+        if (!dictionaryInfo.isValid()) {
+            broken = true;
+            canLaunch = false;
+        }
+        if (downloadable != null && (!canLaunch || updateAvailable)) {
             downloadButton
                     .setText(getString(
                             R.string.downloadButton,
@@ -577,6 +582,10 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (downloadable != null) {
             builder.append("; ");
             builder.append(getString(R.string.downloadButton, downloadable.uncompressedBytes / 1024.0 / 1024.0));
+        }
+        if (broken) {
+            name.setText("Broken: " + application.getDictionaryName(dictionaryInfo.uncompressedFilename));
+            builder.append("; Cannot be used, redownload, check hardware/file system");
         }
         details.setText(builder.toString());
 

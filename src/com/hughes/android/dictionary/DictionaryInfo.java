@@ -64,6 +64,10 @@ public class DictionaryInfo implements Serializable {
         // Blank object.
     }
 
+    public boolean isValid() {
+        return !indexInfos.isEmpty();
+    }
+
     public StringBuilder append(final StringBuilder result) {
         result.append(uncompressedFilename);
         result.append("\t").append(downloadUrl);

@@ -590,7 +590,7 @@ public class DictionaryApplication extends Application {
                 for (final String uncompressedFilename : oldDictionaryConfig.dictionaryFilesOrdered) {
                     final File dictFile = getPath(uncompressedFilename);
                     final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(dictFile);
-                    if (dictionaryInfo != null) {
+                    if (dictionaryInfo.isValid()) {
                         newDictionaryConfig.dictionaryFilesOrdered.add(uncompressedFilename);
                         newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
                                 uncompressedFilename, dictionaryInfo);
@@ -619,9 +619,8 @@ public class DictionaryApplication extends Application {
                             continue;
                         }
                         final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(file);
-                        if (dictionaryInfo == null) {
+                        if (!dictionaryInfo.isValid()) {
                             Log.e(LOG, "Unable to parse dictionary: " + file.getPath());
-                            continue;
                         }
 
                         toAddSorted.add(file.getName());
