@@ -125,8 +125,9 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         RAFList.write(raf, pairEntries, new PairEntry.Serializer(this), 64, true);
         System.out.println("text start: " + raf.getFilePointer());
         RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
-        System.out.println("html start: " + raf.getFilePointer());
+        System.out.println("html index start: " + raf.getFilePointer());
         RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this), 64, true);
+        System.out.println("html data start: " + raf.getFilePointer());
         assert htmlData == null;
         RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 128, true);
         System.out.println("indices start: " + raf.getFilePointer());
