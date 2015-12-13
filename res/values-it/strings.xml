@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">QuickDic</string>
-    <string name="thanksForUpdatingVersion">5.1.0</string>
-    
     <!-- Global. -->
     <string name="about">About QuickDic…</string>
     <string name="settings">Preferenze…</string>
@@ -63,40 +60,28 @@ Sfortunatamente, non ho responsabilità circa il contenuto del dizionario
 (al difuori della formattazione), in quanto è creato con altre sorgenti. 
 Per favore inviami (in inglese) commenti, suggerimenti, 
 segnalazioni di bug o semplicemente un breve saluto a:</string>
-    <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">Per più informazioni, guarda:</string>
-    <string name="webPageUrl">https://github.com/rdoeffinger/Dictionary/releases/</string>
     <string name="contributionsFrom">Contributions from:</string>
     <string name="license">QuickDic contiene codice con copyright di Google e rilasciato sotto licenza Apache 2.0</string>
-    <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
- 
+
     <!-- Preferences -->
-    
-    <string name="defaultDicKey">defaultddic</string>
+
     <string name="defaultDicTitle">Default Dic</string>
     <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
-    <string name="quickdicDirectoryKey">QuickDic Directory</string>
     <string name="quickdicDirectoryTitle">QuickDic Directory</string>
     <string name="quickdicDirectorySummary">La cartella dove QuickDic salva i dizionari.</string>
-    <string name="wordListFileKey">wordListFile</string>
     <string name="wordListFileTitle">Word list file</string>
     <string name="wordListFileSummary">Il file locale dove sarà aggiunta la lista parole (word list).</string>
-    <string name="fontKey">font</string>
     <string name="fontTitle">Fonts dizionario</string>
     <string name="fontSummary">Font usato per i dizionari.</string>
-    <string name="fontSizeKey">fontSize</string>
     <string name="fontSizeTitle">Dimensione font</string>
     <string name="fontSizeSummary">La grandezza del font per le righe del dizionario.</string>
-    <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
     <string name="saveOnlyFirstSubentryTitle">Salva solo la prima sotto-voce</string>
     <string name="saveOnlyFirstSubentrySummary">Per voci con più sotto-voci, aggiungi solamente la prima alla word list.</string>
-    <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
     <string name="clickOpensContextMenuTitle">Premi per aprire il menù contestuale</string>
     <string name="clickOpensContextMenuSummary">Apri il meù contestuale con un solo tap (tap lunghi apriranno comunque il menù contestuale).</string>
-    <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
     <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
     <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
-    <string name="themeKey">theme</string>
     <string name="themeTitle">Tema</string>
     <string name="themeSummary">Colore del tema utente.</string>
     <string name="chosenNotWritable">Chosen directory not writable, try one of</string>

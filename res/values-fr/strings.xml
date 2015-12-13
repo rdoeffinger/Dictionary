@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">QuickDic</string>
-
     <!-- Global. -->
     <string name="about">À propos de QuickDic</string>
     <string name="settings">Configuration</string>
@@ -30,7 +28,6 @@
     <string name="unzippingFailed">La décompression a échoué : \n%s</string>
     <string name="installationFinished">Installation terminée : \n%s.</string>
     <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
-    <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Rechercher…</string>
@@ -61,40 +58,28 @@
      Étant donné que le dictionnaire provient de sources externes, je ne suis pas responsable de son contenu (en dehors de la mise en forme).
      Merci à Michael Vogel pour les icônes et la traduction allemande, sans oublier Justice Nanhou pour la traduction Française.
      Merci d\'envoyer vos commentaires, bugs, propositions ou alors juste un petit bonjour à :</string>
-    <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">Vous trouverez plus d\'informations sur cette page :</string>
-    <string name="webPageUrl">https://github.com/rdoeffinger/Dictionary/releases/</string>
     <string name="contributionsFrom">Contributions de :</string>
     <string name="license">QuickDic contient du code sous copyright de Google et publié sous la licence Apache 2.0.</string>
-    <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
 
     <!-- Preferences -->
 
-    <string name="defaultDicKey">defaultddic</string>
     <string name="defaultDicTitle">Dictionnaire par défaut</string>
     <string name="defaultDicSummary">Dictionnaire utilisé par défaut</string>
-    <string name="quickdicDirectoryKey">quickdicDirectory</string>
     <string name="quickdicDirectoryTitle">Repertoire QuickDic</string>
     <string name="quickdicDirectorySummary">Repertoire dans lequel QuickDic enrégistre les dictionnaires</string>
-    <string name="wordListFileKey">wordListFile</string>
     <string name="wordListFileTitle">Entrées du dictionnaire</string>
     <string name="wordListFileSummary">Fichier où les entrées du dictionnaire sont ajoutées</string>
-    <string name="fontKey">font</string>
     <string name="fontTitle">Police du dictionnaire</string>
     <string name="fontSummary">Police de caractère utilisée</string>
-    <string name="fontSizeKey">fontSize</string>
     <string name="fontSizeTitle">Taille de la police</string>
     <string name="fontSizeSummary">Taille de la police de caractère</string>
-    <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
     <string name="saveOnlyFirstSubentryTitle">Ne conserver que la première entrée</string>
     <string name="saveOnlyFirstSubentrySummary">Pour les mots avec plusieurs sous-entrées, ne conserver que le premier dans la liste</string>
-    <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
     <string name="clickOpensContextMenuTitle">Un clic ouvre le menu contextuel</string>
     <string name="clickOpensContextMenuSummary">Un clic sur une entrée ouvre le menu contextuel (un clic long ouvre toujours le menu contextuel)</string>
-    <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
     <string name="showPrevNextButtonsTitle">Boutons de navigation</string>
     <string name="showPrevNextButtonsSummary">Afficher ou masquer les boutons mot suivant/précédant dans le dictionnaire</string>
-    <string name="themeKey">thème</string>
     <string name="themeTitle">Thème</string>
     <string name="themeSummary">Thème de couleurs de l\'interface utilisateur</string>
     <string name="chosenNotWritable">Chosen directory not writable, try one of</string>

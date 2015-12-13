@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">QuickDic</string>
-
     <!-- Global. -->
     <string name="about">Über QuickDic…</string>
     <string name="settings">Einstellungen…</string>
@@ -30,7 +28,6 @@
     <string name="unzippingFailed">Unzipping failed: \n%s</string>
     <string name="installationFinished">Installation finished: \n%s.</string>
     <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
-    <string name="thanksForUpdatingVersion">4.0.1_en_a</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Suchtext</string>
@@ -61,40 +58,28 @@
      Leider kann ich keine Verantwortung für die Wörterbücher (außer Formatierung) nehmen, weil sie aus anderen Quellen erzeugt werden.
      Danke an Michael Vogel für Hilfe mit dem Icon und den deutschen Übersetzungen.
      Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:</string>
-    <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">Weitere Informationen finden Sie unter:</string>
-    <string name="webPageUrl">https://github.com/rdoeffinger/Dictionary/releases/</string>
     <string name="contributionsFrom">Contributions from:</string>
     <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
-    <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
 
     <!-- Preferences -->
 
-    <string name="defaultDicKey">defaultddic</string>
     <string name="defaultDicTitle">Default Dic</string>
     <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
-    <string name="quickdicDirectoryKey">quickdicDirectory</string>
     <string name="quickdicDirectoryTitle">QuickDic Verzeichnis</string>
     <string name="quickdicDirectorySummary">Das Verzeichnis, in dem QuickDic die Wörterbücher speichert.</string>
-    <string name="wordListFileKey">wordListFile</string>
     <string name="wordListFileTitle">Wörterbucheinträge</string>
     <string name="wordListFileSummary">Die lokale Datei, in die Wörterbucheinträge hinzugefügt werden können.</string>
-    <string name="fontKey">font</string>
     <string name="fontTitle">Schriftart</string>
     <string name="fontSummary">Definition der Wörterbuchschrift.</string>
-    <string name="fontSizeKey">fontSize</string>
     <string name="fontSizeTitle">Schriftgröße</string>
     <string name="fontSizeSummary">Schriftgröße für die Wörterbucheinträge.</string>
-    <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
     <string name="saveOnlyFirstSubentryTitle">Export-Filter</string>
     <string name="saveOnlyFirstSubentrySummary">Bei mehrfachen Einträgen nur den ersten exportieren.</string>
-    <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
     <string name="clickOpensContextMenuTitle">Kontextmenü</string>
     <string name="clickOpensContextMenuSummary">Kontextmenü bereits bei kurzem Klick auf einen Eintrag öffnen.</string>
-    <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
     <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
     <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
-    <string name="themeKey">theme</string>
     <string name="themeTitle">Farbschema</string>
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
     <string name="chosenNotWritable">Chosen directory not writable, try one of</string>

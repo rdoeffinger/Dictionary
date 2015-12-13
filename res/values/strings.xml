@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">QuickDic</string>
-    <string name="thanksForUpdatingVersion">5.1.0</string>
+    <string name="app_name" translatable="false">QuickDic</string>
+    <string name="thanksForUpdatingVersion" translatable="false">5.1.0</string>
 
     <!-- Global. -->
     <string name="about">About QuickDic…</string>
@@ -60,40 +60,40 @@
     <string name="contactMe">If you\'re using QuickDic, I\'d love to hear from you.
   Unfortunately, I cannot take responsibility for dictionary content (other than formatting), as it is generated from other sources.
   Please send comments, suggestions, bug reports, or just a quick hello to:</string>
-    <string name="myEmail" formatted="false">quickdic@reimardoeffinger.de</string>
+    <string name="myEmail" formatted="false" translatable="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">For more information, see:</string>
-    <string name="webPageUrl">https://github.com/rdoeffinger/Dictionary/releases/</string>
+    <string name="webPageUrl" translatable="false">https://github.com/rdoeffinger/Dictionary/releases/</string>
     <string name="contributionsFrom">Contributions from:</string>
     <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
-    <string name="licenseUrl">http://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="licenseUrl" translatable="false">http://www.apache.org/licenses/LICENSE-2.0</string>
 
     <!-- Preferences -->
 
-    <string name="defaultDicKey">defaultddic</string>
+    <string name="defaultDicKey" translatable="false">defaultddic</string>
     <string name="defaultDicTitle">Default Dic</string>
     <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
-    <string name="quickdicDirectoryKey">quickdicDirectory</string>
+    <string name="quickdicDirectoryKey" translatable="false">quickdicDirectory</string>
     <string name="quickdicDirectoryTitle">QuickDic directory</string>
     <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries (empty for default quickDic folder on external storage).</string>
-    <string name="wordListFileKey">wordListFile</string>
+    <string name="wordListFileKey" translatable="false">wordListFile</string>
     <string name="wordListFileTitle">Word list file</string>
     <string name="wordListFileSummary">The local file where the word list will be appended.</string>
-    <string name="fontKey">font</string>
+    <string name="fontKey" translatable="false">font</string>
     <string name="fontTitle">Dictionary font</string>
     <string name="fontSummary">Font used to display dictionaries.</string>
-    <string name="fontSizeKey">fontSize</string>
+    <string name="fontSizeKey" translatable="false">fontSize</string>
     <string name="fontSizeTitle">Font size</string>
     <string name="fontSizeSummary">The size of the font for dictionary rows.</string>
-    <string name="saveOnlyFirstSubentryKey">saveOnlyFirstSubentry</string>
+    <string name="saveOnlyFirstSubentryKey" translatable="false">saveOnlyFirstSubentry</string>
     <string name="saveOnlyFirstSubentryTitle">Save only first sub-entry</string>
     <string name="saveOnlyFirstSubentrySummary">For entries with multiple sub-entries, only write the first to the word list.</string>
-    <string name="clickOpensContextMenuKey">clickOpensContextMenu</string>
+    <string name="clickOpensContextMenuKey" translatable="false">clickOpensContextMenu</string>
     <string name="clickOpensContextMenuTitle">Click opens context menu</string>
     <string name="clickOpensContextMenuSummary">Open context menu for clicks on entries (long-click will always open-context menu).</string>
-    <string name="showPrevNextButtonsKey">showPrevNextButtons</string>
+    <string name="showPrevNextButtonsKey" translatable="false">showPrevNextButtons</string>
     <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
     <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
-    <string name="themeKey">theme</string>
+    <string name="themeKey" translatable="false">theme</string>
     <string name="themeTitle">UI theme</string>
     <string name="themeSummary">User-interface color theme.</string>
     <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
