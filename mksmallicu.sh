@@ -9,3 +9,4 @@ zip -d "$DST" com/ibm/icu/impl/ICULangDataTables*.class com/ibm/icu/impl/ICURegi
 zip -d "$DST" com/ibm/icu/text/CompactDecimalDataCache*.class com/ibm/icu/text/*Currency*.class com/ibm/icu/text/Date*.class com/ibm/icu/text/*Format*.class com/ibm/icu/text/*TimeZone*.class com/ibm/icu/text/NF*.class com/ibm/icu/text/RBNF*.class com/ibm/icu/text/*Substitution*.class
 zip -d "$DST" com/ibm/icu/util/*Currency*.class com/ibm/icu/util/GlobalizationPreferences*.class com/ibm/icu/util/*Calendar*.class com/ibm/icu/util/EasterRule*.class com/ibm/icu/util/*DateRule*.class com/ibm/icu/util/*Holiday*.class com/ibm/icu/util/*Time*.class com/ibm/icu/util/Range.class com/ibm/icu/util/STZInfo*.class com/ibm/icu/util/Measure*.class
 zip -d "$DST" license.html
+zip -d "$DST" com/ibm/icu/impl/coll/* com/ibm/icu/impl/data/icudt55b/coll/* com/ibm/icu/text/*Collat* com/ibm/icu/text/StringSearch* com/ibm/icu/text/AlphabeticIndex* com/ibm/icu/impl/text/RbnfScanner*

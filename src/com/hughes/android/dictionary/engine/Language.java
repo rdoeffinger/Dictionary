@@ -15,7 +15,7 @@
 package com.hughes.android.dictionary.engine;
 
 import com.hughes.android.dictionary.DictionaryApplication;
-import com.ibm.icu.text.Collator;
+import java.text.Collator;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;

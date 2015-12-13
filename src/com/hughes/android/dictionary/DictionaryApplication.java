@@ -43,7 +43,7 @@ import com.hughes.android.dictionary.engine.Language.LanguageResources;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
 import com.hughes.util.ListUtil;
-import com.ibm.icu.text.Collator;
+import java.text.Collator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -65,10 +65,12 @@ public class DictionaryApplication extends Application {
     // If set to false, avoid use of ICU collator
     // Works well enough for most european languages,
     // gives faster startup and avoids crashes on some
-    // devices due to Dalvik bugs (e.g. ARMv6, S5570i, CM11).
+    // devices due to Dalvik bugs (e.g. ARMv6, S5570i, CM11)
+    // when using ICU4J.
     // Leave it enabled by default for correctness except
     // for my known broken development/performance test device config.
-    static public final boolean USE_COLLATOR = !android.os.Build.FINGERPRINT.equals("Samsung/cm_tassve/tassve:4.4.4/KTU84Q/20150211:userdebug/release-keys");
+    //static public final boolean USE_COLLATOR = !android.os.Build.FINGERPRINT.equals("Samsung/cm_tassve/tassve:4.4.4/KTU84Q/20150211:userdebug/release-keys");
+    static public final boolean USE_COLLATOR = true;
 
     // Static, determined by resources (and locale).
     // Unordered.
