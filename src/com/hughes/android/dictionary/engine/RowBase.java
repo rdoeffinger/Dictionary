@@ -181,6 +181,8 @@ public abstract class RowBase extends IndexedObject {
                 type = 4;
             }
             assert t.referenceIndex < (1 << 21);
+            if ((t.referenceIndex >> 16) >= (1 << 5))
+                throw new RuntimeException("referenceIndex larger than supported max");
             raf.writeByte(((type + 1) << 5) + (t.referenceIndex >> 16));
             raf.writeShort(t.referenceIndex);
         }
