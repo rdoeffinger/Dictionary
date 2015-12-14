@@ -579,13 +579,15 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             builder.append(getString(R.string.indexInfo, indexInfo.shortName,
                     indexInfo.mainTokenCount));
         }
-        if (downloadable != null) {
+        if (downloadable != null || dictionaryInfo != null) {
             builder.append("; ");
-            builder.append(getString(R.string.downloadButton, downloadable.uncompressedBytes / 1024.0 / 1024.0));
+            builder.append(getString(R.string.downloadButton, (dictionaryInfo != null ? dictionaryInfo.uncompressedBytes : downloadable.uncompressedBytes) / 1024.0 / 1024.0));
         }
         if (broken) {
             name.setText("Broken: " + application.getDictionaryName(dictionaryInfo.uncompressedFilename));
             builder.append("; Cannot be used, redownload, check hardware/file system");
+            // Allow deleting, but cannot open
+            row.setLongClickable(true);
         }
         details.setText(builder.toString());
 
