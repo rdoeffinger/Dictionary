@@ -46,7 +46,7 @@ public abstract class RowBase extends IndexedObject {
             throws IOException {
         super(thisRowIndex);
         this.index = index;
-        this.referenceIndex = extra == -1 ? raf.readInt() : ((extra << 24) + raf.readUnsignedShort()); // what this points to.
+        this.referenceIndex = extra == -1 ? raf.readInt() : ((extra << 16) + raf.readUnsignedShort()); // what this points to.
     }
 
     public RowBase(final int referenceIndex, final int thisRowIndex, final Index index) {
@@ -181,7 +181,7 @@ public abstract class RowBase extends IndexedObject {
                 type = 4;
             }
             assert t.referenceIndex < (1 << 21);
-            raf.writeByte(((type + 1) << 5) + (t.referenceIndex >> 24));
+            raf.writeByte(((type + 1) << 5) + (t.referenceIndex >> 16));
             raf.writeShort(t.referenceIndex);
         }
     }
