@@ -550,7 +550,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             downloadButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    downloadDictionary(downloadable.downloadUrl);
+                    downloadDictionary(downloadable.downloadUrl, downloadable.zipBytes, downloadButton);
                 }
             });
         } else {
@@ -611,8 +611,25 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         return row;
     }
 
-    private void downloadDictionary(final String downloadUrl) {
+    private void downloadDictionary(final String downloadUrl, long bytes, Button downloadButton) {
         DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        final DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterByStatus(DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_PENDING | DownloadManager.STATUS_RUNNING);
+        final Cursor cursor = downloadManager.query(query);
+        while (cursor.moveToNext()) {
+            if (downloadUrl.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_URI))))
+                break;
+        }
+        if (!cursor.isAfterLast()) {
+            downloadManager.remove(cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID)));
+            downloadButton
+                    .setText(getString(
+                            R.string.downloadButton,
+                            bytes / 1024.0 / 1024.0));
+            cursor.close();
+            return;
+        }
+        cursor.close();
         Request request = new Request(
                 Uri.parse(downloadUrl));
         try {
@@ -625,6 +642,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             throw new RuntimeException(e);
         }
         downloadManager.enqueue(request);
+        downloadButton.setText("X");
     }
 
 }
