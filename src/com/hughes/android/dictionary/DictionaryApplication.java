@@ -276,7 +276,7 @@ public class DictionaryApplication extends Application {
 
     }
 
-    static final class DictionaryConfig implements Serializable {
+    public static final class DictionaryConfig implements Serializable {
         private static final long serialVersionUID = -1444177164708201263L;
         // User-ordered list, persisted, just the ones that are/have been
         // present.

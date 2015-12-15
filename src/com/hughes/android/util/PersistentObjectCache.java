@@ -18,12 +18,21 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
+import com.hughes.android.dictionary.DictionaryApplication;
+import com.hughes.android.dictionary.DictionaryInfo;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,6 +40,29 @@ public class PersistentObjectCache {
 
     private final File dir;
     private final Map<String, Object> objects = new LinkedHashMap<String, Object>();
+
+    class ConstrainedOIS extends ObjectInputStream {
+      public ConstrainedOIS(InputStream in) throws IOException {
+        super(in);
+      }
+
+      protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+        String name = desc.getName();
+        // Note: try to avoid adding more classes.
+        // LinkedHashMap is already more than enough for a DoS
+        if (!name.equals(ArrayList.class.getName()) &&
+            !name.equals(HashMap.class.getName()) &&
+            !name.equals(LinkedHashMap.class.getName()) &&
+            !name.equals(String.class.getName()) &&
+            !name.equals(DictionaryApplication.DictionaryConfig.class.getName()) &&
+            !name.equals(DictionaryInfo.class.getName()) &&
+            !name.equals(DictionaryInfo.IndexInfo.class.getName()))
+        {
+          throw new InvalidClassException("Not allowed to deserialize class", name);
+        }
+        return super.resolveClass(desc);
+      }
+    }
 
     public synchronized <T extends Serializable> T read(final String filename, final Class<T> resultClass) {
         try {
@@ -45,7 +77,7 @@ public class PersistentObjectCache {
                 return null;
             }
             try {
-                final ObjectInputStream in = new ObjectInputStream(new FileInputStream(src));
+                final ObjectInputStream in = new ConstrainedOIS(new FileInputStream(src));
                 object = in.readObject();
                 in.close();
             } catch (Exception e) {
