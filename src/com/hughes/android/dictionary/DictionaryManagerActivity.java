@@ -142,11 +142,17 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                         .getInt(cursor
                                 .getColumnIndex(DownloadManager.COLUMN_STATUS));
                 if (DownloadManager.STATUS_SUCCESSFUL != status) {
+                    final int reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
                     Log.w(LOG,
                             "Download failed: status=" + status +
-                                    ", reason=" + cursor.getString(cursor
-                                            .getColumnIndex(DownloadManager.COLUMN_REASON)));
-                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.downloadFailed, dest)).setNeutralButton("Close", null).show();
+                                    ", reason=" + reason);
+                    String msg = Integer.toString(reason);
+                    switch (reason) {
+                    case DownloadManager.ERROR_FILE_ALREADY_EXISTS: msg = "File exists"; break;
+                    case DownloadManager.ERROR_FILE_ERROR: msg = "File error"; break;
+                    case DownloadManager.ERROR_INSUFFICIENT_SPACE: msg = "Not enough space"; break;
+                    }
+                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.downloadFailed, reason)).setNeutralButton("Close", null).show();
                     return;
                 }
 
