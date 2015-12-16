@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Global. -->
+    <string name="about">クイック辞書について…</string>
+    <string name="settings">設定…</string>
+    <string name="help">ヘルプ</string>
+    <string name="reportIssue">問題を報告…</string>
+    <string name="no_dict_file">設定でデフォルトのディレクトリーを指定してください.</string>
+
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">辞書管理</string>
+    <string name="dictionariesOnDevice">端末にある辞書</string>
+    <string name="downloadableDictionaries">ダウンロード可能辞書</string>
+    <string name="downloadButton">%.1fMB</string>
+    <string name="updateAvailable">更新!</string>
+    <string name="moveToTop">先頭に移動</string>
+    <string name="deleteDictionary">辞書を削除</string>
+    <string name="indexInfo">%1$s: %2$,d 語</string>
+    <string name="managerShow">表示</string>
+    <string name="managerHide">非表示</string>
+    <string name="error">エラー</string>
+    <string name="unableToReadDictionaryDir">辞書ディレクトリーを読むことができません: \n%1$s\n\nAndroid 外部ストレージのディレクトリー: \n%2$s</string>
+
+    <!-- Download. -->
+    <string name="downloadFailed">ダウンロードできませんでした: \n%s.</string>
+    <string name="unzippingDictionary">辞書を解凍しています: \n%s</string>
+    <string name="unzippingFailed">解凍できませんでした: \n%s</string>
+    <string name="installationFinished">インストールか完了しました: \n%s.</string>
+    <string name="notWritable">辞書の場所 %s は書き込みできません。設定で変更してください.</string>
+
+    <!-- DictionaryActivity -->
+    <string name="searchText">検索するテキスト</string>
+    <string name="selectDictionary">辞書を選択…</string>
+    <string name="addToWordList">単語リストに追加: %s</string>
+    <string name="searchForSelection">検索: %s</string>
+    <string name="failedAddingToWordList">単語リストに追加できませんでした: %s</string>
+    <string name="invalidDictionary">辞書が正しくありません: ファイル=%1$s, エラー=%2$s</string>
+    <string name="noSearchResults">検索結果はありません.</string>
+    <string name="aboutDictionary">辞書について…</string>
+    <string name="fontFailure">フォントエラー: %s</string>
+    <string name="seeAlso">参照してください: %1$s (%2$s)</string>
+    <string name="speak">話す</string>
+    <string name="nextWord">次の単語</string>
+    <string name="previousWord">前の単語</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">ファイル: %s</string>
+    <string name="dictionarySize">サイズ: %,d バイト</string>
+    <string name="dictionaryCreationTime">作成: %tc</string>
+    <string name="indexName">索引: %s</string>
+    <string name="mainTokenCount">語彙の数: %,d</string>
+    <string name="sources">ソース</string>
+    <string name="sourceInfo">%1$s : %2$,d 件</string>
+
+    <!-- About. -->
+    <string name="contactMe">クイック辞書をお使いの方へ, ご意見をお聞かせください.
+  あいにく, 外部の情報元から生成しているため, 辞書の内容についての責任は負いかねます.
+  コメント, 提案, バグレポート, または簡単な挨拶でもこちらにメールください:</string>
+    <string name="webPage">さらに詳しい情報は, こちらを参照ください:</string>
+    <string name="contributionsFrom">貢献者:</string>
+    <string name="license">クイック辞書は Google に copyright があるコードを含んでいます. また, Apache 2.0 license　の下にリリースされています.</string>
+
+    <!-- Preferences -->
+
+    <string name="defaultDicTitle">デフォルト辞書</string>
+    <string name="defaultDicSummary">他に指定がない時に使用される辞書です.</string>
+    <string name="quickdicDirectoryTitle">QuickDic 辞書</string>
+    <string name="quickdicDirectorySummary">QuickDic が保存する辞書です (外部ストレージにデフォルトの quickDic フォルダーが作成されます).</string>
+    <string name="wordListFileTitle">単語リストファイル</string>
+    <string name="wordListFileSummary">単語リストが追加されるローカルファイルです.</string>
+    <string name="fontTitle">辞書フォント</string>
+    <string name="fontSummary">辞書を表示する時に使用されるフォント.</string>
+    <string name="fontSizeTitle">フォントサイズ</string>
+    <string name="fontSizeSummary">辞書の行を表示するフォントサイズ.</string>
+    <string name="saveOnlyFirstSubentryTitle">最初のサブエントリーのみ保存</string>
+    <string name="saveOnlyFirstSubentrySummary">複数のサブエントリーをもつエントリーで, 最初のサブエントリーのみ単語リストに書き込みます.</string>
+    <string name="clickOpensContextMenuTitle">クリックでコンテントメニューを開く</string>
+    <string name="clickOpensContextMenuSummary">エントリーでクリックするとコンテントメニューを開きます (長押しするといつもコンテントメニューを表示します).</string>
+    <string name="showPrevNextButtonsTitle">上/下ボタンを表示</string>
+    <string name="showPrevNextButtonsSummary">辞書表示の際, 前および次の単語ボタンを表示または非表示します.</string>
+    <string name="themeTitle">UI テーマ</string>
+    <string name="themeSummary">ユーザーインターフェイスの色のテーマ.</string>
+    <string name="chosenNotWritable">選択したディレクトリーは書き込みできません。次から選択してください</string>
+
+</resources>

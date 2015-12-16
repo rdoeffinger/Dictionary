@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string-array name="fonts">
+    <item>フリーセリフ</item>
+    <item>システム デフォルト</item>
+    <item>システム セリフ</item>
+    <item>システム サンセリフ</item>
+    <item>システム モノスペース</item>
+  </string-array>
+
+  <string-array name="themes">
+    <item>ライト テーマ</item>
+    <item>デフォルト テーマ</item>
+  </string-array>
+  
+</resources>
