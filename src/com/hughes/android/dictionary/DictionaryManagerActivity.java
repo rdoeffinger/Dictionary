@@ -637,7 +637,12 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     .getName();
             Log.d(LOG, "Downloading to: " + destFile);
 
-            request.setDestinationInExternalFilesDir(getApplicationContext(), null, destFile);
+            try {
+                request.setDestinationInExternalFilesDir(getApplicationContext(), null, destFile);
+            } catch (IllegalStateException e) {
+                request.setDestinationUri(Uri.fromFile(new File(Environment
+                        .getExternalStorageDirectory(), destFile)));
+            }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
