@@ -117,7 +117,7 @@ public final class Index implements RAFSerializable<Index> {
      * normalizations.
      */
     public NormalizeComparator getSortComparator() {
-        return new NormalizeComparator(normalizer(), sortLanguage.getCollator());
+        return new NormalizeComparator(normalizer(), sortLanguage.getCollator(), dict.dictFileVersion);
     }
 
     public Index(final Dictionary dict, final DataInput inp) throws IOException {
@@ -309,7 +309,9 @@ public final class Index implements RAFSerializable<Index> {
             }
             final IndexEntry midEntry = sortedIndexEntries.get(mid);
 
-            final int comp = sortCollator.compare(token, midEntry.normalizedToken());
+            int comp = NormalizeComparator.compareWithoutLeadingDash(token, midEntry.normalizedToken(), sortCollator, dict.dictFileVersion);
+            if (comp == 0)
+                comp = sortCollator.compare(token, midEntry.normalizedToken());
             if (comp == 0) {
                 final int result = windBackCase(token, mid, interrupted);
                 return result;
