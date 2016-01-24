@@ -110,6 +110,13 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        final MyWebView webView = (MyWebView)findViewById(R.id.webView);
+        if (webView.canGoBack()) webView.goBack();
+        else super.onBackPressed();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Explicitly handle the up button press so
         // we return to the dictionary.
