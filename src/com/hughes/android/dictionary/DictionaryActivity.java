@@ -777,7 +777,7 @@ public class DictionaryActivity extends ActionBarActivity {
             }
         } else {
             // Down
-            destIndexEntry = Math.min(tokenRow.referenceIndex + 1, index.sortedIndexEntries.size());
+            destIndexEntry = Math.min(tokenRow.referenceIndex + 1, index.sortedIndexEntries.size() - 1);
         }
         final Index.IndexEntry dest = index.sortedIndexEntries.get(destIndexEntry);
         Log.d(LOG, "onUpDownButton, destIndexEntry=" + dest.token);
