@@ -129,6 +129,8 @@ public class DictionaryActivity extends ActionBarActivity {
 
     List<RowBase> rowsToShow = null; // if not null, just show these rows.
 
+    final Random rand = new Random();
+
     final Handler uiHandler = new Handler();
 
     private final Executor searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
@@ -168,7 +170,7 @@ public class DictionaryActivity extends ActionBarActivity {
     ImageButton languageButton;
     SearchView.OnQueryTextListener onQueryTextListener;
 
-    MenuItem nextWordMenuItem, previousWordMenuItem;
+    MenuItem nextWordMenuItem, previousWordMenuItem, randomWordMenuItem;
 
     // Never null.
     private File wordList = null;
@@ -784,6 +786,14 @@ public class DictionaryActivity extends ActionBarActivity {
         defocusSearchText();
     }
 
+    void onRandomWordButton() {
+        int destIndexEntry = rand.nextInt(index.sortedIndexEntries.size());
+        final Index.IndexEntry dest = index.sortedIndexEntries.get(destIndexEntry);
+        setSearchText(dest.token, false);
+        jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
+        defocusSearchText();
+    }
+
     // --------------------------------------------------------------------------
     // Options Menu
     // --------------------------------------------------------------------------
@@ -819,6 +829,15 @@ public class DictionaryActivity extends ActionBarActivity {
                 }
             });
         }
+
+        randomWordMenuItem = menu.add(getString(R.string.randomWord));
+        randomWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                onRandomWordButton();
+                return true;
+            }
+        });
 
         application.onCreateGlobalOptionsMenu(this, menu);
 

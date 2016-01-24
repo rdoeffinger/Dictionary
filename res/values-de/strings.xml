@@ -43,6 +43,7 @@
     <string name="speak">Sprechen</string>
     <string name="nextWord">Nächstes Wort</string>
     <string name="previousWord">Voriges Wort</string>
+    <string name="randomWord">Zufälliges Wort</string>
     
     <!-- About dictionary. -->
     <string name="dictionaryPath">Datei: %s</string>

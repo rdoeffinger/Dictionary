@@ -41,6 +41,9 @@ def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "../Util"
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
+    lintOptions {
+        disable "MissingTranslation"
+    }
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
