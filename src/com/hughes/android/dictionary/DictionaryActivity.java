@@ -638,6 +638,13 @@ public class DictionaryActivity extends ActionBarActivity {
         }
     }
 
+    private void hideKeyboard() {
+        Log.d(LOG, "Hide soft keyboard.");
+        searchView.clearFocus();
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+    }
+
     void updateLangButton() {
         final LanguageResources languageResources =
                 DictionaryApplication.isoCodeToResources.get(index.shortName);
@@ -1006,7 +1013,7 @@ public class DictionaryActivity extends ActionBarActivity {
         getListView().requestFocus();
 
         // Visual indication that a new keystroke will clear the search text.
-        // Doesn't seem to work unless earchText has focus.
+        // Doesn't seem to work unless searchText has focus.
         // searchView.selectAll();
     }
 
@@ -1108,6 +1115,9 @@ public class DictionaryActivity extends ActionBarActivity {
         // Hide search icon once text is entered
         searchView.setIconifiedByDefault(text.length() > 0);
         searchView.setIconified(false);
+
+        // We don't want to show virtual keyboard when we're changing searchView text programatically:
+        hideKeyboard();
 
         if (triggerSearch) {
             onQueryTextListener.onQueryTextChange(text);
