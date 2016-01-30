@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hughes.android.dictionary"
     android:installLocation="auto"
-    android:versionCode="54"
-    android:versionName="5.2.3" >
+    android:versionCode="55"
+    android:versionName="5.2.4" >
 
     <uses-sdk
         android:minSdkVersion="10"
