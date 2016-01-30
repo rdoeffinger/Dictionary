@@ -514,17 +514,16 @@ public class DictionaryActivity extends ActionBarActivity {
         searchView.setQueryHint(getString(R.string.searchText));
         searchView.setSubmitButtonEnabled(false);
         searchView.setImeOptions(
-                EditorInfo.IME_ACTION_SEARCH |
+                EditorInfo.IME_ACTION_DONE |
                         EditorInfo.IME_FLAG_NO_EXTRACT_UI |
-                        EditorInfo.IME_FLAG_NO_ENTER_ACTION |
                         // EditorInfo.IME_FLAG_NO_FULLSCREEN | // Requires API
                         // 11
-                        EditorInfo.IME_MASK_ACTION |
                         EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         onQueryTextListener = new OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(LOG, "OnQueryTextListener: onQueryTextSubmit: " + searchView.getQuery());
+                hideKeyboard();
                 return true;
             }
 
