@@ -616,6 +616,14 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         final DownloadManager.Query query = new DownloadManager.Query();
         query.setFilterByStatus(DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_PENDING | DownloadManager.STATUS_RUNNING);
         final Cursor cursor = downloadManager.query(query);
+
+        if (cursor == null) {
+            new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
+                    .setMessage(getString(R.string.downloadFailed, "Couldn't query Download Manager"))
+                    .setNeutralButton("Close", null).show();
+            return;
+        }
+
         while (cursor.moveToNext()) {
             if (downloadUrl.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_URI))))
                 break;
