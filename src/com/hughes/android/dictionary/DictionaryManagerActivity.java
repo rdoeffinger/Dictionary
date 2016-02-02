@@ -33,6 +33,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -269,6 +270,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     private void onCreateSetupActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
         filterSearchView = new SearchView(getSupportActionBar().getThemedContext());
         filterSearchView.setIconifiedByDefault(false);
@@ -277,9 +280,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         // wrong place.
         filterSearchView.setQueryHint(getString(R.string.searchText));
         filterSearchView.setSubmitButtonEnabled(false);
-        final int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300,
-                getResources().getDisplayMetrics());
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width,
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
         filterSearchView.setLayoutParams(lp);
         filterSearchView.setImeOptions(
@@ -306,6 +307,10 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
         actionBar.setCustomView(filterSearchView);
         actionBar.setDisplayShowCustomEnabled(true);
+
+        // Avoid wasting space on large left inset
+        Toolbar tb = (Toolbar)filterSearchView.getParent();
+        tb.setContentInsetsRelative(0, 0);
     }
 
     @Override
