@@ -43,6 +43,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -282,18 +283,17 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 FrameLayout.LayoutParams.WRAP_CONTENT);
         filterSearchView.setLayoutParams(lp);
         filterSearchView.setImeOptions(
-                EditorInfo.IME_ACTION_SEARCH |
+                EditorInfo.IME_ACTION_DONE |
                         EditorInfo.IME_FLAG_NO_EXTRACT_UI |
-                        EditorInfo.IME_FLAG_NO_ENTER_ACTION |
                         // EditorInfo.IME_FLAG_NO_FULLSCREEN | // Requires API
                         // 11
-                        EditorInfo.IME_MASK_ACTION |
                         EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         filterSearchView.setOnQueryTextListener(new OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return true;
+                filterSearchView.clearFocus();
+                return false;
             }
 
             @Override
