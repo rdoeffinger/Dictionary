@@ -582,7 +582,7 @@ public class DictionaryApplication extends Application {
             @Override
             public void run() {
                 final DictionaryConfig oldDictionaryConfig = new DictionaryConfig();
-                synchronized (this) {
+                synchronized (DictionaryApplication.this) {
                     oldDictionaryConfig.dictionaryFilesOrdered
                             .addAll(dictionaryConfig.dictionaryFilesOrdered);
                 }
@@ -590,7 +590,7 @@ public class DictionaryApplication extends Application {
                 for (final String uncompressedFilename : oldDictionaryConfig.dictionaryFilesOrdered) {
                     final File dictFile = getPath(uncompressedFilename);
                     final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(dictFile);
-                    if (dictionaryInfo.isValid()) {
+                    if (dictionaryInfo.isValid() || dictFile.exists()) {
                         newDictionaryConfig.dictionaryFilesOrdered.add(uncompressedFilename);
                         newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
                                 uncompressedFilename, dictionaryInfo);
@@ -642,7 +642,7 @@ public class DictionaryApplication extends Application {
                     Log.e(LOG, "Failed persisting dictionary configs", e);
                 }
 
-                synchronized (this) {
+                synchronized (DictionaryApplication.this) {
                     dictionaryConfig = newDictionaryConfig;
                 }
 
