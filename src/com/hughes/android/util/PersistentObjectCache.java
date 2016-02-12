@@ -76,12 +76,14 @@ public class PersistentObjectCache {
                 Log.d(getClass().getSimpleName(), "File empty: " + src);
                 return null;
             }
+	    ObjectInputStream in = null;
             try {
-                final ObjectInputStream in = new ConstrainedOIS(new FileInputStream(src));
+                in = new ConstrainedOIS(new FileInputStream(src));
                 object = in.readObject();
                 in.close();
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Deserialization failed: " + src, e);
+                try { if (in != null) in.close(); } catch (IOException e2) {}
                 return null;
             }
             objects.put(filename, object);
@@ -94,13 +96,14 @@ public class PersistentObjectCache {
     public synchronized void write(final String filename, final Serializable object) {
         objects.put(filename, object);
         final File dest = new File(dir, filename);
+	ObjectOutputStream out = null;
         try {
-            final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(dest));
+            out = new ObjectOutputStream(new FileOutputStream(dest));
             out.writeObject(object);
-            out.close();
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Serialization failed: " + dest, e);
         }
+        try { if (out != null) out.close(); } catch (IOException e) {}
     }
 
     private PersistentObjectCache(final Context context) {
