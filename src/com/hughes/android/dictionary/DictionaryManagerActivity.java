@@ -177,6 +177,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     final OutputStream zipOut = new FileOutputStream(targetFile);
                     copyStream(zipIn, zipOut);
                     zipFile.close();
+                    zipOut.close();
                     application.backgroundUpdateDictionaries(dictionaryUpdater);
                     Toast.makeText(context, getString(R.string.installationFinished, dest),
                             Toast.LENGTH_LONG).show();

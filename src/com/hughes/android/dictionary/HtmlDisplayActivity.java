@@ -28,6 +28,8 @@ import android.widget.Button;
 
 import com.hughes.util.StringUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 public final class HtmlDisplayActivity extends ActionBarActivity {
@@ -74,7 +76,12 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
         final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
         String html;
         if (htmlRes != -1) {
-            html = StringUtil.readToString(getResources().openRawResource(htmlRes));
+            InputStream res = getResources().openRawResource(htmlRes);
+            html = StringUtil.readToString(res);
+            try {
+                res.close();
+            } catch (IOException e) {
+            }
         } else {
             html = getIntent().getStringExtra(HTML);
         }
