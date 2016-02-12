@@ -314,10 +314,10 @@ public class DictionaryApplication extends Application {
                 DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO.put(
                         dictionaryInfo.uncompressedFilename, dictionaryInfo);
             }
-            reader.close();
         } catch (IOException e) {
             Log.e(LOG, "Failed to load downloadable dictionary lists.", e);
         }
+        try { reader.close(); } catch (IOException e) {}
     }
 
     private File dictDir;

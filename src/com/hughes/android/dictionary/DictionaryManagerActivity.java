@@ -164,20 +164,21 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 
                 
                 final File localZipFile = new File(Uri.parse(dest).getPath());
+                ZipFile zipFile = null;
+                InputStream zipIn = null;
+                OutputStream zipOut = null;
                 try {
-                    ZipFile zipFile = new ZipFile(localZipFile);
+                    zipFile = new ZipFile(localZipFile);
                     final ZipEntry zipEntry = zipFile.entries().nextElement();
                     Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
-                    final InputStream zipIn = zipFile.getInputStream(zipEntry);
+                    zipIn = zipFile.getInputStream(zipEntry);
                     File targetFile = new File(application.getDictDir(), zipEntry.getName());
                     if (targetFile.exists()) {
                         targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
                         targetFile = new File(application.getDictDir(), zipEntry.getName());
                     }
-                    final OutputStream zipOut = new FileOutputStream(targetFile);
+                    zipOut = new FileOutputStream(targetFile);
                     copyStream(zipIn, zipOut);
-                    zipFile.close();
-                    zipOut.close();
                     application.backgroundUpdateDictionaries(dictionaryUpdater);
                     Toast.makeText(context, getString(R.string.installationFinished, dest),
                             Toast.LENGTH_LONG).show();
@@ -190,6 +191,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
                     Log.e(LOG, "Failed to unzip.", e);
                 } finally {
+                    try { if (zipOut != null) zipOut.close(); } catch (IOException e) {}
+                    try { if (zipIn != null) zipIn.close(); } catch (IOException e) {}
+                    try { if (zipFile != null) zipFile.close(); } catch (IOException e) {}
                     localZipFile.delete();
                 }
             }
