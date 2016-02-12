@@ -16,6 +16,7 @@ package com.hughes.android.dictionary;
 
 import android.app.Activity;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -32,8 +33,11 @@ public final class AboutActivity extends Activity {
         setContentView(R.layout.about_activity);
         String ver = "???";
         try {
-            PackageInfo p = getPackageManager().getPackageInfo(getPackageName(), 0);
-            ver = p.versionName + " (ID " + p.versionCode + ")";
+            PackageManager pm = getPackageManager();
+            if (pm != null) {
+                PackageInfo p = pm.getPackageInfo(getPackageName(), 0);
+                ver = p.versionName + " (ID " + p.versionCode + ")";
+            }
         } catch (Exception e) {
         }
         TextView titleView = (TextView)findViewById(R.id.titleText);
