@@ -389,7 +389,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     for (final Index index : dictionary.indices) {
                         final String searchToken = index.sortedIndexEntries.get(0).token;
                         final IndexEntry entry = index.findExact(searchToken);
-                        if (!searchToken.equals(entry.token)) {
+                        if (entry == null || !searchToken.equals(entry.token)) {
                             Log.e(LOG, "Couldn't find token: " + searchToken + ", " + entry.token);
                         }
                     }
@@ -1095,8 +1095,11 @@ public class DictionaryActivity extends ActionBarActivity {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
             Log.d(LOG, "Trying to hide soft keyboard.");
             final InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
+            View focus = getCurrentFocus();
+            if (focus != null) {
+                inputManager.hideSoftInputFromWindow(focus.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);

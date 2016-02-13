@@ -104,9 +104,12 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
                         dirs += "\n" + f.getAbsolutePath();
                 }
             } else {
-                String externalFilesDir = getApplicationContext().getExternalFilesDir(null).getAbsolutePath();
-                if (new File(externalFilesDir).canWrite())
-                    dirs += "\n" + externalFilesDir;
+                File efd = getApplicationContext().getExternalFilesDir(null);
+                if (efd != null) {
+                    String externalFilesDir = efd.getAbsolutePath();
+                    if (new File(externalFilesDir).canWrite())
+                        dirs += "\n" + externalFilesDir;
+                }
             }
             new AlertDialog.Builder(this).setTitle(getString(R.string.error))
                 .setMessage(getString(R.string.chosenNotWritable) + dirs)
