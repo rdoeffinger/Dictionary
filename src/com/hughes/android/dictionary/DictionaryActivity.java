@@ -390,7 +390,7 @@ public class DictionaryActivity extends ActionBarActivity {
                         final String searchToken = index.sortedIndexEntries.get(0).token;
                         final IndexEntry entry = index.findExact(searchToken);
                         if (entry == null || !searchToken.equals(entry.token)) {
-                            Log.e(LOG, "Couldn't find token: " + searchToken + ", " + entry.token);
+                            Log.e(LOG, "Couldn't find token: " + searchToken + ", " + (entry == null ? "null" : entry.token));
                         }
                     }
                     indexPrepFinished = true;
