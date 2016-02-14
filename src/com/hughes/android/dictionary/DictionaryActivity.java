@@ -35,6 +35,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.text.ClipboardManager;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -511,6 +512,7 @@ public class DictionaryActivity extends ActionBarActivity {
         // wrong place.
         searchView.setQueryHint(getString(R.string.searchText));
         searchView.setSubmitButtonEnabled(false);
+        searchView.setInputType(InputType.TYPE_CLASS_TEXT);
         searchView.setImeOptions(
                 EditorInfo.IME_ACTION_DONE |
                         EditorInfo.IME_FLAG_NO_EXTRACT_UI |

@@ -34,6 +34,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -288,6 +289,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
         filterSearchView.setLayoutParams(lp);
+        filterSearchView.setInputType(InputType.TYPE_CLASS_TEXT);
         filterSearchView.setImeOptions(
                 EditorInfo.IME_ACTION_DONE |
                         EditorInfo.IME_FLAG_NO_EXTRACT_UI |
