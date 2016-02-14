@@ -402,14 +402,33 @@ public class DictionaryApplication extends Application {
         });
     }
 
+    private String selectDefaultDir() {
+        final File defaultDictDir = new File(Environment.getExternalStorageDirectory(), "quickDic");
+        String dir = defaultDictDir.getAbsolutePath();
+        File dictDir = new File(dir);
+        if (dictDir.isDirectory() && dictDir.list().length > 0) {
+            return dir;
+        }
+        File efd = getApplicationContext().getExternalFilesDir(null);
+        if (efd != null) {
+            efd.mkdirs();
+            if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                getApplicationContext().getExternalFilesDirs(null);
+            }
+            if (efd.isDirectory() && efd.canWrite() && checkFileCreate(efd)) {
+                return efd.getAbsolutePath();
+            }
+        }
+        return dir;
+    }
+
     public synchronized File getDictDir() {
         // This metaphor doesn't work, because we've already reset
         // prefsMightHaveChanged.
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String dir = prefs.getString(getString(R.string.quickdicDirectoryKey), "");
         if (dir.isEmpty()) {
-            final File defaultDictDir = new File(Environment.getExternalStorageDirectory(), "quickDic");
-            dir = defaultDictDir.getAbsolutePath();
+            dir = selectDefaultDir();
         }
         dictDir = new File(dir);
         dictDir.mkdirs();
