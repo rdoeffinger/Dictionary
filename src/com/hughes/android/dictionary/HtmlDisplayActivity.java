@@ -90,7 +90,7 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
             // No way to get pure UTF-8 data into WebView
             html = Base64.encodeToString(html.getBytes("UTF-8"), Base64.DEFAULT);
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Missing UTF-8 support?!", e);
         }
         // Use loadURL to allow specifying a charset
         webView.loadUrl("data:text/html;charset=utf-8;base64," + html);

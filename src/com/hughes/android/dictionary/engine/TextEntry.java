@@ -33,7 +33,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
             throws IOException {
         super(dictionary, raf, index);
         text = raf.readUTF();
-        throw new RuntimeException();
+        throw new RuntimeException("TextEntry constructor should be unreachable");
     }
 
     @Override

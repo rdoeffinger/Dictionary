@@ -664,7 +664,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                         .getExternalStorageDirectory(), destFile)));
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Download manager refuses download URL!", e);
         }
         downloadManager.enqueue(request);
         downloadButton.setText("X");

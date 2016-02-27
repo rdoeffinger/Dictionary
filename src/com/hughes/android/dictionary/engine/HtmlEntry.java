@@ -246,7 +246,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
                 try {
                     html = new String(data.get(index), "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Dictionary HTML data corrupted", e);
                 }
                 htmlRef = new SoftReference<String>(html);
                 return html;
@@ -259,14 +259,14 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
                     raf.seek(offset);
                     raf.read(zipBytes);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Failed to read HTML data from dictionary", e);
                 }
             }
             try {
                 final byte[] bytes = StringUtil.unzipFully(zipBytes, numBytes);
                 html = new String(bytes, "UTF-8");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Dictionary HTML data corrupted", e);
             }
             htmlRef = new SoftReference<String>(html);
             return html;
