@@ -78,30 +78,30 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         // disrupts the offset.
         try {
             final RAFList<EntrySource> rafSources = RAFList.create(raf, new EntrySource.Serializer(
-                    this), raf.getFilePointer(), dictFileVersion);
+                    this), raf.getFilePointer(), dictFileVersion, dictInfo + " sources: ");
             sources = new ArrayList<EntrySource>(rafSources);
             raf.seek(rafSources.getEndOffset());
 
             pairEntries = CachingList.create(
-                    RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
+                    RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictInfo + " pairs: "),
                     CACHE_SIZE);
             textEntries = CachingList.create(
-                    RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
+                    RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictInfo + " text: "),
                     CACHE_SIZE);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
-                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion),
+                        RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictInfo + " html: "),
                         CACHE_SIZE);
             } else {
                 htmlEntries = Collections.emptyList();
             }
             if (dictFileVersion >= 7) {
-                htmlData = RAFList.create(raf, new HtmlEntry.DataDeserializer(), raf.getFilePointer(), dictFileVersion);
+                htmlData = RAFList.create(raf, new HtmlEntry.DataDeserializer(), raf.getFilePointer(), dictFileVersion, dictInfo + " html: ");
             } else {
                 htmlData = null;
             }
             indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer,
-                    raf.getFilePointer(), dictFileVersion));
+                    raf.getFilePointer(), dictFileVersion, dictInfo + " index: "));
         } catch (RuntimeException e) {
             final IOException ioe = new IOException("RuntimeException loading dictionary");
             ioe.initCause(e);

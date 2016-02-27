@@ -137,7 +137,7 @@ public final class Index implements RAFSerializable<Index> {
         }
         sortedIndexEntries = CachingList.create(
                 RAFList.create(raf, indexEntrySerializer, raf.getFilePointer(),
-                               dict.dictFileVersion), CACHE_SIZE);
+                               dict.dictFileVersion, dict.dictInfo + " idx " + languageCode + ": "), CACHE_SIZE);
         if (dict.dictFileVersion >= 7) {
             int count = StringUtil.readVarInt(raf);
             stoplist = new HashSet<String>(count);
@@ -244,7 +244,8 @@ public final class Index implements RAFSerializable<Index> {
             } else if (index.dict.dictFileVersion >= 6) {
                 this.htmlEntries = CachingList.create(
                         RAFList.create((RandomAccessFile)raf, index.dict.htmlEntryIndexSerializer,
-                                ((RandomAccessFile)raf).getFilePointer(), index.dict.dictFileVersion), 1);
+                                ((RandomAccessFile)raf).getFilePointer(), index.dict.dictFileVersion,
+                                index.dict.dictInfo + " htmlEntries: "), 1);
             } else {
                 this.htmlEntries = Collections.emptyList();
             }
