@@ -329,7 +329,7 @@ public class DictionaryActivity extends ActionBarActivity {
             @Override
             public void onInit(int status) {
                 ttsReady = true;
-                updateTTSLanguage();
+                updateTTSLanguage(indexIndex);
             }
         });
 
@@ -658,15 +658,15 @@ public class DictionaryActivity extends ActionBarActivity {
                 languageButton.setImageResource(android.R.drawable.ic_media_previous);
             }
         }
-        updateTTSLanguage();
+        updateTTSLanguage(indexIndex);
     }
 
-    private void updateTTSLanguage() {
+    private void updateTTSLanguage(int i) {
         if (!ttsReady || index == null || textToSpeech == null) {
             Log.d(LOG, "Can't updateTTSLanguage.");
             return;
         }
-        final Locale locale = new Locale(index.sortLanguage.getIsoCode());
+        final Locale locale = new Locale(dictionary.indices.get(i).sortLanguage.getIsoCode());
         Log.d(LOG, "Setting TTS locale to: " + locale);
         final int ttsResult = textToSpeech.setLanguage(locale);
         if (ttsResult != TextToSpeech.LANG_AVAILABLE &&
@@ -973,12 +973,14 @@ public class DictionaryActivity extends ActionBarActivity {
             //searchForSelection.setIcon(R.drawable.abs__ic_search);
         }
 
-        if (row instanceof TokenRow && ttsReady) {
+        if ((row instanceof TokenRow || selectedSpannableText != null) && ttsReady) {
             final android.view.MenuItem speak = menu.add(R.string.speak);
+            final String textToSpeak = row instanceof TokenRow ? ((TokenRow) row).getToken() : selectedSpannableText;
+            updateTTSLanguage(row instanceof TokenRow ? indexIndex : selectedSpannableIndex);
             speak.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(android.view.MenuItem item) {
-                    textToSpeech.speak(((TokenRow) row).getToken(), TextToSpeech.QUEUE_FLUSH,
+                    textToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH,
                             new HashMap<String, String>());
                     return false;
                 }
@@ -989,6 +991,7 @@ public class DictionaryActivity extends ActionBarActivity {
     private void jumpToTextFromHyperLink(
             final String selectedText, final int defaultIndexToUse) {
         int indexToUse = -1;
+        int numFound = 0;
         for (int i = 0; i < dictionary.indices.size(); ++i) {
             final Index index = dictionary.indices.get(i);
             if (indexPrepFinished) {
@@ -999,14 +1002,14 @@ public class DictionaryActivity extends ActionBarActivity {
                             .getTokenRow(false);
                     if (tokenRow != null && tokenRow.hasMainEntry) {
                         indexToUse = i;
-                        break;
+                        ++numFound;
                     }
                 }
             } else {
                 Log.w(LOG, "Skipping findExact on index " + index.shortName);
             }
         }
-        if (indexToUse == -1) {
+        if (numFound != 1 || indexToUse == -1) {
             indexToUse = defaultIndexToUse;
         }
         // Without this extra delay, the call to jumpToRow that this
@@ -1475,9 +1478,7 @@ public class DictionaryActivity extends ActionBarActivity {
             final TextView textView = new TextView(context);
             textView.setText(text, BufferType.SPANNABLE);
             createTokenLinkSpans(textView, (Spannable) textView.getText(), text);
-            final TextViewLongClickListener textViewLongClickListenerIndex0 = new TextViewLongClickListener(
-                    0);
-            textView.setOnLongClickListener(textViewLongClickListenerIndex0);
+            textView.setOnLongClickListener(indexIndex > 0 ? textViewLongClickListenerIndex1 : textViewLongClickListenerIndex0);
             result.setLongClickable(true);
 
             // Doesn't work:
