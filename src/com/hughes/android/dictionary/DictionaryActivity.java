@@ -1137,12 +1137,12 @@ public class DictionaryActivity extends ActionBarActivity {
         searchView.setIconifiedByDefault(text.length() > 0);
         searchView.setIconified(false);
 
+        if (triggerSearch) {
+            onSearchTextChange(text);
+        }
+
         // We don't want to show virtual keyboard when we're changing searchView text programatically:
         hideKeyboard();
-
-        if (triggerSearch) {
-            onQueryTextListener.onQueryTextChange(text);
-        }
     }
 
     // private long cursorDelayMillis = 100;
