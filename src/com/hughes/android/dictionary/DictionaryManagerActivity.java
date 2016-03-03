@@ -622,6 +622,12 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     private void downloadDictionary(final String downloadUrl, long bytes, Button downloadButton) {
+        String fileName;
+        try {
+            fileName = new URL(downloadUrl).getFile();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid download URL!", e);
+        }
         DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         final DownloadManager.Query query = new DownloadManager.Query();
         query.setFilterByStatus(DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_PENDING | DownloadManager.STATUS_RUNNING);
@@ -639,6 +645,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         while (cursor.moveToNext()) {
             if (downloadUrl.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_URI))))
                 break;
+            if (fileName.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))))
+                break;
         }
         if (!cursor.isAfterLast()) {
             downloadManager.remove(cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID)));
@@ -652,20 +660,19 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         cursor.close();
         Request request = new Request(
                 Uri.parse(downloadUrl));
-        try {
-            final String destFile = new File(new URL(downloadUrl).getFile())
-                    .getName();
-            Log.d(LOG, "Downloading to: " + destFile);
 
-            try {
-                request.setDestinationInExternalFilesDir(getApplicationContext(), null, destFile);
-            } catch (IllegalStateException e) {
-                request.setDestinationUri(Uri.fromFile(new File(Environment
-                        .getExternalStorageDirectory(), destFile)));
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Download manager refuses download URL!", e);
+        final String destFile = new File(fileName)
+                .getName();
+        Log.d(LOG, "Downloading to: " + destFile);
+        request.setTitle(fileName);
+
+        try {
+            request.setDestinationInExternalFilesDir(getApplicationContext(), null, destFile);
+        } catch (IllegalStateException e) {
+            request.setDestinationUri(Uri.fromFile(new File(Environment
+                    .getExternalStorageDirectory(), destFile)));
         }
+
         downloadManager.enqueue(request);
         downloadButton.setText("X");
     }
