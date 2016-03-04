@@ -622,9 +622,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     private void downloadDictionary(final String downloadUrl, long bytes, Button downloadButton) {
-        String fileName;
+        String destFile;
         try {
-            fileName = new URL(downloadUrl).getFile();
+            destFile = new File(new URL(downloadUrl).getPath()).getName();
         } catch (MalformedURLException e) {
             throw new RuntimeException("Invalid download URL!", e);
         }
@@ -645,7 +645,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         while (cursor.moveToNext()) {
             if (downloadUrl.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_URI))))
                 break;
-            if (fileName.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))))
+            if (destFile.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))))
                 break;
         }
         if (!cursor.isAfterLast()) {
@@ -661,10 +661,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         Request request = new Request(
                 Uri.parse(downloadUrl));
 
-        final String destFile = new File(fileName)
-                .getName();
         Log.d(LOG, "Downloading to: " + destFile);
-        request.setTitle(fileName);
+        request.setTitle(destFile);
 
         try {
             request.setDestinationInExternalFilesDir(getApplicationContext(), null, destFile);
