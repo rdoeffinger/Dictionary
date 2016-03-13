@@ -409,7 +409,11 @@ public class DictionaryApplication extends Application {
         if (dictDir.isDirectory() && dictDir.list().length > 0) {
             return dir;
         }
-        File efd = getApplicationContext().getExternalFilesDir(null);
+        File efd = null;
+        try {
+            efd = getApplicationContext().getExternalFilesDir(null);
+        } catch (Exception e) {
+        }
         if (efd != null) {
             efd.mkdirs();
             if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

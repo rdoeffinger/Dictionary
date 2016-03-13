@@ -104,7 +104,11 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
                         dirs += "\n" + f.getAbsolutePath();
                 }
             } else {
-                File efd = getApplicationContext().getExternalFilesDir(null);
+                File efd = null;
+                try {
+                    efd = getApplicationContext().getExternalFilesDir(null);
+                } catch (Exception e) {
+                }
                 if (efd != null) {
                     String externalFilesDir = efd.getAbsolutePath();
                     if (new File(externalFilesDir).canWrite())
