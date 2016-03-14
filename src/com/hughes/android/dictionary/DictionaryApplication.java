@@ -423,6 +423,9 @@ public class DictionaryApplication extends Application {
                 return efd.getAbsolutePath();
             }
         }
+        if (!dictDir.isDirectory() && !dictDir.mkdirs()) {
+            return getApplicationContext().getFilesDir().getAbsolutePath();
+        }
         return dir;
     }
 

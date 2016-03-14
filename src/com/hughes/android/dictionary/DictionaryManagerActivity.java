@@ -666,7 +666,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
         try {
             request.setDestinationInExternalFilesDir(getApplicationContext(), null, destFile);
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             request.setDestinationUri(Uri.fromFile(new File(Environment
                     .getExternalStorageDirectory(), destFile)));
         }

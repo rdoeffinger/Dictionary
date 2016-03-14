@@ -115,6 +115,9 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
                         dirs += "\n" + externalFilesDir;
                 }
             }
+            File fd = getApplicationContext().getFilesDir();
+            if (fd.canWrite())
+                dirs += "\n" + fd.getAbsolutePath();
             new AlertDialog.Builder(this).setTitle(getString(R.string.error))
                 .setMessage(getString(R.string.chosenNotWritable) + dirs)
                     .setNeutralButton("Close", null).show();
