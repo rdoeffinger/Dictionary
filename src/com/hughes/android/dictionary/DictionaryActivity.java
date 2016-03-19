@@ -732,6 +732,10 @@ public class DictionaryActivity extends ActionBarActivity {
                         }
                     };
                     button.setOnClickListener(intentLauncher);
+                    if (i == indexIndex && dictFile != null &&
+                        dictFile.getName().equals(dictionaryInfo.uncompressedFilename)) {
+                        button.setPressed(true);
+                    }
                     result.addView(button);
                 }
 
