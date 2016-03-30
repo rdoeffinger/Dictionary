@@ -689,7 +689,7 @@ public class DictionaryActivity extends ActionBarActivity {
             currentSearchOperation = null;
         }
         setIndexAndSearchText((indexIndex + 1) % dictionary.indices.size(),
-                searchView.getQuery().toString());
+                searchView.getQuery().toString(), false);
     }
 
     void onLanguageButtonLongClick(final Context context) {
@@ -1026,7 +1026,7 @@ public class DictionaryActivity extends ActionBarActivity {
         getListView().postDelayed(new Runnable() {
             @Override
             public void run() {
-                setIndexAndSearchText(actualIndexToUse, selectedText);
+                setIndexAndSearchText(actualIndexToUse, selectedText, true);
             }
         }, 100);
     }
@@ -1118,7 +1118,7 @@ public class DictionaryActivity extends ActionBarActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private void setIndexAndSearchText(int newIndex, String newSearchText) {
+    private void setIndexAndSearchText(int newIndex, String newSearchText, boolean hideKeyboard) {
         Log.d(LOG, "Changing index to: " + newIndex);
         if (newIndex == -1) {
             Log.e(LOG, "Invalid index.");
@@ -1133,10 +1133,10 @@ public class DictionaryActivity extends ActionBarActivity {
             setDictionaryPrefs(this, dictFile, index.shortName, searchView.getQuery().toString());
             updateLangButton();
         }
-        setSearchText(newSearchText, true);
+        setSearchText(newSearchText, true, hideKeyboard);
     }
 
-    private void setSearchText(final String text, final boolean triggerSearch) {
+    private void setSearchText(final String text, final boolean triggerSearch, boolean hideKeyboard) {
         Log.d(LOG, "setSearchText, text=" + text + ", triggerSearch=" + triggerSearch);
         // Disable the listener, because sometimes it doesn't work.
         searchView.setOnQueryTextListener(null);
@@ -1153,7 +1153,13 @@ public class DictionaryActivity extends ActionBarActivity {
         }
 
         // We don't want to show virtual keyboard when we're changing searchView text programatically:
-        hideKeyboard();
+        if (hideKeyboard) {
+            hideKeyboard();
+        }
+    }
+
+    private void setSearchText(final String text, final boolean triggerSearch) {
+	setSearchText(text, triggerSearch, true);
     }
 
     // private long cursorDelayMillis = 100;
