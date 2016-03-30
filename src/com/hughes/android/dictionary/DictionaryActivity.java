@@ -668,10 +668,14 @@ public class DictionaryActivity extends ActionBarActivity {
         }
         final Locale locale = new Locale(dictionary.indices.get(i).sortLanguage.getIsoCode());
         Log.d(LOG, "Setting TTS locale to: " + locale);
+        try {
         final int ttsResult = textToSpeech.setLanguage(locale);
         if (ttsResult != TextToSpeech.LANG_AVAILABLE &&
                 ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
             Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult);
+        }
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.TTSbroken), Toast.LENGTH_LONG).show();
         }
     }
 

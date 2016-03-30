@@ -48,6 +48,7 @@
     <string name="nextWord">Next word</string>
     <string name="previousWord">Previous word</string>
     <string name="randomWord">Random word</string>
+    <string name="TTSbroken">TTS is broken on this device</string>
 
     <!-- About dictionary. -->
     <string name="dictionaryPath">File: %s</string>
