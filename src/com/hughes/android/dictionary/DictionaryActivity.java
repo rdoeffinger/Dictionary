@@ -507,9 +507,12 @@ public class DictionaryActivity extends ActionBarActivity {
         customSearchView.addView(languageButton, lpb);
 
         searchView = new SearchView(getSupportActionBar().getThemedContext());
-        searchView.setIconifiedByDefault(false);
-        // searchView.setIconified(false); // puts the magnifying glass in the
-        // wrong place.
+
+        // Get rid of search icon, it takes up too much space.
+        // There is still text saying "search" in the search field.
+        searchView.setIconifiedByDefault(true);
+        searchView.setIconified(false);
+
         searchView.setQueryHint(getString(R.string.searchText));
         searchView.setSubmitButtonEnabled(false);
         searchView.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -1144,10 +1147,6 @@ public class DictionaryActivity extends ActionBarActivity {
         moveCursorToRight();
         searchView.setOnQueryTextListener(onQueryTextListener);
 
-        // Hide search icon once text is entered
-        searchView.setIconifiedByDefault(text.length() > 0);
-        searchView.setIconified(false);
-
         if (triggerSearch) {
             onSearchTextChange(text);
         }
@@ -1630,10 +1629,6 @@ public class DictionaryActivity extends ActionBarActivity {
             Log.d(LOG, "searchText changed during shutdown, doing nothing.");
             return;
         }
-
-        // Hide search icon once text is entered
-        searchView.setIconifiedByDefault(text.length() > 0);
-        searchView.setIconified(false);
 
         // if (!searchView.hasFocus()) {
         // Log.d(LOG, "searchText changed without focus, doing nothing.");
