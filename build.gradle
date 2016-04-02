@@ -16,7 +16,7 @@ configurations {
     smallicu
 }
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.2.1'
     // Note: you can just replace "smallicu" by compile
     // and remove the "compile files" part if you do not
     // care about the size of the apk
