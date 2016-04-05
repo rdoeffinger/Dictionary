@@ -18,6 +18,7 @@ import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -63,6 +64,7 @@ import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,9 +72,12 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 // Right-click:
 //  Delete, move to top.
@@ -95,6 +100,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     private ListAdapter getListAdapter() {
         return getListView().getAdapter();
     }
+
+    // For DownloadManager bug workaround
+    private Set<Long> finishedDownloadIds = new HashSet<Long>();
 
     DictionaryApplication application;
 
@@ -123,12 +131,13 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public synchronized void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 final long downloadId = intent.getLongExtra(
                         DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                if (finishedDownloadIds.contains(downloadId)) return; // ignore double notifications
                 final DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(downloadId);
                 final DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
@@ -155,34 +164,43 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     case DownloadManager.ERROR_FILE_ERROR: msg = "File error"; break;
                     case DownloadManager.ERROR_INSUFFICIENT_SPACE: msg = "Not enough space"; break;
                     }
-                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.downloadFailed, reason)).setNeutralButton("Close", null).show();
+                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.downloadFailed, msg)).setNeutralButton("Close", null).show();
                     return;
                 }
 
-                Log.w(LOG, "Download finished: " + dest);
+                Log.w(LOG, "Download finished: " + dest + " Id: " + downloadId);
                 Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
                         Toast.LENGTH_LONG).show();
                 
                 
-                final File localZipFile = new File(Uri.parse(dest).getPath());
-                ZipFile zipFile = null;
-                InputStream zipIn = null;
+                final Uri zipUri = Uri.parse(dest);
+                File localZipFile = null;
+                InputStream zipFileStream = null;
+                ZipInputStream zipFile = null;
                 OutputStream zipOut = null;
                 try {
-                    zipFile = new ZipFile(localZipFile);
-                    final ZipEntry zipEntry = zipFile.entries().nextElement();
+                    if (zipUri.getScheme().equals("content")) {
+                        zipFileStream = context.getContentResolver().openInputStream(zipUri);
+                        localZipFile = null;
+                    } else {
+                        localZipFile = new File(zipUri.getPath());
+                        zipFileStream = new FileInputStream(localZipFile);
+                    }
+                    zipFile = new ZipInputStream(zipFileStream);
+                    final ZipEntry zipEntry = zipFile.getNextEntry();
                     Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
-                    zipIn = zipFile.getInputStream(zipEntry);
                     File targetFile = new File(application.getDictDir(), zipEntry.getName());
                     if (targetFile.exists()) {
                         targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
                         targetFile = new File(application.getDictDir(), zipEntry.getName());
                     }
                     zipOut = new FileOutputStream(targetFile);
-                    copyStream(zipIn, zipOut);
+                    copyStream(zipFile, zipOut);
                     application.backgroundUpdateDictionaries(dictionaryUpdater);
                     Toast.makeText(context, getString(R.string.installationFinished, dest),
                             Toast.LENGTH_LONG).show();
+                    finishedDownloadIds.add(downloadId);
+                    Log.w(LOG, "Unzipping finished: " + dest + " Id: " + downloadId);
                 } catch (Exception e) {
                     String msg = getString(R.string.unzippingFailed, dest);
                     File dir = application.getDictDir();
@@ -193,9 +211,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     Log.e(LOG, "Failed to unzip.", e);
                 } finally {
                     try { if (zipOut != null) zipOut.close(); } catch (IOException e) {}
-                    try { if (zipIn != null) zipIn.close(); } catch (IOException e) {}
                     try { if (zipFile != null) zipFile.close(); } catch (IOException e) {}
-                    localZipFile.delete();
+                    try { if (zipFileStream != null) zipFileStream.close(); } catch (IOException e) {}
+                    if (localZipFile != null) localZipFile.delete();
                 }
             }
         }
@@ -621,7 +639,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         return row;
     }
 
-    private void downloadDictionary(final String downloadUrl, long bytes, Button downloadButton) {
+    private synchronized void downloadDictionary(final String downloadUrl, long bytes, Button downloadButton) {
         String destFile;
         try {
             destFile = new File(new URL(downloadUrl).getPath()).getName();
@@ -664,14 +682,21 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         Log.d(LOG, "Downloading to: " + destFile);
         request.setTitle(destFile);
 
+        File destFilePath = new File(application.getDictDir(), destFile);
+        destFilePath.delete();
         try {
-            request.setDestinationInExternalFilesDir(getApplicationContext(), null, destFile);
+            request.setDestinationUri(Uri.fromFile(destFilePath));
         } catch (Exception e) {
-            request.setDestinationUri(Uri.fromFile(new File(Environment
-                    .getExternalStorageDirectory(), destFile)));
         }
 
-        downloadManager.enqueue(request);
+        try {
+            downloadManager.enqueue(request);
+        } catch (SecurityException e) {
+            request = new Request(Uri.parse(downloadUrl));
+            request.setTitle(destFile);
+            downloadManager.enqueue(request);
+        }
+        Log.w(LOG, "Download started: " + destFile);
         downloadButton.setText("X");
     }
 
