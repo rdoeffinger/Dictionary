@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name" translatable="false">QuickDic</string>
-    <string name="thanksForUpdatingVersion" translatable="false">5.1.0</string>
-
     <!-- Global. -->
     <string name="about">Sobre o QuickDic…</string>
     <string name="settings">Configurações…</string>
@@ -31,7 +28,7 @@
     <string name="unzippingDictionary">Desenpacotando dicionário: \n%s</string>
     <string name="unzippingFailed">Falha na descompactação: \n%s</string>
     <string name="installationFinished">Instalação finalizada: \n%s.</string>
-    <string name="notWritable"> <VOLTA_AQUI> Dictionary location %s not writable, change in settings.</string>
+    <string name="notWritable">Local do dicionário %s não pode ser modificado, altere-o nas configurações.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Buscar Texto</string>
@@ -63,43 +60,31 @@
     <string name="contactMe">Eu adoraria ouvir de você, caso esteja usando o QuickDic.
   Infelizmente, não posso me responsabilizar pelo conteúdo dos dicionários (para além da formatação), pois eles são gerados de outras fontes.
   Por favor, envie comentários, sugestões, relatórios de erros ou apenas um pequeno olá para:</string>
-    <string name="myEmail" formatted="false" translatable="false">quickdic@reimardoeffinger.de</string>
     <string name="webPage">Para mais informações, veja:</string>
-    <string name="webPageUrl" translatable="false">https://github.com/rdoeffinger/Dictionary/releases/</string>
     <string name="contributionsFrom">Contribuições de:</string>
     <string name="contributors">\'Akira, Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano.</string>
     <string name="license">QuickDic contém código patenteado pela Google sob a licença Apache 2.0.</string>
-    <string name="licenseUrl" translatable="false">http://www.apache.org/licenses/LICENSE-2.0</string>
     <string name="pt_br_translator">Tradução para o português (Brasil):<string>
     <string name="Nóis">\'Akira<string>
 
     <!-- Preferences -->
 
-    <string name="defaultDicKey" translatable="false">defaultddic</string>
-    <string name="defaultDicTitle">Default Dic</string>
-    <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
-    <string name="quickdicDirectoryKey" translatable="false">quickdicDirectory</string>
+    <string name="defaultDicTitle">Dicionário Padrão</string>
+    <string name="defaultDicSummary">O diretório a ser acionado quando nada mais é mencionado.</string>
     <string name="quickdicDirectoryTitle">Diretório do QuickDic</string>
     <string name="quickdicDirectorySummary">O diretório em que o QuickDic armazena os dicionários (deixe em branco para a pasta padrão do QuickDic no armazenamento externo).</string>
-    <string name="wordListFileKey" translatable="false">wordListFile</string>
     <string name="wordListFileTitle">Arquivo da Lista de Palavras</string>
     <string name="wordListFileSummary">O arquivo local onde serão incluidas as palavras à lista de palavras.</string>
-    <string name="fontKey" translatable="false">font</string>
     <string name="fontTitle">Fonte do dicionário</string>
     <string name="fontSummary">Fonte usada para mostrar dicionários.</string>
-    <string name="fontSizeKey" translatable="false">fontSize</string>
     <string name="fontSizeTitle">Tamanho da fonte</string>
     <string name="fontSizeSummary">Tamanho da fonte das linhas dos dicionários.</string>
-    <string name="saveOnlyFirstSubentryKey" translatable="false">saveOnlyFirstSubentry</string>
     <string name="saveOnlyFirstSubentryTitle">Salvar apenas a primeira sub-entrada</string>
     <string name="saveOnlyFirstSubentrySummary">Para entradas com muitas sub-entradas, escrever apenas a primeira na Lista de Palavras.</string>
-    <string name="clickOpensContextMenuKey" translatable="false">clickOpensContextMenu</string>
     <string name="clickOpensContextMenuTitle">Clicar abre o menu de contexto</string>
     <string name="clickOpensContextMenuSummary">Abre o menu de contexto ao clicar em uma entrada (um clique longo sempre abrirá o menu de contexto).</string>
-    <string name="showPrevNextButtonsKey" translatable="false">showPrevNextButtons</string>
     <string name="showPrevNextButtonsTitle">Mostrar botões cima/baixo</string>
     <string name="showPrevNextButtonsSummary">Mostra ou esconde os botões de palavra anterior e próxima palavra nos dicionários.</string>
-    <string name="themeKey" translatable="false">theme</string>
     <string name="themeTitle">Tema da Interface do Usuário</string>
     <string name="themeSummary">Cor do tema da Interface do Usuário.</string>
     <string name="chosenNotWritable">Não é possível escrever no diretório escolhido, tente outro</string>
