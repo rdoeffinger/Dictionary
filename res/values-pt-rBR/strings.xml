@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Global. -->
+    <string name="about">Sobre o QuickDic…</string>
+    <string name="settings">Configurações…</string>
+    <string name="help">Ajuda</string>
+    <string name="reportIssue">Reportar um problema…</string>
+    <string name="no_dict_file">Por favor, especifique um diretório padrão nas configurações.</string>
+
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">Gerenciador de dicionários</string>
+    <string name="dictionariesOnDevice">Dicionários no dispositivo</string>
+    <string name="downloadableDictionaries">Dicionários para baixar</string>
+    <string name="downloadButton">%.1fMB</string>
+    <string name="updateAvailable">Atualização!</string>
+    <string name="moveToTop">Mover para o topo</string>
+    <string name="deleteDictionary">Apagar dicionário</string>
+    <string name="indexInfo">%1$s: %2$,d palavras</string>
+    <string name="managerShow">Mostrar</string>
+    <string name="managerHide">Esconder</string>
+    <string name="error">Erro</string>
+    <string name="unableToReadDictionaryDir">Não foi possível ler o diretório do dicionário: \n%1$s\n\nDiretório do armazenamento externo do Android: \n%2$s</string>
+
+    <!-- Download. -->
+    <string name="downloadFailed">O Download falhou: \n%s.</string>
+    <string name="downloadManagerQueryFailed">Não foi possível invocar o gerenciador de downloads.\nEle está desabilitado ou faltando?</string>
+    <string name="unzippingDictionary">Desenpacotando dicionário: \n%s</string>
+    <string name="unzippingFailed">Falha na descompactação: \n%s</string>
+    <string name="installationFinished">Instalação finalizada: \n%s.</string>
+    <string name="notWritable">Local do dicionário %s não pode ser modificado, altere-o nas configurações.</string>
+
+    <!-- DictionaryActivity -->
+    <string name="searchText">Buscar Texto</string>
+    <string name="selectDictionary">Selecionar dicionário…</string>
+    <string name="addToWordList">Adicionar à lista de palavras: %s</string>
+    <string name="searchForSelection">Buscar: %s</string>
+    <string name="failedAddingToWordList">Falha ao adicionar à lista de palavras: %s</string>
+    <string name="invalidDictionary">Dicionário inválido: arquivo=%1$s, erro=%2$s</string>
+    <string name="noSearchResults">A busca não retornou resultados.</string>
+    <string name="aboutDictionary">Sobre o dicionário…</string>
+    <string name="fontFailure">Falha na fonte: %s</string>
+    <string name="seeAlso">Veja também: %1$s (%2$s)</string>
+    <string name="speak">Falar</string>
+    <string name="nextWord">Próxima palavra</string>
+    <string name="previousWord">Palavra anterior</string>
+    <string name="randomWord">Palavra aleatória</string>
+    <string name="TTSbroken">O TTS está quebrado neste dispositivo</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">Arquivo: %s</string>
+    <string name="dictionarySize">Tamanho: %,d bytes</string>
+    <string name="dictionaryCreationTime">Criado: %tc</string>
+    <string name="indexName">Indexação: %s</string>
+    <string name="mainTokenCount">Número de palavras: %,d</string>
+    <string name="sources">Fontes</string>
+    <string name="sourceInfo">%1$s : %2$,d entradas</string>
+
+    <!-- About. -->
+    <string name="contactMe">Eu adoraria ouvir de você, caso esteja usando o QuickDic.
+  Infelizmente, não posso me responsabilizar pelo conteúdo dos dicionários (para além da formatação), pois eles são gerados de outras fontes.
+  Por favor, envie comentários, sugestões, relatórios de erros ou apenas um pequeno olá para:</string>
+    <string name="webPage">Para mais informações, veja:</string>
+    <string name="contributionsFrom">Contribuições de:</string>
+    <string name="contributors">\'Akira, Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano.</string>
+    <string name="license">QuickDic contém código patenteado pela Google sob a licença Apache 2.0.</string>
+    <string name="pt_br_translator">Tradução para o português (Brasil):<string>
+    <string name="Nóis">\'Akira<string>
+
+    <!-- Preferences -->
+
+    <string name="defaultDicTitle">Dicionário Padrão</string>
+    <string name="defaultDicSummary">O diretório a ser acionado quando nada mais é mencionado.</string>
+    <string name="quickdicDirectoryTitle">Diretório do QuickDic</string>
+    <string name="quickdicDirectorySummary">O diretório em que o QuickDic armazena os dicionários (deixe em branco para a pasta padrão do QuickDic no armazenamento externo).</string>
+    <string name="wordListFileTitle">Arquivo da Lista de Palavras</string>
+    <string name="wordListFileSummary">O arquivo local onde serão incluidas as palavras à lista de palavras.</string>
+    <string name="fontTitle">Fonte do dicionário</string>
+    <string name="fontSummary">Fonte usada para mostrar dicionários.</string>
+    <string name="fontSizeTitle">Tamanho da fonte</string>
+    <string name="fontSizeSummary">Tamanho da fonte das linhas dos dicionários.</string>
+    <string name="saveOnlyFirstSubentryTitle">Salvar apenas a primeira sub-entrada</string>
+    <string name="saveOnlyFirstSubentrySummary">Para entradas com muitas sub-entradas, escrever apenas a primeira na Lista de Palavras.</string>
+    <string name="clickOpensContextMenuTitle">Clicar abre o menu de contexto</string>
+    <string name="clickOpensContextMenuSummary">Abre o menu de contexto ao clicar em uma entrada (um clique longo sempre abrirá o menu de contexto).</string>
+    <string name="showPrevNextButtonsTitle">Mostrar botões cima/baixo</string>
+    <string name="showPrevNextButtonsSummary">Mostra ou esconde os botões de palavra anterior e próxima palavra nos dicionários.</string>
+    <string name="themeTitle">Tema da Interface do Usuário</string>
+    <string name="themeSummary">Cor do tema da Interface do Usuário.</string>
+    <string name="chosenNotWritable">Não é possível escrever no diretório escolhido, tente outro</string>
+
+<!-- 'Akira   Nóis  ;) -->
+
+
+</resources>
