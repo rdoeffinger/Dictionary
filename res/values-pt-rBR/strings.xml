@@ -64,8 +64,8 @@
     <string name="contributionsFrom">Contribuições de:</string>
     <string name="contributors">\'Akira, Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano.</string>
     <string name="license">QuickDic contém código patenteado pela Google sob a licença Apache 2.0.</string>
-    <string name="pt_br_translator">Tradução para o português (Brasil):<string>
-    <string name="Nóis">\'Akira<string>
+    <string name="pt_br_translator">Tradução para o português (Brasil):</string>
+    <string name="Nóis">\'Akira</string>
 
     <!-- Preferences -->
 
