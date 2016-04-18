@@ -24,8 +24,9 @@
 
     <!-- Download. -->
     <string name="downloadFailed">Error descargando archivo: \n%s</string>
-    <string name="unzippingDictionary">Descomprimiendo diccionario: \n%s</string>
-    <string name="unzippingFailed">Error descomprimiento diccionario: \n%s</string>
+    <string name="downloadManagerQueryFailed">No se pudo consultar con el gestor de descargas.\nEstá deshabilitado o no se encuentra</string>   
+ <string name="unzippingDictionary">Descomprimiendo diccionario: \n%s</string>
+    <string name="unzippingFailed">Error descomprimiendo diccionario: \n%s</string>
     <string name="installationFinished">Terminado: \n%s.</string>
     <string name="notWritable">No se puede escribir en la ubicación del diccionario %s, cámbielo en los ajustes.</string>
 
@@ -43,7 +44,9 @@
     <string name="speak">Locución</string>
     <string name="nextWord">Siguiente palabra</string>
     <string name="previousWord">Anterior palabra</string>
-    
+        <string name="randomWord">Palabra aleatoria</string>
+    <string name="TTSbroken">TTS está estropeado en este dispositivo</string>
+
     <!-- About dictionary. -->
     <string name="dictionaryPath">Archivo: %s</string>
     <string name="dictionarySize">Tamaño: %,d bytes</string>
@@ -57,10 +60,10 @@
     <string name="contactMe">Si está usando QuickDic, me encantaría saberlo.
   Desgraciadamente, no puedo hacerme responsable sobre el contenido del diccionario (sólo el formato), ya que está generado desde otras fuentes.
 Por favor envíe comentarios, sugerencias, informes de error o simplemente un saludo rápido a:</string>
-    <string name="webPage">Para más información, vea:</string>
-    <string name="contributionsFrom">Contribuciones de:</string>
-    <string name="license">QuickDic contiene código con derechos de autor de Google y publicado bajo la licencia Apache 2.0.</string>
-
+   <string name="webPage">Para más información, vea:</string> 
+   <string name="contributionsFrom">Contribuciones de:</string>
+   <string name="license">QuickDic contiene código con derechos de autor de Google y publicado bajo la licencia Apache 2.0.</string>
+   
     <!-- Preferences -->
 
     <string name="defaultDicTitle">Diccionario predeterminado</string>
