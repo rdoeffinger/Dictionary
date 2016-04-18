@@ -3,31 +3,31 @@
 
     <!-- Global. -->
     <string name="about">Acerca de QuickDic…</string>
-    <string name="settings">Preferencias…</string>
+    <string name="settings">Ajustes…</string>
     <string name="help">Ayuda</string>
     <string name="reportIssue">Informar de errores…</string>
-    <string name="no_dict_file">Please specify a default directory in the settings.</string>
+    <string name="no_dict_file">Por favor especifique un directorio predeterminado en los ajustes.</string>
 
     <!-- DictionaryManagerActivity -->
     <string name="dictionaryManager">Gestor de Diccionarios</string>
-    <string name="dictionariesOnDevice">Dictionaries on device</string>
-    <string name="downloadableDictionaries">Downloadable dictionaries</string>
+    <string name="dictionariesOnDevice">Diccionarios en el dispositivo</string>
+    <string name="downloadableDictionaries">Diccionarios descargables</string>
     <string name="downloadButton">%.1fMB</string>
-    <string name="updateAvailable">UPDATE!</string>
+    <string name="updateAvailable">¡ACTUALIZAR!</string>
     <string name="moveToTop">Mover al principio</string>
     <string name="deleteDictionary">Borrar diccionario</string>
     <string name="indexInfo">%1$s: %2$,d palabras</string>
-    <string name="managerShow">Show</string>
-    <string name="managerHide">Hide</string>
+    <string name="managerShow">Mostrar</string>
+    <string name="managerHide">Ocultar</string>
     <string name="error">Error</string>
-    <string name="unableToReadDictionaryDir">Unable to read dictionary directory: \n%1$s\n\nAndroid external storage directory: \n%2$s</string>
+    <string name="unableToReadDictionaryDir">No se ha podido leer el directorio de diccionarios: \n%1$s\n\nDirectorio en el almacenamiento externo de Android: \n%2$s</string>
 
     <!-- Download. -->
     <string name="downloadFailed">Error descargando archivo: \n%s</string>
     <string name="unzippingDictionary">Descomprimiendo diccionario: \n%s</string>
-    <string name="unzippingFailed">Error descomprimiento disccionario: \n%s</string>
+    <string name="unzippingFailed">Error descomprimiento diccionario: \n%s</string>
     <string name="installationFinished">Terminado: \n%s.</string>
-    <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
+    <string name="notWritable">No se puede escribir en la ubicación del diccionario %s, cámbielo en los ajustes.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Buscar Texto</string>
@@ -41,8 +41,8 @@
     <string name="fontFailure">Error de tipo de letra: %s</string>
     <string name="seeAlso">Vea también: %s</string>
     <string name="speak">Locución</string>
-    <string name="nextWord">Next word</string>
-    <string name="previousWord">Previous word</string>
+    <string name="nextWord">Siguiente palabra</string>
+    <string name="previousWord">Anterior palabra</string>
     
     <!-- About dictionary. -->
     <string name="dictionaryPath">Archivo: %s</string>
@@ -58,13 +58,13 @@
   Desgraciadamente, no puedo hacerme responsable sobre el contenido del diccionario (sólo el formato), ya que está generado desde otras fuentes.
 Por favor envíe comentarios, sugerencias, informes de error o simplemente un saludo rápido a:</string>
     <string name="webPage">Para más información, vea:</string>
-    <string name="contributionsFrom">Contributions from:</string>
+    <string name="contributionsFrom">Contribuciones de:</string>
     <string name="license">QuickDic contiene código con derechos de autor de Google y publicado bajo la licencia Apache 2.0.</string>
 
     <!-- Preferences -->
 
-    <string name="defaultDicTitle">Default Dic</string>
-    <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
+    <string name="defaultDicTitle">Diccionario predeterminado</string>
+    <string name="defaultDicSummary">El diccionario a usar cuando no se indica otra cosa.</string>
     <string name="quickdicDirectoryTitle">Directorio de QuickDic</string>
     <string name="quickdicDirectorySummary">El directorio donde QuickDic almacena los diccionarios.</string>
     <string name="wordListFileTitle">Archivo de lista de palabras</string>
@@ -81,6 +81,6 @@ Por favor envíe comentarios, sugerencias, informes de error o simplemente un sa
     <string name="showPrevNextButtonsSummary">Mostrar u ocultar los botones de palabra anterior y siguiente en la vista de diccionario.</string>
     <string name="themeTitle">Tema</string>
     <string name="themeSummary">Color y tema de la interfaz de usuario.</string>
-    <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
+    <string name="chosenNotWritable">No se puede escribir en e directorio escogido, pruebe uno de</string>
     
 </resources>
