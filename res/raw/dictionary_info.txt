@@ -15,6 +15,7 @@ DE-PT.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-d
 DE-RU.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE-RU.quickdic.v007.zip	1457273239244	3057216	2847200	2	DE	39275	36573	RU	44630	35800	(DE)Wiktionary-based DE-RU dictionary.
 DE-SV.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE-SV.quickdic.v007.zip	1450144802348	3986636	3858695	2	DE	27671	26038	SV	28559	26709	(DE)Wiktionary-based DE-SV dictionary.
 DE-TR.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE-TR.quickdic.v006.zip	1357253378516	1928300	658637	2	DE	13149	12286	TR	10869	8610	Wikitionary-based DE-TR dictionary.
+DE-cmn.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE-cmn.quickdic.v007.zip	1465034288817	2920564	2621526	2	DE	27610	25554	cmn	68248	44686	(DE)Wiktionary-based DE-cmn dictionary.
 DE.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE.quickdic.v007.zip	1450142809392	53932864	53495276	1	DE	321963	281270	Wiktionary-based DE dictionary.
 EN-AF.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-AF.quickdic.v007.zip	1450136224827	558393	519807	2	EN	7082	2548	AF	5206	4836	(EN)Wiktionary-based EN-AF dictionary.
 EN-AR.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-AR.quickdic.v007.zip	1450136252764	8415575	8008434	2	EN	21417	9244	AR	68929	57138	(EN)Wiktionary-based EN-AR dictionary.
