@@ -62,10 +62,7 @@
   Por favor, envie comentários, sugestões, relatórios de erros ou apenas um pequeno olá para:</string>
     <string name="webPage">Para mais informações, veja:</string>
     <string name="contributionsFrom">Contribuições de:</string>
-    <string name="contributors">\'Akira, Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano.</string>
     <string name="license">QuickDic contém código patenteado pela Google sob a licença Apache 2.0.</string>
-    <string name="pt_br_translator">Tradução para o português (Brasil):</string>
-    <string name="Nóis">\'Akira</string>
 
     <!-- Preferences -->
 
