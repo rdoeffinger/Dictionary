@@ -1,5 +1,8 @@
 #!/bin/sh
 DST="$2"
+# Gradle is hopelessly buggy, so just create the
+# directory ourselves...
+mkdir -p $(dirname "$DST")
 cp $1 "$DST"
 zip -ws -d "$DST" com/ibm/icu/impl/data/icudt55b/*.res com/ibm/icu/impl/data/icudt55b/*.spp com/ibm/icu/impl/data/icudt55b/unames.icu
 zip -d "$DST" com/ibm/icu/impl/data/icudt55b/brkitr/* com/ibm/icu/impl/data/icudt55b/curr/* com/ibm/icu/impl/data/icudt55b/lang/* com/ibm/icu/impl/data/icudt55b/rbnf/* com/ibm/icu/impl/data/icudt55b/region/* com/ibm/icu/impl/data/icudt55b/unit/* com/ibm/icu/impl/data/icudt55b/zone/*
