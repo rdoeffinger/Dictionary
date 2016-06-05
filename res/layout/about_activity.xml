@@ -86,7 +86,7 @@
             android:text="Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano"
             android:paddingBottom="10dip"
              />
-        
+
         <TextView
             android:id="@+id/license"
             android:layout_width="wrap_content"
