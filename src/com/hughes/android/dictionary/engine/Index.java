@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * 
+ *
  */
 
 package com.hughes.android.dictionary.engine;

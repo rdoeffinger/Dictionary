@@ -44,7 +44,7 @@
     <string name="nextWord">Nächstes Wort</string>
     <string name="previousWord">Voriges Wort</string>
     <string name="randomWord">Zufälliges Wort</string>
-    
+
     <!-- About dictionary. -->
     <string name="dictionaryPath">Datei: %s</string>
     <string name="dictionarySize">Größe: %,d bytes</string>
@@ -84,5 +84,5 @@
     <string name="themeTitle">Farbschema</string>
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
     <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
-   
+
 </resources>

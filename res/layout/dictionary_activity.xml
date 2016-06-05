@@ -4,8 +4,8 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <!-- 
-    
+    <!--
+
     <LinearLayout
         android:id="@+id/SearchBarLinearLayout"
         android:layout_width="fill_parent"
@@ -38,7 +38,7 @@
     </LinearLayout>
 
  -->
- 
+
     <ListView
         android:id="@id/android:list"
         android:layout_width="fill_parent"

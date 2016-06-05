@@ -19,7 +19,7 @@
         </LinearLayout>
 
         <!--
-        http://stackoverflow.com/questions/11243867/android-last-line-of-textview-cut-off 
+        http://stackoverflow.com/questions/11243867/android-last-line-of-textview-cut-off
          -->
         <TextView
             android:id="@+id/dictionaryName"

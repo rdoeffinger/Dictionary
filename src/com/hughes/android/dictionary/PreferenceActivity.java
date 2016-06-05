@@ -35,7 +35,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
     public void onCreate(Bundle savedInstanceState) {
         final DictionaryApplication application = (DictionaryApplication) getApplication();
         setTheme(application.getSelectedTheme().themeId);
-        
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getString(getString(R.string.quickdicDirectoryKey), "").equals("")) {
             prefs.edit().putString(getString(R.string.quickdicDirectoryKey), application.getDictDir().getAbsolutePath()).commit();

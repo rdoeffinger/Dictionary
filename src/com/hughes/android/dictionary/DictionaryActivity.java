@@ -473,9 +473,9 @@ public class DictionaryActivity extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
-        
+
         final LinearLayout customSearchView = new LinearLayout(getSupportActionBar().getThemedContext());
-        
+
         final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         customSearchView.setLayoutParams(layoutParams);
@@ -1459,7 +1459,7 @@ public class DictionaryActivity extends ActionBarActivity {
             result.setFocusable(true);
             result.setLongClickable(true);
 //            result.setBackgroundResource(android.R.drawable.menuitem_background);
-            
+
             result.setBackgroundResource(theme.normalRowBg);
 
             result.setOnClickListener(new TextView.OnClickListener() {

@@ -283,7 +283,7 @@ public class DictionaryApplication extends Application {
         final List<String> dictionaryFilesOrdered = new ArrayList<String>();
 
         final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new LinkedHashMap<String, DictionaryInfo>();
-        
+
         /**
          * Sometimes a deserialized version of this data structure isn't valid.
          * @return

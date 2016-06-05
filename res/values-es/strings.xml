@@ -24,7 +24,7 @@
 
     <!-- Download. -->
     <string name="downloadFailed">Error descargando archivo: \n%s</string>
-    <string name="downloadManagerQueryFailed">No se pudo consultar con el gestor de descargas.\nEstá deshabilitado o no se encuentra</string>   
+    <string name="downloadManagerQueryFailed">No se pudo consultar con el gestor de descargas.\nEstá deshabilitado o no se encuentra</string>
     <string name="unzippingDictionary">Descomprimiendo diccionario: \n%s</string>
     <string name="unzippingFailed">Error descomprimiendo diccionario: \n%s</string>
     <string name="installationFinished">Terminado: \n%s.</string>

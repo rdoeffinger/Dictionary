@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="@string/contactMe"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-        
+
         <TextView
             android:id="@+id/email"
             android:layout_width="wrap_content"

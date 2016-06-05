@@ -171,8 +171,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 Log.w(LOG, "Download finished: " + dest + " Id: " + downloadId);
                 Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
                         Toast.LENGTH_LONG).show();
-                
-                
+
+
                 final Uri zipUri = Uri.parse(dest);
                 File localZipFile = null;
                 InputStream zipFileStream = null;
