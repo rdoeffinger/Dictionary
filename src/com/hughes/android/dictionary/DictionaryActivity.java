@@ -300,6 +300,15 @@ public class DictionaryActivity extends ActionBarActivity {
             if (query != null)
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
         }
+        /*
+         * This processes text on M+ devices where QuickDic shows up in the context menu.
+         */
+        if (intentAction != null && intentAction.equals(Intent.ACTION_PROCESS_TEXT)) {
+            String query = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT);
+            if (query != null) {
+                getIntent().putExtra(C.SEARCH_TOKEN, query);
+            }
+        }
         /**
          * @author Dominik Köppl If no dictionary is chosen, use the default
          *         dictionary specified in the preferences If this step does
