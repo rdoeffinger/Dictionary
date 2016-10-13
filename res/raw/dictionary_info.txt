@@ -124,5 +124,6 @@ IT-LA.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-d
 IT-LV.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT-LV.quickdic.v007.zip	1450157333658	385497	352894	2	IT	6629	6224	LV	7619	7083	(IT)Wiktionary-based IT-LV dictionary.
 IT-NL.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT-NL.quickdic.v007.zip	1450157381433	1066849	976100	2	IT	16925	15382	NL	20144	19017	(IT)Wiktionary-based IT-NL dictionary.
 IT-PL.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT-PL.quickdic.v007.zip	1450157435325	959248	886217	2	IT	14990	13659	PL	16385	14114	(IT)Wiktionary-based IT-PL dictionary.
+IT-RU.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT-RU.quickdic.v007.zip	1476394808069	2003756	1865344	2	IT	21698	19699	RU	33493	28038	(IT)Wiktionary-based IT-RU dictionary.
 IT-SV.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT-SV.quickdic.v007.zip	1450157488704	993790	909550	2	IT	16567	15060	SV	18001	17076	(IT)Wiktionary-based IT-SV dictionary.
 IT.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT.quickdic.v007.zip	1450143871352	20481672	19971869	1	IT	322105	322099	Wiktionary-based IT dictionary.
