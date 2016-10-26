@@ -310,7 +310,7 @@ public final class Index implements RAFSerializable<Index> {
             }
             final IndexEntry midEntry = sortedIndexEntries.get(mid);
 
-            int comp = NormalizeComparator.compareWithoutLeadingDash(token, midEntry.normalizedToken(), sortCollator, dict.dictFileVersion);
+            int comp = NormalizeComparator.compareWithoutDash(token, midEntry.normalizedToken(), sortCollator, dict.dictFileVersion);
             if (comp == 0)
                 comp = sortCollator.compare(token, midEntry.normalizedToken());
             if (comp == 0) {
