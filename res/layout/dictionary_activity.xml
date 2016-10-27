@@ -57,6 +57,14 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_swap_horiz_black_24dp" />
 
+     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatSearchButton"
+        android:layout_toLeftOf="@+id/floatSwapButton"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_search_black_24dp" />
+
     <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"

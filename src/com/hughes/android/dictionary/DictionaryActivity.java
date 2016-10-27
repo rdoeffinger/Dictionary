@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -470,6 +471,21 @@ public class DictionaryActivity extends ActionBarActivity {
             public boolean onLongClick(View v) {
                 onLanguageButtonLongClick(v.getContext());
                 return true;
+            }
+        });
+
+        final FloatingActionButton floatSearchButton = (FloatingActionButton)findViewById(R.id.floatSearchButton);
+        floatSearchButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                if (!searchView.hasFocus()) {
+                    searchView.requestFocus();
+                }
+                if (searchView.getQuery().toString().length() > 0) {
+                    searchView.setQuery("", false);
+                }
+                showKeyboard();
+                searchView.setIconified(false);
             }
         });
 
@@ -1666,6 +1682,7 @@ public class DictionaryActivity extends ActionBarActivity {
         }
         currentSearchOperation = new SearchOperation(text, index);
         searchExecutor.execute(currentSearchOperation);
+        ((FloatingActionButton)findViewById(R.id.floatSearchButton)).setImageResource(text.length() > 0 ? R.drawable.ic_clear_black_24dp : R.drawable.ic_search_black_24dp);
     }
 
     // --------------------------------------------------------------------------
