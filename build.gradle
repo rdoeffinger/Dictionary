@@ -17,6 +17,7 @@ configurations {
 }
 dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
     // Note: you can just replace "smallicu" by compile
     // and remove the "compile files" part if you do not
     // care about the size of the apk

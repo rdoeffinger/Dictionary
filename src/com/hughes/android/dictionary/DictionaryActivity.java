@@ -367,6 +367,7 @@ public class DictionaryActivity extends ActionBarActivity {
         }
         Log.d(LOG, "Loading index " + indexIndex);
         index = dictionary.indices.get(indexIndex);
+        getListView().setEmptyView(findViewById(android.R.id.empty));
         setListAdapter(new IndexAdapter(index));
 
         // Pre-load the collators.
@@ -447,6 +448,21 @@ public class DictionaryActivity extends ActionBarActivity {
         Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
 
         onCreateSetupActionBarAndSearchView();
+
+        View floatSwapButton = findViewById(R.id.floatSwapButton);
+        floatSwapButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                onLanguageButtonClick();
+            }
+        });
+        floatSwapButton.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onLanguageButtonLongClick(v.getContext());
+                return true;
+            }
+        });
 
         // Set the search text from the intent, then the saved state.
         String text = getIntent().getStringExtra(C.SEARCH_TOKEN);
