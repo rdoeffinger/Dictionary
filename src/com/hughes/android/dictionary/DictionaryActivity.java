@@ -353,25 +353,34 @@ public class DictionaryActivity extends ActionBarActivity {
             for (int i = 0; dictFilename == null && i < dics.size(); ++i)
             {
                 try {
-                    final String fname = dics.get(i).uncompressedFilename;
-                    Dictionary dic = new Dictionary(new RandomAccessFile(new File(fname), "r"));
+                    Log.d(LOG, "Checking dictionary " + dics.get(i).uncompressedFilename);
+                    final File dictfile = application.getPath(dics.get(i).uncompressedFilename);
+                    Dictionary dic = new Dictionary(new RandomAccessFile(dictfile, "r"));
                     for (int j = 0; j < dic.indices.size(); ++j) {
                         Index idx = dic.indices.get(j);
+                        Log.d(LOG, "Checking index " + idx.shortName);
                         if (idx.findExact(search) != null)
                         {
-                            dictFilename = fname;
+                            Log.d(LOG, "Found exact match");
+                            dictFilename = dictfile.toString();
                             intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
                             break;
                         }
                         int matchLen = getMatchLen(search, idx.findInsertionPoint(search, dummy));
+                        Log.d(LOG, "Found partial match length " + matchLen);
                         if (matchLen > bestMatchLen)
                         {
-                            dictFilename = fname;
-                            intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
+                            bestFname = dictfile.toString();
+                            bestIndex = idx.shortName;
                             bestMatchLen = matchLen;
                         }
                     }
                 } catch (Exception e) {}
+            }
+            if (dictFilename == null && bestFname != null)
+            {
+                dictFilename = bestFname;
+                intent.putExtra(C.INDEX_SHORT_NAME, bestIndex);
             }
         }
 
