@@ -52,7 +52,7 @@ public class TransliteratorManager {
                                     Language.en.getDefaultNormalizerRules(),
                                     Transliterator.FORWARD).transliterate("Îñţérñåţîöñåļîžåţîờñ");
             if (!"internationalization".equals(transliterated)) {
-                System.out.println("Wrong transliteratation: " + transliterated);
+                System.out.println("Wrong transliteration: " + transliterated);
             }
 
             final List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
