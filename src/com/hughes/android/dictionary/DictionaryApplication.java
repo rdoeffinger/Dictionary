@@ -53,7 +53,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -113,7 +113,7 @@ public class DictionaryApplication extends Application {
 
     // Useful:
     // http://www.loc.gov/standards/iso639-2/php/code_list.php
-    public static final Map<String, LanguageResources> isoCodeToResources = new LinkedHashMap<String, LanguageResources>();
+    public static final Map<String, LanguageResources> isoCodeToResources = new HashMap<String, LanguageResources>();
     static {
         isoCodeToResources.put("AF", new LanguageResources("Afrikaans", R.string.AF,
                 R.drawable.flag_of_south_africa));
@@ -282,7 +282,7 @@ public class DictionaryApplication extends Application {
         // present.
         final List<String> dictionaryFilesOrdered = new ArrayList<String>();
 
-        final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new LinkedHashMap<String, DictionaryInfo>();
+        final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new HashMap<String, DictionaryInfo>();
 
         /**
          * Sometimes a deserialized version of this data structure isn't valid.
@@ -301,7 +301,7 @@ public class DictionaryApplication extends Application {
         if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO != null) {
             return;
         }
-        DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO = new LinkedHashMap<String, DictionaryInfo>();
+        DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO = new HashMap<String, DictionaryInfo>();
         final BufferedReader reader = new BufferedReader(
                 new InputStreamReader(context.getResources().openRawResource(R.raw.dictionary_info)));
         try {
@@ -481,7 +481,7 @@ public class DictionaryApplication extends Application {
 
     String defaultLangISO2 = Locale.getDefault().getLanguage().toLowerCase();
     String defaultLangName = null;
-    final Map<String, String> fileToNameCache = new LinkedHashMap<String, String>();
+    final Map<String, String> fileToNameCache = new HashMap<String, String>();
 
     public String isoCodeToLocalizedLanguageName(final String isoCode) {
         final Language.LanguageResources languageResources = isoCodeToResources
@@ -716,7 +716,7 @@ public class DictionaryApplication extends Application {
         final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(
                 dictionaryConfig.dictionaryFilesOrdered.size());
 
-        final Map<String, DictionaryInfo> remaining = new LinkedHashMap<String, DictionaryInfo>(
+        final Map<String, DictionaryInfo> remaining = new HashMap<String, DictionaryInfo>(
                 DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO);
         remaining.keySet().removeAll(dictionaryConfig.dictionaryFilesOrdered);
         for (final DictionaryInfo dictionaryInfo : remaining.values()) {

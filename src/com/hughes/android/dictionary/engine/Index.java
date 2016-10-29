@@ -44,8 +44,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -344,7 +343,7 @@ public final class Index implements RAFSerializable<Index> {
 
     private static final int MAX_SEARCH_ROWS = 1000;
 
-    private final Map<String, Integer> prefixToNumRows = new LinkedHashMap<String, Integer>();
+    private final Map<String, Integer> prefixToNumRows = new HashMap<String, Integer>();
 
     private synchronized final int getUpperBoundOnRowsStartingWith(final String normalizedPrefix,
             final int maxRows, final AtomicBoolean interrupted) {
@@ -379,7 +378,7 @@ public final class Index implements RAFSerializable<Index> {
         final long startMills = System.currentTimeMillis();
         final List<RowBase> result = new ArrayList<RowBase>();
 
-        final Set<String> normalizedNonStoplist = new LinkedHashSet<String>();
+        final Set<String> normalizedNonStoplist = new HashSet<String>();
 
         String bestPrefix = null;
         int leastRows = Integer.MAX_VALUE;

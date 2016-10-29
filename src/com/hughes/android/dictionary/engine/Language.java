@@ -18,7 +18,7 @@ import com.hughes.android.dictionary.DictionaryApplication;
 import java.text.Collator;
 
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public class Language {
         }
     }
 
-    private static final Map<String, Language> registry = new LinkedHashMap<String, Language>();
+    private static final Map<String, Language> registry = new HashMap<String, Language>();
 
     final String isoCode;
     final Locale locale;
