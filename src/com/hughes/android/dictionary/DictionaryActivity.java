@@ -301,6 +301,12 @@ public class DictionaryActivity extends ActionBarActivity {
             if (query != null)
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
         }
+        if (intentAction != null && intentAction.equals(Intent.ACTION_SEND))
+        {
+            String query = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (query != null)
+                getIntent().putExtra(C.SEARCH_TOKEN, query);
+        }
         /*
          * This processes text on M+ devices where QuickDic shows up in the context menu.
          */
@@ -532,15 +538,8 @@ public class DictionaryActivity extends ActionBarActivity {
         languageButton.setScaleType(ScaleType.FIT_CENTER);
         languageButton.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View arg0) {
-                onLanguageButtonClick();
-            }
-        });
-        languageButton.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 onLanguageButtonLongClick(v.getContext());
-                return true;
             }
         });
         languageButton.setAdjustViewBounds(true);
