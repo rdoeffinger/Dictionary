@@ -704,6 +704,8 @@ public class DictionaryActivity extends ActionBarActivity {
             searchOperation.interrupted.set(true);
         }
         searchExecutor.shutdownNow();
+        textToSpeech.shutdown();
+        textToSpeech = null;
 
         try {
             Log.d(LOG, "Closing RAF.");
