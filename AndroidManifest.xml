@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hughes.android.dictionary"
     android:installLocation="auto"
-    android:versionCode="72"
-    android:versionName="5.2.11" >
+    android:versionCode="74"
+    android:versionName="5.3.0" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -37,11 +37,6 @@
             </intent-filter>
 
             <!--
-            <intent-filter>
-	       	 <action android:name="android.intent.action.SEND" />
-	       	 <category android:name="android.intent.category.DEFAULT" />
-	       	 <data android:mimeType="text/plain" />
-	    	</intent-filter>
         	<meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
         	        		    	<intent-filter>
             	<action android:name="android.intent.action.SEARCH" />
@@ -64,6 +59,11 @@
             -->
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
