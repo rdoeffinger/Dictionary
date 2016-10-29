@@ -209,6 +209,19 @@ public class DictionaryActivity extends ActionBarActivity {
         outState.putString(C.SEARCH_TOKEN, searchView.getQuery().toString());
     }
 
+    private int getMatchLen(String search, Index.IndexEntry e)
+    {
+        if (e == null) return 0;
+        for (int i = 0; i < search.length(); ++i)
+        {
+            String a = search.substring(0, i + 1);
+            String b = e.token.substring(0, i + 1);
+            if (!a.equalsIgnoreCase(b))
+                return i;
+        }
+        return search.length();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // This needs to be before super.onCreate, otherwise ActionbarSherlock
@@ -329,6 +342,38 @@ public class DictionaryActivity extends ActionBarActivity {
                 intent.putExtra(C.DICT_FILE, application.getPath(dictfile).toString());
         }
         String dictFilename = intent.getStringExtra(C.DICT_FILE);
+        if (dictFilename == null && intent.getStringExtra(C.SEARCH_TOKEN) != null)
+        {
+            final List<DictionaryInfo> dics = application.getDictionariesOnDevice(null);
+            final String search = intent.getStringExtra(C.SEARCH_TOKEN);
+            String bestFname = null;
+            String bestIndex = null;
+            int bestMatchLen = 2; // ignore shorter matches
+            AtomicBoolean dummy = new AtomicBoolean();
+            for (int i = 0; dictFilename == null && i < dics.size(); ++i)
+            {
+                try {
+                    final String fname = dics.get(i).uncompressedFilename;
+                    Dictionary dic = new Dictionary(new RandomAccessFile(new File(fname), "r"));
+                    for (int j = 0; j < dic.indices.size(); ++j) {
+                        Index idx = dic.indices.get(j);
+                        if (idx.findExact(search) != null)
+                        {
+                            dictFilename = fname;
+                            intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
+                            break;
+                        }
+                        int matchLen = getMatchLen(search, idx.findInsertionPoint(search, dummy));
+                        if (matchLen > bestMatchLen)
+                        {
+                            dictFilename = fname;
+                            intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
+                            bestMatchLen = matchLen;
+                        }
+                    }
+                } catch (Exception e) {}
+            }
+        }
 
         if (dictFilename == null)
         {
