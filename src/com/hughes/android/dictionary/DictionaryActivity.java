@@ -108,6 +108,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -135,7 +136,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
     final Handler uiHandler = new Handler();
 
-    private final Executor searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+    private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
             return new Thread(r, "searchExecutor");
@@ -198,6 +199,7 @@ public class DictionaryActivity extends ActionBarActivity {
         intent.putExtra(C.DICT_FILE, dictFile.getPath());
         intent.putExtra(C.INDEX_SHORT_NAME, indexShortName);
         intent.putExtra(C.SEARCH_TOKEN, searchToken);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
 
@@ -701,6 +703,7 @@ public class DictionaryActivity extends ActionBarActivity {
             currentSearchOperation = null;
             searchOperation.interrupted.set(true);
         }
+        searchExecutor.shutdownNow();
 
         try {
             Log.d(LOG, "Closing RAF.");
