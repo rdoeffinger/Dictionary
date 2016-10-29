@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
@@ -24,12 +25,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -227,6 +231,38 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         return intent;
     }
 
+    public void readableCheckAndError(boolean requestPermission) {
+        final File dictDir = application.getDictDir();
+        if (dictDir.canRead() && dictDir.canExecute()) return;
+        blockAutoLaunch = true;
+        if (requestPermission &&
+            ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                             Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            return;
+        }
+        blockAutoLaunch = true;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getListView().getContext());
+        builder.setTitle(getString(R.string.error));
+        builder.setMessage(getString(
+                R.string.unableToReadDictionaryDir,
+                dictDir.getAbsolutePath(),
+                Environment.getExternalStorageDirectory()));
+        builder.setNeutralButton("Close", null);
+        builder.create().show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        readableCheckAndError(false);
+
+        application.backgroundUpdateDictionaries(dictionaryUpdater);
+
+        setMyListAdapater();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // This must be first, otherwise the actiona bar doesn't get
@@ -276,19 +312,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         setMyListAdapater();
         registerForContextMenu(getListView());
 
-        final File dictDir = application.getDictDir();
-        if (!dictDir.canRead() || !dictDir.canExecute()) {
-            blockAutoLaunch = true;
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getListView().getContext());
-            builder.setTitle(getString(R.string.error));
-            builder.setMessage(getString(
-                    R.string.unableToReadDictionaryDir,
-                    dictDir.getAbsolutePath(),
-                    Environment.getExternalStorageDirectory()));
-            builder.setNeutralButton("Close", null);
-            builder.create().show();
-        }
+        readableCheckAndError(true);
 
         onCreateSetupActionBar();
     }

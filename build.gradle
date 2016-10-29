@@ -76,6 +76,6 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
-        targetSdkVersion 22
+        targetSdkVersion 23
     }
 }
