@@ -220,20 +220,24 @@ public final class Index implements RAFSerializable<Index> {
             normalizedToken = hasNormalizedForm ? raf.readUTF() : token;
             if (index.dict.dictFileVersion >= 7) {
                 int size = StringUtil.readVarInt(raf);
-                final int[] htmlEntryIndices = new int[size];
-                for (int i = 0; i < size; ++i) {
-                    htmlEntryIndices[i] = StringUtil.readVarInt(raf);
+                if (size == 0) {
+                    this.htmlEntries = Collections.emptyList();
+                } else {
+                    final int[] htmlEntryIndices = new int[size];
+                    for (int i = 0; i < size; ++i) {
+                        htmlEntryIndices[i] = StringUtil.readVarInt(raf);
+                    }
+                    this.htmlEntries = CachingList.create(new AbstractList<HtmlEntry>() {
+                        @Override
+                        public HtmlEntry get(int i) {
+                            return index.dict.htmlEntries.get(htmlEntryIndices[i]);
+                        }
+                        @Override
+                        public int size() {
+                            return htmlEntryIndices.length;
+                        }
+                        }, 1);
                 }
-                this.htmlEntries = CachingList.create(new AbstractList<HtmlEntry>() {
-                    @Override
-                    public HtmlEntry get(int i) {
-                        return index.dict.htmlEntries.get(htmlEntryIndices[i]);
-                    }
-                    @Override
-                    public int size() {
-                        return htmlEntryIndices.length;
-                    }
-                    }, 1);
             } else if (index.dict.dictFileVersion >= 6) {
                 this.htmlEntries = CachingList.create(
                         RAFList.create((RandomAccessFile)raf, index.dict.htmlEntryIndexSerializer,
