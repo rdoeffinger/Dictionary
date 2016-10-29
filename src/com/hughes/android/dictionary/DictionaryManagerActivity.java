@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -42,6 +43,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -409,6 +411,16 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
+        final MenuItem sort = menu.add(getString(R.string.sortDicts));
+        MenuItemCompat.setShowAsAction(sort, MenuItem.SHOW_AS_ACTION_NEVER);
+        sort.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(final MenuItem menuItem) {
+                application.sortDictionaries();
+                setMyListAdapater();
+                return true;
+            }
+        });
+
         application.onCreateGlobalOptionsMenu(this, menu);
         return true;
     }

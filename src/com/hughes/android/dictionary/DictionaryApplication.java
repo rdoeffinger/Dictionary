@@ -564,6 +564,11 @@ public class DictionaryApplication extends Application {
         PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
+    public synchronized void sortDictionaries() {
+        Collections.sort(dictionaryConfig.dictionaryFilesOrdered, uncompressedFilenameComparator);
+        PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
+    }
+
     public synchronized void deleteDictionary(final DictionaryInfo dictionaryInfo) {
         while (dictionaryConfig.dictionaryFilesOrdered.remove(dictionaryInfo.uncompressedFilename)) {
         }
