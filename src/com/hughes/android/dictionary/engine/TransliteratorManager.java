@@ -49,7 +49,7 @@ public class TransliteratorManager {
                     Transliterator
                             .createFromRules(
                                     "",
-                                    ":: Any-Latin; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;",
+                                    Language.en.getDefaultNormalizerRules(),
                                     Transliterator.FORWARD).transliterate("Îñţérñåţîöñåļîžåţîờñ");
             if (!"internationalization".equals(transliterated)) {
                 System.out.println("Wrong transliteratation: " + transliterated);
