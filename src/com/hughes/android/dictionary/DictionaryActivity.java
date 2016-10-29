@@ -1484,6 +1484,11 @@ public class DictionaryActivity extends ActionBarActivity {
 
                 final TextView col1 = new TextView(tableRow.getContext());
                 final TextView col2 = new TextView(tableRow.getContext());
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+                {
+                    col1.setTextIsSelectable(true);
+                    col2.setTextIsSelectable(true);
+                }
 
                 // Set the columns in the table.
                 if (r > 0) {
