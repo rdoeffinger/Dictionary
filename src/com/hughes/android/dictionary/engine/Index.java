@@ -191,17 +191,14 @@ public final class Index implements RAFSerializable<Index> {
     };
 
     public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
-        private final Index index;
         public final String token;
         private final String normalizedToken;
         public final int startRow;
         public final int numRows; // doesn't count the token row!
         public List<HtmlEntry> htmlEntries;
-        private int[] htmlEntryIndices;
 
         public IndexEntry(final Index index, final String token, final String normalizedToken,
                 final int startRow, final int numRows) {
-            this.index = index;
             assert token.equals(token.trim());
             assert token.length() > 0;
             this.token = token;
@@ -212,7 +209,6 @@ public final class Index implements RAFSerializable<Index> {
         }
 
         public IndexEntry(final Index index, final DataInput raf) throws IOException {
-            this.index = index;
             token = raf.readUTF();
             if (index.dict.dictFileVersion >= 7) {
                 startRow = StringUtil.readVarInt(raf);
@@ -223,10 +219,9 @@ public final class Index implements RAFSerializable<Index> {
             }
             final boolean hasNormalizedForm = raf.readBoolean();
             normalizedToken = hasNormalizedForm ? raf.readUTF() : token;
-            htmlEntryIndices = null;
             if (index.dict.dictFileVersion >= 7) {
                 int size = StringUtil.readVarInt(raf);
-                htmlEntryIndices = new int[size];
+                final int[] htmlEntryIndices = new int[size];
                 for (int i = 0; i < size; ++i) {
                     htmlEntryIndices[i] = StringUtil.readVarInt(raf);
                 }
