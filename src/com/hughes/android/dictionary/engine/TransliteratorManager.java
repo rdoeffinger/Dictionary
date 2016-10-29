@@ -14,18 +14,18 @@
 
 package com.hughes.android.dictionary.engine;
 
-import android.support.v4.util.LruCache;
-
 import com.ibm.icu.text.Transliterator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hughes.util.LRUCacheMap;
+
 public class TransliteratorManager {
 
     private static boolean starting = false;
     private static boolean ready = false;
-    private static LruCache<String, Transliterator> cache = new LruCache<String, Transliterator>(4);
+    private static LRUCacheMap<String, Transliterator> cache = new LRUCacheMap<String, Transliterator>(4);
 
     // Whom to notify when we're all set up and ready to go.
     private static List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
