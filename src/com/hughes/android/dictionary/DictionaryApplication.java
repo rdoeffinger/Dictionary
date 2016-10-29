@@ -406,7 +406,7 @@ public class DictionaryApplication extends Application {
         final File defaultDictDir = new File(Environment.getExternalStorageDirectory(), "quickDic");
         String dir = defaultDictDir.getAbsolutePath();
         File dictDir = new File(dir);
-        if (dictDir.isDirectory() && dictDir.list().length > 0) {
+        if (dictDir.isDirectory() && dictDir.list() != null && dictDir.list().length > 0) {
             return dir;
         }
         File efd = null;
