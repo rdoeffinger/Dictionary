@@ -332,7 +332,7 @@ public class DictionaryActivity extends ActionBarActivity {
         /**
          * @author Dominik Köppl If no dictionary is chosen, use the default
          *         dictionary specified in the preferences If this step does
-         *         fail (no default directory specified), show a toast and
+         *         fail (no default dictionary specified), show a toast and
          *         abort.
          */
         if (intent.getStringExtra(C.DICT_FILE) == null)

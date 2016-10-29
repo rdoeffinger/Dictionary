@@ -6,7 +6,6 @@
     <string name="settings">Einstellungen…</string>
     <string name="help">Hilfe</string>
     <string name="reportIssue">Problem melden…</string>
-    <string name="no_dict_file">Please specify a default directory in the settings.</string>
 
     <!-- DictionaryManagerActivity -->
     <string name="dictionaryManager">Wörterbuch-Liste</string>
