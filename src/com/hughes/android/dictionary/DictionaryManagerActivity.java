@@ -472,8 +472,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             DictionaryInfo dictionaryInfo;
             boolean onDevice;
 
-            private Row(DictionaryInfo dictinoaryInfo, boolean onDevice) {
-                this.dictionaryInfo = dictinoaryInfo;
+            private Row(DictionaryInfo dictionaryInfo, boolean onDevice) {
+                this.dictionaryInfo = dictionaryInfo;
                 this.onDevice = onDevice;
             }
         }
