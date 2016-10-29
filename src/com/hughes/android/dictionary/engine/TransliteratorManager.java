@@ -14,6 +14,8 @@
 
 package com.hughes.android.dictionary.engine;
 
+import android.support.v4.util.LruCache;
+
 import com.ibm.icu.text.Transliterator;
 
 import java.util.ArrayList;
@@ -23,9 +25,19 @@ public class TransliteratorManager {
 
     private static boolean starting = false;
     private static boolean ready = false;
+    private static LruCache<String, Transliterator> cache = new LruCache<String, Transliterator>(4);
 
     // Whom to notify when we're all set up and ready to go.
     private static List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
+
+    public static synchronized Transliterator get(String rules) {
+        Transliterator result = cache.get(rules);
+        if (result == null) {
+            result = Transliterator.createFromRules("", rules, Transliterator.FORWARD);
+            cache.put(rules, result);
+        }
+        return result;
+    }
 
     public static synchronized boolean init(final Callback callback) {
         if (ready) {
@@ -45,12 +57,7 @@ public class TransliteratorManager {
         @Override
         public void run() {
             System.out.println("Starting Transliterator load.");
-            final String transliterated =
-                    Transliterator
-                            .createFromRules(
-                                    "",
-                                    Language.en.getDefaultNormalizerRules(),
-                                    Transliterator.FORWARD).transliterate("Îñţérñåţîöñåļîžåţîờñ");
+            final String transliterated = get(Language.en.getDefaultNormalizerRules()).transliterate("Îñţérñåţîöñåļîžåţîờñ");
             if (!"internationalization".equals(transliterated)) {
                 System.out.println("Wrong transliteration: " + transliterated);
             }

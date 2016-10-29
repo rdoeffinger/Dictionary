@@ -106,8 +106,7 @@ public final class Index implements RAFSerializable<Index> {
      */
     public synchronized Transliterator normalizer() {
         if (normalizer == null) {
-            normalizer = Transliterator
-                    .createFromRules("", normalizerRules, Transliterator.FORWARD);
+            normalizer = TransliteratorManager.get(normalizerRules);
         }
         return normalizer;
     }
