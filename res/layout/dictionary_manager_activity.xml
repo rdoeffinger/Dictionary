@@ -10,7 +10,6 @@
         android:layout_height="fill_parent"
         android:choiceMode="singleChoice"
         android:clickable="true"
-        android:fastScrollEnabled="true"
         android:focusable="true"
         android:focusableInTouchMode="true" />
 

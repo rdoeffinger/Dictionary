@@ -49,8 +49,12 @@
         android:focusable="true"
         android:focusableInTouchMode="true" />
 
+     <!-- force fabSize to mini, otherwise it is normal on some
+          phones and mini on others, with not particular sense to it.
+          Also leaves more space for content. -->
      <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatSwapButton"
+        app:fabSize="mini"
         app:useCompatPadding="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -60,6 +64,7 @@
 
      <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatSearchButton"
+        app:fabSize="mini"
         app:useCompatPadding="true"
         android:layout_toLeftOf="@+id/floatSwapButton"
         android:layout_alignParentBottom="true"
