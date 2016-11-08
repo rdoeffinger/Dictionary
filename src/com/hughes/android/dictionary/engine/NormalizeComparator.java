@@ -25,10 +25,10 @@ public class NormalizeComparator implements Comparator<String> {
     int version;
 
     public NormalizeComparator(final Transliterator normalizer,
-            final Comparator<Object> comparator, int version) {
+                               final Comparator<Object> comparator, int version) {
         this.normalizer = normalizer;
         this.comparator = comparator;
-	this.version = version;
+        this.version = version;
     }
 
     // Handles comparison between items containing "-".

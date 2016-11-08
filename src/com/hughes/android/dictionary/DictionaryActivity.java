@@ -194,7 +194,7 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     public static Intent getLaunchIntent(Context c, final File dictFile, final String indexShortName,
-            final String searchToken) {
+                                         final String searchToken) {
         final Intent intent = new Intent(c, DictionaryActivity.class);
         intent.putExtra(C.DICT_FILE, dictFile.getPath());
         intent.putExtra(C.INDEX_SHORT_NAME, indexShortName);
@@ -211,11 +211,9 @@ public class DictionaryActivity extends ActionBarActivity {
         outState.putString(C.SEARCH_TOKEN, searchView.getQuery().toString());
     }
 
-    private int getMatchLen(String search, Index.IndexEntry e)
-    {
+    private int getMatchLen(String search, Index.IndexEntry e) {
         if (e == null) return 0;
-        for (int i = 0; i < search.length(); ++i)
-        {
+        for (int i = 0; i < search.length(); ++i) {
             String a = search.substring(0, i + 1);
             String b = e.token.substring(0, i + 1);
             if (!a.equalsIgnoreCase(b))
@@ -254,8 +252,7 @@ public class DictionaryActivity extends ActionBarActivity {
          *         -> language in which the phrase is written to -> to which
          *         language shall be translated
          */
-        if (intentAction != null && intentAction.equals("com.hughes.action.ACTION_SEARCH_DICT"))
-        {
+        if (intentAction != null && intentAction.equals("com.hughes.action.ACTION_SEARCH_DICT")) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             String from = intent.getStringExtra("from");
             if (from != null)
@@ -263,42 +260,35 @@ public class DictionaryActivity extends ActionBarActivity {
             String to = intent.getStringExtra("to");
             if (to != null)
                 to = to.toLowerCase(Locale.US);
-            if (query != null)
-            {
+            if (query != null) {
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
             }
-            if (intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null))
-            {
+            if (intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null)) {
                 Log.d(LOG, "DictSearch: from: " + from + " to " + to);
                 List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
-                for (DictionaryInfo info : dicts)
-                {
+                for (DictionaryInfo info : dicts) {
                     boolean hasFrom = from == null;
                     boolean hasTo = to == null;
-                    for (IndexInfo index : info.indexInfos)
-                    {
+                    for (IndexInfo index : info.indexInfos) {
                         if (!hasFrom && index.shortName.toLowerCase(Locale.US).equals(from))
                             hasFrom = true;
                         if (!hasTo && index.shortName.toLowerCase(Locale.US).equals(to))
                             hasTo = true;
                     }
-                    if (hasFrom && hasTo)
-                    {
-                        if (from != null)
-                        {
+                    if (hasFrom && hasTo) {
+                        if (from != null) {
                             int which_index = 0;
-                            for (; which_index < info.indexInfos.size(); ++which_index)
-                            {
+                            for (; which_index < info.indexInfos.size(); ++which_index) {
                                 if (info.indexInfos.get(which_index).shortName.toLowerCase(
-                                        Locale.US).equals(from))
+                                            Locale.US).equals(from))
                                     break;
                             }
                             intent.putExtra(C.INDEX_SHORT_NAME,
-                                    info.indexInfos.get(which_index).shortName);
+                                            info.indexInfos.get(which_index).shortName);
 
                         }
                         intent.putExtra(C.DICT_FILE, application.getPath(info.uncompressedFilename)
-                                .toString());
+                                        .toString());
                         break;
                     }
                 }
@@ -310,14 +300,12 @@ public class DictionaryActivity extends ActionBarActivity {
          *         simple query Arguments follow from android standard (see
          *         documentation)
          */
-        if (intentAction != null && intentAction.equals(Intent.ACTION_SEARCH))
-        {
+        if (intentAction != null && intentAction.equals(Intent.ACTION_SEARCH)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (query != null)
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
         }
-        if (intentAction != null && intentAction.equals(Intent.ACTION_SEND))
-        {
+        if (intentAction != null && intentAction.equals(Intent.ACTION_SEND)) {
             String query = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (query != null)
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
@@ -337,23 +325,20 @@ public class DictionaryActivity extends ActionBarActivity {
          *         fail (no default dictionary specified), show a toast and
          *         abort.
          */
-        if (intent.getStringExtra(C.DICT_FILE) == null)
-        {
+        if (intent.getStringExtra(C.DICT_FILE) == null) {
             String dictfile = prefs.getString(getString(R.string.defaultDicKey), null);
             if (dictfile != null)
                 intent.putExtra(C.DICT_FILE, application.getPath(dictfile).toString());
         }
         String dictFilename = intent.getStringExtra(C.DICT_FILE);
-        if (dictFilename == null && intent.getStringExtra(C.SEARCH_TOKEN) != null)
-        {
+        if (dictFilename == null && intent.getStringExtra(C.SEARCH_TOKEN) != null) {
             final List<DictionaryInfo> dics = application.getDictionariesOnDevice(null);
             final String search = intent.getStringExtra(C.SEARCH_TOKEN);
             String bestFname = null;
             String bestIndex = null;
             int bestMatchLen = 2; // ignore shorter matches
             AtomicBoolean dummy = new AtomicBoolean();
-            for (int i = 0; dictFilename == null && i < dics.size(); ++i)
-            {
+            for (int i = 0; dictFilename == null && i < dics.size(); ++i) {
                 try {
                     Log.d(LOG, "Checking dictionary " + dics.get(i).uncompressedFilename);
                     final File dictfile = application.getPath(dics.get(i).uncompressedFilename);
@@ -361,8 +346,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     for (int j = 0; j < dic.indices.size(); ++j) {
                         Index idx = dic.indices.get(j);
                         Log.d(LOG, "Checking index " + idx.shortName);
-                        if (idx.findExact(search) != null)
-                        {
+                        if (idx.findExact(search) != null) {
                             Log.d(LOG, "Found exact match");
                             dictFilename = dictfile.toString();
                             intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
@@ -370,8 +354,7 @@ public class DictionaryActivity extends ActionBarActivity {
                         }
                         int matchLen = getMatchLen(search, idx.findInsertionPoint(search, dummy));
                         Log.d(LOG, "Found partial match length " + matchLen);
-                        if (matchLen > bestMatchLen)
-                        {
+                        if (matchLen > bestMatchLen) {
                             bestFname = dictfile.toString();
                             bestIndex = idx.shortName;
                             bestMatchLen = matchLen;
@@ -379,15 +362,13 @@ public class DictionaryActivity extends ActionBarActivity {
                     }
                 } catch (Exception e) {}
             }
-            if (dictFilename == null && bestFname != null)
-            {
+            if (dictFilename == null && bestFname != null) {
                 dictFilename = bestFname;
                 intent.putExtra(C.INDEX_SHORT_NAME, bestIndex);
             }
         }
 
-        if (dictFilename == null)
-        {
+        if (dictFilename == null) {
             Toast.makeText(this, getString(R.string.no_dict_file), Toast.LENGTH_LONG).show();
             startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
             finish();
@@ -421,7 +402,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 dictRaf = null;
             }
             Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()),
-                    Toast.LENGTH_LONG).show();
+                           Toast.LENGTH_LONG).show();
             startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
             finish();
             return;
@@ -470,7 +451,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     indexPrepFinished = true;
                 } catch (Exception e) {
                     Log.w(LOG,
-                            "Exception while prepping.  This can happen if dictionary is closed while search is happening.");
+                          "Exception while prepping.  This can happen if dictionary is closed while search is happening.");
                 }
                 Log.d(LOG, "Prepping indices took:" + (System.currentTimeMillis() - startMillis));
             }
@@ -479,11 +460,11 @@ public class DictionaryActivity extends ActionBarActivity {
         String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.otf.jpg");
         if ("SYSTEM".equals(fontName)) {
             typeface = Typeface.DEFAULT;
-	} else if ("SERIF".equals(fontName)) {
+        } else if ("SERIF".equals(fontName)) {
             typeface = Typeface.SERIF;
-	} else if ("SANS_SERIF".equals(fontName)) {
+        } else if ("SANS_SERIF".equals(fontName)) {
             typeface = Typeface.SANS_SERIF;
-	} else if ("MONOSPACE".equals(fontName)) {
+        } else if ("MONOSPACE".equals(fontName)) {
             typeface = Typeface.MONOSPACE;
         } else {
             if ("FreeSerif.ttf.jpg".equals(fontName)) {
@@ -494,7 +475,7 @@ public class DictionaryActivity extends ActionBarActivity {
             } catch (Exception e) {
                 Log.w(LOG, "Exception trying to use typeface, using default.", e);
                 Toast.makeText(this, getString(R.string.fontFailure, e.getLocalizedMessage()),
-                        Toast.LENGTH_LONG).show();
+                               Toast.LENGTH_LONG).show();
             }
         }
         if (typeface == null) {
@@ -514,9 +495,9 @@ public class DictionaryActivity extends ActionBarActivity {
         // Cache some prefs.
         wordList = application.getWordListFile();
         saveOnlyFirstSubentry = prefs.getBoolean(getString(R.string.saveOnlyFirstSubentryKey),
-                false);
+                                false);
         clickOpensContextMenu = prefs.getBoolean(getString(R.string.clickOpensContextMenuKey),
-                false);
+                                false);
         Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
 
         onCreateSetupActionBarAndSearchView();
@@ -580,7 +561,7 @@ public class DictionaryActivity extends ActionBarActivity {
         final LinearLayout customSearchView = new LinearLayout(getSupportActionBar().getThemedContext());
 
         final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         customSearchView.setLayoutParams(layoutParams);
 
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -613,11 +594,11 @@ public class DictionaryActivity extends ActionBarActivity {
         searchView.setSubmitButtonEnabled(false);
         searchView.setInputType(InputType.TYPE_CLASS_TEXT);
         searchView.setImeOptions(
-                EditorInfo.IME_ACTION_DONE |
-                        EditorInfo.IME_FLAG_NO_EXTRACT_UI |
-                        // EditorInfo.IME_FLAG_NO_FULLSCREEN | // Requires API
-                        // 11
-                        EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            EditorInfo.IME_ACTION_DONE |
+            EditorInfo.IME_FLAG_NO_EXTRACT_UI |
+            // EditorInfo.IME_FLAG_NO_FULLSCREEN | // Requires API
+            // 11
+            EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         onQueryTextListener = new OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -642,7 +623,7 @@ public class DictionaryActivity extends ActionBarActivity {
         actionBar.setCustomView(customSearchView);
         actionBar.setDisplayShowCustomEnabled(true);
 
-	// Avoid wasting space on large left inset
+        // Avoid wasting space on large left inset
         Toolbar tb = (Toolbar)customSearchView.getParent();
         tb.setContentInsetsRelative(0, 0);
     }
@@ -678,7 +659,7 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     private static void setDictionaryPrefs(final Context context, final File dictFile,
-            final String indexShortName, final String searchToken) {
+                                           final String indexShortName, final String searchToken) {
         final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(
                 context).edit();
         prefs.putString(C.DICT_FILE, dictFile.getPath());
@@ -750,7 +731,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
     void updateLangButton() {
         final LanguageResources languageResources =
-                DictionaryApplication.isoCodeToResources.get(index.shortName);
+            DictionaryApplication.isoCodeToResources.get(index.shortName);
         if (languageResources != null && languageResources.flagId != 0) {
             languageButton.setImageResource(languageResources.flagId);
         } else {
@@ -771,11 +752,11 @@ public class DictionaryActivity extends ActionBarActivity {
         final Locale locale = new Locale(dictionary.indices.get(i).sortLanguage.getIsoCode());
         Log.d(LOG, "Setting TTS locale to: " + locale);
         try {
-        final int ttsResult = textToSpeech.setLanguage(locale);
-        if (ttsResult != TextToSpeech.LANG_AVAILABLE &&
-                ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
-            Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult);
-        }
+            final int ttsResult = textToSpeech.setLanguage(locale);
+            if (ttsResult != TextToSpeech.LANG_AVAILABLE &&
+                    ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
+                Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult);
+            }
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.TTSbroken), Toast.LENGTH_LONG).show();
         }
@@ -791,7 +772,7 @@ public class DictionaryActivity extends ActionBarActivity {
             currentSearchOperation = null;
         }
         setIndexAndSearchText((indexIndex + 1) % dictionary.indices.size(),
-                searchView.getQuery().toString(), false);
+                              searchView.getQuery().toString(), false);
     }
 
     void onLanguageButtonLongClick(final Context context) {
@@ -806,7 +787,7 @@ public class DictionaryActivity extends ActionBarActivity {
         final String name = getString(R.string.dictionaryManager);
         button.setText(name);
         final IntentLauncher intentLauncher = new IntentLauncher(listView.getContext(),
-                DictionaryManagerActivity.getLaunchIntent(getApplicationContext())) {
+        DictionaryManagerActivity.getLaunchIntent(getApplicationContext())) {
             @Override
             protected void onGo() {
                 dialog.dismiss();
@@ -826,11 +807,11 @@ public class DictionaryActivity extends ActionBarActivity {
                 for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
                     final View button = application.createButton(parent.getContext(),
-                            dictionaryInfo, indexInfo);
+                                        dictionaryInfo, indexInfo);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(getApplicationContext(),
-                                    application.getPath(dictionaryInfo.uncompressedFilename),
-                                    indexInfo.shortName, searchView.getQuery().toString())) {
+                                            application.getPath(dictionaryInfo.uncompressedFilename),
+                    indexInfo.shortName, searchView.getQuery().toString())) {
                         @Override
                         protected void onGo() {
                             dialog.dismiss();
@@ -839,7 +820,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     };
                     button.setOnClickListener(intentLauncher);
                     if (i == indexIndex && dictFile != null &&
-                        dictFile.getName().equals(dictionaryInfo.uncompressedFilename)) {
+                            dictFile.getName().equals(dictionaryInfo.uncompressedFilename)) {
                         button.setPressed(true);
                     }
                     result.addView(button);
@@ -847,10 +828,10 @@ public class DictionaryActivity extends ActionBarActivity {
 
                 final TextView nameView = new TextView(parent.getContext());
                 final String name = application
-                        .getDictionaryName(dictionaryInfo.uncompressedFilename);
+                                    .getDictionaryName(dictionaryInfo.uncompressedFilename);
                 nameView.setText(name);
                 final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.width = 0;
                 layoutParams.weight = 1.0f;
                 nameView.setLayoutParams(layoutParams);
@@ -923,7 +904,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 .getBoolean(getString(R.string.showPrevNextButtonsKey), true)) {
             // Next word.
             nextWordMenuItem = menu.add(getString(R.string.nextWord))
-                    .setIcon(R.drawable.arrow_down_float);
+                               .setIcon(R.drawable.arrow_down_float);
             MenuItemCompat.setShowAsAction(nextWordMenuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
             nextWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
@@ -935,7 +916,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
             // Previous word.
             previousWordMenuItem = menu.add(getString(R.string.previousWord))
-                    .setIcon(R.drawable.arrow_up_float);
+                                   .setIcon(R.drawable.arrow_up_float);
             MenuItemCompat.setShowAsAction(previousWordMenuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
             previousWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
@@ -988,27 +969,27 @@ public class DictionaryActivity extends ActionBarActivity {
                     if (dictionaryInfo != null) {
                         builder.append(dictionaryInfo.dictInfo).append("\n\n");
                         builder.append(getString(R.string.dictionaryPath, dictFile.getPath()))
-                                .append("\n");
+                        .append("\n");
                         builder.append(
-                                getString(R.string.dictionarySize, dictionaryInfo.uncompressedBytes))
-                                .append("\n");
+                            getString(R.string.dictionarySize, dictionaryInfo.uncompressedBytes))
+                        .append("\n");
                         builder.append(
-                                getString(R.string.dictionaryCreationTime,
-                                        dictionaryInfo.creationMillis)).append("\n");
+                            getString(R.string.dictionaryCreationTime,
+                                      dictionaryInfo.creationMillis)).append("\n");
                         for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
                             builder.append("\n");
                             builder.append(getString(R.string.indexName, indexInfo.shortName))
-                                    .append("\n");
+                            .append("\n");
                             builder.append(
-                                    getString(R.string.mainTokenCount, indexInfo.mainTokenCount))
-                                    .append("\n");
+                                getString(R.string.mainTokenCount, indexInfo.mainTokenCount))
+                            .append("\n");
                         }
                         builder.append("\n");
                         builder.append(getString(R.string.sources)).append("\n");
                         for (final EntrySource source : dictionary.sources) {
                             builder.append(
-                                    getString(R.string.sourceInfo, source.getName(),
-                                            source.getNumEntries())).append("\n");
+                                getString(R.string.sourceInfo, source.getName(),
+                                          source.getNumEntries())).append("\n");
                         }
                     }
                     textView.setText(builder.toString());
@@ -1038,12 +1019,12 @@ public class DictionaryActivity extends ActionBarActivity {
         final android.view.MenuItem addToWordlist = menu.add(getString(R.string.addToWordList,
                 wordList.getName()));
         addToWordlist
-                .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(android.view.MenuItem item) {
-                        onAppendToWordList(row);
-                        return false;
-                    }
-                });
+        .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(android.view.MenuItem item) {
+                onAppendToWordList(row);
+                return false;
+            }
+        });
 
         final android.view.MenuItem share = menu.add("Share");
         share.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
@@ -1051,9 +1032,9 @@ public class DictionaryActivity extends ActionBarActivity {
                 Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, row.getTokenRow(true)
-                        .getToken());
+                                     .getToken());
                 shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-                        row.getRawText(saveOnlyFirstSubentry));
+                                     row.getRawText(saveOnlyFirstSubentry));
                 startActivity(shareIntent);
                 return false;
             }
@@ -1070,15 +1051,15 @@ public class DictionaryActivity extends ActionBarActivity {
         if (selectedSpannableText != null) {
             final String selectedText = selectedSpannableText;
             final android.view.MenuItem searchForSelection = menu.add(getString(
-                    R.string.searchForSelection,
-                    selectedSpannableText));
+                        R.string.searchForSelection,
+                        selectedSpannableText));
             searchForSelection
-                    .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(android.view.MenuItem item) {
-                            jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
-                            return false;
-                        }
-                    });
+            .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(android.view.MenuItem item) {
+                    jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
+                    return false;
+                }
+            });
             // Rats, this won't be shown:
             //searchForSelection.setIcon(R.drawable.abs__ic_search);
         }
@@ -1091,7 +1072,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 @Override
                 public boolean onMenuItemClick(android.view.MenuItem item) {
                     textToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH,
-                            new HashMap<String, String>());
+                                       new HashMap<String, String>());
                     return false;
                 }
             });
@@ -1099,7 +1080,7 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     private void jumpToTextFromHyperLink(
-            final String selectedText, final int defaultIndexToUse) {
+        final String selectedText, final int defaultIndexToUse) {
         int indexToUse = -1;
         int numFound = 0;
         for (int i = 0; i < dictionary.indices.size(); ++i) {
@@ -1109,7 +1090,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 final IndexEntry indexEntry = index.findExact(selectedText);
                 if (indexEntry != null) {
                     final TokenRow tokenRow = index.rows.get(indexEntry.startRow)
-                            .getTokenRow(false);
+                                              .getTokenRow(false);
                     if (tokenRow != null && tokenRow.hasMainEntry) {
                         indexToUse = i;
                         ++numFound;
@@ -1174,8 +1155,8 @@ public class DictionaryActivity extends ActionBarActivity {
         } catch (Exception e) {
             Log.e(LOG, "Unable to append to " + wordList.getAbsolutePath(), e);
             Toast.makeText(this,
-                    getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()),
-                    Toast.LENGTH_LONG).show();
+                           getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()),
+                           Toast.LENGTH_LONG).show();
         }
         return;
     }
@@ -1213,7 +1194,7 @@ public class DictionaryActivity extends ActionBarActivity {
             View focus = getCurrentFocus();
             if (focus != null) {
                 inputManager.hideSoftInputFromWindow(focus.getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
+                                                     InputMethodManager.HIDE_NOT_ALWAYS);
             }
             return true;
         }
@@ -1257,7 +1238,7 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     private void setSearchText(final String text, final boolean triggerSearch) {
-	setSearchText(text, triggerSearch, true);
+        setSearchText(text, triggerSearch, true);
     }
 
     // private long cursorDelayMillis = 100;
@@ -1364,12 +1345,12 @@ public class DictionaryActivity extends ActionBarActivity {
                 } else {
                     searchTokens = Arrays.asList(searchTokenArray);
                     multiWordSearchResult = index.multiWordSearch(searchText, searchTokens,
-                            interrupted);
+                                            interrupted);
                 }
                 Log.d(LOG,
-                        "searchText=" + searchText + ", searchDuration="
-                                + (System.currentTimeMillis() - searchStartMillis)
-                                + ", interrupted=" + interrupted.get());
+                      "searchText=" + searchText + ", searchDuration="
+                      + (System.currentTimeMillis() - searchStartMillis)
+                      + ", interrupted=" + interrupted.get());
                 if (!interrupted.get()) {
                     uiHandler.post(new Runnable() {
                         @Override
@@ -1396,10 +1377,10 @@ public class DictionaryActivity extends ActionBarActivity {
     // --------------------------------------------------------------------------
 
     static ViewGroup.LayoutParams WEIGHT_1 = new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f);
+        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f);
 
     static ViewGroup.LayoutParams WEIGHT_0 = new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.0f);
+        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.0f);
 
     final class IndexAdapter extends BaseAdapter {
 
@@ -1476,7 +1457,7 @@ public class DictionaryActivity extends ActionBarActivity {
         }
 
         private TableLayout getView(final int position, PairEntry.Row row, ViewGroup parent,
-                final TableLayout result) {
+                                    final TableLayout result) {
             final PairEntry entry = row.getEntry();
             final int rowCount = entry.pairs.size();
 
@@ -1489,8 +1470,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
                 final TextView col1 = new TextView(tableRow.getContext());
                 final TextView col2 = new TextView(tableRow.getContext());
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
-                {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
                     col1.setTextIsSelectable(true);
                     col2.setTextIsSelectable(true);
                 }
@@ -1525,13 +1505,13 @@ public class DictionaryActivity extends ActionBarActivity {
 
                 // Bold the token instances in col1.
                 final Set<String> toBold = toHighlight != null ? this.toHighlight : Collections
-                        .singleton(row.getTokenRow(true).getToken());
+                                           .singleton(row.getTokenRow(true).getToken());
                 final Spannable col1Spannable = (Spannable) col1.getText();
                 for (final String token : toBold) {
                     int startPos = 0;
                     while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
                         col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos, startPos
-                                + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                                              + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
                         startPos += token.length();
                     }
                 }
@@ -1583,7 +1563,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
             final TableRow tableRow = new TableRow(result.getContext());
             tableRow.setBackgroundResource(hasMainEntry ? theme.tokenRowMainBg
-                    : theme.tokenRowOtherBg);
+                                           : theme.tokenRowOtherBg);
             if (isTokenRow) {
                 tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
             } else {
@@ -1630,10 +1610,10 @@ public class DictionaryActivity extends ActionBarActivity {
                         String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
                         // Log.d(LOG, "html=" + html);
                         startActivityForResult(
-                                HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
-                                        "<html><head></head><body>%s</body></html>", html),
-                                        htmlTextToHighlight, false),
-                                0);
+                            HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
+                                    "<html><head></head><body>%s</body></html>", html),
+                                                              htmlTextToHighlight, false),
+                            0);
                     }
                 });
             }
@@ -1643,16 +1623,16 @@ public class DictionaryActivity extends ActionBarActivity {
         private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
             final IndexEntry indexEntry = row.getIndexEntry();
             return getPossibleLinkToHtmlEntryView(true, indexEntry.token, row.hasMainEntry,
-                    indexEntry.htmlEntries, null, parent, result);
+                                                  indexEntry.htmlEntries, null, parent, result);
         }
 
         private TableLayout getView(HtmlEntry.Row row, ViewGroup parent, final TableLayout result) {
             final HtmlEntry htmlEntry = row.getEntry();
             final TokenRow tokenRow = row.getTokenRow(true);
             return getPossibleLinkToHtmlEntryView(false,
-                    getString(R.string.seeAlso, htmlEntry.title, htmlEntry.entrySource.getName()),
-                    false, Collections.singletonList(htmlEntry), tokenRow.getToken(), parent,
-                    result);
+                                                  getString(R.string.seeAlso, htmlEntry.title, htmlEntry.entrySource.getName()),
+                                                  false, Collections.singletonList(htmlEntry), tokenRow.getToken(), parent,
+                                                  result);
         }
 
     }
@@ -1660,15 +1640,15 @@ public class DictionaryActivity extends ActionBarActivity {
     static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+");
 
     private void createTokenLinkSpans(final TextView textView, final Spannable spannable,
-            final String text) {
+                                      final String text) {
         // Saw from the source code that LinkMovementMethod sets the selection!
         // http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.3.1_r1/android/text/method/LinkMovementMethod.java#LinkMovementMethod
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         final Matcher matcher = CHAR_DASH.matcher(text);
         while (matcher.find()) {
             spannable.setSpan(new NonLinkClickableSpan(textColorFg), matcher.start(),
-                    matcher.end(),
-                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                              matcher.end(),
+                              Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -1704,10 +1684,10 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     final TextViewLongClickListener textViewLongClickListenerIndex0 = new TextViewLongClickListener(
-            0);
+        0);
 
     final TextViewLongClickListener textViewLongClickListenerIndex1 = new TextViewLongClickListener(
-            1);
+        1);
 
     // --------------------------------------------------------------------------
     // SearchText

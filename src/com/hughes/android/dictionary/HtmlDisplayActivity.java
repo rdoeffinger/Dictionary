@@ -54,7 +54,7 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
     }
 
     public static Intent getHtmlIntent(Context c, final String html, final String textToHighlight,
-            final boolean showOkButton) {
+                                       final boolean showOkButton) {
         final Intent intent = new Intent(c, HtmlDisplayActivity.class);
         intent.putExtra(HTML, html);
         intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight);
@@ -127,8 +127,7 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Explicitly handle the up button press so
         // we return to the dictionary.
-        if (item.getItemId() == android.R.id.home)
-        {
+        if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }

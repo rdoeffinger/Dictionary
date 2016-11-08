@@ -30,7 +30,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     final String text;
 
     public TextEntry(final Dictionary dictionary, final DataInput raf, final int index)
-            throws IOException {
+    throws IOException {
         super(dictionary, raf, index);
         text = raf.readUTF();
         throw new RuntimeException("TextEntry constructor should be unreachable");
@@ -76,7 +76,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
     public static class Row extends RowBase {
 
         Row(final DataInput raf, final int thisRowIndex,
-                final Index index, int extra) throws IOException {
+            final Index index, int extra) throws IOException {
             super(raf, thisRowIndex, index, extra);
         }
 
@@ -96,8 +96,8 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
 
         @Override
         public RowMatchType matches(final List<String> searchTokens,
-                final Pattern orderedMatchPattern, Transliterator normalizer,
-                boolean swapPairEntries) {
+                                    final Pattern orderedMatchPattern, Transliterator normalizer,
+                                    boolean swapPairEntries) {
             return null;
         }
     }

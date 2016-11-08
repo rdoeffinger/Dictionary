@@ -43,7 +43,7 @@ public abstract class RowBase extends IndexedObject {
     private TokenRow tokenRow = null;
 
     RowBase(final DataInput raf, final int thisRowIndex, final Index index, final int extra)
-            throws IOException {
+    throws IOException {
         super(thisRowIndex);
         this.index = index;
         this.referenceIndex = extra == -1 ? raf.readInt() : ((extra << 16) + raf.readUnsignedShort()); // what this points to.
@@ -71,7 +71,7 @@ public abstract class RowBase extends IndexedObject {
             }
             final RowKey that = (RowKey) o;
             return this.referenceIndex == that.referenceIndex
-                    && this.rowClass.equals(that.rowClass);
+                   && this.rowClass.equals(that.rowClass);
         }
 
         @Override
@@ -107,7 +107,7 @@ public abstract class RowBase extends IndexedObject {
                         // Did we hit the next set of TokenRows?
                         if (candidateUp.index() > this.index()) {
                             final int tokenIndex = index.sortedIndexEntries
-                                    .get(candidateUp.referenceIndex - 1).startRow;
+                                                   .get(candidateUp.referenceIndex - 1).startRow;
                             candidateUp = (TokenRow) index.rows.get(tokenIndex);
                         }
                         for (--rUp; rUp >= index(); --rUp) {
@@ -135,7 +135,7 @@ public abstract class RowBase extends IndexedObject {
     public abstract String getRawText(final boolean compact);
 
     public abstract RowMatchType matches(final List<String> searchTokens,
-            final Pattern orderedMatch, final Transliterator normalizer, boolean swapPairEntries);
+                                         final Pattern orderedMatch, final Transliterator normalizer, boolean swapPairEntries);
 
     // RowBase must manage "disk-based" polymorphism. All other polymorphism is
     // dealt with in the normal manner.

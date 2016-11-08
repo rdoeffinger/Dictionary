@@ -142,7 +142,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 final long downloadId = intent.getLongExtra(
-                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                                            DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                 if (finishedDownloadIds.contains(downloadId)) return; // ignore double notifications
                 final DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(downloadId);
@@ -155,20 +155,26 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 }
 
                 final String dest = cursor
-                        .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                                    .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                 final int status = cursor
-                        .getInt(cursor
-                                .getColumnIndex(DownloadManager.COLUMN_STATUS));
+                                   .getInt(cursor
+                                           .getColumnIndex(DownloadManager.COLUMN_STATUS));
                 if (DownloadManager.STATUS_SUCCESSFUL != status) {
                     final int reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
                     Log.w(LOG,
-                            "Download failed: status=" + status +
-                                    ", reason=" + reason);
+                          "Download failed: status=" + status +
+                          ", reason=" + reason);
                     String msg = Integer.toString(reason);
                     switch (reason) {
-                    case DownloadManager.ERROR_FILE_ALREADY_EXISTS: msg = "File exists"; break;
-                    case DownloadManager.ERROR_FILE_ERROR: msg = "File error"; break;
-                    case DownloadManager.ERROR_INSUFFICIENT_SPACE: msg = "Not enough space"; break;
+                    case DownloadManager.ERROR_FILE_ALREADY_EXISTS:
+                        msg = "File exists";
+                        break;
+                    case DownloadManager.ERROR_FILE_ERROR:
+                        msg = "File error";
+                        break;
+                    case DownloadManager.ERROR_INSUFFICIENT_SPACE:
+                        msg = "Not enough space";
+                        break;
                     }
                     new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(getString(R.string.downloadFailed, msg)).setNeutralButton("Close", null).show();
                     return;
@@ -176,7 +182,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
                 Log.w(LOG, "Download finished: " + dest + " Id: " + downloadId);
                 Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
-                        Toast.LENGTH_LONG).show();
+                               Toast.LENGTH_LONG).show();
 
 
                 final Uri zipUri = Uri.parse(dest);
@@ -204,7 +210,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     copyStream(zipFile, zipOut);
                     application.backgroundUpdateDictionaries(dictionaryUpdater);
                     Toast.makeText(context, getString(R.string.installationFinished, dest),
-                            Toast.LENGTH_LONG).show();
+                                   Toast.LENGTH_LONG).show();
                     finishedDownloadIds.add(downloadId);
                     Log.w(LOG, "Unzipping finished: " + dest + " Id: " + downloadId);
                 } catch (Exception e) {
@@ -216,9 +222,15 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
                     Log.e(LOG, "Failed to unzip.", e);
                 } finally {
-                    try { if (zipOut != null) zipOut.close(); } catch (IOException e) {}
-                    try { if (zipFile != null) zipFile.close(); } catch (IOException e) {}
-                    try { if (zipFileStream != null) zipFileStream.close(); } catch (IOException e) {}
+                    try {
+                        if (zipOut != null) zipOut.close();
+                    } catch (IOException e) {}
+                    try {
+                        if (zipFile != null) zipFile.close();
+                    } catch (IOException e) {}
+                    try {
+                        if (zipFileStream != null) zipFileStream.close();
+                    } catch (IOException e) {}
                     if (localZipFile != null) localZipFile.delete();
                 }
             }
@@ -236,10 +248,11 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (dictDir.canRead() && dictDir.canExecute()) return;
         blockAutoLaunch = true;
         if (requestPermission &&
-            ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                             Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                                              new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
+                                                      Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                                           }, 0);
             return;
         }
         blockAutoLaunch = true;
@@ -247,9 +260,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(getListView().getContext());
         builder.setTitle(getString(R.string.error));
         builder.setMessage(getString(
-                R.string.unableToReadDictionaryDir,
-                dictDir.getAbsolutePath(),
-                Environment.getExternalStorageDirectory()));
+                               R.string.unableToReadDictionaryDir,
+                               dictDir.getAbsolutePath(),
+                               Environment.getExternalStorageDirectory()));
         builder.setNeutralButton("Close", null);
         builder.create().show();
     }
@@ -280,15 +293,15 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         setContentView(R.layout.dictionary_manager_activity);
 
         dictionariesOnDeviceHeaderRow = (LinearLayout) LayoutInflater.from(
-                getListView().getContext()).inflate(
-                R.layout.dictionary_manager_header_row_on_device, getListView(), false);
+                                            getListView().getContext()).inflate(
+                                            R.layout.dictionary_manager_header_row_on_device, getListView(), false);
 
         downloadableDictionariesHeaderRow = (LinearLayout) LayoutInflater.from(
-                getListView().getContext()).inflate(
-                R.layout.dictionary_manager_header_row_downloadable, getListView(), false);
+                                                getListView().getContext()).inflate(
+                                                R.layout.dictionary_manager_header_row_downloadable, getListView(), false);
 
         showDownloadable = (ToggleButton) downloadableDictionariesHeaderRow
-                .findViewById(R.id.hideDownloadable);
+                           .findViewById(R.id.hideDownloadable);
         showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -299,15 +312,15 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
         if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(
-                thanksForUpdatingLatestVersion)) {
+                    thanksForUpdatingLatestVersion)) {
             blockAutoLaunch = true;
             startActivity(HtmlDisplayActivity.getWhatsNewLaunchIntent(getApplicationContext()));
             prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion)
-                    .commit();
+            .commit();
         }
 
         registerReceiver(broadcastReceiver, new IntentFilter(
-                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                             DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         setMyListAdapater();
         registerForContextMenu(getListView());
@@ -335,11 +348,11 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         filterSearchView.setLayoutParams(lp);
         filterSearchView.setInputType(InputType.TYPE_CLASS_TEXT);
         filterSearchView.setImeOptions(
-                EditorInfo.IME_ACTION_DONE |
-                        EditorInfo.IME_FLAG_NO_EXTRACT_UI |
-                        // EditorInfo.IME_FLAG_NO_FULLSCREEN | // Requires API
-                        // 11
-                        EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            EditorInfo.IME_ACTION_DONE |
+            EditorInfo.IME_FLAG_NO_EXTRACT_UI |
+            // EditorInfo.IME_FLAG_NO_FULLSCREEN | // Requires API
+            // 11
+            EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         filterSearchView.setOnQueryTextListener(new OnQueryTextListener() {
             @Override
@@ -371,7 +384,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     private static int copyStream(final InputStream in, final OutputStream out)
-            throws IOException {
+    throws IOException {
         int bytesRead;
         final byte[] bytes = new byte[1024 * 16];
         while ((bytesRead = in.read(bytes)) != -1) {
@@ -413,9 +426,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 prefs.contains(C.INDEX_SHORT_NAME)) {
             Log.d(LOG, "Skipping DictionaryManager, going straight to dictionary.");
             startActivity(DictionaryActivity.getLaunchIntent(getApplicationContext(),
-                    new File(prefs.getString(C.DICT_FILE, "")),
-                    prefs.getString(C.INDEX_SHORT_NAME, ""),
-                    prefs.getString(C.SEARCH_TOKEN, "")));
+                          new File(prefs.getString(C.DICT_FILE, "")),
+                          prefs.getString(C.INDEX_SHORT_NAME, ""),
+                          prefs.getString(C.SEARCH_TOKEN, "")));
             finish();
             return;
         }
@@ -451,12 +464,12 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     @Override
     public void onCreateContextMenu(final ContextMenu menu, final View view,
-            final ContextMenuInfo menuInfo) {
+                                    final ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, view, menuInfo);
         Log.d(LOG, "onCreateContextMenu, " + menuInfo);
 
         final AdapterContextMenuInfo adapterContextMenuInfo =
-                (AdapterContextMenuInfo) menuInfo;
+            (AdapterContextMenuInfo) menuInfo;
         final int position = adapterContextMenuInfo.position;
         final MyListAdapter.Row row = (MyListAdapter.Row) getListAdapter().getItem(position);
 
@@ -466,29 +479,29 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
         if (position > 0 && row.onDevice) {
             final android.view.MenuItem moveToTopMenuItem =
-                    menu.add(R.string.moveToTop);
+                menu.add(R.string.moveToTop);
             moveToTopMenuItem.setOnMenuItemClickListener(new
-                    android.view.MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(android.view.MenuItem item) {
-                            application.moveDictionaryToTop(row.dictionaryInfo);
-                            setMyListAdapater();
-                            return true;
-                        }
-                    });
+            android.view.MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(android.view.MenuItem item) {
+                    application.moveDictionaryToTop(row.dictionaryInfo);
+                    setMyListAdapater();
+                    return true;
+                }
+            });
         }
 
         if (row.onDevice) {
             final android.view.MenuItem deleteMenuItem = menu.add(R.string.deleteDictionary);
             deleteMenuItem
-                    .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(android.view.MenuItem item) {
-                            application.deleteDictionary(row.dictionaryInfo);
-                            setMyListAdapater();
-                            return true;
-                        }
-                    });
+            .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(android.view.MenuItem item) {
+                    application.deleteDictionary(row.dictionaryInfo);
+                    setMyListAdapater();
+                    return true;
+                }
+            });
         }
     }
 
@@ -585,16 +598,16 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     private void setMyListAdapater() {
         final String filter = filterSearchView == null ? "" : filterSearchView.getQuery()
-                .toString();
+                              .toString();
         final String[] filters = filter.trim().toLowerCase().split("(\\s|-)+");
         setListAdapter(new MyListAdapter(filters));
     }
 
     private View createDictionaryRow(final DictionaryInfo dictionaryInfo,
-            final ViewGroup parent, boolean canLaunch) {
+                                     final ViewGroup parent, boolean canLaunch) {
 
         View row = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.dictionary_manager_row, parent, false);
+                       R.layout.dictionary_manager_row, parent, false);
         final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
         final TextView details = (TextView) row.findViewById(R.id.dictionaryDetails);
         name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
@@ -609,9 +622,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         }
         if (downloadable != null && (!canLaunch || updateAvailable)) {
             downloadButton
-                    .setText(getString(
-                            R.string.downloadButton,
-                            downloadable.zipBytes / 1024.0 / 1024.0));
+            .setText(getString(
+                         R.string.downloadButton,
+                         downloadable.zipBytes / 1024.0 / 1024.0));
             downloadButton.setMinWidth(application.languageButtonPixels * 3 / 2);
             downloadButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -632,15 +645,15 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         }
         for (IndexInfo indexInfo : sortedIndexInfos) {
             final View button = application.createButton(buttons.getContext(), dictionaryInfo,
-                    indexInfo);
+                                indexInfo);
             buttons.addView(button);
 
             if (canLaunch) {
                 button.setOnClickListener(
-                        new IntentLauncher(buttons.getContext(),
-                                DictionaryActivity.getLaunchIntent(getApplicationContext(),
-                                        application.getPath(dictionaryInfo.uncompressedFilename),
-                                        indexInfo.shortName, "")));
+                    new IntentLauncher(buttons.getContext(),
+                                       DictionaryActivity.getLaunchIntent(getApplicationContext(),
+                                               application.getPath(dictionaryInfo.uncompressedFilename),
+                                               indexInfo.shortName, "")));
 
             } else {
                 button.setEnabled(false);
@@ -649,7 +662,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 builder.append("; ");
             }
             builder.append(getString(R.string.indexInfo, indexInfo.shortName,
-                    indexInfo.mainTokenCount));
+                                     indexInfo.mainTokenCount));
         }
         builder.append("; ");
         builder.append(getString(R.string.downloadButton, dictionaryInfo.uncompressedBytes / 1024.0 / 1024.0));
@@ -664,9 +677,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (canLaunch) {
             row.setClickable(true);
             row.setOnClickListener(new IntentLauncher(parent.getContext(),
-                    DictionaryActivity.getLaunchIntent(getApplicationContext(),
-                            application.getPath(dictionaryInfo.uncompressedFilename),
-                            dictionaryInfo.indexInfos.get(0).shortName, "")));
+                                   DictionaryActivity.getLaunchIntent(getApplicationContext(),
+                                           application.getPath(dictionaryInfo.uncompressedFilename),
+                                           dictionaryInfo.indexInfos.get(0).shortName, "")));
             row.setFocusable(true);
             row.setLongClickable(true);
         }
@@ -691,8 +704,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         // the download manager is disabled.
         if (cursor == null) {
             new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
-                    .setMessage(getString(R.string.downloadFailed, R.string.downloadManagerQueryFailed))
-                    .setNeutralButton("Close", null).show();
+            .setMessage(getString(R.string.downloadFailed, R.string.downloadManagerQueryFailed))
+            .setNeutralButton("Close", null).show();
             return;
         }
 
@@ -705,15 +718,15 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (!cursor.isAfterLast()) {
             downloadManager.remove(cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID)));
             downloadButton
-                    .setText(getString(
-                            R.string.downloadButton,
-                            bytes / 1024.0 / 1024.0));
+            .setText(getString(
+                         R.string.downloadButton,
+                         bytes / 1024.0 / 1024.0));
             cursor.close();
             return;
         }
         cursor.close();
         Request request = new Request(
-                Uri.parse(downloadUrl));
+            Uri.parse(downloadUrl));
 
         Log.d(LOG, "Downloading to: " + destFile);
         request.setTitle(destFile);

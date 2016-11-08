@@ -55,7 +55,7 @@ public class EntrySource extends IndexedObject {
 
         @Override
         public EntrySource read(DataInput raf, int readIndex)
-                throws IOException {
+        throws IOException {
             final String name = raf.readUTF();
             final int numEntries = dictionary.dictFileVersion >= 3 ? raf.readInt() : 0;
             return new EntrySource(readIndex, name, numEntries);

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntry>,
-        Comparable<PairEntry> {
+    Comparable<PairEntry> {
 
     public final List<Pair> pairs;
 
@@ -43,7 +43,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     }
 
     public PairEntry(final Dictionary dictionary, final DataInput raf, final int index)
-            throws IOException {
+    throws IOException {
         super(dictionary, raf, index);
         final int size = dictionary.dictFileVersion >= 7 ? StringUtil.readVarInt(raf) : raf.readInt();
         pairs = new ArrayList<PairEntry.Pair>(size);
@@ -99,12 +99,12 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     public static class Row extends RowBase {
 
         Row(final DataInput raf, final int thisRowIndex,
-                final Index index, int extra) throws IOException {
+            final Index index, int extra) throws IOException {
             super(raf, thisRowIndex, index, extra);
         }
 
         Row(final int referenceIndex, final int thisRowIndex,
-                final Index index) {
+            final Index index) {
             super(referenceIndex, thisRowIndex, index);
         }
 
@@ -134,8 +134,8 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
 
         @Override
         public RowMatchType matches(final List<String> searchTokens,
-                final Pattern orderedMatchPattern, final Transliterator normalizer,
-                final boolean swapPairEntries) {
+                                    final Pattern orderedMatchPattern, final Transliterator normalizer,
+                                    final boolean swapPairEntries) {
             final int side = swapPairEntries ? 1 : 0;
             final List<Pair> pairs = getEntry().pairs;
             final String[] pairSides = new String[pairs.size()];

@@ -57,7 +57,7 @@ public enum EntryTypeName {
     // The next two are how we file entries like: "sono: {form of|essere}" under
     // "essere".
     WIKTIONARY_BASE_FORM_SINGLE(), // These two should be eligible for removal
-                                   // if the links are otherwise present.
+    // if the links are otherwise present.
     WIKTIONARY_BASE_FORM_MULTI(false, false, WIKTIONARY_BASE_FORM_SINGLE),
     PART_OF_HYPHENATED(),
     BRACKETED(),
@@ -75,7 +75,7 @@ public enum EntryTypeName {
     }
 
     EntryTypeName(final boolean mainWord, final boolean overridesStopList,
-                  final EntryTypeName singleWordInstance) {
+    final EntryTypeName singleWordInstance) {
         this.mainWord = mainWord;
         this.overridesStopList = overridesStopList;
         this.singleWordInstance = singleWordInstance == null ? this : singleWordInstance;

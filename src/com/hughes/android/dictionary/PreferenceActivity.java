@@ -52,14 +52,13 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         ListPreference defaultDic = (ListPreference) findPreference(getResources().getString(
-                R.string.defaultDicKey));
+                                        R.string.defaultDicKey));
         List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
 
         final CharSequence[] entries = new CharSequence[dicts.size()];
         final CharSequence[] entryvalues = new CharSequence[dicts.size()];
 
-        for (int i = 0; i < entries.length; ++i)
-        {
+        for (int i = 0; i < entries.length; ++i) {
             entries[i] = dicts.get(i).dictInfo;
             entryvalues[i] = dicts.get(i).uncompressedFilename;
         }
@@ -92,7 +91,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
         final DictionaryApplication application = (DictionaryApplication)getApplication();
         File dictDir = application.getDictDir();
         if (!dictDir.isDirectory() || !dictDir.canWrite() ||
-            !application.checkFileCreate(dictDir)) {
+                !application.checkFileCreate(dictDir)) {
             String dirs = "";
             String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
             if (new File(externalDir).canWrite())
@@ -119,8 +118,8 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
             if (fd.canWrite())
                 dirs += "\n" + fd.getAbsolutePath();
             new AlertDialog.Builder(this).setTitle(getString(R.string.error))
-                .setMessage(getString(R.string.chosenNotWritable) + dirs)
-                    .setNeutralButton("Close", null).show();
+            .setMessage(getString(R.string.chosenNotWritable) + dirs)
+            .setNeutralButton("Close", null).show();
         }
     }
 }

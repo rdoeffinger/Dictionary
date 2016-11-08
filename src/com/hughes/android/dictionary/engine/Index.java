@@ -85,8 +85,8 @@ public final class Index implements RAFSerializable<Index> {
     // --------------------------------------------------------------------------
 
     public Index(final Dictionary dict, final String shortName, final String longName,
-            final Language sortLanguage, final String normalizerRules,
-            final boolean swapPairEntries, final Set<String> stoplist) {
+                 final Language sortLanguage, final String normalizerRules,
+                 final boolean swapPairEntries, final Set<String> stoplist) {
         this.dict = dict;
         this.shortName = shortName;
         this.longName = longName;
@@ -134,22 +134,22 @@ public final class Index implements RAFSerializable<Index> {
             mainTokenCount = raf.readInt();
         }
         sortedIndexEntries = CachingList.create(
-                RAFList.create(raf, indexEntrySerializer, raf.getFilePointer(),
-                               dict.dictFileVersion, dict.dictInfo + " idx " + languageCode + ": "), CACHE_SIZE);
+                                 RAFList.create(raf, indexEntrySerializer, raf.getFilePointer(),
+                                                dict.dictFileVersion, dict.dictInfo + " idx " + languageCode + ": "), CACHE_SIZE);
         if (dict.dictFileVersion >= 7) {
             int count = StringUtil.readVarInt(raf);
             stoplist = new HashSet<String>(count);
             for (int i = 0; i < count; ++i) {
                 stoplist.add(raf.readUTF());
             }
-	} else if (dict.dictFileVersion >= 4) {
+        } else if (dict.dictFileVersion >= 4) {
             stoplist = new SerializableSerializer<Set<String>>().read(raf);
         } else {
             stoplist = Collections.emptySet();
         }
         rows = CachingList.create(
-                UniformRAFList.create(raf, new RowBase.Serializer(this), raf.getFilePointer()),
-                CACHE_SIZE);
+                   UniformRAFList.create(raf, new RowBase.Serializer(this), raf.getFilePointer()),
+                   CACHE_SIZE);
     }
 
     @Override
@@ -197,7 +197,7 @@ public final class Index implements RAFSerializable<Index> {
         public List<HtmlEntry> htmlEntries;
 
         public IndexEntry(final Index index, final String token, final String normalizedToken,
-                final int startRow, final int numRows) {
+                          final int startRow, final int numRows) {
             assert token.equals(token.trim());
             assert token.length() > 0;
             this.token = token;
@@ -236,13 +236,13 @@ public final class Index implements RAFSerializable<Index> {
                         public int size() {
                             return htmlEntryIndices.length;
                         }
-                        };
+                    };
                 }
             } else if (index.dict.dictFileVersion >= 6) {
                 this.htmlEntries = CachingList.create(
-                        RAFList.create((RandomAccessFile)raf, index.dict.htmlEntryIndexSerializer,
-                                ((RandomAccessFile)raf).getFilePointer(), index.dict.dictFileVersion,
-                                index.dict.dictInfo + " htmlEntries: "), 1);
+                                       RAFList.create((RandomAccessFile)raf, index.dict.htmlEntryIndexSerializer,
+                                                      ((RandomAccessFile)raf).getFilePointer(), index.dict.dictFileVersion,
+                                                      index.dict.dictInfo + " htmlEntries: "), 1);
             } else {
                 this.htmlEntries = Collections.emptyList();
             }
@@ -280,8 +280,8 @@ public final class Index implements RAFSerializable<Index> {
 
     public IndexEntry findExact(final String exactToken) {
         final int result = Collections.binarySearch(
-                TransformingList.create(sortedIndexEntries, INDEX_ENTRY_TO_TOKEN), exactToken,
-                getSortComparator());
+                               TransformingList.create(sortedIndexEntries, INDEX_ENTRY_TO_TOKEN), exactToken,
+                               getSortComparator());
         if (result >= 0) {
             return sortedIndexEntries.get(result);
         }
@@ -377,8 +377,8 @@ public final class Index implements RAFSerializable<Index> {
     }
 
     public final List<RowBase> multiWordSearch(
-            final String searchText, final List<String> searchTokens,
-            final AtomicBoolean interrupted) {
+        final String searchText, final List<String> searchTokens,
+        final AtomicBoolean interrupted) {
         final long startMills = System.currentTimeMillis();
         final List<RowBase> result = new ArrayList<RowBase>();
 
@@ -399,7 +399,7 @@ public final class Index implements RAFSerializable<Index> {
             if (!stoplist.contains(searchToken)) {
                 if (normalizedNonStoplist.add(normalized)) {
                     final int numRows = getUpperBoundOnRowsStartingWith(normalized,
-                            MAX_SEARCH_ROWS, interrupted);
+                                        MAX_SEARCH_ROWS, interrupted);
                     if (numRows != -1 && numRows < leastRows) {
                         if (numRows == 0) {
                             // We really are done here.
@@ -423,11 +423,11 @@ public final class Index implements RAFSerializable<Index> {
             System.out.println("Everything was in the stoplist!");
         }
         System.out.println("Searching using prefix: " + bestPrefix + ", leastRows=" + leastRows
-                + ", searchTokens=" + searchTokens);
+                           + ", searchTokens=" + searchTokens);
 
         // Place to store the things that match.
         final Map<RowMatchType, List<RowBase>> matches = new EnumMap<RowMatchType, List<RowBase>>(
-                RowMatchType.class);
+            RowMatchType.class);
         for (final RowMatchType rowMatchType : RowMatchType.values()) {
             if (rowMatchType != RowMatchType.NO_MATCH) {
                 matches.put(rowMatchType, new ArrayList<RowBase>());
@@ -473,7 +473,7 @@ public final class Index implements RAFSerializable<Index> {
                 }
                 rowsAlreadySeen.add(rowKey);
                 final RowMatchType matchType = row.matches(searchTokens, pattern, normalizer(),
-                        swapPairEntries);
+                                               swapPairEntries);
                 if (matchType != RowMatchType.NO_MATCH) {
                     matches.get(matchType).add(row);
                     ++matchCount;
@@ -484,7 +484,7 @@ public final class Index implements RAFSerializable<Index> {
 
         // Sort them into a reasonable order.
         final RowBase.LengthComparator lengthComparator = new RowBase.LengthComparator(
-                swapPairEntries);
+            swapPairEntries);
         for (final Collection<RowBase> rows : matches.values()) {
             final List<RowBase> ordered = new ArrayList<RowBase>(rows);
             Collections.sort(ordered, lengthComparator);

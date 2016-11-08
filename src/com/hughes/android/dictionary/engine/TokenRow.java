@@ -28,13 +28,13 @@ public class TokenRow extends RowBase {
     public final boolean hasMainEntry;
 
     TokenRow(final DataInput raf, final int thisRowIndex, final Index index,
-            final boolean hasMainEntry, int extra) throws IOException {
+             final boolean hasMainEntry, int extra) throws IOException {
         super(raf, thisRowIndex, index, extra);
         this.hasMainEntry = hasMainEntry;
     }
 
     TokenRow(final int referenceIndex, final int thisRowIndex, final Index index,
-            final boolean hasMainEntry) {
+             final boolean hasMainEntry) {
         super(referenceIndex, thisRowIndex, index);
         this.hasMainEntry = hasMainEntry;
     }
@@ -77,7 +77,7 @@ public class TokenRow extends RowBase {
 
     @Override
     public RowMatchType matches(List<String> searchTokens, final Pattern orderedMatchPattern,
-            Transliterator normalizer, boolean swapPairEntries) {
+                                Transliterator normalizer, boolean swapPairEntries) {
         return RowMatchType.NO_MATCH;
     }
 

@@ -42,26 +42,25 @@ public class PersistentObjectCache {
     private final Map<String, Object> objects = new LinkedHashMap<String, Object>();
 
     class ConstrainedOIS extends ObjectInputStream {
-      public ConstrainedOIS(InputStream in) throws IOException {
-        super(in);
-      }
-
-      protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-        String name = desc.getName();
-        // Note: try to avoid adding more classes.
-        // LinkedHashMap is already more than enough for a DoS
-        if (!name.equals(ArrayList.class.getName()) &&
-            !name.equals(HashMap.class.getName()) &&
-            !name.equals(LinkedHashMap.class.getName()) &&
-            !name.equals(String.class.getName()) &&
-            !name.equals(DictionaryApplication.DictionaryConfig.class.getName()) &&
-            !name.equals(DictionaryInfo.class.getName()) &&
-            !name.equals(DictionaryInfo.IndexInfo.class.getName()))
-        {
-          throw new InvalidClassException("Not allowed to deserialize class", name);
+        public ConstrainedOIS(InputStream in) throws IOException {
+            super(in);
         }
-        return super.resolveClass(desc);
-      }
+
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            String name = desc.getName();
+            // Note: try to avoid adding more classes.
+            // LinkedHashMap is already more than enough for a DoS
+            if (!name.equals(ArrayList.class.getName()) &&
+                    !name.equals(HashMap.class.getName()) &&
+                    !name.equals(LinkedHashMap.class.getName()) &&
+                    !name.equals(String.class.getName()) &&
+                    !name.equals(DictionaryApplication.DictionaryConfig.class.getName()) &&
+                    !name.equals(DictionaryInfo.class.getName()) &&
+                    !name.equals(DictionaryInfo.IndexInfo.class.getName())) {
+                throw new InvalidClassException("Not allowed to deserialize class", name);
+            }
+            return super.resolveClass(desc);
+        }
     }
 
     public synchronized <T extends Serializable> T read(final String filename, final Class<T> resultClass) {
@@ -76,14 +75,16 @@ public class PersistentObjectCache {
                 Log.d(getClass().getSimpleName(), "File empty: " + src);
                 return null;
             }
-	    ObjectInputStream in = null;
+            ObjectInputStream in = null;
             try {
                 in = new ConstrainedOIS(new FileInputStream(src));
                 object = in.readObject();
                 in.close();
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Deserialization failed: " + src, e);
-                try { if (in != null) in.close(); } catch (IOException e2) {}
+                try {
+                    if (in != null) in.close();
+                } catch (IOException e2) {}
                 return null;
             }
             objects.put(filename, object);
@@ -96,14 +97,16 @@ public class PersistentObjectCache {
     public synchronized void write(final String filename, final Serializable object) {
         objects.put(filename, object);
         final File dest = new File(dir, filename);
-	ObjectOutputStream out = null;
+        ObjectOutputStream out = null;
         try {
             out = new ObjectOutputStream(new FileOutputStream(dest));
             out.writeObject(object);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Serialization failed: " + dest, e);
         }
-        try { if (out != null) out.close(); } catch (IOException e) {}
+        try {
+            if (out != null) out.close();
+        } catch (IOException e) {}
     }
 
     private PersistentObjectCache(final Context context) {
@@ -111,8 +114,8 @@ public class PersistentObjectCache {
         dir = filesDir != null ? filesDir : Environment.getExternalStorageDirectory();
         if (dir == null) {
             throw new RuntimeException("context.getFilesDir() == " + context.getFilesDir()
-                    + ", Environment.getExternalStorageDirectory()="
-                    + Environment.getExternalStorageDirectory());
+                                       + ", Environment.getExternalStorageDirectory()="
+                                       + Environment.getExternalStorageDirectory());
         }
     }
 
@@ -129,7 +132,7 @@ public class PersistentObjectCache {
         } else {
             if (!instance.dir.equals(context.getFilesDir())) {
                 throw new RuntimeException("File dir changed.  old=" + instance.dir + ", new="
-                        + context.getFilesDir());
+                                           + context.getFilesDir());
             }
         }
         return instance;

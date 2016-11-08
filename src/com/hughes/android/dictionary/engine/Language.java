@@ -85,10 +85,10 @@ public class Language {
      * simplified for performance and small code size.
      */
     private static final String rtlChars =
-            "\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC";
+        "\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC";
 
     private static final String puncChars =
-            "\\[\\]\\(\\)\\{\\}\\=";
+        "\\[\\]\\(\\)\\{\\}\\=";
 
     private static final Pattern RTL_LEFT_BOUNDARY = Pattern.compile("([" + puncChars + "])(["
             + rtlChars + "])");

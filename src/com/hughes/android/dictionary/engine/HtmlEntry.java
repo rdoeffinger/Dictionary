@@ -29,7 +29,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     }
 
     public HtmlEntry(Dictionary dictionary, DataInput raf, final int index)
-            throws IOException {
+    throws IOException {
         super(dictionary, raf, index);
         title = raf.readUTF();
         lazyHtmlLoader = new LazyHtmlLoader(raf, dictionary.htmlData, index);
@@ -138,12 +138,12 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         boolean isExpanded = false;
 
         Row(final DataInput raf, final int thisRowIndex,
-                final Index index, int extra) throws IOException {
+            final Index index, int extra) throws IOException {
             super(raf, thisRowIndex, index, extra);
         }
 
         Row(final int referenceIndex, final int thisRowIndex,
-                final Index index) {
+            final Index index) {
             super(referenceIndex, thisRowIndex, index);
         }
 
@@ -170,8 +170,8 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 
         @Override
         public RowMatchType matches(final List<String> searchTokens,
-                final Pattern orderedMatchPattern, final Transliterator normalizer,
-                final boolean swapPairEntries) {
+                                    final Pattern orderedMatchPattern, final Transliterator normalizer,
+                                    final boolean swapPairEntries) {
             final String text = normalizer.transform(getRawText(false));
             if (orderedMatchPattern.matcher(text).find()) {
                 return RowMatchType.ORDERED_MATCH;
@@ -191,8 +191,8 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         for (final HtmlEntry htmlEntry : htmlEntries) {
             final String titleEscaped = StringUtil.escapeUnicodeToPureHtml(htmlEntry.title);
             result.append(String.format("<h1><a href=\"%s\">%s</a></h1>\n<p>%s\n",
-                    formatQuickdicUrl(indexShortName, htmlEntry.title), titleEscaped,
-                    htmlEntry.getHtml()));
+                                        formatQuickdicUrl(indexShortName, htmlEntry.title), titleEscaped,
+                                        htmlEntry.getHtml()));
         }
         return result.toString();
     }
@@ -252,7 +252,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
                 return html;
             }
             System.out.println("Loading Html: numBytes=" + numBytes + ", numZipBytes="
-                    + numZipBytes);
+                               + numZipBytes);
             final byte[] zipBytes = new byte[numZipBytes];
             synchronized (raf) {
                 try {

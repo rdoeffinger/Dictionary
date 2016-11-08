@@ -31,7 +31,7 @@ public abstract class AbstractEntry extends IndexedObject {
     }
 
     public AbstractEntry(Dictionary dictionary, DataInput raf, final int index)
-            throws IOException {
+    throws IOException {
         super(index);
         if (dictionary.dictFileVersion >= 1) {
             final int entrySouceIdx = dictionary.dictFileVersion >= 7 ? StringUtil.readVarInt(raf) : raf.readShort();
