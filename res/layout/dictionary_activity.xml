@@ -60,6 +60,7 @@
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onLanguageButtonClick"
         android:src="@drawable/ic_swap_horiz_black_24dp" />
 
      <android.support.design.widget.FloatingActionButton
@@ -70,6 +71,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onSearchButtonClick"
         android:src="@drawable/ic_search_black_24dp" />
 
     <TextView

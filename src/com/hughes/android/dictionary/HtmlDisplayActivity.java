@@ -62,6 +62,10 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
         return intent;
     }
 
+    public void onOkClick(View dummy) {
+        finish();
+    }
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -105,12 +109,6 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
         }
 
         final Button okButton = (Button) findViewById(R.id.okButton);
-        okButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
         if (!getIntent().getBooleanExtra(SHOW_OK_BUTTON, true)) {
             okButton.setVisibility(Button.GONE);
         }

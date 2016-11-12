@@ -503,32 +503,11 @@ public class DictionaryActivity extends ActionBarActivity {
         onCreateSetupActionBarAndSearchView();
 
         View floatSwapButton = findViewById(R.id.floatSwapButton);
-        floatSwapButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                onLanguageButtonClick();
-            }
-        });
         floatSwapButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 onLanguageButtonLongClick(v.getContext());
                 return true;
-            }
-        });
-
-        final FloatingActionButton floatSearchButton = (FloatingActionButton)findViewById(R.id.floatSearchButton);
-        floatSearchButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                if (!searchView.hasFocus()) {
-                    searchView.requestFocus();
-                }
-                if (searchView.getQuery().toString().length() > 0) {
-                    searchView.setQuery("", false);
-                }
-                showKeyboard();
-                searchView.setIconified(false);
             }
         });
 
@@ -762,7 +741,18 @@ public class DictionaryActivity extends ActionBarActivity {
         }
     }
 
-    void onLanguageButtonClick() {
+    public void onSearchButtonClick(View dummy) {
+        if (!searchView.hasFocus()) {
+            searchView.requestFocus();
+        }
+        if (searchView.getQuery().toString().length() > 0) {
+            searchView.setQuery("", false);
+        }
+        showKeyboard();
+        searchView.setIconified(false);
+    }
+
+    public void onLanguageButtonClick(View dummy) {
         if (dictionary.indices.size() == 1) {
             // No need to work to switch indices.
             return;
