@@ -1075,6 +1075,37 @@ public class DictionaryActivity extends ActionBarActivity {
                 }
             });
         }
+        if (row instanceof PairEntry.Row && ttsReady) {
+            final List<Pair> pairs = ((PairEntry.Row)row).getEntry().pairs;
+            final MenuItem speakLeft = menu.add(R.string.speak_left);
+            speakLeft.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(android.view.MenuItem item) {
+                    int idx = index.swapPairEntries ? 1 : 0;
+                    updateTTSLanguage(idx);
+                    String text = "";
+                    for (Pair p : pairs) text += p.get(idx);
+                    text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
+                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH,
+                                       new HashMap<String, String>());
+                    return false;
+                }
+            });
+            final MenuItem speakRight = menu.add(R.string.speak_right);
+            speakRight.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(android.view.MenuItem item) {
+                    int idx = index.swapPairEntries ? 0 : 1;
+                    updateTTSLanguage(idx);
+                    String text = "";
+                    for (Pair p : pairs) text += p.get(idx);
+                    text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
+                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH,
+                                       new HashMap<String, String>());
+                    return false;
+                }
+            });
+        }
     }
 
     private void jumpToTextFromHyperLink(

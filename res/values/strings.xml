@@ -46,6 +46,8 @@
     <string name="fontFailure">Font failure: %s</string>
     <string name="seeAlso">See also: %1$s (%2$s)</string>
     <string name="speak">Speak</string>
+    <string name="speak_left">Speak left side</string>
+    <string name="speak_right">Speak right side</string>
     <string name="nextWord">Next word</string>
     <string name="previousWord">Previous word</string>
     <string name="randomWord">Random word</string>
