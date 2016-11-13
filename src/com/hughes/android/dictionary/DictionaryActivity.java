@@ -421,7 +421,15 @@ public class DictionaryActivity extends ActionBarActivity {
         }
         Log.d(LOG, "Loading index " + indexIndex);
         index = dictionary.indices.get(indexIndex);
+        getListView().setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         getListView().setEmptyView(findViewById(android.R.id.empty));
+        getListView().setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int row, long id) {
+                onListItemClick(getListView(), view, row, id);
+            }
+        });
+
         setListAdapter(new IndexAdapter(index));
 
         // Pre-load the collators.
@@ -543,13 +551,6 @@ public class DictionaryActivity extends ActionBarActivity {
         final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         customSearchView.setLayoutParams(layoutParams);
-
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int row, long id) {
-                onListItemClick(getListView(), view, row, id);
-            }
-        });
 
         languageButton = new ImageButton(customSearchView.getContext());
         languageButton.setId(R.id.languageButton);
@@ -1569,7 +1570,7 @@ public class DictionaryActivity extends ActionBarActivity {
             // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
             result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             result.setClickable(true);
-            result.setFocusable(true);
+            result.setFocusable(false);
             result.setLongClickable(true);
 //            result.setBackgroundResource(android.R.drawable.menuitem_background);
 
@@ -1646,6 +1647,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     }
                 });
             }
+            result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             return result;
         }
 
