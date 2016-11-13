@@ -43,6 +43,7 @@
         android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:nextFocusRight="@+id/floatSearchButton"
         android:choiceMode="singleChoice"
         android:clickable="true"
         android:fastScrollEnabled="true"
@@ -71,6 +72,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:nextFocusLeft="@id/android:list"
         android:onClick="onSearchButtonClick"
         android:src="@drawable/ic_search_black_24dp" />
 

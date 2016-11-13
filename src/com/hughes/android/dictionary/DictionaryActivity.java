@@ -20,6 +20,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -497,7 +498,7 @@ public class DictionaryActivity extends ActionBarActivity {
         saveOnlyFirstSubentry = prefs.getBoolean(getString(R.string.saveOnlyFirstSubentryKey),
                                 false);
         clickOpensContextMenu = prefs.getBoolean(getString(R.string.clickOpensContextMenuKey),
-                                false);
+                                !getPackageManager().hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN));
         Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
 
         onCreateSetupActionBarAndSearchView();
@@ -551,6 +552,7 @@ public class DictionaryActivity extends ActionBarActivity {
         });
 
         languageButton = new ImageButton(customSearchView.getContext());
+        languageButton.setId(R.id.languageButton);
         languageButton.setScaleType(ScaleType.FIT_CENTER);
         languageButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -563,6 +565,7 @@ public class DictionaryActivity extends ActionBarActivity {
         customSearchView.addView(languageButton, lpb);
 
         searchView = new SearchView(getSupportActionBar().getThemedContext());
+        searchView.setId(R.id.searchView);
 
         // Get rid of search icon, it takes up too much space.
         // There is still text saying "search" in the search field.
@@ -605,6 +608,10 @@ public class DictionaryActivity extends ActionBarActivity {
         // Avoid wasting space on large left inset
         Toolbar tb = (Toolbar)customSearchView.getParent();
         tb.setContentInsetsRelative(0, 0);
+
+        getListView().setNextFocusLeftId(R.id.searchView);
+        findViewById(R.id.floatSwapButton).setNextFocusRightId(R.id.languageButton);
+        languageButton.setNextFocusLeftId(R.id.floatSwapButton);
     }
 
     @Override
@@ -787,6 +794,7 @@ public class DictionaryActivity extends ActionBarActivity {
         button.setOnClickListener(intentLauncher);
         listView.addHeaderView(button);
 
+        listView.setItemsCanFocus(true);
         listView.setAdapter(new BaseAdapter() {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {

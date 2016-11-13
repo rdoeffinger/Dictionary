@@ -324,6 +324,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
         setMyListAdapater();
         registerForContextMenu(getListView());
+        getListView().setItemsCanFocus(true);
 
         readableCheckAndError(true);
 
@@ -657,6 +658,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
             } else {
                 button.setEnabled(false);
+                button.setFocusable(false);
             }
             if (builder.length() != 0) {
                 builder.append("; ");
@@ -680,7 +682,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                                    DictionaryActivity.getLaunchIntent(getApplicationContext(),
                                            application.getPath(dictionaryInfo.uncompressedFilename),
                                            dictionaryInfo.indexInfos.get(0).shortName, "")));
-            row.setFocusable(true);
+            // do not setFocusable, for keyboard navigation
+            // offering only the index buttons is better.
             row.setLongClickable(true);
         }
         row.setBackgroundResource(android.R.drawable.menuitem_background);

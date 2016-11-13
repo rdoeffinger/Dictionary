@@ -3,6 +3,7 @@
     android:id="@+id/onDeviceHeaderLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:focusable="false"
     android:background="@color/gray"
     android:orientation="horizontal"
     android:padding="10dip">
@@ -12,6 +13,7 @@
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:focusable="false"
         android:text="@string/dictionariesOnDevice"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
