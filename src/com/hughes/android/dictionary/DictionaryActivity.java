@@ -1012,8 +1012,21 @@ public class DictionaryActivity extends ActionBarActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo) menuInfo;
+        final AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo) menuInfo;
         final RowBase row = (RowBase) getListAdapter().getItem(adapterContextMenuInfo.position);
+
+        if (clickOpensContextMenu && (row instanceof HtmlEntry.Row ||
+            (row instanceof TokenRow && ((TokenRow)row).getIndexEntry().htmlEntries.size() > 0))) {
+            final List<HtmlEntry> html = row instanceof TokenRow ? ((TokenRow)row).getIndexEntry().htmlEntries : Collections.singletonList(((HtmlEntry.Row)row).getEntry());
+            final String highlight = row instanceof HtmlEntry.Row ? ((HtmlEntry.Row)row).getTokenRow(true).getToken() : null;
+            final MenuItem open = menu.add("Open");
+            open.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(MenuItem item) {
+                    showHtml(html, highlight);
+                    return false;
+                }
+            });
+        }
 
         final android.view.MenuItem addToWordlist = menu.add(getString(R.string.addToWordList,
                 wordList.getName()));
@@ -1159,10 +1172,15 @@ public class DictionaryActivity extends ActionBarActivity {
         // searchView.selectAll();
     }
 
-    protected void onListItemClick(ListView l, View v, int row, long id) {
+    protected void onListItemClick(ListView l, View v, int rowIdx, long id) {
         defocusSearchText();
         if (clickOpensContextMenu && dictRaf != null) {
             openContextMenu(v);
+        } else {
+            final RowBase row = (RowBase)getListAdapter().getItem(rowIdx);
+            if (!(row instanceof PairEntry.Row)) {
+                v.performClick();
+            }
         }
     }
 
@@ -1406,6 +1424,16 @@ public class DictionaryActivity extends ActionBarActivity {
     // IndexAdapter
     // --------------------------------------------------------------------------
 
+    private void showHtml(final List<HtmlEntry> htmlEntries, final String htmlTextToHighlight) {
+        String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
+        // Log.d(LOG, "html=" + html);
+        startActivityForResult(
+            HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
+                    "<html><head></head><body>%s</body></html>", html),
+                                              htmlTextToHighlight, false),
+            0);
+    }
+
     static ViewGroup.LayoutParams WEIGHT_1 = new LinearLayout.LayoutParams(
         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f);
 
@@ -1637,13 +1665,13 @@ public class DictionaryActivity extends ActionBarActivity {
                 textView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
-                        // Log.d(LOG, "html=" + html);
-                        startActivityForResult(
-                            HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
-                                    "<html><head></head><body>%s</body></html>", html),
-                                                              htmlTextToHighlight, false),
-                            0);
+                        showHtml(htmlEntries, htmlTextToHighlight);
+                    }
+                });
+                result.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        textView.performClick();
                     }
                 });
             }
