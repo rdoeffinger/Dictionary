@@ -1,0 +1,207 @@
+This is a quick write-up of the dictionary file format, v7.
+v6 is troublesome as it relies on Java serialization and thus
+I won't even attempt to document it.
+This is hasn't been checked for correctness and likely has some bugs.
+Also, I really should have used some standard format for writing this...
+
+===========================================
+
+Some basic types:
+
+[String]
+[Short]: string length
+n bytes: string, modified UTF-8, n is value from previous element
+         note: no zero termination
+
+[Short]
+2 bytes: big-endian, signed value (note: negative values generally not used here)
+
+[Int]
+4 bytes: big-endian, signed value (note: negative values generally not used here)
+
+[Long]
+8 bytes: big-endian, signed value (note: negative values generally not used here)
+
+======================================================
+
+[Dictionary]
+
+[Int]: version, fixed value 7
+[Long]: file creation time (in milliseconds since Jan. 1st 1970)
+[String]: dictionary information (human-readable)
+
+list_of([source])
+list_of([pair_entry], block size 64, compressed)
+list_of([text_entry])
+list_of([html_entry], block size 64, compressed)
+list_of([html_entry_data], block size 128, compressed)
+list_of([index])
+
+[String]: string "END OF DICTIONARY" (length value 17)
+
+
+Note: block size and compression flags is only what
+the dictionary generation currently uses and seems
+a good compromise between performance and size for
+wiktionary content. It is not a requirement
+of the file format.
+
+==============================
+
+[varInt]
+
+Much of the data inside the dictionary uses a varInt format
+(variable length integer), always stored in big-endian,
+which can take on of these forms:
+1 byte: value in 0x0 - 0x7F range.
+2 bytes: value in 0x80 - 0x3FFF range, offset by 0x8000
+3 bytes: value in 0x4000 - 0x1FFFFF range, offset by 0xC00000
+4 bytes: value in 0x200000 - 0xFFFFFFF range, offset by 0xE0000000
+5 bytes: all other values, including negative, written as is with the value
+0xF0 prepended in the first byte.
+
+For decoding, the number of leading 1s in the first byte is the overall
+length - 1.
+Note that this scheme would allow storing an even larger range values
+in the 5-byte variant and can be extended to arbitrary length, however
+that is not currently implemented.
+
+===========================
+
+All list_of entries describe a list of elements.
+These elements can have variable size, thus an index (table-of-contents, TOC)
+is needed.
+To reduce the cost of this table and enable more efficient compression,
+multiple entries can be stored in a block that gets one single index entry.
+I.e. it is only possible to do random-access to the start of a block,
+seeking to elements further inside the block must be done via reading.
+Caching should be used to reduce the impact of this.
+
+These lists have the following base format:
+
+[varInt]: number of entries in the list (must be >= 1) (<size>)
+[varInt]: compression block size (in entries) (must be >= 1) (<blockSize>)
+[varInt]: flags. Currently only bit 0 used, indicating compression is used
+
+<toc size>=<size>/<blockSize>*4 + 4 bytes:
+(note division with rounding up if not divisible)
+table-of-contents. [Int] offset value for each block of entries.
+Followed by a final [Int] offset value to the end of the list data (<end offset>).
+Each offset is relative to the start of this block.
+Note that currently for simplicity Java int type is used
+to process these values, even though negative values make no sense.
+This limits the maximum amount of data to around 2GB.
+
+<end offset>-<toc size> bytes: data
+
+If compression is enabled, the data for each block is
+deflate compressed.
+Note that this is really raw deflate, not e.g. gzip,
+so neither header nor footer.
+There is also no decompressed size, so to decompress
+the start of the next block must be used to find the end
+of the compressed data and signal the end of input to the
+inflater, and whatever data the inflater produces is the
+decompressed input (note: this might be an implementation
+detail, you might need the decompressed size to decompress
+and parse the contained data, but it prevents things like
+the inflater overreading and producing spurious errors).
+
+==========================================================
+
+[source]
+
+[String]: name of source, e.g. "enwiktionary"
+[Int]: number of entries from that source (I kind of wouldn't rely on that one
+being useful/correct...)
+
+========================================================
+
+[pair entry]
+
+[varInt]: source index (see list_of([source]))
+[varInt]: number of pairs in this entry (<num_pairs>)
+<num_pairs> times:
+  [String]: in first language
+  [String]: in second language (possibly empty)
+
+=================================================
+
+[text_entry]
+
+[varInt]: source index (see list_of([source]))
+[String]: text
+
+===========================================
+
+[html_entry]
+
+[varInt]: source index (see list_of([source]))
+[String]: title for HTML entry
+
+====================================
+
+[html_entry_data]
+
+[varInt]: length of data in bytes (<len>)
+<len> bytes: HTML page data, UTF-8 encoded
+
+=====================================
+
+[index]
+
+Note: this structure is used for binary search.
+It is thus critical that all entries are correctly
+sorted.
+The sorting is according to libicu, however as Java
+and Android versions do not match special hacks
+have been added, like ignoring "-" for the comparison
+(unless that makes them equal, then they are
+compared including the dash).
+
+[String]: index short name
+[String]: index long name
+[String]: language ISO code (sort order depends on this)
+[String]: ICU normalizer rules to apply for sorting/searching
+1 byte: swap pair entries (if != 0, this index is for the second language entries in [pair_entry])
+[Int]: number of main tokens (?)
+list_of([index_entry], block size 32, compressed)
+[varInt]: stop list size <stoplist_size>
+<stoplist_size> times:
+    [String]: stop list words
+uniform_list_of([row])
+
+
+with uniform_list_of:
+[Int]: number of entries in list <num_entries>
+[Int]: size of entry <entry_size>
+<num_entries>*<entry_size> bytes: data
+
+
+================================================
+
+[index_entry]
+
+[String]: token
+[varInt]: start index into uniform_list_of([row])
+[varInt]: number of rows covered
+1 byte: <has_normalized>
+if <has_normalized> != 0:
+  [String]: normalized token
+[varInt]: <num_html_entries>
+<num_html_entries> times:
+  [varInt]: index into list_of([html_entries])/list_of([html_entries_data])
+
+=======================================
+
+[row]
+
+1 byte: highest 3 bits <type>, lowest 5 bits additional high bits for next value (bits 16 - 20)
+[Short]: lowest 16 bit of index
+
+<type> means:
+1: index into list_of([pair_entry])
+2: index into list_of([index_entry]) (mark as "main word header" entry)
+3: index into list_of([text_entry])
+4: index into list_of([index_entry]) (mark as "extra info/translation" entry)
+5: index into list_of([html_entry])/list_of([html_entry_data])
