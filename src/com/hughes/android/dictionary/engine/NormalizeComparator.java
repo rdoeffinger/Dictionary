@@ -32,10 +32,11 @@ public class NormalizeComparator implements Comparator<String> {
     }
 
     // Handles comparison between items containing "-".
+    // Also replaces other problematic cases like "thorn".
     public static int compareWithoutDash(final String a, final String b, final Comparator c, int version) {
         if (version < 7) return 0;
-        String s1 = a.replace("-", "");
-        String s2 = b.replace("-", "");
+        String s1 = a.replace("-", "").replace("þ", "th").replace("Þ", "Th");
+        String s2 = b.replace("-", "").replace("þ", "th").replace("Þ", "Th");
         return c.compare(s1, s2);
     }
 
