@@ -1,26 +1,27 @@
 This is a quick write-up of the dictionary file format, v7.
 v6 is troublesome as it relies on Java serialization and thus
 I won't even attempt to document it.
-This is hasn't been checked for correctness and likely has some bugs.
+This hasn't been checked for correctness and likely has some bugs.
 Also, I really should have used some standard format for writing this...
 
 ===========================================
 
 Some basic types:
 
-[String]
-[Short]: string length
-n bytes: string, modified UTF-8, n is value from previous element
-         note: no zero termination
-
 [Short]
-2 bytes: big-endian, signed value (note: negative values generally not used here)
+  2 bytes: big-endian, signed value (note: negative values generally not used here)
 
 [Int]
-4 bytes: big-endian, signed value (note: negative values generally not used here)
+  4 bytes: big-endian, signed value (note: negative values generally not used here)
 
 [Long]
-8 bytes: big-endian, signed value (note: negative values generally not used here)
+  8 bytes: big-endian, signed value (note: negative values generally not used here)
+
+
+[String]
+  [Short]: string length
+  n bytes: string, modified UTF-8, n is value from previous element
+           note: no zero termination
 
 ======================================================
 
@@ -62,7 +63,7 @@ which can take on of these forms:
 
 For decoding, the number of leading 1s in the first byte is the overall
 length - 1.
-Note that this scheme would allow storing an even larger range values
+Note that this scheme would allow storing an even larger range of values
 in the 5-byte variant and can be extended to arbitrary length, however
 that is not currently implemented.
 
@@ -75,24 +76,28 @@ To reduce the cost of this table and enable more efficient compression,
 multiple entries can be stored in a block that gets one single index entry.
 I.e. it is only possible to do random-access to the start of a block,
 seeking to elements further inside the block must be done via reading.
-Caching should be used to reduce the impact of this.
+Caching should be used to reduce the performance impact of this (so
+that when entries 5, 4, 3 etc. of a block are read sequentially,
+parsing and decompression is done only once).
 
 These lists have the following base format:
 
-[varInt]: number of entries in the list (must be >= 1) (<size>)
+[varInt]: number of entries in the list (must be >= 0) (<size>)
 [varInt]: compression block size (in entries) (must be >= 1) (<blockSize>)
 [varInt]: flags. Currently only bit 0 used, indicating compression is used
 
-<toc size>=<size>/<blockSize>*4 + 4 bytes:
-(note division with rounding up if not divisible)
-table-of-contents. [Int] offset value for each block of entries.
-Followed by a final [Int] offset value to the end of the list data (<end offset>).
-Each offset is relative to the start of this block.
-Note that currently for simplicity Java int type is used
-to process these values, even though negative values make no sense.
-This limits the maximum amount of data to around 2GB.
+<toc size>=(<size>/<blockSize>)*4 + 4 bytes:
+  (note division with rounding up if not divisible)
+  table-of-contents.
+  [Int] offset value for each block of entries.
+  Followed by a final [Int] offset value to the end of the list data (<end offset>).
+  Each offset is relative to the start of this block.
+  Note that currently for simplicity Java int type is used
+  to process these values, even though negative values make no sense.
+  This limits the maximum amount of data to around 2GB.
 
-<end offset>-<toc size> bytes: data
+<end offset>-<toc size> bytes:
+  entry data
 
 If compression is enabled, the data for each block is
 deflate compressed.
