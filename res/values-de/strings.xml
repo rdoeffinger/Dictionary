@@ -6,11 +6,13 @@
     <string name="settings">Einstellungen…</string>
     <string name="help">Hilfe</string>
     <string name="reportIssue">Problem melden…</string>
+    <string name="no_dict_file">Bitte wählen Sie das Standartwörterbuch in den Einstellungen aus.</string>
 
     <!-- DictionaryManagerActivity -->
     <string name="dictionaryManager">Wörterbuch-Liste</string>
     <string name="dictionariesOnDevice">Verfügbare Wörterbücher</string>
-    <string name="downloadableDictionaries">Wörterbücher zum herunterladen</string>
+    <string name="downloadableDictionaries">Wörterbücher zum Herunterladen</string>
+    <string name="sortDicts">Wörterbücher sortieren</string>
     <string name="downloadButton">%.1fMB</string>
     <string name="updateAvailable">Aktualisierung!</string>
     <string name="moveToTop">Nach Anfang ziehen</string>
@@ -18,15 +20,16 @@
     <string name="indexInfo">%1$s: %2$,d Wörter</string>
     <string name="managerShow">Zeigen</string>
     <string name="managerHide">Verstecken</string>
-    <string name="error">Error</string>
-    <string name="unableToReadDictionaryDir">Unable to read dictionary directory: \n%1$s\n\nAndroid external storage directory: \n%2$s</string>
+    <string name="error">Fehler</string>
+    <string name="unableToReadDictionaryDir">Fehler beim Lesen des Wörterbuch Verzeichnis: \n%1$s\n\nAndroid externer Speicher Verzeichnis: \n%2$s</string>
 
     <!-- Download. -->
-    <string name="downloadFailed">Download failed: \n%s.</string>
-    <string name="unzippingDictionary">Unzipping dictionary: \n%s</string>
-    <string name="unzippingFailed">Unzipping failed: \n%s</string>
-    <string name="installationFinished">Installation finished: \n%s.</string>
-    <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
+    <string name="downloadFailed">Download fehlgeschlagen: \n%s.</string>
+    <string name="downloadManagerQueryFailed">Konnte Download Manager nicht beauftragen.\nIst er deaktiviert oder fehlt er?</string>
+    <string name="unzippingDictionary">Wörterbuch entpacken: \n%s</string>
+    <string name="unzippingFailed">Entpacken fehlgeschlagen: \n%s</string>
+    <string name="installationFinished">Installation beendet: \n%s.</string>
+    <string name="notWritable">Wörterbuch Verzeichnis %s ist nicht beschreibbar. Bitte ändern Sie dies in den Einstellungen.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Suchtext</string>
@@ -34,15 +37,18 @@
     <string name="addToWordList">Zum Wortliste hinzufügen: %s</string>
     <string name="searchForSelection">Suche: %s</string>
     <string name="failedAddingToWordList">Fehler beim Hinzufügen zur Wortliste: %s</string>
-    <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
+    <string name="invalidDictionary">Fehlerhaftes Wörterbuch: Datei=%1$s, Fehler=%2$s</string>
     <string name="noSearchResults">Kein Treffer.</string>
     <string name="aboutDictionary">Über Wörterbuch…</string>
-    <string name="fontFailure">Font failure: %s</string>
+    <string name="fontFailure">Schriftfehler: %s</string>
     <string name="seeAlso">vgl.: %1$s (%2$s)</string>
     <string name="speak">Sprechen</string>
+    <string name="speak_left">Speak left side</string> //TODO
+    <string name="speak_right">Speak right side</string> //TODO
     <string name="nextWord">Nächstes Wort</string>
     <string name="previousWord">Voriges Wort</string>
     <string name="randomWord">Zufälliges Wort</string>
+    <string name="TTSbroken">TTS ist fehlerhaft auf diesem Gerät</string>
 
     <!-- About dictionary. -->
     <string name="dictionaryPath">Datei: %s</string>
@@ -59,13 +65,13 @@
      Danke an Michael Vogel für Hilfe mit dem Icon und den deutschen Übersetzungen.
      Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:</string>
     <string name="webPage">Weitere Informationen finden Sie unter:</string>
-    <string name="contributionsFrom">Contributions from:</string>
-    <string name="license">QuickDic contains code copyrighted by Google and released under the Apache 2.0 license.</string>
+    <string name="contributionsFrom">Codebeiträge von:</string>
+    <string name="license">QuickDic enthält Programmcode, der unter der Apache 2.0 Lizenz steht und an dem Google die Rechte besitzt.</string>
 
     <!-- Preferences -->
 
-    <string name="defaultDicTitle">Default Dic</string>
-    <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>
+    <string name="defaultDicTitle">Standardwörterbuch</string>
+    <string name="defaultDicSummary">Dieses Wörterbuch wird benutzt, wenn kein Anderes explizit abgegeben ist.</string>
     <string name="quickdicDirectoryTitle">QuickDic Verzeichnis</string>
     <string name="quickdicDirectorySummary">Das Verzeichnis, in dem QuickDic die Wörterbücher speichert.</string>
     <string name="wordListFileTitle">Wörterbucheinträge</string>
@@ -78,10 +84,10 @@
     <string name="saveOnlyFirstSubentrySummary">Bei mehrfachen Einträgen nur den ersten exportieren.</string>
     <string name="clickOpensContextMenuTitle">Kontextmenü</string>
     <string name="clickOpensContextMenuSummary">Kontextmenü bereits bei kurzem Klick auf einen Eintrag öffnen.</string>
-    <string name="showPrevNextButtonsTitle">Show up/down buttons</string>
-    <string name="showPrevNextButtonsSummary">Show or hide the previous and next word buttons in the dictionary view.</string>
+    <string name="showPrevNextButtonsTitle">Zeige hoch/runter Schaltflächen</string>
+    <string name="showPrevNextButtonsSummary">Zeige oder verstecke das Vorherige und Nächste Wort im Wörterbuch.</string>
     <string name="themeTitle">Farbschema</string>
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
-    <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
+    <string name="chosenNotWritable">Ausgewähltes Wörterbuch nicht beschreibbar, versuche Eines von</string>
 
 </resources>
