@@ -3,15 +3,15 @@
 
   <string-array name="fonts">
     <item>FreeSerif</item>
-    <item>System default</item>
-    <item>System serif</item>
-    <item>System sans-serif</item>
-    <item>System monospace</item>
+    <item>System Standard</item>
+    <item>System Serif</item>
+    <item>System Sans-Serif</item>
+    <item>System Monospace</item>
   </string-array>
 
   <string-array name="themes">
-    <item>Weiß-Theme</item>
-    <item>Standard-Theme</item>
+    <item>Hell</item>
+    <item>Standard</item>
   </string-array>
 
 </resources>
