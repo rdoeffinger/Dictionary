@@ -2,10 +2,10 @@
 <resources>
 
     <!-- Global. -->
-    <string name="about">クイック辞書について…</string>
-    <string name="settings">設定…</string>
+    <string name="about">クイック辞書について</string>
+    <string name="settings">設定</string>
     <string name="help">ヘルプ</string>
-    <string name="reportIssue">問題を報告…</string>
+    <string name="reportIssue">問題を報告</string>
     <string name="no_dict_file">設定でデフォルトのディレクトリーを指定してください.</string>
 
     <!-- DictionaryManagerActivity -->
@@ -37,7 +37,7 @@
     <string name="failedAddingToWordList">単語リストに追加できませんでした: %s</string>
     <string name="invalidDictionary">辞書が正しくありません: ファイル=%1$s, エラー=%2$s</string>
     <string name="noSearchResults">検索結果はありません.</string>
-    <string name="aboutDictionary">辞書について…</string>
+    <string name="aboutDictionary">辞書について</string>
     <string name="fontFailure">フォントエラー: %s</string>
     <string name="seeAlso">参照してください: %1$s (%2$s)</string>
     <string name="speak">話す</string>
