@@ -42,9 +42,9 @@
     <string name="aboutDictionary">Über Wörterbuch…</string>
     <string name="fontFailure">Schriftfehler: %s</string>
     <string name="seeAlso">vgl.: %1$s (%2$s)</string>
-    <string name="speak">Sprechen</string>
-    <string name="speak_left">Speak left side</string> //TODO
-    <string name="speak_right">Speak right side</string> //TODO
+    <string name="speak">Vorlesen</string>
+    <string name="speak_left">Linke Seite vorlesen</string>
+    <string name="speak_right">Rechte Seite vorlesen</string>
     <string name="nextWord">Nächstes Wort</string>
     <string name="previousWord">Voriges Wort</string>
     <string name="randomWord">Zufälliges Wort</string>
@@ -65,7 +65,7 @@
      Danke an Michael Vogel für Hilfe mit dem Icon und den deutschen Übersetzungen.
      Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:</string>
     <string name="webPage">Weitere Informationen finden Sie unter:</string>
-    <string name="contributionsFrom">Codebeiträge von:</string>
+    <string name="contributionsFrom">Beiträge von:</string>
     <string name="license">QuickDic enthält Programmcode, der unter der Apache 2.0 Lizenz steht und an dem Google die Rechte besitzt.</string>
 
     <!-- Preferences -->
@@ -88,6 +88,6 @@
     <string name="showPrevNextButtonsSummary">Zeige oder verstecke das Vorherige und Nächste Wort im Wörterbuch.</string>
     <string name="themeTitle">Farbschema</string>
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
-    <string name="chosenNotWritable">Ausgewähltes Wörterbuch nicht beschreibbar, versuche Eines von</string>
+    <string name="chosenNotWritable">Ausgewähltes Verzeichnis nicht beschreibbar, versuche Eines von</string>
 
 </resources>
