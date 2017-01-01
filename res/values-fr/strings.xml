@@ -5,7 +5,7 @@
     <string name="about">À propos de QuickDic</string>
     <string name="settings">Configuration</string>
     <string name="help">Aide</string>
-    <string name="reportIssue">Signaler un problème…</string>
+    <string name="reportIssue">Signaler un problème</string>
     <string name="no_dict_file">Merci de spécifier un répertoire par défaut dans les réglages.</string>
 
     <!-- DictionaryManagerActivity -->
@@ -30,14 +30,14 @@
     <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
 
     <!-- DictionaryActivity -->
-    <string name="searchText">Rechercher…</string>
+    <string name="searchText">Rechercher</string>
     <string name="selectDictionary">Choisir un dictionnaire…</string>
     <string name="addToWordList">Ajouter à la liste de mots : %s</string>
     <string name="searchForSelection">Rechercher : %s</string>
     <string name="failedAddingToWordList">Erreur pendant l\'ajout à la liste : %s</string>
     <string name="invalidDictionary">Dictionnaire incorrect: fichier=%1$s, erreur=%2$s</string>
     <string name="noSearchResults">Aucun résultat.</string>
-    <string name="aboutDictionary">À propos du dictionnaire…</string>
+    <string name="aboutDictionary">À propos du dictionnaire</string>
     <string name="fontFailure">Erreur de la police : %s</string>
     <string name="seeAlso">Voir aussi : %1$s (%2$s)</string>
     <string name="speak">Parler</string>

@@ -2,10 +2,10 @@
 <resources>
 
     <!-- Global. -->
-    <string name="about">Acerca de QuickDic…</string>
-    <string name="settings">Ajustes…</string>
+    <string name="about">Acerca de QuickDic</string>
+    <string name="settings">Ajustes</string>
     <string name="help">Ayuda</string>
-    <string name="reportIssue">Informar de errores…</string>
+    <string name="reportIssue">Informar de errores</string>
     <string name="no_dict_file">Por favor especifique un directorio predeterminado en los ajustes.</string>
 
     <!-- DictionaryManagerActivity -->
@@ -38,7 +38,7 @@
     <string name="failedAddingToWordList">Error agregando a la lista de palabras: %s</string>
     <string name="invalidDictionary">Diccionario no válido: archivo=%1$s, error=%2$s</string>
     <string name="noSearchResults">La búsqueda no dio resultados.</string>
-    <string name="aboutDictionary">Acerca del diccionario…</string>
+    <string name="aboutDictionary">Acerca del diccionario</string>
     <string name="fontFailure">Error de tipo de letra: %s</string>
     <string name="seeAlso">Vea también: %s</string>
     <string name="speak">Locución</string>
