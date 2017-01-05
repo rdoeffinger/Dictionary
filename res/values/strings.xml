@@ -5,10 +5,10 @@
     <string name="thanksForUpdatingVersion" translatable="false">5.1.0</string>
 
     <!-- Global. -->
-    <string name="about">About QuickDic…</string>
-    <string name="settings">Settings…</string>
+    <string name="about">About QuickDic</string>
+    <string name="settings">Settings</string>
     <string name="help">Help</string>
-    <string name="reportIssue">Report issue…</string>
+    <string name="reportIssue">Report issue</string>
     <string name="no_dict_file">Please specify a default dictionary in the settings.</string>
 
     <!-- DictionaryManagerActivity -->
@@ -42,7 +42,7 @@
     <string name="failedAddingToWordList">Failure adding to word list: %s</string>
     <string name="invalidDictionary">Invalid dictionary: file=%1$s, error=%2$s</string>
     <string name="noSearchResults">No search results.</string>
-    <string name="aboutDictionary">About dictionary…</string>
+    <string name="aboutDictionary">About dictionary</string>
     <string name="fontFailure">Font failure: %s</string>
     <string name="seeAlso">See also: %1$s (%2$s)</string>
     <string name="speak">Speak</string>
