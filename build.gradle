@@ -37,7 +37,7 @@ task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
     commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-55.1.small.jar"
 }
 
-def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "../Util"
+def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "Util"
 
 android {
     compileSdkVersion 25
