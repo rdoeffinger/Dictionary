@@ -16,7 +16,9 @@ package com.hughes.android.dictionary;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Base64;
@@ -90,6 +92,15 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
             html = getIntent().getStringExtra(HTML);
         }
         final MyWebView webView = (MyWebView) findViewById(R.id.webView);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final String fontSize = prefs.getString(getString(R.string.fontSizeKey), "14");
+        int fontSizeSp;
+        try {
+            fontSizeSp = Integer.parseInt(fontSize.trim());
+        } catch (NumberFormatException e) {
+            fontSizeSp = 14;
+        }
+        webView.getSettings().setDefaultFontSize(fontSizeSp);
         try {
             // No way to get pure UTF-8 data into WebView
             html = Base64.encodeToString(html.getBytes("UTF-8"), Base64.DEFAULT);
