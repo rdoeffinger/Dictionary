@@ -487,10 +487,17 @@ public class DictionaryApplication extends Application {
     final Map<String, String> fileToNameCache = new HashMap<String, String>();
 
     public String isoCodeToLocalizedLanguageName(final String isoCode) {
+        String lang = new Locale(isoCode).getDisplayLanguage();
+        if (!lang.equals("") && !lang.equals(isoCode))
+        {
+            return lang;
+        }
         final Language.LanguageResources languageResources = isoCodeToResources
                 .get(isoCode);
-        final String lang = languageResources != null ? getApplicationContext().getString(
-                                languageResources.nameId) : isoCode;
+        if (languageResources != null)
+        {
+            lang = getApplicationContext().getString(languageResources.nameId);
+        }
         return lang;
     }
 
