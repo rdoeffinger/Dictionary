@@ -102,6 +102,7 @@ ES-CA.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-d
 ES-PT.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/ES-PT.quickdic.v007.zip	1452541238755	1466971	1327281	2	ES	25546	23376	PT	24058	22224	(EN)Wiktionary-based ES-PT dictionary.
 ES-RU.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/ES-RU.quickdic.v006.zip	1357253815481	6682120	2135784	2	ES	19517	17692	RU	50993	21891	Wikitionary-based ES-RU dictionary.
 ES-cmn.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/ES-cmn.quickdic.v006.zip	1357257626909	4437355	1502694	2	ES	13698	12252	cmn	42183	27263	Wikitionary-based ES-cmn dictionary.
+ES.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/ES.quickdic.v007.zip	1486831620159	40912362	39767438	1	ES	780906	780905	Wiktionary-based ES dictionary.
 FR-AR.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/FR-AR.quickdic.v007.zip	1460747740420	1106574	1039309	2	FR	10841	9828	AR	17402	11432	(FR)Wiktionary-based FR-AR dictionary.
 FR-BG.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/FR-BG.quickdic.v007.zip	1450155696184	8470115	8159443	2	FR	12330	11577	BG	169951	164827	(FR)Wiktionary-based FR-BG dictionary.
 FR-CS.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/FR-CS.quickdic.v007.zip	1450155867471	5520076	5406192	2	FR	16874	15501	CS	44564	42900	(FR)Wiktionary-based FR-CS dictionary.
@@ -128,3 +129,4 @@ IT-PL.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-d
 IT-RU.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT-RU.quickdic.v007.zip	1476394808069	2003756	1865344	2	IT	21698	19699	RU	33493	28038	(IT)Wiktionary-based IT-RU dictionary.
 IT-SV.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT-SV.quickdic.v007.zip	1450157488704	993790	909550	2	IT	16567	15060	SV	18001	17076	(IT)Wiktionary-based IT-SV dictionary.
 IT.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/IT.quickdic.v007.zip	1450143871352	20481672	19971869	1	IT	322105	322099	Wiktionary-based IT dictionary.
+PT.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/PT.quickdic.v007.zip	1486832011665	19872396	19647876	1	PT	147617	143242	Wiktionary-based PT dictionary.
