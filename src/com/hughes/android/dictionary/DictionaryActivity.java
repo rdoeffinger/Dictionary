@@ -1429,7 +1429,7 @@ public class DictionaryActivity extends ActionBarActivity {
         // Log.d(LOG, "html=" + html);
         startActivityForResult(
             HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
-                    "<html><head></head><body>%s</body></html>", html),
+                    "<html><head><meta name=\"viewport\" content=\"width=device-width\"></head><body>%s</body></html>", html),
                                               htmlTextToHighlight, false),
             0);
     }
