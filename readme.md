@@ -1,3 +1,16 @@
+#QuickDic
+
+QuickDic offline Dictionary App for Android. Provided downloadable dictionaries are based on Wiktionaries, but can also be created from other sources (see DictionaryPC)
+
+<a href="https://f-droid.org/repository/browse/?fdid=de.reimardoeffinger.quickdic" target="_blank">
+  <img src="https://f-droid.org/badge/get-it-on.png" height="60"/>
+</a>
+<a href="https://play.google.com/store/apps/details?id=de.reimardoeffinger.quickdic" target="_blank">
+  <img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60"/>
+</a>
+
+##Build
+
 Make sure you also checked out the Util repository,
 and if you want to generate dictionaries also the DictionaryPC
 repository.
@@ -12,6 +25,7 @@ And approximation of the steps for generating dictionaries:
 - run ./compile.sh (probably needs quite a few things to be installed or paths in it configured)
 - run ./WiktionarySplitter.sh
 - run ./generate_dictionaries.sh.
+
   You might want to edit the settings at the start of the file
   so it does not generate all dictionaries, and edit its input files
   like EN-trans-dictlist.txt to add new dictionaries.
