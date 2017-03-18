@@ -293,6 +293,11 @@ public final class Index implements RAFSerializable<Index> {
         return index != -1 ? sortedIndexEntries.get(index) : null;
     }
 
+    private int compareIdx(String token, final Comparator sortCollator, int idx) {
+        final IndexEntry entry = sortedIndexEntries.get(idx);
+        return NormalizeComparator.compareWithoutDash(token, entry.normalizedToken(), sortCollator, dict.dictFileVersion);
+    }
+
     public int findInsertionPointIndex(String token, final AtomicBoolean interrupted) {
         token = normalizeToken(token);
 
@@ -316,11 +321,27 @@ public final class Index implements RAFSerializable<Index> {
             } else if (comp < 0) {
                 // System.out.println("Upper bound: " + midEntry + ", norm=" +
                 // midEntry.normalizedToken() + ", mid=" + mid);
-                end = mid;
+
+                // Hack for robustness if sort order is broken
+                if (mid + 2 < end &&
+                    compareIdx(token, sortCollator, mid + 1) > 0 &&
+                    compareIdx(token, sortCollator, mid + 2) > 0) {
+                    start = mid;
+                } else {
+                    end = mid;
+                }
             } else {
                 // System.out.println("Lower bound: " + midEntry + ", norm=" +
                 // midEntry.normalizedToken() + ", mid=" + mid);
-                start = mid + 1;
+
+                // Hack for robustness if sort order is broken
+                if (mid - 2 >= start &&
+                    compareIdx(token, sortCollator, mid - 1) < 0 &&
+                    compareIdx(token, sortCollator, mid - 2) < 0) {
+                    end = mid + 1;
+                } else {
+                    start = mid + 1;
+                }
             }
         }
 
