@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.0'
     }
 }
 
@@ -16,13 +16,13 @@ configurations {
     smallicu
 }
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:design:25.3.0'
     // Note: you can just replace "smallicu" by compile
     // and remove the "compile files" part if you do not
     // care about the size of the apk
-    smallicu 'com.ibm.icu:icu4j:55.1'
-    compile files("$buildDir/icu4j-55.1.small.jar") {
+    smallicu 'com.ibm.icu:icu4j:57.1'
+    compile files("$buildDir/icu4j-57.1.small.jar") {
         builtBy 'makesmallicu'
     }
 }
@@ -31,10 +31,10 @@ task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
     inputs.file "mksmallicu.sh"
     inputs.file "${configurations.smallicu.resolve()[0]}"
     outputs.dir "$buildDir"
-    outputs.file "$buildDir/icu4j-55.1.small.jar"
+    outputs.file "$buildDir/icu4j-57.1.small.jar"
     // necessary due to gradle bug: GRADLE-2638
     new File("$buildDir").mkdirs()
-    commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-55.1.small.jar"
+    commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-57.1.small.jar"
 }
 
 def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "Util"
