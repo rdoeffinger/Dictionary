@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -449,6 +450,10 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
+        if ("true".equals(Settings.System.getString(getContentResolver(), "firebase.test.lab")))
+        {
+            return false; // testing the menu is not very interesting
+        }
         final MenuItem sort = menu.add(getString(R.string.sortDicts));
         MenuItemCompat.setShowAsAction(sort, MenuItem.SHOW_AS_ACTION_NEVER);
         sort.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
