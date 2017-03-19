@@ -30,11 +30,18 @@ public class TransliteratorManager {
     // Whom to notify when we're all set up and ready to go.
     private static List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
 
-    public static synchronized Transliterator get(String rules) {
-        Transliterator result = cache.get(rules);
-        if (result == null) {
-            result = Transliterator.createFromRules("", rules, Transliterator.FORWARD);
-            cache.put(rules, result);
+    public static Transliterator get(String rules) {
+        // DO NOT make the method synchronized!
+        // synchronizing on the class would break the whole
+        // asynchronous init concept, since the runnable
+        // then holds the same lock as the init function needs.
+        Transliterator result = null;
+        synchronized (cache) {
+            result = cache.get(rules);
+            if (result == null) {
+                result = Transliterator.createFromRules("", rules, Transliterator.FORWARD);
+                cache.put(rules, result);
+            }
         }
         return result;
     }
