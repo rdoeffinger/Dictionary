@@ -21,11 +21,11 @@ import java.util.Comparator;
 public class NormalizeComparator implements Comparator<String> {
 
     final Transliterator normalizer;
-    final Comparator<Object> comparator;
+    final Comparator<String> comparator;
     int version;
 
     public NormalizeComparator(final Transliterator normalizer,
-                               final Comparator<Object> comparator, int version) {
+                               final Comparator<String> comparator, int version) {
         this.normalizer = normalizer;
         this.comparator = comparator;
         this.version = version;
@@ -42,8 +42,8 @@ public class NormalizeComparator implements Comparator<String> {
 
     @Override
     public int compare(final String s1, final String s2) {
-        final String n1 = normalizer.transform(s1);
-        final String n2 = normalizer.transform(s2);
+        final String n1 = normalizer == null ? s1.toLowerCase() : normalizer.transform(s1);
+        final String n2 = normalizer == null ? s2.toLowerCase() : normalizer.transform(s2);
         int cn = compareWithoutDash(n1, n2, comparator, version);
         if (cn != 0) {
             return cn;
