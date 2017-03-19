@@ -432,24 +432,25 @@ public class DictionaryActivity extends ActionBarActivity {
 
         setListAdapter(new IndexAdapter(index));
 
+        // Pre-load the Transliterator (will spawn its own thread)
+        TransliteratorManager.init(new TransliteratorManager.Callback() {
+            @Override
+            public void onTransliteratorReady() {
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onSearchTextChange(searchView.getQuery().toString());
+                    }
+                });
+            }
+        }, DictionaryApplication.threadBackground);
+
         // Pre-load the collators.
         new Thread(new Runnable() {
             public void run() {
-                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LESS_FAVORABLE);
                 final long startMillis = System.currentTimeMillis();
                 try {
-                    TransliteratorManager.init(new TransliteratorManager.Callback() {
-                        @Override
-                        public void onTransliteratorReady() {
-                            uiHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    onSearchTextChange(searchView.getQuery().toString());
-                                }
-                            });
-                        }
-                    });
-
                     for (final Index index : dictionary.indices) {
                         final String searchToken = index.sortedIndexEntries.get(0).token;
                         final IndexEntry entry = index.findExact(searchToken);

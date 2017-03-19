@@ -72,6 +72,15 @@ public class DictionaryApplication extends Application {
     //static public final boolean USE_COLLATOR = !android.os.Build.FINGERPRINT.equals("Samsung/cm_tassve/tassve:4.4.4/KTU84Q/20150211:userdebug/release-keys");
     static public final boolean USE_COLLATOR = true;
 
+    static public final TransliteratorManager.ThreadSetup threadBackground = new TransliteratorManager.ThreadSetup() {
+        @Override
+        public void onThreadStart() {
+            // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
+            // can make Transliterator go from 20 seconds to 3 minutes (!)
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LESS_FAVORABLE);
+        }
+    };
+
     // Static, determined by resources (and locale).
     // Unordered.
     static Map<String, DictionaryInfo> DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO = null;
@@ -328,7 +337,7 @@ public class DictionaryApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d("QuickDic", "Application: onCreate");
-        TransliteratorManager.init(null);
+        TransliteratorManager.init(null, threadBackground);
         staticInit(getApplicationContext());
 
         languageButtonPixels = (int) TypedValue.applyDimension(

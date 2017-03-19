@@ -25,6 +25,7 @@ public class TransliteratorManager {
 
     private static boolean starting = false;
     private static boolean ready = false;
+    private static ThreadSetup threadSetup = null;
     private static LRUCacheMap<String, Transliterator> cache = new LRUCacheMap<String, Transliterator>(4);
 
     // Whom to notify when we're all set up and ready to go.
@@ -46,7 +47,7 @@ public class TransliteratorManager {
         return result;
     }
 
-    public static synchronized boolean init(final Callback callback) {
+    public static synchronized boolean init(final Callback callback, final ThreadSetup setupCallback) {
         if (ready) {
             return true;
         }
@@ -55,6 +56,7 @@ public class TransliteratorManager {
         }
         if (!starting) {
             starting = true;
+            threadSetup = setupCallback;
             new Thread(init).start();
         }
         return false;
@@ -63,6 +65,9 @@ public class TransliteratorManager {
     private static final Runnable init = new Runnable() {
         @Override
         public void run() {
+            synchronized (TransliteratorManager.class) {
+                if (threadSetup != null) threadSetup.onThreadStart();
+            }
             System.out.println("Starting Transliterator load.");
             final String transliterated = get(Language.en.getDefaultNormalizerRules()).transliterate("Îñţérñåţîöñåļîžåţîờñ");
             if (!"internationalization".equals(transliterated)) {
@@ -79,6 +84,10 @@ public class TransliteratorManager {
             }
         }
     };
+
+    public interface ThreadSetup {
+        void onThreadStart();
+    }
 
     public interface Callback {
         void onTransliteratorReady();

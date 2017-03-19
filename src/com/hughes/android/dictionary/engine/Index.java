@@ -517,7 +517,7 @@ public final class Index implements RAFSerializable<Index> {
     }
 
     private String normalizeToken(final String searchToken) {
-        if (TransliteratorManager.init(null)) {
+        if (TransliteratorManager.init(null, null)) {
             final Transliterator normalizer = normalizer();
             return normalizer.transliterate(searchToken);
         } else {
