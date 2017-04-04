@@ -66,18 +66,18 @@
      Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:</string>
     <string name="webPage">Weitere Informationen finden Sie unter:</string>
     <string name="contributionsFrom">Beiträge von:</string>
-    <string name="license">QuickDic enthält Programmcode, der unter der Apache 2.0 Lizenz steht und an dem Google die Rechte besitzt.</string>
+    <string name="license">QuickDic enthält Programmcode, der unter der Apache-2.0-Lizenz steht und an dem Google die Rechte besitzt.</string>
 
     <!-- Preferences -->
 
     <string name="defaultDicTitle">Standardwörterbuch</string>
-    <string name="defaultDicSummary">Dieses Wörterbuch wird benutzt, wenn kein Anderes explizit abgegeben ist.</string>
+    <string name="defaultDicSummary">Dieses Wörterbuch wird benutzt, wenn kein anderes explizit angegeben ist.</string>
     <string name="quickdicDirectoryTitle">QuickDic Verzeichnis</string>
     <string name="quickdicDirectorySummary">Das Verzeichnis, in dem QuickDic die Wörterbücher speichert.</string>
     <string name="wordListFileTitle">Wörterbucheinträge</string>
     <string name="wordListFileSummary">Die lokale Datei, in die Wörterbucheinträge hinzugefügt werden können.</string>
     <string name="fontTitle">Schriftart</string>
-    <string name="fontSummary">Definition der Wörterbuchschrift.</string>
+    <string name="fontSummary">Wörterbuchschriftart festlegen</string>
     <string name="fontSizeTitle">Schriftgröße</string>
     <string name="fontSizeSummary">Schriftgröße für die Wörterbucheinträge.</string>
     <string name="saveOnlyFirstSubentryTitle">Export-Filter</string>
@@ -85,7 +85,7 @@
     <string name="clickOpensContextMenuTitle">Kontextmenü</string>
     <string name="clickOpensContextMenuSummary">Kontextmenü bereits bei kurzem Klick auf einen Eintrag öffnen.</string>
     <string name="showPrevNextButtonsTitle">Zeige hoch/runter Schaltflächen</string>
-    <string name="showPrevNextButtonsSummary">Zeige oder verstecke das Vorherige und Nächste Wort im Wörterbuch.</string>
+    <string name="showPrevNextButtonsSummary">Zeige oder verstecke das vorherige und nächste Wort im Wörterbuch.</string>
     <string name="themeTitle">Farbschema</string>
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
     <string name="chosenNotWritable">Ausgewähltes Verzeichnis nicht beschreibbar, versuche Eines von</string>
