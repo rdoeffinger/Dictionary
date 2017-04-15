@@ -27,6 +27,7 @@
         android:icon="@drawable/icon"
         android:banner="@drawable/banner_tv"
         android:label="@string/app_name"
+        android:supportsRtl="true"
         android:theme="@style/AppBaseThemeDark" >
         <meta-data
             android:name="com.google.android.backup.api_key"
