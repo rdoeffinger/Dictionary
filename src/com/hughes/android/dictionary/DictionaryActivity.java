@@ -42,6 +42,7 @@ import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -1473,7 +1474,12 @@ public class DictionaryActivity extends ActionBarActivity {
 
         private void getMetrics() {
             // Get the screen's density scale
-            final float scale = getResources().getDisplayMetrics().density;
+            // The previous method getResources().getDisplayMetrics()
+            // used to occasionally trigger a null pointer exception,
+            // so try this instead.
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            final float scale = dm.density;
             // Convert the dps to pixels, based on density scale
             mPaddingDefault = (int) (PADDING_DEFAULT_DP * scale + 0.5f);
             mPaddingLarge = (int) (PADDING_LARGE_DP * scale + 0.5f);
