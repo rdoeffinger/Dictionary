@@ -26,7 +26,7 @@
     <string name="downloadFailed">Загрузить не удалось: \n%s.</string>
     <string name="downloadManagerQueryFailed">Не удалось связаться с менеджером загрузок.\nМожет быть, он выключен или отсутствует?</string>
     <string name="unzippingDictionary">Распаковка словаря: \n%s</string>
-    <string name="unzippingFailed">Распаковка не удалась: \n%s</string>
+    <string name="unzippingFailed">Распаковать не удалось: \n%s</string>
     <string name="installationFinished">Установка завершена: \n%s.</string>
 
     <!-- DictionaryActivity -->
@@ -62,10 +62,11 @@
     <string name="webPage">Дополнительная информация:</string>
     <string name="contributionsFrom">Свой вклад внесли:</string>
     <string name="license">QuickDic содержит код за авторством Google, выпущенный под лицензией Apache 2.0.</string>
+
     <!-- Preferences -->
 
     <string name="defaultDicTitle">Словарь по умолчанию</string>
-    <string name="defaultDicSummary">Словарь, который будет использоваться, если никакой не указан явно.</string>
+    <string name="defaultDicSummary">Словарь, который будет использоваться, если не указан никакой другой.</string>
     <string name="quickdicDirectoryTitle">Каталог QuickDic</string>
     <string name="quickdicDirectorySummary">Каталог, в котором QuickDic хранит словари (оставьте пустым, чтобы использовать путь по умолчанию).</string>
     <string name="wordListFileTitle">Файл списка слов</string>
