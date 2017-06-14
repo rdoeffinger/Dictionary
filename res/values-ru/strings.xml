@@ -28,6 +28,7 @@
     <string name="unzippingDictionary">Распаковка словаря: \n%s</string>
     <string name="unzippingFailed">Распаковать не удалось: \n%s</string>
     <string name="installationFinished">Установка завершена: \n%s.</string>
+    <string name="notWritable">Каталог словарей %s недоступен для записи, измените его в настройках.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Поиск текста</string>
@@ -45,6 +46,7 @@
     <string name="nextWord">Следующее слово</string>
     <string name="previousWord">Предыдущее слово</string>
     <string name="randomWord">Случайное слово</string>
+    <string name="TTSbroken">Система синтеза речи на этом устройстве не работает</string>
 
     <!-- About dictionary. -->
     <string name="dictionaryPath">Файл: %s</string>
@@ -83,5 +85,6 @@
     <string name="showPrevNextButtonsSummary">Показать или скрыть кнопки, ведущие к предыдущему и следующему слову в словаре.</string>
     <string name="themeTitle">Тема</string>
     <string name="themeSummary">Цветовая тема пользовательского интерфейса.</string>
+    <string name="chosenNotWritable">Выбранный каталог недоступен для записи, попробуйте один из</string>
 
 </resources>
