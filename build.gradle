@@ -77,6 +77,6 @@ android {
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
         targetSdkVersion 23
-        resConfigs "de", "es", "fr", "it", "ja", "pt", "pt-rBR"
+        resConfigs "de", "es", "fr", "it", "ja", "pt", "pt-rBR", "ru"
     }
 }
