@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string-array name="fonts">
+    <item>FreeSerif</item>
+    <item>Системный по умолчанию</item>
+    <item>Системный с засечками</item>
+    <item>Системный без засечек</item>
+    <item>Системный моноширинный</item>
+  </string-array>
+
+  <string-array name="themes">
+    <item>Светлая тема</item>
+    <item>Тёмная тема (по умолчанию)</item>
+  </string-array>
+
+</resources>

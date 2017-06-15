@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Global. -->
+    <string name="about">О QuickDic</string>
+    <string name="settings">Настройки</string>
+    <string name="help">Справка</string>
+    <string name="reportIssue">Сообщить об ошибке</string>
+    <string name="no_dict_file">Укажите в настройках словарь по умолчанию.</string>
+
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">Менеджер словарей</string>
+    <string name="dictionariesOnDevice">Словари на устройстве</string>
+    <string name="downloadableDictionaries">Словари для загрузки</string>
+    <string name="sortDicts">Сортировать словари</string>
+    <string name="downloadButton">%.1f МБ</string>
+    <string name="updateAvailable">Обновление!</string>
+    <string name="moveToTop">Переместить наверх</string>
+    <string name="deleteDictionary">Удалить словарь</string>
+    <string name="indexInfo">%1$s: %2$,d слов</string>
+    <string name="managerShow">Показать</string>
+    <string name="managerHide">Скрыть</string>
+    <string name="error">Ошибка</string>
+
+    <!-- Download. -->
+    <string name="downloadFailed">Загрузить не удалось: \n%s.</string>
+    <string name="downloadManagerQueryFailed">Не удалось связаться с менеджером загрузок.\nМожет быть, он выключен или отсутствует?</string>
+    <string name="unzippingDictionary">Распаковка словаря: \n%s</string>
+    <string name="unzippingFailed">Распаковать не удалось: \n%s</string>
+    <string name="installationFinished">Установка завершена: \n%s.</string>
+    <string name="notWritable">Каталог словарей %s недоступен для записи, измените его в настройках.</string>
+
+    <!-- DictionaryActivity -->
+    <string name="searchText">Поиск текста</string>
+    <string name="selectDictionary">Выберите словарь…</string>
+    <string name="addToWordList">Добавить в список слов: %s</string>
+    <string name="searchForSelection">Искать: %s</string>
+    <string name="failedAddingToWordList">Не удалось добавить в список слов: %s</string>
+    <string name="noSearchResults">Ничего не найдено.</string>
+    <string name="aboutDictionary">О словаре</string>
+    <string name="fontFailure">Ошибка шрифтов: %s</string>
+    <string name="seeAlso">См. также: %1$s (%2$s)</string>
+    <string name="speak">Произнести</string>
+    <string name="speak_left">Произнести левую сторону</string>
+    <string name="speak_right">Произнести правую сторону</string>
+    <string name="nextWord">Следующее слово</string>
+    <string name="previousWord">Предыдущее слово</string>
+    <string name="randomWord">Случайное слово</string>
+    <string name="TTSbroken">Система синтеза речи на этом устройстве не работает</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">Файл: %s</string>
+    <string name="dictionarySize">Размер: %,d Б</string>
+    <string name="dictionaryCreationTime">Создан: %tc</string>
+    <string name="indexName">Индекс: %s</string>
+    <string name="mainTokenCount">Количество слов: %,d</string>
+    <string name="sources">Источники</string>
+    <string name="sourceInfo">%1$s: %2$,d статей</string>
+
+    <!-- About. -->
+    <string name="contactMe">Если вы используете QuickDic, я был бы рад услышать ваши пожелания.
+ К сожалению, я не могу взять на себя ответственность за содержание словарей (кроме форматирования), так как они создаются на основе других источников.
+ Отправляйте комментарии, предложения, отчёты об ошибках и просто приветы по адресу:</string>
+    <string name="webPage">Дополнительная информация:</string>
+    <string name="contributionsFrom">Свой вклад внесли:</string>
+    <string name="license">QuickDic содержит код за авторством Google, выпущенный под лицензией Apache 2.0.</string>
+
+    <!-- Preferences -->
+
+    <string name="defaultDicTitle">Словарь по умолчанию</string>
+    <string name="defaultDicSummary">Словарь, который будет использоваться, если не указан никакой другой.</string>
+    <string name="quickdicDirectoryTitle">Каталог QuickDic</string>
+    <string name="quickdicDirectorySummary">Каталог, в котором QuickDic хранит словари (оставьте пустым, чтобы использовать путь по умолчанию).</string>
+    <string name="wordListFileTitle">Файл списка слов</string>
+    <string name="wordListFileSummary">Локальный файл, в который будут добавляться слова.</string>
+    <string name="fontTitle">Шрифт словаря</string>
+    <string name="fontSummary">Шрифт, используемый для отображения словарей.</string>
+    <string name="fontSizeTitle">Размер шрифта</string>
+    <string name="fontSizeSummary">Размер шрифта словарных статей.</string>
+    <string name="saveOnlyFirstSubentryTitle">Сохранять только первую подстатью</string>
+    <string name="saveOnlyFirstSubentrySummary">Если в статье есть несколько пунктов, добавлять в список слов только первый.</string>
+    <string name="clickOpensContextMenuTitle">Нажатие открывает контекстное меню</string>
+    <string name="clickOpensContextMenuSummary">Открывать контекстное меню по нажатию на статьи (долгое нажатие всегда открывает контекстное меню).</string>
+    <string name="showPrevNextButtonsTitle">Показывать кнопки вверх/вниз</string>
+    <string name="showPrevNextButtonsSummary">Показать или скрыть кнопки, ведущие к предыдущему и следующему слову в словаре.</string>
+    <string name="themeTitle">Тема</string>
+    <string name="themeSummary">Цветовая тема пользовательского интерфейса.</string>
+    <string name="chosenNotWritable">Выбранный каталог недоступен для записи, попробуйте один из</string>
+
+</resources>
