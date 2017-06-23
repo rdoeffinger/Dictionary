@@ -70,6 +70,7 @@ import android.widget.ToggleButton;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -78,6 +79,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -190,7 +193,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 File localZipFile = null;
                 InputStream zipFileStream = null;
                 ZipInputStream zipFile = null;
-                OutputStream zipOut = null;
+                FileOutputStream zipOut = null;
                 try {
                     if (zipUri.getScheme().equals("content")) {
                         zipFileStream = context.getContentResolver().openInputStream(zipUri);
@@ -199,7 +202,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                         localZipFile = new File(zipUri.getPath());
                         zipFileStream = new FileInputStream(localZipFile);
                     }
-                    zipFile = new ZipInputStream(zipFileStream);
+                    zipFile = new ZipInputStream(new BufferedInputStream(zipFileStream));
                     final ZipEntry zipEntry = zipFile.getNextEntry();
                     Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
                     File targetFile = new File(application.getDictDir(), zipEntry.getName());
@@ -385,16 +388,24 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    private static int copyStream(final InputStream in, final OutputStream out)
+    private static void copyStream(final InputStream ins, final FileOutputStream outs)
     throws IOException {
+        ByteBuffer buf = ByteBuffer.allocateDirect(1024 * 64);
+        FileChannel out = outs.getChannel();
         int bytesRead;
-        final byte[] bytes = new byte[1024 * 16];
-        while ((bytesRead = in.read(bytes)) != -1) {
-            out.write(bytes, 0, bytesRead);
-        }
-        in.close();
-        out.close();
-        return bytesRead;
+        int pos = 0;
+        final byte[] bytes = new byte[1024 * 64];
+        do {
+            bytesRead = ins.read(bytes, pos, bytes.length - pos);
+            if (bytesRead != -1) pos += bytesRead;
+            if (bytesRead == -1 ? pos != 0 : 2*pos >= bytes.length) {
+                buf.put(bytes, 0, pos);
+                pos = 0;
+                buf.flip();
+                while (buf.hasRemaining()) out.write(buf);
+                buf.clear();
+            }
+        } while (bytesRead != -1);
     }
 
     @Override
