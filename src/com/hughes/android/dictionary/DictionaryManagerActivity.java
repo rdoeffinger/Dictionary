@@ -282,14 +282,23 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // This must be first, otherwise the actiona bar doesn't get
+        // This must be first, otherwise the action bar doesn't get
         // styled properly.
-        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
+        // Unfortunately on some (Samsung?) Android versions this
+        // results in a ClassCastException...
+        boolean themeSet = true;
+        try {
+            setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
+        } catch (ClassCastException e) {
+            themeSet = false;
+        }
 
         super.onCreate(savedInstanceState);
         Log.d(LOG, "onCreate:" + this);
 
         application = (DictionaryApplication) getApplication();
+        if (!themeSet)
+            setTheme(application.getSelectedTheme().themeId);
 
         blockAutoLaunch = false;
 
