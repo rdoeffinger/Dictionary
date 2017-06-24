@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hughes.android.dictionary"
     android:installLocation="auto"
-    android:versionCode="88"
+    android:versionCode="89"
     android:versionName="5.3.6" >
 
     <uses-sdk
