@@ -57,7 +57,7 @@ public class DictionaryInfo implements Serializable {
     public long uncompressedBytes;
     public long zipBytes;
     public long creationMillis;
-    public final List<IndexInfo> indexInfos = new ArrayList<IndexInfo>();
+    public final ArrayList<IndexInfo> indexInfos = new ArrayList<IndexInfo>();
     public String dictInfo;
 
     public DictionaryInfo() {
@@ -91,6 +91,7 @@ public class DictionaryInfo implements Serializable {
         uncompressedBytes = Long.parseLong(fields[i++]);
         zipBytes = Long.parseLong(fields[i++]);
         final int size = Integer.parseInt(fields[i++]);
+        indexInfos.ensureCapacity(size);
         for (int j = 0; j < size; ++j) {
             indexInfos.add(new IndexInfo(fields, i));
             i += IndexInfo.NUM_CSV_FIELDS;
