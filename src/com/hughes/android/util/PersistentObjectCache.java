@@ -21,6 +21,8 @@ import android.util.Log;
 import com.hughes.android.dictionary.DictionaryApplication;
 import com.hughes.android.dictionary.DictionaryInfo;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -65,7 +67,7 @@ public class PersistentObjectCache {
 
     public synchronized <T extends Serializable> T read(final String filename, final Class<T> resultClass) {
         try {
-            Object object = (objects.get(filename));
+            Object object = objects.get(filename);
             if (object != null) {
                 return resultClass.cast(object);
             }
@@ -77,7 +79,7 @@ public class PersistentObjectCache {
             }
             ObjectInputStream in = null;
             try {
-                in = new ConstrainedOIS(new FileInputStream(src));
+                in = new ConstrainedOIS(new BufferedInputStream(new FileInputStream(src)));
                 object = in.readObject();
                 in.close();
             } catch (Exception e) {
@@ -99,7 +101,7 @@ public class PersistentObjectCache {
         final File dest = new File(dir, filename);
         ObjectOutputStream out = null;
         try {
-            out = new ObjectOutputStream(new FileOutputStream(dest));
+            out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(dest)));
             out.writeObject(object);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Serialization failed: " + dest, e);
