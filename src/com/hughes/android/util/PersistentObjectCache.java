@@ -52,16 +52,16 @@ public class PersistentObjectCache {
             String name = desc.getName();
             // Note: try to avoid adding more classes.
             // LinkedHashMap is already more than enough for a DoS
-            if (!name.equals(ArrayList.class.getName()) &&
-                    !name.equals(HashMap.class.getName()) &&
-                    !name.equals(LinkedHashMap.class.getName()) &&
-                    !name.equals(String.class.getName()) &&
-                    !name.equals(DictionaryApplication.DictionaryConfig.class.getName()) &&
-                    !name.equals(DictionaryInfo.class.getName()) &&
-                    !name.equals(DictionaryInfo.IndexInfo.class.getName())) {
-                throw new InvalidClassException("Not allowed to deserialize class", name);
+            if (name.equals(String.class.getName()) ||
+                    name.equals(DictionaryInfo.IndexInfo.class.getName()) ||
+                    name.equals(ArrayList.class.getName()) ||
+                    name.equals(HashMap.class.getName()) ||
+                    name.equals(DictionaryInfo.class.getName()) ||
+                    name.equals(DictionaryApplication.DictionaryConfig.class.getName()) ||
+                    name.equals(LinkedHashMap.class.getName())) {
+                return super.resolveClass(desc);
             }
-            return super.resolveClass(desc);
+            throw new InvalidClassException("Not allowed to deserialize class", name);
         }
     }
 
