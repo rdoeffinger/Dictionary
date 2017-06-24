@@ -39,7 +39,7 @@ import java.util.Map;
 public class PersistentObjectCache {
 
     private final File dir;
-    private final Map<String, Object> objects = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> objects = new HashMap<String, Object>();
 
     class ConstrainedOIS extends ObjectInputStream {
         public ConstrainedOIS(InputStream in) throws IOException {
