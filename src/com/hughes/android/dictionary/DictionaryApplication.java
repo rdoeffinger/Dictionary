@@ -316,7 +316,7 @@ public class DictionaryApplication extends Application {
         try {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("#") || line.length() == 0) {
+                if (line.length() == 0 || line.charAt(0) == '#') {
                     continue;
                 }
                 final DictionaryInfo dictionaryInfo = new DictionaryInfo(line);
