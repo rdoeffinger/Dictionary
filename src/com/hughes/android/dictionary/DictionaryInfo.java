@@ -57,7 +57,7 @@ public class DictionaryInfo implements Serializable {
     public long uncompressedBytes;
     public long zipBytes;
     public long creationMillis;
-    public final List<IndexInfo> indexInfos = new ArrayList<DictionaryInfo.IndexInfo>();
+    public final List<IndexInfo> indexInfos = new ArrayList<IndexInfo>();
     public String dictInfo;
 
     public DictionaryInfo() {
