@@ -58,7 +58,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class DictionaryApplication extends Application {
+public enum DictionaryApplication {
+    INSTANCE;
+
+    private Context appContext;
 
     static final String LOG = "QuickDicApp";
 
@@ -168,18 +171,21 @@ public class DictionaryApplication extends Application {
 
     private File dictDir;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public void init(Context c) {
+        if (appContext != null) {
+            assert c == appContext;
+            return;
+        }
+        appContext = c;
         Log.d("QuickDic", "Application: onCreate");
         TransliteratorManager.init(null, threadBackground);
-        staticInit(getApplicationContext());
+        staticInit(appContext);
 
         languageButtonPixels = (int) TypedValue.applyDimension(
-                                   TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
+                                   TypedValue.COMPLEX_UNIT_DIP, 60, appContext.getResources().getDisplayMetrics());
 
         // Load the dictionaries we know about.
-        dictionaryConfig = PersistentObjectCache.init(getApplicationContext()).read(
+        dictionaryConfig = PersistentObjectCache.init(appContext).read(
                                C.DICTIONARY_CONFIGS, DictionaryConfig.class);
         if (dictionaryConfig == null) {
             dictionaryConfig = new DictionaryConfig();
@@ -189,53 +195,54 @@ public class DictionaryApplication extends Application {
         }
 
         // Theme stuff.
-        setTheme(getSelectedTheme().themeId);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        appContext.setTheme(getSelectedTheme().themeId);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
         prefs.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                                   String key) {
                 Log.d("QuickDic", "prefs changed: " + key);
-                if (key.equals(getString(R.string.themeKey))) {
-                    setTheme(getSelectedTheme().themeId);
+                if (key.equals(appContext.getString(R.string.themeKey))) {
+                    appContext.setTheme(getSelectedTheme().themeId);
                 }
             }
         });
     }
 
-    public void onCreateGlobalOptionsMenu(
+    public static void onCreateGlobalOptionsMenu(
         final Context context, final Menu menu) {
-        final MenuItem about = menu.add(getString(R.string.about));
+        final Context c = context.getApplicationContext();
+        final MenuItem about = menu.add(c.getString(R.string.about));
         MenuItemCompat.setShowAsAction(about, MenuItem.SHOW_AS_ACTION_NEVER);
         about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
-                final Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
+                final Intent intent = new Intent(c, AboutActivity.class);
                 context.startActivity(intent);
                 return false;
             }
         });
 
-        final MenuItem help = menu.add(getString(R.string.help));
+        final MenuItem help = menu.add(c.getString(R.string.help));
         MenuItemCompat.setShowAsAction(help, MenuItem.SHOW_AS_ACTION_NEVER);
         help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
-                context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent(getApplicationContext()));
+                context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent(c));
                 return false;
             }
         });
 
-        final MenuItem preferences = menu.add(getString(R.string.settings));
+        final MenuItem preferences = menu.add(c.getString(R.string.settings));
         MenuItemCompat.setShowAsAction(preferences, MenuItem.SHOW_AS_ACTION_NEVER);
         preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 PreferenceActivity.prefsMightHaveChanged = true;
-                final Intent intent = new Intent(getApplicationContext(), PreferenceActivity.class);
+                final Intent intent = new Intent(c, PreferenceActivity.class);
                 context.startActivity(intent);
                 return false;
             }
         });
 
-        final MenuItem reportIssue = menu.add(getString(R.string.reportIssue));
+        final MenuItem reportIssue = menu.add(c.getString(R.string.reportIssue));
         MenuItemCompat.setShowAsAction(reportIssue, MenuItem.SHOW_AS_ACTION_NEVER);
         reportIssue.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
@@ -258,20 +265,20 @@ public class DictionaryApplication extends Application {
         }
         File efd = null;
         try {
-            efd = getApplicationContext().getExternalFilesDir(null);
+            efd = appContext.getExternalFilesDir(null);
         } catch (Exception e) {
         }
         if (efd != null) {
             efd.mkdirs();
             if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                getApplicationContext().getExternalFilesDirs(null);
+                appContext.getExternalFilesDirs(null);
             }
             if (efd.isDirectory() && efd.canWrite() && checkFileCreate(efd)) {
                 return efd.getAbsolutePath();
             }
         }
         if (!dictDir.isDirectory() && !dictDir.mkdirs()) {
-            return getApplicationContext().getFilesDir().getAbsolutePath();
+            return appContext.getFilesDir().getAbsolutePath();
         }
         return dir;
     }
@@ -279,15 +286,15 @@ public class DictionaryApplication extends Application {
     public synchronized File getDictDir() {
         // This metaphor doesn't work, because we've already reset
         // prefsMightHaveChanged.
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String dir = prefs.getString(getString(R.string.quickdicDirectoryKey), "");
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+        String dir = prefs.getString(appContext.getString(R.string.quickdicDirectoryKey), "");
         if (dir.isEmpty()) {
             dir = selectDefaultDir();
         }
         dictDir = new File(dir);
         dictDir.mkdirs();
         if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getApplicationContext().getExternalFilesDirs(null);
+            appContext.getExternalFilesDirs(null);
         }
         return dictDir;
     }
@@ -304,8 +311,8 @@ public class DictionaryApplication extends Application {
     }
 
     public File getWordListFile() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String file = prefs.getString(getString(R.string.wordListFileKey), "");
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+        String file = prefs.getString(appContext.getString(R.string.wordListFileKey), "");
         if (file.isEmpty()) {
             return new File(getDictDir(), "wordList.txt");
         }
@@ -313,8 +320,8 @@ public class DictionaryApplication extends Application {
     }
 
     public Theme getSelectedTheme() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String theme = prefs.getString(getString(R.string.themeKey), "themeLight");
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+        final String theme = prefs.getString(appContext.getString(R.string.themeKey), "themeLight");
         if (theme.equals("themeLight")) {
             return Theme.LIGHT;
         } else {
@@ -349,7 +356,7 @@ public class DictionaryApplication extends Application {
             defaultLangName = null;
         }
         if (defaultLangName == null) {
-            defaultLangName = IsoUtils.INSTANCE.isoCodeToLocalizedLanguageName(getApplicationContext(), defaultLangISO2);
+            defaultLangName = IsoUtils.INSTANCE.isoCodeToLocalizedLanguageName(appContext, defaultLangISO2);
         }
 
         String name = fileToNameCache.get(uncompressedFilename);
@@ -368,7 +375,7 @@ public class DictionaryApplication extends Application {
                     nameBuilder.append("-");
                 }
                 nameBuilder
-                .append(IsoUtils.INSTANCE.isoCodeToLocalizedLanguageName(getApplicationContext(), sortedIndexInfos.get(i).shortName));
+                .append(IsoUtils.INSTANCE.isoCodeToLocalizedLanguageName(appContext, sortedIndexInfos.get(i).shortName));
             }
             name = nameBuilder.toString();
         } else {

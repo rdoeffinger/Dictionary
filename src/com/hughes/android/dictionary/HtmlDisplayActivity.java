@@ -71,7 +71,8 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
+        DictionaryApplication.INSTANCE.init(getApplicationContext());
+        setTheme(DictionaryApplication.INSTANCE.getSelectedTheme().themeId);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.html_display_activity);

@@ -33,7 +33,8 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        final DictionaryApplication application = (DictionaryApplication) getApplication();
+        DictionaryApplication.INSTANCE.init(getApplicationContext());
+        final DictionaryApplication application = DictionaryApplication.INSTANCE;
         setTheme(application.getSelectedTheme().themeId);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -88,7 +89,8 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences p, String v) {
-        final DictionaryApplication application = (DictionaryApplication)getApplication();
+        DictionaryApplication.INSTANCE.init(getApplicationContext());
+        final DictionaryApplication application = DictionaryApplication.INSTANCE;
         File dictDir = application.getDictDir();
         if (!dictDir.isDirectory() || !dictDir.canWrite() ||
                 !application.checkFileCreate(dictDir)) {

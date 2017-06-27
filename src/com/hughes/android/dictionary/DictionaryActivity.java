@@ -226,10 +226,12 @@ public class DictionaryActivity extends ActionBarActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        DictionaryApplication.INSTANCE.init(getApplicationContext());
+        application = DictionaryApplication.INSTANCE;
         // This needs to be before super.onCreate, otherwise ActionbarSherlock
         // doesn't makes the background of the actionbar white when you're
         // in the dark theme.
-        setTheme(((DictionaryApplication) getApplication()).getSelectedTheme().themeId);
+        setTheme(application.getSelectedTheme().themeId);
 
         Log.d(LOG, "onCreate:" + this);
         super.onCreate(savedInstanceState);
@@ -241,7 +243,6 @@ public class DictionaryActivity extends ActionBarActivity {
 
         setContentView(R.layout.dictionary_activity);
 
-        application = (DictionaryApplication) getApplication();
         theme = application.getSelectedTheme();
         textColorFg = getResources().getColor(theme.tokenRowFgColor);
 

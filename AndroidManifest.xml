@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hughes.android.dictionary"
     android:installLocation="auto"
-    android:versionCode="89"
-    android:versionName="5.3.6" >
+    android:versionCode="90"
+    android:versionName="5.3.7" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -21,7 +21,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".DictionaryApplication"
         android:allowBackup="true"
         android:resizeableActivity="true"
         android:icon="@drawable/icon"
