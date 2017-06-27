@@ -719,10 +719,9 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     void updateLangButton() {
-        final LanguageResources languageResources =
-            DictionaryApplication.isoCodeToResources.get(index.shortName);
-        if (languageResources != null && languageResources.flagId != 0) {
-            languageButton.setImageResource(languageResources.flagId);
+        final int flagId = IsoUtils.INSTANCE.getFlagIdForIsoCode(index.shortName);
+        if (flagId != 0) {
+            languageButton.setImageResource(flagId);
         } else {
             if (indexIndex % 2 == 0) {
                 languageButton.setImageResource(android.R.drawable.ic_media_next);
@@ -807,8 +806,8 @@ public class DictionaryActivity extends ActionBarActivity {
 
                 for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
-                    final View button = application.createButton(parent.getContext(),
-                                        dictionaryInfo, indexInfo);
+                    final View button = IsoUtils.INSTANCE.createButton(parent.getContext(),
+                                        dictionaryInfo, indexInfo, application.languageButtonPixels);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(getApplicationContext(),
                                             application.getPath(dictionaryInfo.uncompressedFilename),

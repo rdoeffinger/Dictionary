@@ -670,8 +670,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             builder.append(getString(R.string.updateAvailable));
         }
         for (IndexInfo indexInfo : sortedIndexInfos) {
-            final View button = application.createButton(buttons.getContext(), dictionaryInfo,
-                                indexInfo);
+            final View button = IsoUtils.INSTANCE.createButton(buttons.getContext(), dictionaryInfo,
+                                indexInfo, application.languageButtonPixels);
             buttons.addView(button);
 
             if (canLaunch) {
