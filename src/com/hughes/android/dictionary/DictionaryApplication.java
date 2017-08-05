@@ -36,6 +36,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.hughes.android.dictionary.CollatorWrapper;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.Language;
@@ -43,7 +44,6 @@ import com.hughes.android.dictionary.engine.Language.LanguageResources;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
 import com.hughes.util.ListUtil;
-import java.text.Collator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -405,7 +405,7 @@ public enum DictionaryApplication {
         PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
-    final Comparator collator = USE_COLLATOR ? Collator.getInstance() : String.CASE_INSENSITIVE_ORDER;
+    final Comparator collator = USE_COLLATOR ? CollatorWrapper.getInstance() : String.CASE_INSENSITIVE_ORDER;
     final Comparator<String> uncompressedFilenameComparator = new Comparator<String>() {
         @Override
         public int compare(String uncompressedFilename1, String uncompressedFilename2) {

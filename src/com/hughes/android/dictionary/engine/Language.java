@@ -14,8 +14,8 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.android.dictionary.CollatorWrapper;
 import com.hughes.android.dictionary.DictionaryApplication;
-import java.text.Collator;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class Language {
     final String isoCode;
     final Locale locale;
 
-    private Collator collator;
+    private Comparator collator;
 
     private Language(final Locale locale, final String isoCode) {
         this.locale = locale;
@@ -69,8 +69,7 @@ public class Language {
             return String.CASE_INSENSITIVE_ORDER;
         // Don't think this is thread-safe...
         // if (collator == null) {
-        this.collator = Collator.getInstance(locale);
-        this.collator.setStrength(Collator.IDENTICAL);
+        this.collator = CollatorWrapper.getInstanceStrengthIdentical(locale);
         // }
         return collator;
     }

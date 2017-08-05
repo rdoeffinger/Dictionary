@@ -29,7 +29,6 @@ import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
 import com.hughes.util.raf.SerializableSerializer;
 import com.hughes.util.raf.UniformRAFList;
-import java.text.Collator;
 import com.ibm.icu.text.Transliterator;
 
 import java.io.DataInput;
