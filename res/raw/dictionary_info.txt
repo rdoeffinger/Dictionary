@@ -1,4 +1,5 @@
 AR-DE.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/AR-DE.quickdic.v006.zip	1357249622977	2592092	891722	2	AR	20748	8126	DE	11307	10516	Wikitionary-based AR-DE dictionary.
+AR-TR.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/AR-TR.quickdic.v007.zip	1501919414104	556379	512587	2	AR	10487	6838	TR	7955	6686	(EN)Wiktionary-based AR-TR dictionary.
 DE-CA.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE-CA.quickdic.v007.zip	1450144011879	1451136	1370869	2	DE	18490	17773	CA	15490	14102	(DE)Wiktionary-based DE-CA dictionary.
 DE-CS.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE-CS.quickdic.v007.zip	1450144068188	3298275	3193087	2	DE	23504	22264	CS	24041	19643	(DE)Wiktionary-based DE-CS dictionary.
 DE-EO.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/DE-EO.quickdic.v007.zip	1450144125276	1117363	1036505	2	DE	14741	14061	EO	17157	16318	(DE)Wiktionary-based DE-EO dictionary.
