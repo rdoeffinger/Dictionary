@@ -171,7 +171,7 @@ public enum DictionaryApplication {
 
     private File dictDir;
 
-    public void init(Context c) {
+    public synchronized void init(Context c) {
         if (appContext != null) {
             assert c == appContext;
             return;
