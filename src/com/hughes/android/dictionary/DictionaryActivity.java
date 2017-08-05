@@ -1473,13 +1473,18 @@ public class DictionaryActivity extends ActionBarActivity {
         }
 
         private void getMetrics() {
+            float scale = 1;
             // Get the screen's density scale
             // The previous method getResources().getDisplayMetrics()
             // used to occasionally trigger a null pointer exception,
             // so try this instead.
-            DisplayMetrics dm = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(dm);
-            final float scale = dm.density;
+            // As it still crashes, add a fallback
+            try {
+                DisplayMetrics dm = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(dm);
+                scale = dm.density;
+            } catch (NullPointerException e)
+            {}
             // Convert the dps to pixels, based on density scale
             mPaddingDefault = (int) (PADDING_DEFAULT_DP * scale + 0.5f);
             mPaddingLarge = (int) (PADDING_LARGE_DP * scale + 0.5f);
