@@ -241,5 +241,19 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
             throw new IllegalArgumentException();
         }
 
+        @Override
+        public boolean equals(Object o)
+        {
+            if (o == this) return true;
+            if (!(o instanceof Pair)) return false;
+            Pair p = (Pair)o;
+            return p.lang1.equals(lang1) && p.lang2.equals(lang2);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return (lang1 + "|" + lang2).hashCode();
+        }
     }
 }
