@@ -41,7 +41,7 @@ def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "Util"
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "26.0.1"
     lintOptions {
         disable "MissingTranslation"
     }
@@ -76,7 +76,7 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
-        targetSdkVersion 23
+        targetSdkVersion 25
         resConfigs "de", "es", "fr", "it", "ja", "pt", "pt-rBR", "ru"
     }
 }
