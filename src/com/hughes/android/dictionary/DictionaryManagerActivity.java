@@ -724,8 +724,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         // Due to a bug, cursor is null instead of empty when
         // the download manager is disabled.
         if (cursor == null) {
+            String msg = getString(R.string.downloadManagerQueryFailed);
             new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
-            .setMessage(getString(R.string.downloadFailed, R.string.downloadManagerQueryFailed))
+            .setMessage(getString(R.string.downloadFailed, msg))
             .setNeutralButton("Close", null).show();
             return;
         }
