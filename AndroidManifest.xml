@@ -44,6 +44,60 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+            <!-- Direct installation of dictionaries -->
+            <!-- When opening from downloads, no proper file name is sent -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content"
+                      android:host="*"
+                      android:pathPattern=".*"
+                      android:mimeType="application/zip" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file"
+                      android:host="*"
+                      android:pathPattern=".*"
+                      android:mimeType="application/zip" />
+            <!-- Handling cases with no mimeType (maybe not necessary?)
+                 works for files not in downloads -->
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content"
+                      android:host="*"
+                      android:pathPattern=".*\\.quickdic\\.v006\\.zip" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file"
+                      android:host="*"
+                      android:pathPattern=".*\\.quickdic\\.v006\\.zip" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content"
+                      android:host="*"
+                      android:pathPattern=".*\\.quickdic\\.v007\\.zip" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file"
+                      android:host="*"
+                      android:pathPattern=".*\\.quickdic\\.v007\\.zip" />
+            </intent-filter>
 
             <!--
         	<meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
@@ -87,6 +141,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <!-- Allow direct opening of dictionary files -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -94,13 +149,25 @@
                       android:host="*"
                       android:mimeType="application/octet-stream"
                       android:pathPattern=".*\\.quickdic" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="file"
                       android:host="*"
                       android:mimeType="application/octet-stream"
                       android:pathPattern=".*\\.quickdic" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="content"
                       android:host="*"
                       android:pathPattern=".*\\.quickdic" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="file"
                       android:host="*"
                       android:pathPattern=".*\\.quickdic" />

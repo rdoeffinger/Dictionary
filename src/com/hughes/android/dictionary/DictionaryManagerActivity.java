@@ -188,58 +188,64 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
                                Toast.LENGTH_LONG).show();
 
-
-                final Uri zipUri = Uri.parse(dest);
-                File localZipFile = null;
-                InputStream zipFileStream = null;
-                ZipInputStream zipFile = null;
-                FileOutputStream zipOut = null;
-                try {
-                    if (zipUri.getScheme().equals("content")) {
-                        zipFileStream = context.getContentResolver().openInputStream(zipUri);
-                        localZipFile = null;
-                    } else {
-                        localZipFile = new File(zipUri.getPath());
-                        zipFileStream = new FileInputStream(localZipFile);
-                    }
-                    zipFile = new ZipInputStream(new BufferedInputStream(zipFileStream));
-                    final ZipEntry zipEntry = zipFile.getNextEntry();
-                    Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
-                    File targetFile = new File(application.getDictDir(), zipEntry.getName());
-                    if (targetFile.exists()) {
-                        targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
-                        targetFile = new File(application.getDictDir(), zipEntry.getName());
-                    }
-                    zipOut = new FileOutputStream(targetFile);
-                    copyStream(zipFile, zipOut);
-                    application.backgroundUpdateDictionaries(dictionaryUpdater);
-                    Toast.makeText(context, getString(R.string.installationFinished, dest),
-                                   Toast.LENGTH_LONG).show();
+                if (unzipInstall(context, Uri.parse(dest), dest)) {
                     finishedDownloadIds.add(downloadId);
                     Log.w(LOG, "Unzipping finished: " + dest + " Id: " + downloadId);
-                } catch (Exception e) {
-                    String msg = getString(R.string.unzippingFailed, dest);
-                    File dir = application.getDictDir();
-                    if (!dir.canWrite() || !application.checkFileCreate(dir)) {
-                        msg = getString(R.string.notWritable, dir.getAbsolutePath());
-                    }
-                    new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
-                    Log.e(LOG, "Failed to unzip.", e);
-                } finally {
-                    try {
-                        if (zipOut != null) zipOut.close();
-                    } catch (IOException e) {}
-                    try {
-                        if (zipFile != null) zipFile.close();
-                    } catch (IOException e) {}
-                    try {
-                        if (zipFileStream != null) zipFileStream.close();
-                    } catch (IOException e) {}
-                    if (localZipFile != null) localZipFile.delete();
                 }
             }
         }
     };
+
+    private boolean unzipInstall(Context context, Uri zipUri, String dest) {
+        File localZipFile = null;
+        InputStream zipFileStream = null;
+        ZipInputStream zipFile = null;
+        FileOutputStream zipOut = null;
+        boolean result = false;
+        try {
+            if (zipUri.getScheme().equals("content")) {
+                zipFileStream = context.getContentResolver().openInputStream(zipUri);
+                localZipFile = null;
+            } else {
+                localZipFile = new File(zipUri.getPath());
+                zipFileStream = new FileInputStream(localZipFile);
+            }
+            zipFile = new ZipInputStream(new BufferedInputStream(zipFileStream));
+            final ZipEntry zipEntry = zipFile.getNextEntry();
+            Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
+            File targetFile = new File(application.getDictDir(), zipEntry.getName());
+            if (targetFile.exists()) {
+                targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
+                targetFile = new File(application.getDictDir(), zipEntry.getName());
+            }
+            zipOut = new FileOutputStream(targetFile);
+            copyStream(zipFile, zipOut);
+            application.backgroundUpdateDictionaries(dictionaryUpdater);
+            Toast.makeText(context, getString(R.string.installationFinished, dest),
+                           Toast.LENGTH_LONG).show();
+            result = true;
+        } catch (Exception e) {
+            String msg = getString(R.string.unzippingFailed, dest);
+            File dir = application.getDictDir();
+            if (!dir.canWrite() || !application.checkFileCreate(dir)) {
+                msg = getString(R.string.notWritable, dir.getAbsolutePath());
+            }
+            new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
+            Log.e(LOG, "Failed to unzip.", e);
+        } finally {
+            try {
+                if (zipOut != null) zipOut.close();
+            } catch (IOException e) {}
+            try {
+                if (zipFile != null) zipFile.close();
+            } catch (IOException e) {}
+            try {
+                if (zipFileStream != null) zipFileStream.close();
+            } catch (IOException e) {}
+            if (localZipFile != null) localZipFile.delete();
+        }
+        return result;
+    }
 
     public static Intent getLaunchIntent(Context c) {
         final Intent intent = new Intent(c, DictionaryManagerActivity.class);
@@ -335,6 +341,14 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         readableCheckAndError(true);
 
         onCreateSetupActionBar();
+
+        final Intent intent = getIntent();
+        if (intent != null && intent.getAction() != null &&
+            intent.getAction().equals(Intent.ACTION_VIEW)) {
+            blockAutoLaunch = true;
+            Uri uri = intent.getData();
+            unzipInstall(this, uri, uri.getLastPathSegment());
+        }
     }
 
     private void onCreateSetupActionBar() {
