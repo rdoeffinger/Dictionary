@@ -87,6 +87,24 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content"
+                      android:host="*"
+                      android:mimeType="application/octet-stream"
+                      android:pathPattern=".*\\.quickdic" />
+                <data android:scheme="file"
+                      android:host="*"
+                      android:mimeType="application/octet-stream"
+                      android:pathPattern=".*\\.quickdic" />
+                <data android:scheme="content"
+                      android:host="*"
+                      android:pathPattern=".*\\.quickdic" />
+                <data android:scheme="file"
+                      android:host="*"
+                      android:pathPattern=".*\\.quickdic" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".AboutActivity"

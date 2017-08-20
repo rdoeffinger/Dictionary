@@ -99,6 +99,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -124,7 +125,8 @@ public class DictionaryActivity extends ActionBarActivity {
     DictionaryApplication application;
 
     File dictFile = null;
-    RandomAccessFile dictRaf = null;
+    FileChannel dictRaf = null;
+    String dictFileTitleName = null;
 
     Dictionary dictionary = null;
 
@@ -224,6 +226,22 @@ public class DictionaryActivity extends ActionBarActivity {
         return search.length();
     }
 
+    private void dictionaryOpenFail(Exception e) {
+        Log.e(LOG, "Unable to load dictionary.", e);
+        if (dictRaf != null) {
+            try {
+                dictRaf.close();
+            } catch (IOException e1) {
+                Log.e(LOG, "Unable to close dictRaf.", e1);
+            }
+            dictRaf = null;
+        }
+        Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()),
+                       Toast.LENGTH_LONG).show();
+        startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
+        finish();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         DictionaryApplication.INSTANCE.init(getApplicationContext());
@@ -245,6 +263,15 @@ public class DictionaryActivity extends ActionBarActivity {
 
         theme = application.getSelectedTheme();
         textColorFg = getResources().getColor(theme.tokenRowFgColor);
+
+        if (dictRaf != null) {
+            try {
+                dictRaf.close();
+            } catch (IOException e) {
+                Log.e(LOG, "Failed to close dictionary", e);
+            }
+            dictRaf = null;
+        }
 
         final Intent intent = getIntent();
         String intentAction = intent.getAction();
@@ -322,6 +349,18 @@ public class DictionaryActivity extends ActionBarActivity {
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
             }
         }
+        // Support opening dictionary file directly
+        if (intentAction != null && intentAction.equals(Intent.ACTION_VIEW)) {
+            Uri uri = intent.getData();
+            intent.putExtra(C.DICT_FILE, uri.toString());
+            dictFileTitleName = uri.getLastPathSegment();
+            try {
+                dictRaf = getContentResolver().openAssetFileDescriptor(uri, "r").createInputStream().getChannel();
+            } catch (Exception e) {
+                dictionaryOpenFail(e);
+                return;
+            }
+        }
         /**
          * @author Dominik Köppl If no dictionary is chosen, use the default
          *         dictionary specified in the preferences If this step does
@@ -345,7 +384,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 try {
                     Log.d(LOG, "Checking dictionary " + dics.get(i).uncompressedFilename);
                     final File dictfile = application.getPath(dics.get(i).uncompressedFilename);
-                    Dictionary dic = new Dictionary(new RandomAccessFile(dictfile, "r"));
+                    Dictionary dic = new Dictionary(new RandomAccessFile(dictfile, "r").getChannel());
                     for (int j = 0; j < dic.indices.size(); ++j) {
                         Index idx = dic.indices.get(j);
                         Log.d(LOG, "Checking index " + idx.shortName);
@@ -377,7 +416,7 @@ public class DictionaryActivity extends ActionBarActivity {
             finish();
             return;
         }
-        if (dictFilename != null)
+        if (dictRaf == null && dictFilename != null)
             dictFile = new File(dictFilename);
 
         ttsReady = false;
@@ -390,24 +429,14 @@ public class DictionaryActivity extends ActionBarActivity {
         });
 
         try {
-            final String name = application.getDictionaryName(dictFile.getName());
-            this.setTitle("QuickDic: " + name);
-            dictRaf = new RandomAccessFile(dictFile, "r");
+            if (dictRaf == null) {
+                dictFileTitleName = application.getDictionaryName(dictFile.getName());
+                dictRaf = new RandomAccessFile(dictFile, "r").getChannel();
+            }
+            this.setTitle("QuickDic: " + dictFileTitleName);
             dictionary = new Dictionary(dictRaf);
         } catch (Exception e) {
-            Log.e(LOG, "Unable to load dictionary.", e);
-            if (dictRaf != null) {
-                try {
-                    dictRaf.close();
-                } catch (IOException e1) {
-                    Log.e(LOG, "Unable to close dictRaf.", e1);
-                }
-                dictRaf = null;
-            }
-            Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()),
-                           Toast.LENGTH_LONG).show();
-            startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
-            finish();
+            dictionaryOpenFail(e);
             return;
         }
         String targetIndex = intent.getStringExtra(C.INDEX_SHORT_NAME);
@@ -652,8 +681,10 @@ public class DictionaryActivity extends ActionBarActivity {
                                            final String indexShortName, final String searchToken) {
         final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(
                 context).edit();
-        prefs.putString(C.DICT_FILE, dictFile.getPath());
-        prefs.putString(C.INDEX_SHORT_NAME, indexShortName);
+        if (dictFile != null) {
+            prefs.putString(C.DICT_FILE, dictFile.getPath());
+            prefs.putString(C.INDEX_SHORT_NAME, indexShortName);
+        }
         prefs.putString(C.SEARCH_TOKEN, ""); // Don't need to save search token.
         prefs.commit();
     }
@@ -961,16 +992,20 @@ public class DictionaryActivity extends ActionBarActivity {
                     dialog.setContentView(R.layout.about_dictionary_dialog);
                     final TextView textView = (TextView) dialog.findViewById(R.id.text);
 
-                    final String name = application.getDictionaryName(dictFile.getName());
-                    dialog.setTitle(name);
+                    dialog.setTitle(dictFileTitleName);
 
                     final StringBuilder builder = new StringBuilder();
                     final DictionaryInfo dictionaryInfo = dictionary.getDictionaryInfo();
-                    dictionaryInfo.uncompressedBytes = dictFile.length();
                     if (dictionaryInfo != null) {
+                        try {
+                            dictionaryInfo.uncompressedBytes = dictRaf.size();
+                        } catch (IOException e) {
+                        }
                         builder.append(dictionaryInfo.dictInfo).append("\n\n");
-                        builder.append(getString(R.string.dictionaryPath, dictFile.getPath()))
-                        .append("\n");
+                        if (dictFile != null) {
+                            builder.append(getString(R.string.dictionaryPath, dictFile.getPath()))
+                            .append("\n");
+                        }
                         builder.append(
                             getString(R.string.dictionarySize, dictionaryInfo.uncompressedBytes))
                         .append("\n");

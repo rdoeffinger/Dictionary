@@ -22,11 +22,14 @@ import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 
 import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +69,8 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         indices = new ArrayList<Index>();
     }
 
-    public Dictionary(final RandomAccessFile raf) throws IOException {
+    public Dictionary(final FileChannel ch) throws IOException {
+        DataInput raf = new DataInputStream(Channels.newInputStream(ch));
         dictFileVersion = raf.readInt();
         if (dictFileVersion < 0 || dictFileVersion > CURRENT_DICT_VERSION) {
             throw new IOException("Invalid dictionary version: " + dictFileVersion);
@@ -77,31 +81,31 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         // Load the sources, then seek past them, because reading them later
         // disrupts the offset.
         try {
-            final RAFList<EntrySource> rafSources = RAFList.create(raf, new EntrySource.Serializer(
-                    this), raf.getFilePointer(), dictFileVersion, dictInfo + " sources: ");
+            final RAFList<EntrySource> rafSources = RAFList.create(ch, new EntrySource.Serializer(
+                    this), ch.position(), dictFileVersion, dictInfo + " sources: ");
             sources = new ArrayList<EntrySource>(rafSources);
-            raf.seek(rafSources.getEndOffset());
+            ch.position(rafSources.getEndOffset());
 
             pairEntries = CachingList.create(
-                              RAFList.create(raf, new PairEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictInfo + " pairs: "),
+                              RAFList.create(ch, new PairEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " pairs: "),
                               CACHE_SIZE);
             textEntries = CachingList.create(
-                              RAFList.create(raf, new TextEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictInfo + " text: "),
+                              RAFList.create(ch, new TextEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " text: "),
                               CACHE_SIZE);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
-                                  RAFList.create(raf, new HtmlEntry.Serializer(this), raf.getFilePointer(), dictFileVersion, dictInfo + " html: "),
+                                  RAFList.create(ch, new HtmlEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " html: "),
                                   CACHE_SIZE);
             } else {
                 htmlEntries = Collections.emptyList();
             }
             if (dictFileVersion >= 7) {
-                htmlData = RAFList.create(raf, new HtmlEntry.DataDeserializer(), raf.getFilePointer(), dictFileVersion, dictInfo + " html: ");
+                htmlData = RAFList.create(ch, new HtmlEntry.DataDeserializer(), ch.position(), dictFileVersion, dictInfo + " html: ");
             } else {
                 htmlData = null;
             }
-            indices = CachingList.createFullyCached(RAFList.create(raf, indexSerializer,
-                                                    raf.getFilePointer(), dictFileVersion, dictInfo + " index: "));
+            indices = CachingList.createFullyCached(RAFList.create(ch, new IndexSerializer(ch),
+                                                    ch.position(), dictFileVersion, dictInfo + " index: "));
         } catch (RuntimeException e) {
             final IOException ioe = new IOException("RuntimeException loading dictionary");
             ioe.initCause(e);
@@ -131,15 +135,21 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         assert htmlData == null;
         RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 128, true);
         System.out.println("indices start: " + raf.getFilePointer());
-        RAFList.write(raf, indices, indexSerializer);
+        RAFList.write(raf, indices, new IndexSerializer(null));
         System.out.println("end: " + raf.getFilePointer());
         raf.writeUTF(END_OF_DICTIONARY);
     }
 
-    private final RAFListSerializer<Index> indexSerializer = new RAFListSerializer<Index>() {
+    private final class IndexSerializer implements RAFListSerializer<Index> {
+        private final FileChannel ch;
+
+        public IndexSerializer(FileChannel ch) {
+            this.ch = ch;
+        }
+
         @Override
         public Index read(DataInput raf, final int readIndex) throws IOException {
-            return new Index(Dictionary.this, raf);
+            return new Index(Dictionary.this, ch, raf);
         }
 
         @Override
@@ -187,7 +197,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         RandomAccessFile raf = null;
         try {
             raf = new RandomAccessFile(file, "r");
-            final Dictionary dict = new Dictionary(raf);
+            final Dictionary dict = new Dictionary(raf.getChannel());
             final DictionaryInfo dictionaryInfo = dict.getDictionaryInfo();
             dictionaryInfo.uncompressedFilename = file.getName();
             dictionaryInfo.uncompressedBytes = file.length();
