@@ -9,6 +9,7 @@
     <string name="settings">Settings</string>
     <string name="help">Help</string>
     <string name="reportIssue">Report issue</string>
+    <string name="browserDownload">Download in browser</string>
     <string name="no_dict_file">Please specify a default dictionary in the settings.</string>
 
     <!-- DictionaryManagerActivity -->

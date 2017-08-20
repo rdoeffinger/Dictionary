@@ -248,7 +248,19 @@ public enum DictionaryApplication {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri
-                               .parse("http://github.com/rdoeffinger/Dictionary/issues"));
+                               .parse("https://github.com/rdoeffinger/Dictionary/issues"));
+                context.startActivity(intent);
+                return false;
+            }
+        });
+
+        final MenuItem browserDownload = menu.add(c.getString(R.string.browserDownload));
+        MenuItemCompat.setShowAsAction(browserDownload, MenuItem.SHOW_AS_ACTION_NEVER);
+        browserDownload.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            public boolean onMenuItemClick(final MenuItem menuItem) {
+                final Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri
+                               .parse("https://github.com/rdoeffinger/Dictionary/releases/v0.2-dictionaries"));
                 context.startActivity(intent);
                 return false;
             }
