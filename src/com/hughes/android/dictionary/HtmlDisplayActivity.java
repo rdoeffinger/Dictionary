@@ -59,7 +59,7 @@ public final class HtmlDisplayActivity extends ActionBarActivity {
                                        final boolean showOkButton) {
         final Intent intent = new Intent(c, HtmlDisplayActivity.class);
         intent.putExtra(HTML, html);
-        intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight);
+        intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight == null ? "" : textToHighlight);
         intent.putExtra(SHOW_OK_BUTTON, showOkButton);
         return intent;
     }
