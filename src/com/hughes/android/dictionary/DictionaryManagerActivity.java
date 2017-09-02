@@ -188,7 +188,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
                                Toast.LENGTH_LONG).show();
 
-                if (unzipInstall(context, Uri.parse(dest), dest)) {
+                if (unzipInstall(context, Uri.parse(dest), dest, true)) {
                     finishedDownloadIds.add(downloadId);
                     Log.w(LOG, "Unzipping finished: " + dest + " Id: " + downloadId);
                 }
@@ -196,7 +196,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         }
     };
 
-    private boolean unzipInstall(Context context, Uri zipUri, String dest) {
+    private boolean unzipInstall(Context context, Uri zipUri, String dest, boolean delete) {
         File localZipFile = null;
         InputStream zipFileStream = null;
         ZipInputStream zipFile = null;
@@ -208,7 +208,18 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 localZipFile = null;
             } else {
                 localZipFile = new File(zipUri.getPath());
-                zipFileStream = new FileInputStream(localZipFile);
+                try {
+                    zipFileStream = new FileInputStream(localZipFile);
+                } catch (Exception e) {
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this,
+                                                  new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
+                                                          Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                                               }, 0);
+                        return false;
+                    }
+                    throw e;
+                }
             }
             zipFile = new ZipInputStream(new BufferedInputStream(zipFileStream));
             final ZipEntry zipEntry = zipFile.getNextEntry();
@@ -242,7 +253,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             try {
                 if (zipFileStream != null) zipFileStream.close();
             } catch (IOException e) {}
-            if (localZipFile != null) localZipFile.delete();
+            if (localZipFile != null && delete) localZipFile.delete();
         }
         return result;
     }
@@ -347,7 +358,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             intent.getAction().equals(Intent.ACTION_VIEW)) {
             blockAutoLaunch = true;
             Uri uri = intent.getData();
-            unzipInstall(this, uri, uri.getLastPathSegment());
+            unzipInstall(this, uri, uri.getLastPathSegment(), false);
         }
     }
 
