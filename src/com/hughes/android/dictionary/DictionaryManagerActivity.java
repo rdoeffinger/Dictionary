@@ -225,7 +225,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                            Toast.LENGTH_LONG).show();
             result = true;
         } catch (Exception e) {
-            String msg = getString(R.string.unzippingFailed, dest);
+            String msg = getString(R.string.unzippingFailed, dest + ": " + e.getMessage());
             File dir = application.getDictDir();
             if (!dir.canWrite() || !application.checkFileCreate(dir)) {
                 msg = getString(R.string.notWritable, dir.getAbsolutePath());

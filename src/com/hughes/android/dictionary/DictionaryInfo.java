@@ -65,7 +65,7 @@ public class DictionaryInfo implements Serializable {
     }
 
     public boolean isValid() {
-        return !indexInfos.isEmpty();
+        return indexInfos != null && !indexInfos.isEmpty();
     }
 
     public StringBuilder append(final StringBuilder result) {
