@@ -50,7 +50,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 
     public static byte[] readData(DataInput raf) throws IOException {
         int len = StringUtil.readVarInt(raf);
-        final byte[] bytes = new byte[len];
+        final byte[] bytes = new byte[Math.min(len, 20 * 1024 * 1024)];
         raf.readFully(bytes);
         return bytes;
     }
@@ -237,8 +237,8 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
             }
             raf = inp;
             this.ch = ch;
-            numBytes = raf.readInt();
-            numZipBytes = raf.readInt();
+            numBytes = Math.min(raf.readInt(), 20 * 1024 * 1024);
+            numZipBytes = Math.min(raf.readInt(), 20 * 1024 * 1024);
             offset = ch.position();
             raf.skipBytes(numZipBytes);
         }
