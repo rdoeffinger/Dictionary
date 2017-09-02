@@ -94,7 +94,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
                               CACHE_SIZE);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
-                                  RAFList.create(ch, new HtmlEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " html: "),
+                                  RAFList.create(ch, new HtmlEntry.Serializer(this, ch), ch.position(), dictFileVersion, dictInfo + " html: "),
                                   CACHE_SIZE);
             } else {
                 htmlEntries = Collections.emptyList();
@@ -130,7 +130,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         System.out.println("text start: " + raf.getFilePointer());
         RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
         System.out.println("html index start: " + raf.getFilePointer());
-        RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this), 64, true);
+        RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this, null), 64, true);
         System.out.println("html data start: " + raf.getFilePointer());
         assert htmlData == null;
         RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 128, true);

@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -28,11 +29,11 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         lazyHtmlLoader = null;
     }
 
-    public HtmlEntry(Dictionary dictionary, DataInput raf, final int index)
+    public HtmlEntry(Dictionary dictionary, FileChannel ch, DataInput raf, final int index)
     throws IOException {
         super(dictionary, raf, index);
         title = raf.readUTF();
-        lazyHtmlLoader = new LazyHtmlLoader(raf, dictionary.htmlData, index);
+        lazyHtmlLoader = new LazyHtmlLoader(ch, raf, dictionary.htmlData, index);
         html = null;
     }
 
@@ -73,14 +74,16 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     static final class Serializer implements RAFListSerializer<HtmlEntry> {
 
         final Dictionary dictionary;
+        final FileChannel ch;
 
-        Serializer(Dictionary dictionary) {
+        Serializer(Dictionary dictionary, FileChannel ch) {
             this.dictionary = dictionary;
+            this.ch = ch;
         }
 
         @Override
         public HtmlEntry read(DataInput raf, final int index) throws IOException {
-            return new HtmlEntry(dictionary, raf, index);
+            return new HtmlEntry(dictionary, ch, raf, index);
         }
 
         @Override
@@ -210,7 +213,8 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     // --------------------------------------------------------------------
 
     public static final class LazyHtmlLoader {
-        final RandomAccessFile raf;
+        final DataInput raf;
+        final FileChannel ch;
         final long offset;
         final int numBytes;
         final int numZipBytes;
@@ -220,20 +224,22 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         // Not sure this volatile is right, but oh well.
         volatile SoftReference<String> htmlRef = new SoftReference<String>(null);
 
-        private LazyHtmlLoader(final DataInput inp, List<byte[]> data, int index) throws IOException {
+        private LazyHtmlLoader(FileChannel ch, final DataInput inp, List<byte[]> data, int index) throws IOException {
             this.data = data;
             this.index = index;
             if (data != null) {
                 this.raf = null;
+                this.ch = null;
                 this.offset = 0;
                 this.numBytes = -1;
                 this.numZipBytes = -1;
                 return;
             }
-            raf = (RandomAccessFile)inp;
+            raf = inp;
+            this.ch = ch;
             numBytes = raf.readInt();
             numZipBytes = raf.readInt();
-            offset = raf.getFilePointer();
+            offset = ch.position();
             raf.skipBytes(numZipBytes);
         }
 
@@ -254,10 +260,10 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
             System.out.println("Loading Html: numBytes=" + numBytes + ", numZipBytes="
                                + numZipBytes);
             final byte[] zipBytes = new byte[numZipBytes];
-            synchronized (raf) {
+            synchronized (ch) {
                 try {
-                    raf.seek(offset);
-                    raf.read(zipBytes);
+                    ch.position(offset);
+                    raf.readFully(zipBytes);
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to read HTML data from dictionary", e);
                 }
