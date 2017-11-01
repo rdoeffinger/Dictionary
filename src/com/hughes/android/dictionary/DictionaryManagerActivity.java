@@ -475,10 +475,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
         // Remove the active dictionary from the prefs so we won't autolaunch
         // next time.
-        final Editor editor = prefs.edit();
-        editor.remove(C.DICT_FILE);
-        editor.remove(C.INDEX_SHORT_NAME);
-        editor.commit();
+        prefs.edit().remove(C.DICT_FILE).remove(C.INDEX_SHORT_NAME).commit();
 
         application.backgroundUpdateDictionaries(dictionaryUpdater);
 

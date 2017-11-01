@@ -257,7 +257,7 @@ public class DictionaryActivity extends ActionBarActivity {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Don't auto-launch if this fails.
-        prefs.edit().remove(C.DICT_FILE).commit();
+        prefs.edit().remove(C.DICT_FILE).remove(C.INDEX_SHORT_NAME).commit();
 
         setContentView(R.layout.dictionary_activity);
 
