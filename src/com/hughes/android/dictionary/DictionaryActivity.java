@@ -563,7 +563,7 @@ public class DictionaryActivity extends ActionBarActivity {
         setSearchText(text, true);
         Log.d(LOG, "Trying to restore searchText=" + text);
 
-        setDictionaryPrefs(this, dictFile, index.shortName, searchView.getQuery().toString());
+        setDictionaryPrefs(this, dictFile, index.shortName);
 
         updateLangButton();
         searchView.requestFocus();
@@ -678,14 +678,14 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     private static void setDictionaryPrefs(final Context context, final File dictFile,
-                                           final String indexShortName, final String searchToken) {
+                                           final String indexShortName) {
         final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(
                 context).edit();
         if (dictFile != null) {
             prefs.putString(C.DICT_FILE, dictFile.getPath());
             prefs.putString(C.INDEX_SHORT_NAME, indexShortName);
         }
-        prefs.putString(C.SEARCH_TOKEN, ""); // Don't need to save search token.
+        prefs.remove(C.SEARCH_TOKEN); // Don't need to save search token.
         prefs.commit();
     }
 
@@ -1298,7 +1298,7 @@ public class DictionaryActivity extends ActionBarActivity {
             indexAdapter = new IndexAdapter(index);
             setListAdapter(indexAdapter);
             Log.d(LOG, "changingIndex, newLang=" + index.longName);
-            setDictionaryPrefs(this, dictFile, index.shortName, searchView.getQuery().toString());
+            setDictionaryPrefs(this, dictFile, index.shortName);
             updateLangButton();
         }
         setSearchText(newSearchText, true, hideKeyboard);

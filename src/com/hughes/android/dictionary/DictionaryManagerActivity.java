@@ -468,7 +468,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             startActivity(DictionaryActivity.getLaunchIntent(getApplicationContext(),
                           new File(prefs.getString(C.DICT_FILE, "")),
                           prefs.getString(C.INDEX_SHORT_NAME, ""),
-                          prefs.getString(C.SEARCH_TOKEN, "")));
+                          ""));
             finish();
             return;
         }
