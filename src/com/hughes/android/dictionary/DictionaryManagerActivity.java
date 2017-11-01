@@ -478,7 +478,6 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         final Editor editor = prefs.edit();
         editor.remove(C.DICT_FILE);
         editor.remove(C.INDEX_SHORT_NAME);
-        editor.remove(C.SEARCH_TOKEN);
         editor.commit();
 
         application.backgroundUpdateDictionaries(dictionaryUpdater);
