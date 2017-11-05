@@ -230,6 +230,8 @@ public class DictionaryActivity extends ActionBarActivity {
     private void dictionaryOpenFail(Exception e) {
         Log.e(LOG, "Unable to load dictionary.", e);
         if (dictRaf != null) {
+            indexAdapter = null;
+            setListAdapter(null);
             try {
                 dictRaf.close();
             } catch (IOException e1) {
@@ -709,6 +711,9 @@ public class DictionaryActivity extends ActionBarActivity {
         searchExecutor.shutdownNow();
         textToSpeech.shutdown();
         textToSpeech = null;
+
+        indexAdapter = null;
+        setListAdapter(null);
 
         try {
             Log.d(LOG, "Closing RAF.");
