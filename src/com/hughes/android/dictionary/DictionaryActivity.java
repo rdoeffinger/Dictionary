@@ -1541,28 +1541,49 @@ public class DictionaryActivity extends ActionBarActivity {
         }
 
         @Override
-        public TableLayout getView(int position, View convertView, ViewGroup parent) {
-            final TableLayout result;
-            if (convertView instanceof TableLayout) {
-                result = (TableLayout) convertView;
-                result.removeAllViews();
-            } else {
-                result = new TableLayout(parent.getContext());
-            }
+        public int getViewTypeCount() {
+            return 5;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
             final RowBase row = getItem(position);
             if (row instanceof PairEntry.Row) {
-                return getView(position, (PairEntry.Row) row, parent, result);
+                final PairEntry entry = ((PairEntry.Row)row).getEntry();
+                final int rowCount = entry.pairs.size();
+                return rowCount > 1 ? 1 : 0;
             } else if (row instanceof TokenRow) {
-                return getView((TokenRow) row, parent, result);
+                final IndexEntry indexEntry = ((TokenRow)row).getIndexEntry();
+                return indexEntry.htmlEntries.isEmpty() ? 2 : 3;
             } else if (row instanceof HtmlEntry.Row) {
-                return getView((HtmlEntry.Row) row, parent, result);
+                return 4;
+            } else {
+                throw new IllegalArgumentException("Unsupported Row type: " + row.getClass());
+            }
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final RowBase row = getItem(position);
+            if (row instanceof PairEntry.Row) {
+                return getView(position, (PairEntry.Row) row, parent, (TableLayout)convertView);
+            } else if (row instanceof TokenRow) {
+                return getView((TokenRow) row, parent, (TextView)convertView);
+            } else if (row instanceof HtmlEntry.Row) {
+                return getView((HtmlEntry.Row) row, parent, (TextView)convertView);
             } else {
                 throw new IllegalArgumentException("Unsupported Row type: " + row.getClass());
             }
         }
 
         private TableLayout getView(final int position, PairEntry.Row row, ViewGroup parent,
-                                    final TableLayout result) {
+                                    TableLayout result) {
+            final Context context = parent.getContext();
+            if (result == null) {
+                result = new TableLayout(context);
+            } else {
+                result.removeAllViews();
+            }
             final PairEntry entry = row.getEntry();
             final int rowCount = entry.pairs.size();
 
@@ -1658,42 +1679,42 @@ public class DictionaryActivity extends ActionBarActivity {
             return result;
         }
 
-        private TableLayout getPossibleLinkToHtmlEntryView(final boolean isTokenRow,
+        private TextView getPossibleLinkToHtmlEntryView(final boolean isTokenRow,
                 final String text, final boolean hasMainEntry, final List<HtmlEntry> htmlEntries,
-                final String htmlTextToHighlight, ViewGroup parent, final TableLayout result) {
+                final String htmlTextToHighlight, ViewGroup parent, TextView textView) {
             final Context context = parent.getContext();
+            if (textView == null) {
+                textView = new TextView(context);
+                // set up things invariant across one ItemViewType
+                // ItemViewTypes handled here are:
+                // 2: isTokenRow == true, htmlEntries.isEmpty() == true
+                // 3: isTokenRow == true, htmlEntries.isEmpty() == false
+                // 4: isTokenRow == false, htmlEntries.isEmpty() == false
+                textView.setPadding(isTokenRow ? mPaddingDefault : mPaddingLarge, mPaddingDefault, mPaddingDefault, 0);
+                textView.setOnLongClickListener(indexIndex > 0 ? textViewLongClickListenerIndex1 : textViewLongClickListenerIndex0);
+                textView.setLongClickable(true);
 
-            final TableRow tableRow = new TableRow(result.getContext());
-            tableRow.setBackgroundResource(hasMainEntry ? theme.tokenRowMainBg
-                                           : theme.tokenRowOtherBg);
-            if (isTokenRow) {
-                tableRow.setPadding(mPaddingDefault, mPaddingDefault, mPaddingDefault, 0);
-            } else {
-                tableRow.setPadding(mPaddingLarge, mPaddingDefault, mPaddingDefault, 0);
+                // Doesn't work:
+                // textView.setTextColor(android.R.color.secondary_text_light);
+                textView.setTypeface(typeface);
+                if (isTokenRow) {
+                    textView.setTextAppearance(context, theme.tokenRowFg);
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 4 * fontSizeSp / 3);
+                } else {
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+                }
+                if (!htmlEntries.isEmpty()) {
+                    textView.setClickable(true);
+                    textView.setMovementMethod(LinkMovementMethod.getInstance());
+                }
             }
-            result.addView(tableRow);
+
+            textView.setBackgroundResource(hasMainEntry ? theme.tokenRowMainBg
+                                           : theme.tokenRowOtherBg);
 
             // Make it so we can long-click on these token rows, too:
-            final TextView textView = new TextView(context);
             textView.setText(text, BufferType.SPANNABLE);
             createTokenLinkSpans(textView, (Spannable) textView.getText(), text);
-            textView.setOnLongClickListener(indexIndex > 0 ? textViewLongClickListenerIndex1 : textViewLongClickListenerIndex0);
-            result.setLongClickable(true);
-
-            // Doesn't work:
-            // textView.setTextColor(android.R.color.secondary_text_light);
-            textView.setTypeface(typeface);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(0);
-            if (isTokenRow) {
-                textView.setTextAppearance(context, theme.tokenRowFg);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 4 * fontSizeSp / 3);
-            } else {
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-            }
-            lp.weight = 1.0f;
-
-            textView.setLayoutParams(lp);
-            tableRow.addView(textView);
 
             if (!htmlEntries.isEmpty()) {
                 final ClickableSpan clickableSpan = new ClickableSpan() {
@@ -1703,33 +1724,23 @@ public class DictionaryActivity extends ActionBarActivity {
                 };
                 ((Spannable) textView.getText()).setSpan(clickableSpan, 0, text.length(),
                         Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                result.setClickable(true);
-                textView.setClickable(true);
-                textView.setMovementMethod(LinkMovementMethod.getInstance());
                 textView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         showHtml(htmlEntries, htmlTextToHighlight);
                     }
                 });
-                result.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        textView.performClick();
-                    }
-                });
             }
-            result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-            return result;
+            return textView;
         }
 
-        private TableLayout getView(TokenRow row, ViewGroup parent, final TableLayout result) {
+        private TextView getView(TokenRow row, ViewGroup parent, final TextView result) {
             final IndexEntry indexEntry = row.getIndexEntry();
             return getPossibleLinkToHtmlEntryView(true, indexEntry.token, row.hasMainEntry,
                                                   indexEntry.htmlEntries, null, parent, result);
         }
 
-        private TableLayout getView(HtmlEntry.Row row, ViewGroup parent, final TableLayout result) {
+        private TextView getView(HtmlEntry.Row row, ViewGroup parent, final TextView result) {
             final HtmlEntry htmlEntry = row.getEntry();
             final TokenRow tokenRow = row.getTokenRow(true);
             return getPossibleLinkToHtmlEntryView(false,
