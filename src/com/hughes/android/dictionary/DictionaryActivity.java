@@ -1583,16 +1583,13 @@ public class DictionaryActivity extends ActionBarActivity {
                 // Set the columns in the table.
                 if (r > 0) {
                     final TextView bullet = new TextView(tableRow.getContext());
-                    bullet.setText(" • ");
+                    bullet.setText(" •");
                     tableRow.addView(bullet);
                 }
                 tableRow.addView(col1, layoutParams);
-                final TextView margin = new TextView(tableRow.getContext());
-                margin.setText(" ");
-                tableRow.addView(margin);
                 if (r > 0) {
                     final TextView bullet = new TextView(tableRow.getContext());
-                    bullet.setText(" • ");
+                    bullet.setText(" •");
                     tableRow.addView(bullet);
                 }
                 tableRow.addView(col2, layoutParams);
