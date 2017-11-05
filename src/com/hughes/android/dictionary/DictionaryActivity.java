@@ -39,6 +39,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.ClipboardManager;
 import android.text.InputType;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
@@ -1652,14 +1653,12 @@ public class DictionaryActivity extends ActionBarActivity {
                 final Pair pair = entry.pairs.get(r);
                 final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
                 final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
-
-                col1.setText(col1Text, TextView.BufferType.SPANNABLE);
-                col2.setText(col2Text, TextView.BufferType.SPANNABLE);
+                final Spannable col1Spannable = new SpannableString(col1Text);
+                final Spannable col2Spannable = new SpannableString(col2Text);
 
                 // Bold the token instances in col1.
                 final Set<String> toBold = toHighlight != null ? this.toHighlight : Collections
                                            .singleton(row.getTokenRow(true).getToken());
-                final Spannable col1Spannable = (Spannable) col1.getText();
                 for (final String token : toBold) {
                     int startPos = 0;
                     while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
@@ -1670,7 +1669,10 @@ public class DictionaryActivity extends ActionBarActivity {
                 }
 
                 createTokenLinkSpans(col1, col1Spannable, col1Text);
-                createTokenLinkSpans(col2, (Spannable) col2.getText(), col2Text);
+                createTokenLinkSpans(col2, col2Spannable, col2Text);
+
+                col1.setText(col1Spannable);
+                col2.setText(col2Spannable);
             }
 
             result.setOnClickListener(new TextView.OnClickListener() {
@@ -1717,8 +1719,9 @@ public class DictionaryActivity extends ActionBarActivity {
                                            : theme.tokenRowOtherBg);
 
             // Make it so we can long-click on these token rows, too:
-            textView.setText(text, BufferType.SPANNABLE);
-            createTokenLinkSpans(textView, (Spannable) textView.getText(), text);
+            final Spannable textSpannable = new SpannableString(text);
+            createTokenLinkSpans(textView, textSpannable, text);
+            textView.setText(textSpannable);
 
             if (!htmlEntries.isEmpty()) {
                 final ClickableSpan clickableSpan = new ClickableSpan() {
