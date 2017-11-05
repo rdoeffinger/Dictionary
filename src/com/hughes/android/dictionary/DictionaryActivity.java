@@ -1579,19 +1579,28 @@ public class DictionaryActivity extends ActionBarActivity {
         private TableLayout getView(final int position, PairEntry.Row row, ViewGroup parent,
                                     TableLayout result) {
             final Context context = parent.getContext();
-            if (result == null) {
-                result = new TableLayout(context);
-            } else {
-                result.removeAllViews();
-            }
             final PairEntry entry = row.getEntry();
             final int rowCount = entry.pairs.size();
+            if (result == null) {
+                result = new TableLayout(context);
+                // Because we have a Button inside a ListView row:
+                // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
+                result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                result.setClickable(true);
+                result.setFocusable(false);
+                result.setLongClickable(true);
+//                result.setBackgroundResource(android.R.drawable.menuitem_background);
+
+                result.setBackgroundResource(theme.normalRowBg);
+            } else if (result.getChildCount() > rowCount) {
+                result.removeViews(rowCount, result.getChildCount() - rowCount);
+            }
 
             final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
             layoutParams.weight = 0.5f;
             layoutParams.leftMargin = mPaddingLarge;
 
-            for (int r = 0; r < rowCount; ++r) {
+            for (int r = result.getChildCount(); r < rowCount; ++r) {
                 final TableRow tableRow = new TableRow(result.getContext());
 
                 final TextView col1 = new TextView(tableRow.getContext());
@@ -1617,8 +1626,29 @@ public class DictionaryActivity extends ActionBarActivity {
                 col1.setWidth(1);
                 col2.setWidth(1);
 
-                // Set what's in the columns.
+                col1.setTypeface(typeface);
+                col2.setTypeface(typeface);
+                col1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+                col2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
+                // col2.setBackgroundResource(theme.otherLangBg);
 
+                if (index.swapPairEntries) {
+                    col2.setOnLongClickListener(textViewLongClickListenerIndex0);
+                    col1.setOnLongClickListener(textViewLongClickListenerIndex1);
+                } else {
+                    col1.setOnLongClickListener(textViewLongClickListenerIndex0);
+                    col2.setOnLongClickListener(textViewLongClickListenerIndex1);
+                }
+
+                result.addView(tableRow);
+            }
+
+            for (int r = 0; r < rowCount; ++r) {
+                final TableRow tableRow = (TableRow)result.getChildAt(r);
+                final TextView col1 = (TextView)tableRow.getChildAt(r == 0 ? 0 : 1);
+                final TextView col2 = (TextView)tableRow.getChildAt(r == 0 ? 1 : 3);
+
+                // Set what's in the columns.
                 final Pair pair = entry.pairs.get(r);
                 final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
                 final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
@@ -1641,33 +1671,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
                 createTokenLinkSpans(col1, col1Spannable, col1Text);
                 createTokenLinkSpans(col2, (Spannable) col2.getText(), col2Text);
-
-                col1.setTypeface(typeface);
-                col2.setTypeface(typeface);
-                col1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-                col2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
-                // col2.setBackgroundResource(theme.otherLangBg);
-
-                if (index.swapPairEntries) {
-                    col2.setOnLongClickListener(textViewLongClickListenerIndex0);
-                    col1.setOnLongClickListener(textViewLongClickListenerIndex1);
-                } else {
-                    col1.setOnLongClickListener(textViewLongClickListenerIndex0);
-                    col2.setOnLongClickListener(textViewLongClickListenerIndex1);
-                }
-
-                result.addView(tableRow);
             }
-
-            // Because we have a Button inside a ListView row:
-            // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
-            result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-            result.setClickable(true);
-            result.setFocusable(false);
-            result.setLongClickable(true);
-//            result.setBackgroundResource(android.R.drawable.menuitem_background);
-
-            result.setBackgroundResource(theme.normalRowBg);
 
             result.setOnClickListener(new TextView.OnClickListener() {
                 @Override
