@@ -608,30 +608,33 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         }
 
         @Override
+        public int getViewTypeCount() {
+            return 3;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            final Row row = getItem(position);
+            if (row.dictionaryInfo == null) {
+                return row.onDevice ? 0 : 1;
+            }
+            return 2;
+        }
+
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView instanceof LinearLayout &&
-                    convertView != dictionariesOnDeviceHeaderRow &&
-                    convertView != downloadableDictionariesHeaderRow) {
-                /*
-                 * This is done to try to avoid leaking memory that used to
-                 * happen on Android 4.0.3
-                 */
-                ((LinearLayout) convertView).removeAllViews();
+            if (convertView == dictionariesOnDeviceHeaderRow ||
+                convertView == downloadableDictionariesHeaderRow) {
+                return convertView;
             }
 
             final Row row = getItem(position);
 
-            if (row.onDevice) {
-                if (row.dictionaryInfo == null) {
-                    return dictionariesOnDeviceHeaderRow;
-                }
-                return createDictionaryRow(row.dictionaryInfo, parent, true);
-            }
-
             if (row.dictionaryInfo == null) {
-                return downloadableDictionariesHeaderRow;
+                assert convertView == null;
+                return row.onDevice ? dictionariesOnDeviceHeaderRow : downloadableDictionariesHeaderRow;
             }
-            return createDictionaryRow(row.dictionaryInfo, parent, false);
+            return createDictionaryRow(row.dictionaryInfo, parent, convertView, row.onDevice);
         }
 
     }
@@ -644,10 +647,16 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     private View createDictionaryRow(final DictionaryInfo dictionaryInfo,
-                                     final ViewGroup parent, boolean canLaunch) {
+                                     final ViewGroup parent, View row, boolean canLaunch) {
 
-        View row = LayoutInflater.from(parent.getContext()).inflate(
+        if (row == null) {
+            row = LayoutInflater.from(parent.getContext()).inflate(
                        R.layout.dictionary_manager_row, parent, false);
+        } else {
+            // TODO: avoid this
+            LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
+            buttons.removeAllViews();
+        }
         final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
         final TextView details = (TextView) row.findViewById(R.id.dictionaryDetails);
         name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
@@ -710,21 +719,20 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (broken) {
             name.setText("Broken: " + application.getDictionaryName(dictionaryInfo.uncompressedFilename));
             builder.append("; Cannot be used, redownload, check hardware/file system");
-            // Allow deleting, but cannot open
-            row.setLongClickable(true);
         }
         details.setText(builder.toString());
 
         if (canLaunch) {
-            row.setClickable(true);
             row.setOnClickListener(new IntentLauncher(parent.getContext(),
                                    DictionaryActivity.getLaunchIntent(getApplicationContext(),
                                            application.getPath(dictionaryInfo.uncompressedFilename),
                                            dictionaryInfo.indexInfos.get(0).shortName, "")));
             // do not setFocusable, for keyboard navigation
             // offering only the index buttons is better.
-            row.setLongClickable(true);
         }
+        row.setClickable(canLaunch);
+        // Allow deleting, even if we cannot open
+        row.setLongClickable(broken || canLaunch);
         row.setBackgroundResource(android.R.drawable.menuitem_background);
 
         return row;
