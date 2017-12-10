@@ -1582,6 +1582,15 @@ public class DictionaryActivity extends ActionBarActivity {
             }
         }
 
+        private void addBoldSpans(String token, String col1Text, Spannable col1Spannable) {
+            int startPos = 0;
+            while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
+                col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos, startPos
+                                      + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                startPos += token.length();
+            }
+        }
+
         private TableLayout getView(final int position, PairEntry.Row row, ViewGroup parent,
                                     TableLayout result) {
             final Context context = parent.getContext();
@@ -1662,16 +1671,12 @@ public class DictionaryActivity extends ActionBarActivity {
                 final Spannable col2Spannable = new SpannableString(col2Text);
 
                 // Bold the token instances in col1.
-                final Set<String> toBold = toHighlight != null ? this.toHighlight : Collections
-                                           .singleton(row.getTokenRow(true).getToken());
-                for (final String token : toBold) {
-                    int startPos = 0;
-                    while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
-                        col1Spannable.setSpan(new StyleSpan(Typeface.BOLD), startPos, startPos
-                                              + token.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                        startPos += token.length();
+                if (toHighlight != null) {
+                    for (final String token : toHighlight) {
+                        addBoldSpans(token, col1Text, col1Spannable);
                     }
-                }
+                } else
+                    addBoldSpans(row.getTokenRow(true).getToken(), col1Text, col1Spannable);
 
                 createTokenLinkSpans(col1, col1Spannable, col1Text);
                 createTokenLinkSpans(col2, col2Spannable, col2Text);
