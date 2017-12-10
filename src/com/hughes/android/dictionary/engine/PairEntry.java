@@ -25,6 +25,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -47,9 +48,14 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     throws IOException {
         super(dictionary, raf, index);
         final int size = dictionary.dictFileVersion >= 7 ? StringUtil.readVarInt(raf) : raf.readInt();
-        pairs = new ArrayList<PairEntry.Pair>(size);
-        for (int i = 0; i < size; ++i) {
-            pairs.add(new Pair(raf.readUTF(), raf.readUTF()));
+        // Use singletonList for better performance in common case
+        if (size == 1) pairs = Collections.singletonList(new Pair(raf.readUTF(), raf.readUTF()));
+        else
+        {
+            pairs = new ArrayList<PairEntry.Pair>(size);
+            for (int i = 0; i < size; ++i) {
+                pairs.add(new Pair(raf.readUTF(), raf.readUTF()));
+            }
         }
     }
 
