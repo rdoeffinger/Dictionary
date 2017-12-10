@@ -1726,7 +1726,6 @@ public class DictionaryActivity extends ActionBarActivity {
             // Make it so we can long-click on these token rows, too:
             final Spannable textSpannable = new SpannableString(text);
             createTokenLinkSpans(textView, textSpannable, text);
-            textView.setText(textSpannable);
 
             if (!htmlEntries.isEmpty()) {
                 final ClickableSpan clickableSpan = new ClickableSpan() {
@@ -1734,7 +1733,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     public void onClick(View widget) {
                     }
                 };
-                ((Spannable) textView.getText()).setSpan(clickableSpan, 0, text.length(),
+                textSpannable.setSpan(clickableSpan, 0, text.length(),
                         Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 textView.setOnClickListener(new OnClickListener() {
                     @Override
@@ -1743,6 +1742,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     }
                 });
             }
+            textView.setText(textSpannable);
             return textView;
         }
 
