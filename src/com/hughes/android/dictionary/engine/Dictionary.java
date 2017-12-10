@@ -88,14 +88,14 @@ public class Dictionary implements RAFSerializable<Dictionary> {
 
             pairEntries = CachingList.create(
                               RAFList.create(ch, new PairEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " pairs: "),
-                              CACHE_SIZE);
+                              CACHE_SIZE, false);
             textEntries = CachingList.create(
                               RAFList.create(ch, new TextEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " text: "),
-                              CACHE_SIZE);
+                              CACHE_SIZE, true);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
                                   RAFList.create(ch, new HtmlEntry.Serializer(this, ch), ch.position(), dictFileVersion, dictInfo + " html: "),
-                                  CACHE_SIZE);
+                                  CACHE_SIZE, true);
             } else {
                 htmlEntries = Collections.emptyList();
             }

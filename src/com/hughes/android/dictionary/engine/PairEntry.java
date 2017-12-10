@@ -16,6 +16,7 @@ package com.hughes.android.dictionary.engine;
 
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFListSerializerSkippable;
 import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
 
@@ -63,7 +64,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         }
     }
 
-    static final class Serializer implements RAFListSerializer<PairEntry> {
+    static final class Serializer implements RAFListSerializerSkippable<PairEntry> {
 
         final Dictionary dictionary;
 
@@ -74,6 +75,25 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         @Override
         public PairEntry read(DataInput raf, int index) throws IOException {
             return new PairEntry(dictionary, raf, index);
+        }
+
+        @Override
+        public void skip(DataInput raf, int index) throws IOException {
+            final int size;
+            if (dictionary.dictFileVersion >= 7)
+            {
+                StringUtil.readVarInt(raf);
+                size = StringUtil.readVarInt(raf);
+            }
+            else
+            {
+                raf.skipBytes(2);
+                size = raf.readInt();
+            }
+            for (int i = 0; i < 2*size; ++i) {
+                int l = raf.readUnsignedShort();
+                raf.skipBytes(l);
+            }
         }
 
         @Override

@@ -136,7 +136,7 @@ public final class Index implements RAFSerializable<Index> {
         }
         sortedIndexEntries = CachingList.create(
                                  RAFList.create(inp, new IndexEntrySerializer(dict.dictFileVersion == 6 ? inp : null), inp.position(),
-                                                dict.dictFileVersion, dict.dictInfo + " idx " + languageCode + ": "), CACHE_SIZE);
+                                                dict.dictFileVersion, dict.dictInfo + " idx " + languageCode + ": "), CACHE_SIZE, true);
         if (dict.dictFileVersion >= 7) {
             int count = StringUtil.readVarInt(raf);
             stoplist = new HashSet<String>(count);
@@ -150,7 +150,7 @@ public final class Index implements RAFSerializable<Index> {
         }
         rows = CachingList.create(
                    UniformRAFList.create(inp, new RowBase.Serializer(this), inp.position()),
-                   CACHE_SIZE);
+                   CACHE_SIZE, true);
     }
 
     @Override
@@ -249,7 +249,7 @@ public final class Index implements RAFSerializable<Index> {
                 this.htmlEntries = CachingList.create(
                                        RAFList.create(ch, index.dict.htmlEntryIndexSerializer,
                                                       ch.position(), index.dict.dictFileVersion,
-                                                      index.dict.dictInfo + " htmlEntries: "), 1);
+                                                      index.dict.dictInfo + " htmlEntries: "), 1, false);
             } else {
                 this.htmlEntries = Collections.emptyList();
             }
