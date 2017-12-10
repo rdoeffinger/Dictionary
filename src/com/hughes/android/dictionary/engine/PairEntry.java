@@ -213,10 +213,6 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         public Pair(final String lang1, final String lang2) {
             this.lang1 = lang1;
             this.lang2 = lang2;
-            if (!(lang1.trim().length() > 0 && lang2.trim().length() > 0)) {
-                System.err.println("poop");
-            }
-            assert lang1.trim().length() > 0 || lang2.trim().length() > 0 : "Empty pair!!!";
             assert lang1.trim().length() > 0 && lang2.trim().length() > 0 : "Empty pair!!!";
         }
 
