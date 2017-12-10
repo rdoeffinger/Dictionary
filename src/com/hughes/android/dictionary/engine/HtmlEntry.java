@@ -3,6 +3,7 @@ package com.hughes.android.dictionary.engine;
 
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFListSerializerSkippable;
 import com.ibm.icu.text.Transliterator;
 
 import java.io.DataInput;
@@ -71,7 +72,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         return new Row(this.index, rowIndex, dictionaryIndex);
     }
 
-    static final class Serializer implements RAFListSerializer<HtmlEntry> {
+    static final class Serializer implements RAFListSerializerSkippable<HtmlEntry> {
 
         final Dictionary dictionary;
         final FileChannel ch;
@@ -85,6 +86,20 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         public HtmlEntry read(DataInput raf, final int index) throws IOException {
             return new HtmlEntry(dictionary, ch, raf, index);
         }
+
+        @Override
+        public void skip(DataInput raf, final int index) throws IOException {
+            if (dictionary.dictFileVersion >= 7)
+            {
+                StringUtil.readVarInt(raf);
+            }
+            else
+            {
+                raf.skipBytes(2);
+            }
+            int l = raf.readUnsignedShort();
+            raf.skipBytes(l);
+	}
 
         @Override
         public void write(DataOutput raf, HtmlEntry t) throws IOException {

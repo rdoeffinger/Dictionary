@@ -95,7 +95,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
                                   RAFList.create(ch, new HtmlEntry.Serializer(this, ch), ch.position(), dictFileVersion, dictInfo + " html: "),
-                                  CACHE_SIZE, true);
+                                  CACHE_SIZE, false);
             } else {
                 htmlEntries = Collections.emptyList();
             }
