@@ -1772,7 +1772,7 @@ public class DictionaryActivity extends ActionBarActivity {
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         final Matcher matcher = CHAR_DASH.matcher(text);
         while (matcher.find()) {
-            spannable.setSpan(new NonLinkClickableSpan(textColorFg), matcher.start(),
+            spannable.setSpan(new NonLinkClickableSpan(), matcher.start(),
                               matcher.end(),
                               Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         }

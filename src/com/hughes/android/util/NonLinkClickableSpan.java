@@ -23,10 +23,7 @@ public class NonLinkClickableSpan extends ClickableSpan {
     // The singleton pattern doesn't work here--we need a separate instance for
     // each span.
 
-    final int color;
-
-    public NonLinkClickableSpan(int color) {
-        this.color = color;
+    public NonLinkClickableSpan() {
     }
 
     // Won't see these on a long-click.
@@ -38,9 +35,6 @@ public class NonLinkClickableSpan extends ClickableSpan {
 
     @Override
     public void updateDrawState(TextPaint ds) {
-        super.updateDrawState(ds);
-        ds.setUnderlineText(false);
-        ds.setColor(color);
     }
 
 }
