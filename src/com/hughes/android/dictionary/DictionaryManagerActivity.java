@@ -60,6 +60,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -618,6 +619,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             if (row.dictionaryInfo == null) {
                 return row.onDevice ? 0 : 1;
             }
+            assert row.dictionaryInfo.indexInfos.size() <= 2;
             return 2;
         }
 
@@ -652,10 +654,6 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         if (row == null) {
             row = LayoutInflater.from(parent.getContext()).inflate(
                        R.layout.dictionary_manager_row, parent, false);
-        } else {
-            // TODO: avoid this
-            LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
-            buttons.removeAllViews();
         }
         final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
         final TextView details = (TextView) row.findViewById(R.id.dictionaryDetails);
@@ -681,21 +679,31 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                     downloadDictionary(downloadable.downloadUrl, downloadable.zipBytes, downloadButton);
                 }
             });
+            downloadButton.setVisibility(View.VISIBLE);
         } else {
-            downloadButton.setVisibility(View.INVISIBLE);
+            downloadButton.setVisibility(View.GONE);
         }
 
         LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
+
         final List<IndexInfo> sortedIndexInfos = application
                 .sortedIndexInfos(dictionaryInfo.indexInfos);
         final StringBuilder builder = new StringBuilder();
         if (updateAvailable) {
             builder.append(getString(R.string.updateAvailable));
         }
-        for (IndexInfo indexInfo : sortedIndexInfos) {
-            final View button = IsoUtils.INSTANCE.createButton(buttons.getContext(), dictionaryInfo,
+        assert buttons.getChildCount() == 4;
+        for (int i = 0; i < 2; i++) {
+            final Button textButton = (Button)buttons.getChildAt(2*i);
+            final ImageButton imageButton = (ImageButton)buttons.getChildAt(2*i + 1);
+            if (i >= sortedIndexInfos.size()) {
+                textButton.setVisibility(View.GONE);
+                imageButton.setVisibility(View.GONE);
+                continue;
+            }
+            final IndexInfo indexInfo = sortedIndexInfos.get(i);
+            final View button = IsoUtils.INSTANCE.setupButton(textButton, imageButton, dictionaryInfo,
                                 indexInfo, application.languageButtonPixels);
-            buttons.addView(button);
 
             if (canLaunch) {
                 button.setOnClickListener(
@@ -704,10 +712,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                                                application.getPath(dictionaryInfo.uncompressedFilename),
                                                indexInfo.shortName, "")));
 
-            } else {
-                button.setEnabled(false);
-                button.setFocusable(false);
             }
+            button.setEnabled(canLaunch);
+            button.setFocusable(canLaunch);
             if (builder.length() != 0) {
                 builder.append("; ");
             }
