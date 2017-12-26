@@ -1598,6 +1598,7 @@ public class DictionaryActivity extends ActionBarActivity {
             final int rowCount = entry.pairs.size();
             if (result == null) {
                 result = new TableLayout(context);
+                result.setStretchAllColumns(true);
                 // Because we have a Button inside a ListView row:
                 // http://groups.google.com/group/android-developers/browse_thread/thread/3d96af1530a7d62a?pli=1
                 result.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
@@ -1611,11 +1612,10 @@ public class DictionaryActivity extends ActionBarActivity {
                 result.removeViews(rowCount, result.getChildCount() - rowCount);
             }
 
-            final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
-            layoutParams.weight = 0.5f;
-            layoutParams.leftMargin = mPaddingLarge;
-
             for (int r = result.getChildCount(); r < rowCount; ++r) {
+                final TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.leftMargin = mPaddingLarge;
+
                 final TableRow tableRow = new TableRow(result.getContext());
 
                 final TextView col1 = new TextView(tableRow.getContext());
