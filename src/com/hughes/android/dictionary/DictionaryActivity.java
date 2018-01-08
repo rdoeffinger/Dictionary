@@ -1624,6 +1624,8 @@ public class DictionaryActivity extends ActionBarActivity {
                     col1.setTextIsSelectable(true);
                     col2.setTextIsSelectable(true);
                 }
+                col1.setTextColor(textColorFg);
+                col2.setTextColor(textColorFg);
 
                 // Set the columns in the table.
                 if (r > 0) {
