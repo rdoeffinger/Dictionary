@@ -1712,8 +1712,6 @@ public class DictionaryActivity extends ActionBarActivity {
                 textView.setOnLongClickListener(indexIndex > 0 ? textViewLongClickListenerIndex1 : textViewLongClickListenerIndex0);
                 textView.setLongClickable(true);
 
-                // Doesn't work:
-                // textView.setTextColor(android.R.color.secondary_text_light);
                 textView.setTypeface(typeface);
                 if (isTokenRow) {
                     textView.setTextAppearance(context, theme.tokenRowFg);
@@ -1721,6 +1719,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 } else {
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
                 }
+                textView.setTextColor(textColorFg);
                 if (!htmlEntries.isEmpty()) {
                     textView.setClickable(true);
                     textView.setMovementMethod(LinkMovementMethod.getInstance());
