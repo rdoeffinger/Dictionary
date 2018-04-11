@@ -6,7 +6,7 @@
     <string name="settings">Einstellungen</string>
     <string name="help">Hilfe</string>
     <string name="reportIssue">Problem melden</string>
-    <string name="no_dict_file">Bitte wählen Sie das Standartwörterbuch in den Einstellungen aus.</string>
+    <string name="no_dict_file">Bitte wählen Sie das Standardwörterbuch in den Einstellungen aus.</string>
 
     <!-- DictionaryManagerActivity -->
     <string name="dictionaryManager">Wörterbuch-Liste</string>
@@ -25,7 +25,7 @@
 
     <!-- Download. -->
     <string name="downloadFailed">Download fehlgeschlagen: \n%s.</string>
-    <string name="downloadManagerQueryFailed">Konnte Download Manager nicht beauftragen.\nIst er deaktiviert oder fehlt er?</string>
+    <string name="downloadManagerQueryFailed">Konnte Download-Manager nicht aufrufen.\nIst er deaktiviert oder fehlt er?</string>
     <string name="unzippingDictionary">Wörterbuch entpacken: \n%s</string>
     <string name="unzippingFailed">Entpacken fehlgeschlagen: \n%s</string>
     <string name="installationFinished">Installation beendet: \n%s.</string>
@@ -84,10 +84,10 @@
     <string name="saveOnlyFirstSubentrySummary">Bei mehrfachen Einträgen nur den ersten exportieren.</string>
     <string name="clickOpensContextMenuTitle">Kontextmenü</string>
     <string name="clickOpensContextMenuSummary">Kontextmenü bereits bei kurzem Klick auf einen Eintrag öffnen.</string>
-    <string name="showPrevNextButtonsTitle">Zeige hoch/runter Schaltflächen</string>
+    <string name="showPrevNextButtonsTitle">Zeige Schaltflächen "hoch"/"runter"</string>
     <string name="showPrevNextButtonsSummary">Zeige oder verstecke das vorherige und nächste Wort im Wörterbuch.</string>
     <string name="themeTitle">Farbschema</string>
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
-    <string name="chosenNotWritable">Ausgewähltes Verzeichnis nicht beschreibbar, versuche Eines von</string>
+    <string name="chosenNotWritable">Ausgewähltes Verzeichnis nicht beschreibbar, versuche eines von</string>
 
 </resources>
