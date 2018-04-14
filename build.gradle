@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.1'
     }
 }
 
@@ -18,13 +18,13 @@ configurations {
     smallicu
 }
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support:design:25.4.0'
-    // Note: you can just replace "smallicu" by compile
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support:design:25.4.0'
+    // Note: you can just replace "smallicu" by implementation
     // and remove the "compile files" part if you do not
     // care about the size of the apk
     smallicu 'com.ibm.icu:icu4j:57.1'
-    compile files("$buildDir/icu4j-57.1.small.jar") {
+    implementation files("$buildDir/icu4j-57.1.small.jar") {
         builtBy 'makesmallicu'
     }
 }
@@ -63,9 +63,6 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
-
-        // Move the tests to tests/java, tests/res, etc...
-        instrumentTest.setRoot('tests')
 
         // Move the build types to build-types/<type>
         // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
