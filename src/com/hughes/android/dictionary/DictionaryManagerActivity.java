@@ -499,6 +499,18 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             }
         });
 
+        final MenuItem browserDownload = menu.add(getString(R.string.browserDownload));
+        MenuItemCompat.setShowAsAction(browserDownload, MenuItem.SHOW_AS_ACTION_NEVER);
+        browserDownload.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(final MenuItem menuItem) {
+                final Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri
+                               .parse("https://github.com/rdoeffinger/Dictionary/releases/v0.2-dictionaries"));
+                startActivity(intent);
+                return false;
+            }
+        });
+
         application.onCreateGlobalOptionsMenu(this, menu);
         return true;
     }

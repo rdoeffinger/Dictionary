@@ -212,11 +212,13 @@ public enum DictionaryApplication {
     public static void onCreateGlobalOptionsMenu(
         final Context context, final Menu menu) {
         final Context c = context.getApplicationContext();
-        final MenuItem about = menu.add(c.getString(R.string.about));
-        MenuItemCompat.setShowAsAction(about, MenuItem.SHOW_AS_ACTION_NEVER);
-        about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+        final MenuItem preferences = menu.add(c.getString(R.string.settings));
+        MenuItemCompat.setShowAsAction(preferences, MenuItem.SHOW_AS_ACTION_NEVER);
+        preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
-                final Intent intent = new Intent(c, AboutActivity.class);
+                PreferenceActivity.prefsMightHaveChanged = true;
+                final Intent intent = new Intent(c, PreferenceActivity.class);
                 context.startActivity(intent);
                 return false;
             }
@@ -227,17 +229,6 @@ public enum DictionaryApplication {
         help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent(c));
-                return false;
-            }
-        });
-
-        final MenuItem preferences = menu.add(c.getString(R.string.settings));
-        MenuItemCompat.setShowAsAction(preferences, MenuItem.SHOW_AS_ACTION_NEVER);
-        preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                PreferenceActivity.prefsMightHaveChanged = true;
-                final Intent intent = new Intent(c, PreferenceActivity.class);
-                context.startActivity(intent);
                 return false;
             }
         });
@@ -254,13 +245,11 @@ public enum DictionaryApplication {
             }
         });
 
-        final MenuItem browserDownload = menu.add(c.getString(R.string.browserDownload));
-        MenuItemCompat.setShowAsAction(browserDownload, MenuItem.SHOW_AS_ACTION_NEVER);
-        browserDownload.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        final MenuItem about = menu.add(c.getString(R.string.about));
+        MenuItemCompat.setShowAsAction(about, MenuItem.SHOW_AS_ACTION_NEVER);
+        about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
-                final Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri
-                               .parse("https://github.com/rdoeffinger/Dictionary/releases/v0.2-dictionaries"));
+                final Intent intent = new Intent(c, AboutActivity.class);
                 context.startActivity(intent);
                 return false;
             }

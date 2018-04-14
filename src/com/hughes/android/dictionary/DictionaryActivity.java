@@ -974,8 +974,6 @@ public class DictionaryActivity extends ActionBarActivity {
             }
         });
 
-        application.onCreateGlobalOptionsMenu(this, menu);
-
         {
             final MenuItem dictionaryManager = menu.add(getString(R.string.dictionaryManager));
             MenuItemCompat.setShowAsAction(dictionaryManager, MenuItem.SHOW_AS_ACTION_NEVER);
@@ -1045,6 +1043,8 @@ public class DictionaryActivity extends ActionBarActivity {
                 }
             });
         }
+
+        application.onCreateGlobalOptionsMenu(this, menu);
 
         return true;
     }
