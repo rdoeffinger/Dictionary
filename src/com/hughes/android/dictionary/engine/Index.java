@@ -305,6 +305,20 @@ public final class Index implements RAFSerializable<Index> {
         return NormalizeComparator.compareWithoutDash(token, entry.normalizedToken(), sortCollator, dict.dictFileVersion);
     }
 
+    private int findMatchLen(final Comparator sortCollator, String a, String b) {
+        int start = 0;
+        int end = Math.min(a.length(), b.length());
+        while (start < end)
+        {
+            int mid = (start + end + 1) / 2;
+            if (sortCollator.compare(a.substring(0, mid), b.substring(0, mid)) == 0)
+                start = mid;
+            else
+                end = mid - 1;
+        }
+        return start;
+    }
+
     public int findInsertionPointIndex(String token, final AtomicBoolean interrupted) {
         token = normalizeToken(token);
 
@@ -350,6 +364,15 @@ public final class Index implements RAFSerializable<Index> {
                     start = mid + 1;
                 }
             }
+        }
+
+        // if the word before is the better match, move
+        // our result to it
+        if (start > 0 && start < sortedIndexEntries.size()) {
+            String prev = sortedIndexEntries.get(start - 1).normalizedToken();
+            String next = sortedIndexEntries.get(start).normalizedToken();
+            if (findMatchLen(sortCollator, token, prev) >= findMatchLen(sortCollator, token, next))
+                start--;
         }
 
         // If we search for a substring of a string that's in there, return
