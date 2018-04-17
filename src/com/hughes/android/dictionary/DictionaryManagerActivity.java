@@ -186,8 +186,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 }
 
                 Log.w(LOG, "Download finished: " + dest + " Id: " + downloadId);
-                Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
-                               Toast.LENGTH_LONG).show();
+                if (!isFinishing())
+                    Toast.makeText(context, getString(R.string.unzippingDictionary, dest),
+                                   Toast.LENGTH_LONG).show();
 
                 if (unzipInstall(context, Uri.parse(dest), dest, true)) {
                     finishedDownloadIds.add(downloadId);
@@ -233,8 +234,9 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             zipOut = new FileOutputStream(targetFile);
             copyStream(zipFile, zipOut);
             application.backgroundUpdateDictionaries(dictionaryUpdater);
-            Toast.makeText(context, getString(R.string.installationFinished, dest),
-                           Toast.LENGTH_LONG).show();
+            if (!isFinishing())
+                Toast.makeText(context, getString(R.string.installationFinished, dest),
+                               Toast.LENGTH_LONG).show();
             result = true;
         } catch (Exception e) {
             String msg = getString(R.string.unzippingFailed, dest + ": " + e.getMessage());

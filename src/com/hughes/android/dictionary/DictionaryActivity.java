@@ -784,7 +784,8 @@ public class DictionaryActivity extends ActionBarActivity {
                 Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult);
             }
         } catch (Exception e) {
-            Toast.makeText(this, getString(R.string.TTSbroken), Toast.LENGTH_LONG).show();
+            if (!isFinishing())
+                Toast.makeText(this, getString(R.string.TTSbroken), Toast.LENGTH_LONG).show();
         }
     }
 
