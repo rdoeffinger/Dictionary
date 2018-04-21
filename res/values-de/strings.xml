@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
     <!-- Global. -->
     <string name="about">Über QuickDic</string>
     <string name="settings">Einstellungen</string>
     <string name="help">Hilfe</string>
     <string name="reportIssue">Problem melden</string>
+    <string name="browserDownload">Im Browser herunterladen</string>
     <string name="no_dict_file">Bitte wählen Sie das Standardwörterbuch in den Einstellungen aus.</string>
 
     <!-- DictionaryManagerActivity -->
@@ -21,14 +23,23 @@
     <string name="managerShow">Zeigen</string>
     <string name="managerHide">Verstecken</string>
     <string name="error">Fehler</string>
-    <string name="unableToReadDictionaryDir">Fehler beim Lesen des Wörterbuch Verzeichnis: \n%1$s\n\nAndroid externer Speicher Verzeichnis: \n%2$s</string>
+    <string name="unableToReadDictionaryDir">Fehler beim Lesen des Wörterbuch Verzeichnis: \n
+  %1$s\n
+  \n
+  Android externer Speicher Verzeichnis: \n
+  %2$s</string>
 
     <!-- Download. -->
-    <string name="downloadFailed">Download fehlgeschlagen: \n%s.</string>
-    <string name="downloadManagerQueryFailed">Konnte Download-Manager nicht aufrufen.\nIst er deaktiviert oder fehlt er?</string>
-    <string name="unzippingDictionary">Wörterbuch entpacken: \n%s</string>
-    <string name="unzippingFailed">Entpacken fehlgeschlagen: \n%s</string>
-    <string name="installationFinished">Installation beendet: \n%s.</string>
+    <string name="downloadFailed">Download fehlgeschlagen: \n
+  %s.</string>
+    <string name="downloadManagerQueryFailed">Konnte Download-Manager nicht aufrufen.\n
+  Ist er deaktiviert oder fehlt er?</string>
+    <string name="unzippingDictionary">Wörterbuch entpacken: \n
+  %s</string>
+    <string name="unzippingFailed">Entpacken fehlgeschlagen: \n
+  %s</string>
+    <string name="installationFinished">Installation beendet: \n
+  %s.</string>
     <string name="notWritable">Wörterbuch Verzeichnis %s ist nicht beschreibbar. Bitte ändern Sie dies in den Einstellungen.</string>
 
     <!-- DictionaryActivity -->
@@ -60,10 +71,7 @@
     <string name="sourceInfo">%1$s : %2$,d Einträge</string>
 
     <!-- About. -->
-    <string name="contactMe">     Wenn Sie QuickDic benutzen, würde ich gerne von Ihnen hören.
-     Leider kann ich keine Verantwortung für die Wörterbücher (außer Formatierung) nehmen, weil sie aus anderen Quellen erzeugt werden.
-     Danke an Michael Vogel für Hilfe mit dem Icon und den deutschen Übersetzungen.
-     Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:</string>
+    <string name="contactMe">Wenn Sie QuickDic benutzen, würde ich gerne von Ihnen hören.      Leider kann ich keine Verantwortung für die Wörterbücher (außer Formatierung) nehmen, weil sie aus anderen Quellen erzeugt werden.      Danke an Michael Vogel für Hilfe mit dem Icon und den deutschen Übersetzungen.      Bitte senden Sie Kommentare, Anregungen, Bug-Reports, oder einfach nur ein kurzes Hallo an:</string>
     <string name="webPage">Weitere Informationen finden Sie unter:</string>
     <string name="contributionsFrom">Beiträge von:</string>
     <string name="license">QuickDic enthält Programmcode, der unter der Apache-2.0-Lizenz steht und an dem Google die Rechte besitzt.</string>
@@ -84,7 +92,7 @@
     <string name="saveOnlyFirstSubentrySummary">Bei mehrfachen Einträgen nur den ersten exportieren.</string>
     <string name="clickOpensContextMenuTitle">Kontextmenü</string>
     <string name="clickOpensContextMenuSummary">Kontextmenü bereits bei kurzem Klick auf einen Eintrag öffnen.</string>
-    <string name="showPrevNextButtonsTitle">Zeige Schaltflächen "hoch"/"runter"</string>
+    <string name="showPrevNextButtonsTitle">Zeige Schaltflächen \"hoch\"/\"runter\"</string>
     <string name="showPrevNextButtonsSummary">Zeige oder verstecke das vorherige und nächste Wort im Wörterbuch.</string>
     <string name="themeTitle">Farbschema</string>
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
