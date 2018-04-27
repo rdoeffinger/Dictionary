@@ -6,6 +6,7 @@
     <string name="settings">Einstellungen</string>
     <string name="help">Hilfe</string>
     <string name="reportIssue">Problem melden</string>
+    <string name="browserDownload">Im Browser herunterladen</string>
     <string name="no_dict_file">Bitte wählen Sie das Standardwörterbuch in den Einstellungen aus.</string>
 
     <!-- DictionaryManagerActivity -->
