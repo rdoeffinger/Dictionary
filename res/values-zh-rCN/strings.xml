@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Global. -->
+    <string name="about">关于 QuickDic</string>
+    <string name="settings">设置</string>
+    <string name="help">帮助</string>
+    <string name="reportIssue">报告问题</string>
+    <string name="browserDownload">用浏览器下载</string>
+    <string name="no_dict_file">请在设置中选定一本默认词典</string>
+
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">词典管理器</string>
+    <string name="dictionariesOnDevice">设备上的词典</string>
+    <string name="downloadableDictionaries">可下载的词典</string>
+    <string name="sortDicts">排序词典</string>
+    <string name="downloadButton">%.1fMB</string>
+    <string name="updateAvailable">更新!</string>
+    <string name="moveToTop">回到顶部</string>
+    <string name="deleteDictionary">删除词典</string>
+    <string name="indexInfo">%1$s: %2$,d 个单词</string>
+    <string name="managerShow">显示</string>
+    <string name="managerHide">隐藏</string>
+    <string name="error">错误</string>
+    <string name="unableToReadDictionaryDir">无法读取词典目录：\n%1$s\n\nAndroid 外部存储目录：\n%2$s</string>
+
+    <!-- Download. -->
+    <string name="downloadFailed">下载失败：\n%s.</string>
+    <string name="downloadManagerQueryFailed">无法请求下载管理器。\n是否已被禁用或遗失？</string>
+    <string name="unzippingDictionary">正在解压词典：\n%s</string>
+    <string name="unzippingFailed">解压失败：\n%s</string>
+    <string name="installationFinished">安装完毕：\n%s.</string>
+    <string name="notWritable">词典位置 %s 不可读，请在设置中更改</string>
+
+    <!-- DictionaryActivity -->
+    <string name="searchText">搜索文本</string>
+    <string name="selectDictionary">选择词典…</string>
+    <string name="addToWordList">添加到单词表：%s</string>
+    <string name="searchForSelection">搜索：%s</string>
+    <string name="failedAddingToWordList">未能添加到单词表：%s</string>
+    <string name="invalidDictionary">无效的词典：文件=%1$s, 错误=%2$s</string>
+    <string name="noSearchResults">查无所获</string>
+    <string name="aboutDictionary">关于词典</string>
+    <string name="fontFailure">未能应用字体：%s</string>
+    <string name="seeAlso">另见：%1$s (%2$s)</string>
+    <string name="speak">朗读</string>
+    <string name="speak_left">朗读左侧</string>
+    <string name="speak_right">朗读右侧</string>
+    <string name="nextWord">下个单词</string>
+    <string name="previousWord">上个单词</string>
+    <string name="randomWord">随机单词</string>
+    <string name="TTSbroken">该设备上的 TTS 已失效</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">文件：%s</string>
+    <string name="dictionarySize">大小：%,d 字节</string>
+    <string name="dictionaryCreationTime">创建时间：%tc</string>
+    <string name="indexName">索引：%s</string>
+    <string name="mainTokenCount">词数：%,d</string>
+    <string name="sources">来源</string>
+    <string name="sourceInfo">%1$s : %2$,d 个入口</string>
+
+    <!-- About. -->
+    <string name="contactMe">如果您正在使用 QuickDic，我很乐意收到您的来信。
+  遗憾的是，我不能对词典的内容负责（除排版外）因为它生成自其他来源。
+  请将留言、建议、错误报告或仅一段简短的问候发到：</string>
+    <string name="webPage">更多信息请见：</string>
+    <string name="contributionsFrom">贡献来自：</string>
+    <string name="license">QuickDic 包含著作权归 Google 所有的代码并在 Apache 2.0 许可证下发布</string>
+
+    <!-- Preferences -->
+
+    <string name="defaultDicTitle">默认词典</string>
+    <string name="defaultDicSummary">在未作详细要求时运行的词典</string>
+    <string name="quickdicDirectoryTitle">QuickDic 目录</string>
+    <string name="quickdicDirectorySummary">QuickDic 存储词典的目录（留空以使用 quickDic 在外部存储上的默认文件夹）</string>
+    <string name="wordListFileTitle">单词表文件</string>
+    <string name="wordListFileSummary">存储附加单词表的本地文件</string>
+    <string name="fontTitle">词典字体</string>
+    <string name="fontSummary">用于显示词典的字体</string>
+    <string name="fontSizeTitle">字号</string>
+    <string name="fontSizeSummary">词典中的字体大小</string>
+    <string name="saveOnlyFirstSubentryTitle">仅保存第一个子入口</string>
+    <string name="saveOnlyFirstSubentrySummary">对于有多个子入口的入口，只将其第一个写入单词表</string>
+    <string name="clickOpensContextMenuTitle">单击打开上下文目录</string>
+    <string name="clickOpensContextMenuSummary">在单击入口时打开上下文目录（长按将总是打开上下文目录）</string>
+    <string name="showPrevNextButtonsTitle">显示向前/向后按钮</string>
+    <string name="showPrevNextButtonsSummary">在词典视图中显示或隐藏到上个单词和下个单词的按钮</string>
+    <string name="themeTitle">界面主题</string>
+    <string name="themeSummary">用户界面的主题色</string>
+    <string name="chosenNotWritable">选定的目录不可写，请尝试</string>
+
+</resources>

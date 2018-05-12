@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string-array name="fonts">
+    <item>FreeSerif</item>
+    <item>系统默认</item>
+    <item>系统衬线体</item>
+    <item>系统无衬线体</item>
+    <item>系统等宽字体</item>
+  </string-array>
+
+  <string-array name="themes">
+    <item>亮色主题</item>
+    <item>暗色主题（默认）</item>
+  </string-array>
+
+</resources>
