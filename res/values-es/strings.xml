@@ -40,7 +40,7 @@
     <string name="noSearchResults">La búsqueda no dio resultados.</string>
     <string name="aboutDictionary">Acerca del diccionario</string>
     <string name="fontFailure">Error de tipo de letra: %s</string>
-    <string name="seeAlso">Vea también: %s</string>
+    <string name="seeAlso">Vea también: %1$s (%2$s)</string>
     <string name="speak">Locución</string>
     <string name="nextWord">Siguiente palabra</string>
     <string name="previousWord">Anterior palabra</string>
