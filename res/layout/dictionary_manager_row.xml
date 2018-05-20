@@ -17,9 +17,13 @@
             android:orientation="horizontal"
             android:paddingRight="5dip" >
             <Button android:layout_width="60dip" android:layout_height="40dip" />
-            <ImageButton android:layout_width="60dip" android:layout_height="40dip" />
+            <ImageButton android:layout_width="60dip" android:layout_height="40dip"
+                android:contentDescription="first language"
+                tools:ignore="HardcodedText" />
             <Button android:layout_width="60dip" android:layout_height="40dip" />
-            <ImageButton android:layout_width="60dip" android:layout_height="40dip" />
+            <ImageButton android:layout_width="60dip" android:layout_height="40dip"
+                android:contentDescription="second language"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
         <!--

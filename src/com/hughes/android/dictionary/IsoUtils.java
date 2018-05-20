@@ -245,6 +245,7 @@ public enum IsoUtils {
             result = textButton;
         } else {
             imageButton.setImageResource(languageResources.flagId);
+            imageButton.setContentDescription(isoCodeToLocalizedLanguageName(imageButton.getContext(), indexInfo.shortName));
             imageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
             textButton.setVisibility(View.GONE);
             imageButton.setVisibility(View.VISIBLE);

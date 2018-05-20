@@ -51,7 +51,7 @@
             android:clickable="true"
             android:text="@string/myEmail"
             android:paddingBottom="10dip"
-            />
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/webPage"
@@ -68,7 +68,7 @@
             android:clickable="true"
             android:text="@string/webPageUrl"
             android:paddingBottom="10dip"
-             />
+            android:focusable="true" />
 
          <TextView
             android:id="@+id/textView5"
@@ -82,7 +82,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:autoLink="web"
-            android:clickable="true"
             android:text="Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano, 'Akira"
             android:paddingBottom="10dip"
             tools:ignore="HardcodedText" />
