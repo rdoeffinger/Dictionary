@@ -25,23 +25,23 @@ public abstract class AbstractEntry extends IndexedObject {
 
     public final EntrySource entrySource;
 
-    protected AbstractEntry(EntrySource entrySource) {
+    AbstractEntry(EntrySource entrySource) {
         super(-1);
         this.entrySource = entrySource;
     }
 
-    public AbstractEntry(Dictionary dictionary, DataInput raf, final int index)
+    AbstractEntry(Dictionary dictionary, DataInput raf, final int index)
     throws IOException {
         super(index);
         if (dictionary.dictFileVersion >= 1) {
-            final int entrySouceIdx = dictionary.dictFileVersion >= 7 ? StringUtil.readVarInt(raf) : raf.readShort();
-            this.entrySource = dictionary.sources.get(entrySouceIdx);
+            final int entrySourceIdx = dictionary.dictFileVersion >= 7 ? StringUtil.readVarInt(raf) : raf.readShort();
+            this.entrySource = dictionary.sources.get(entrySourceIdx);
         } else {
             this.entrySource = null;
         }
     }
 
-    public void write(DataOutput raf) throws IOException {
+    void write(DataOutput raf) throws IOException {
         StringUtil.writeVarInt(raf, entrySource.index());
     }
 

@@ -21,12 +21,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class Language {
 
     public static final class LanguageResources {
-        public final String englishName;
+        final String englishName;
         public final int nameId;
         public final int flagId;
 
@@ -41,12 +40,10 @@ public class Language {
         }
     }
 
-    private static final Map<String, Language> registry = new HashMap<String, Language>();
+    private static final Map<String, Language> registry = new HashMap<>();
 
-    final String isoCode;
-    final Locale locale;
-
-    private Comparator collator;
+    private final String isoCode;
+    private final Locale locale;
 
     private Language(final Locale locale, final String isoCode) {
         this.locale = locale;
@@ -64,14 +61,16 @@ public class Language {
         return isoCode;
     }
 
-    public synchronized Comparator getCollator() {
+    public synchronized Comparator<Object> getCollator() {
         if (!DictionaryApplication.USE_COLLATOR)
-            return String.CASE_INSENSITIVE_ORDER;
-        // Don't think this is thread-safe...
-        // if (collator == null) {
-        this.collator = CollatorWrapper.getInstanceStrengthIdentical(locale);
-        // }
-        return collator;
+            return new Comparator<Object>() {
+                @Override
+                public int compare(Object o, Object t1) {
+                    return String.class.cast(o).compareToIgnoreCase(String.class.cast(t1));
+                }
+            };
+        // TODO: consider if this should be cached - but must be thread-safe
+        return CollatorWrapper.getInstanceStrengthIdentical(locale);
     }
 
     public String getDefaultNormalizerRules() {
@@ -86,24 +85,16 @@ public class Language {
     private static final String rtlChars =
         "\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC";
 
-    private static final String puncChars =
-        "\\[\\]\\(\\)\\{\\}\\=";
-
-    private static final Pattern RTL_LEFT_BOUNDARY = Pattern.compile("([" + puncChars + "])(["
-            + rtlChars + "])");
-    private static final Pattern RTL_RIGHT_BOUNDARY = Pattern.compile("([" + rtlChars + "])(["
-            + puncChars + "])");
-
+    @SuppressWarnings("unused")
     public static String fixBidiText(String text) {
-        // text = RTL_LEFT_BOUNDARY.matcher(text).replaceAll("$1\u200e $2");
-        // text = RTL_RIGHT_BOUNDARY.matcher(text).replaceAll("$1 \u200e$2");
+        // TODO: RTL text (e.g. arabic) in parenthesis might need extra
+        // \u200e markers sometimes - check what exactly is going on there.
         return text;
     }
 
     // ----------------------------------------------------------------
 
     public static final Language en = new Language(Locale.ENGLISH, "EN");
-    public static final Language fr = new Language(Locale.FRENCH, "FR");
     public static final Language it = new Language(Locale.ITALIAN, "IT");
 
     public static final Language de = new Language(Locale.GERMAN, "DE") {

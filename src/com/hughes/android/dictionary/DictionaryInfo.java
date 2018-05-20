@@ -16,7 +16,6 @@ package com.hughes.android.dictionary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class DictionaryInfo implements Serializable {
 
@@ -25,10 +24,10 @@ public class DictionaryInfo implements Serializable {
     public static final class IndexInfo implements Serializable {
         private static final long serialVersionUID = 6524751236198309438L;
 
-        public static final int NUM_CSV_FIELDS = 3;
+        static final int NUM_CSV_FIELDS = 3;
 
         public final String shortName; // Often LangISO.
-        public final int allTokenCount;
+        final int allTokenCount;
         public final int mainTokenCount;
 
         public IndexInfo(String shortName, int allTokenCount, int mainTokenCount) {
@@ -37,11 +36,10 @@ public class DictionaryInfo implements Serializable {
             this.mainTokenCount = mainTokenCount;
         }
 
-        public StringBuilder append(StringBuilder result) {
+        void append(StringBuilder result) {
             result.append(shortName);
             result.append("\t").append(allTokenCount);
             result.append("\t").append(mainTokenCount);
-            return result;
         }
 
         public IndexInfo(final String[] fields, int i) {
@@ -57,7 +55,7 @@ public class DictionaryInfo implements Serializable {
     public long uncompressedBytes;
     public long zipBytes;
     public long creationMillis;
-    public final ArrayList<IndexInfo> indexInfos = new ArrayList<IndexInfo>();
+    public final ArrayList<IndexInfo> indexInfos = new ArrayList<>();
     public String dictInfo;
 
     public DictionaryInfo() {

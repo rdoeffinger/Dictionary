@@ -10,7 +10,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.nio.channels.FileChannel;
@@ -21,7 +20,8 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 
     // Title is not HTML escaped.
     public final String title;
-    public final LazyHtmlLoader lazyHtmlLoader;
+    private final LazyHtmlLoader lazyHtmlLoader;
+    @SuppressWarnings("WeakerAccess")
     public String html;
 
     public HtmlEntry(final EntrySource entrySource, String title) {
@@ -38,18 +38,18 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         html = null;
     }
 
-    public void writeBase(DataOutput raf) throws IOException {
+    private void writeBase(DataOutput raf) throws IOException {
         super.write(raf);
         raf.writeUTF(title);
     }
 
-    public void writeData(DataOutput raf) throws IOException {
+    private void writeData(DataOutput raf) throws IOException {
         final byte[] bytes = getHtml().getBytes("UTF-8");
         StringUtil.writeVarInt(raf, bytes.length);
         raf.write(bytes);
     }
 
-    public static byte[] readData(DataInput raf) throws IOException {
+    private static byte[] readData(DataInput raf) throws IOException {
         int len = StringUtil.readVarInt(raf);
         final byte[] bytes = new byte[Math.min(len, 20 * 1024 * 1024)];
         raf.readFully(bytes);
@@ -132,7 +132,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         }
     }
 
-    public String getRawText(final boolean compact) {
+    private String getRawText(final boolean compact) {
         return title + ":\n" + getHtml();
     }
 
@@ -152,8 +152,6 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     // --------------------------------------------------------------------
 
     public static class Row extends RowBase {
-
-        boolean isExpanded = false;
 
         Row(final DataInput raf, final int thisRowIndex,
             final Index index, int extra) throws IOException {
@@ -215,6 +213,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         return result.toString();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static String formatQuickdicUrl(final String indexShortName, final String text) {
         assert !indexShortName.contains(":");
         assert text.length() > 0;
@@ -227,6 +226,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 
     // --------------------------------------------------------------------
 
+    @SuppressWarnings("WeakerAccess")
     public static final class LazyHtmlLoader {
         final DataInput raf;
         final FileChannel ch;
@@ -237,7 +237,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         final int index;
 
         // Not sure this volatile is right, but oh well.
-        volatile SoftReference<String> htmlRef = new SoftReference<String>(null);
+        volatile SoftReference<String> htmlRef = new SoftReference<>(null);
 
         private LazyHtmlLoader(FileChannel ch, final DataInput inp, List<byte[]> data, int index) throws IOException {
             this.data = data;
@@ -258,7 +258,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
             raf.skipBytes(numZipBytes);
         }
 
-        public String getHtml() {
+        String getHtml() {
             String html = htmlRef.get();
             if (html != null) {
                 return html;
@@ -269,7 +269,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("Dictionary HTML data corrupted", e);
                 }
-                htmlRef = new SoftReference<String>(html);
+                htmlRef = new SoftReference<>(html);
                 return html;
             }
             System.out.println("Loading Html: numBytes=" + numBytes + ", numZipBytes="
@@ -289,7 +289,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
             } catch (IOException e) {
                 throw new RuntimeException("Dictionary HTML data corrupted", e);
             }
-            htmlRef = new SoftReference<String>(html);
+            htmlRef = new SoftReference<>(html);
             return html;
         }
     }

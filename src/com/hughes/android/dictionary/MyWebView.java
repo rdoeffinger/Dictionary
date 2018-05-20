@@ -15,11 +15,11 @@ import com.hughes.util.StringUtil;
 
 public class MyWebView extends WebView {
 
-    static final String LOG = "MyWebView";
+    private static final String LOG = "MyWebView";
 
     HtmlDisplayActivity activity;
 
-    public static void quickdicUrlToIntent(final String url, final Intent intent) {
+    private static void quickdicUrlToIntent(final String url, final Intent intent) {
         int firstColon = url.indexOf("?");
         if (firstColon == -1)
             return;

@@ -35,7 +35,7 @@ public enum IsoUtils {
 
     // Useful:
     // http://www.loc.gov/standards/iso639-2/php/code_list.php
-    private final Map<String, LanguageResources> isoCodeToResources = new HashMap<String, LanguageResources>();
+    private final Map<String, LanguageResources> isoCodeToResources = new HashMap<>();
     IsoUtils() {
         isoCodeToResources.put("AF", new LanguageResources("Afrikaans", R.string.AF,
                                R.drawable.flag_of_south_africa));
@@ -185,14 +185,12 @@ public enum IsoUtils {
         isoCodeToResources.put("LO", new LanguageResources("Lao", R.string.LO,
                                R.drawable.flag_of_laos));
         isoCodeToResources.put("ML", new LanguageResources("Malayalam", R.string.ML));
-        isoCodeToResources.put("SL", new LanguageResources("Slovenian", R.string.SL,
-                               R.drawable.flag_of_slovenia));
         isoCodeToResources.put("TA", new LanguageResources("Tamil", R.string.TA));
         isoCodeToResources.put("SH", new LanguageResources("Serbo-Croatian", R.string.SH));
         isoCodeToResources.put("SD", new LanguageResources("Sindhi", R.string.SD));
 
         // Hack to allow lower-case ISO codes to work:
-        for (final String isoCode : new ArrayList<String>(isoCodeToResources.keySet())) {
+        for (final String isoCode : new ArrayList<>(isoCodeToResources.keySet())) {
             isoCodeToResources.put(isoCode.toLowerCase(), isoCodeToResources.get(isoCode));
         }
     }
@@ -216,7 +214,7 @@ public enum IsoUtils {
         return lang;
     }
 
-    public View createButton(final Context context, final DictionaryInfo dictionaryInfo,
+    public View createButton(final Context context,
                              final IndexInfo indexInfo, int size) {
         LanguageResources languageResources = isoCodeToResources.get(indexInfo.shortName);
         View result;
@@ -236,8 +234,7 @@ public enum IsoUtils {
     }
 
     public View setupButton(Button textButton, ImageButton imageButton,
-                            final DictionaryInfo dictionaryInfo,
-                            final IndexInfo indexInfo, int size) {
+                            final IndexInfo indexInfo) {
         LanguageResources languageResources = isoCodeToResources.get(indexInfo.shortName);
         View result;
 

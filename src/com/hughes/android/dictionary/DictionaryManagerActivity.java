@@ -19,7 +19,6 @@ import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,17 +32,17 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -53,7 +52,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -77,7 +75,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -87,16 +84,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 // Right-click:
 //  Delete, move to top.
 
-public class DictionaryManagerActivity extends ActionBarActivity {
+public class DictionaryManagerActivity extends AppCompatActivity {
 
-    static final String LOG = "QuickDic";
-    static boolean blockAutoLaunch = false;
+    private static final String LOG = "QuickDic";
+    private static boolean blockAutoLaunch = false;
 
     private ListView listView;
     private ListView getListView() {
@@ -113,19 +109,19 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     // For DownloadManager bug workaround
-    private Set<Long> finishedDownloadIds = new HashSet<Long>();
+    private final Set<Long> finishedDownloadIds = new HashSet<>();
 
-    DictionaryApplication application;
+    private DictionaryApplication application;
 
-    SearchView filterSearchView;
-    ToggleButton showDownloadable;
+    private SearchView filterSearchView;
+    private ToggleButton showDownloadable;
 
-    LinearLayout dictionariesOnDeviceHeaderRow;
-    LinearLayout downloadableDictionariesHeaderRow;
+    private LinearLayout dictionariesOnDeviceHeaderRow;
+    private LinearLayout downloadableDictionariesHeaderRow;
 
-    Handler uiHandler;
+    private Handler uiHandler;
 
-    Runnable dictionaryUpdater = new Runnable() {
+    private final Runnable dictionaryUpdater = new Runnable() {
         @Override
         public void run() {
             if (uiHandler == null) {
@@ -134,13 +130,13 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    setMyListAdapater();
+                    setMyListAdapter();
                 }
             });
         }
     };
 
-    final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public synchronized void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
@@ -267,7 +263,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         return intent;
     }
 
-    public void readableCheckAndError(boolean requestPermission) {
+    private void readableCheckAndError(boolean requestPermission) {
         final File dictDir = application.getDictDir();
         if (dictDir.canRead() && dictDir.canExecute()) return;
         blockAutoLaunch = true;
@@ -292,12 +288,12 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         readableCheckAndError(false);
 
         application.backgroundUpdateDictionaries(dictionaryUpdater);
 
-        setMyListAdapater();
+        setMyListAdapter();
     }
 
     @Override
@@ -348,7 +344,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         registerReceiver(broadcastReceiver, new IntentFilter(
                              DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        setMyListAdapater();
+        setMyListAdapter();
         registerForContextMenu(getListView());
         getListView().setItemsCanFocus(true);
 
@@ -398,7 +394,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
             @Override
             public boolean onQueryTextChange(String filterText) {
-                setMyListAdapater();
+                setMyListAdapter();
                 return true;
             }
         });
@@ -482,7 +478,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
         application.backgroundUpdateDictionaries(dictionaryUpdater);
 
-        setMyListAdapater();
+        setMyListAdapter();
     }
 
     @Override
@@ -496,7 +492,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         sort.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 application.sortDictionaries();
-                setMyListAdapater();
+                setMyListAdapter();
                 return true;
             }
         });
@@ -540,7 +536,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 @Override
                 public boolean onMenuItemClick(android.view.MenuItem item) {
                     application.moveDictionaryToTop(row.dictionaryInfo);
-                    setMyListAdapater();
+                    setMyListAdapter();
                     return true;
                 }
             });
@@ -553,7 +549,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 @Override
                 public boolean onMenuItemClick(android.view.MenuItem item) {
                     application.deleteDictionary(row.dictionaryInfo);
-                    setMyListAdapater();
+                    setMyListAdapter();
                     return true;
                 }
             });
@@ -561,7 +557,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
     }
 
     private void onShowDownloadableChanged() {
-        setMyListAdapater();
+        setMyListAdapter();
         Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
         prefs.putBoolean(C.SHOW_DOWNLOADABLE, showDownloadable.isChecked());
         prefs.commit();
@@ -569,12 +565,12 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     class MyListAdapter extends BaseAdapter {
 
-        List<DictionaryInfo> dictionariesOnDevice;
-        List<DictionaryInfo> downloadableDictionaries;
+        final List<DictionaryInfo> dictionariesOnDevice;
+        final List<DictionaryInfo> downloadableDictionaries;
 
         class Row {
-            DictionaryInfo dictionaryInfo;
-            boolean onDevice;
+            final DictionaryInfo dictionaryInfo;
+            final boolean onDevice;
 
             private Row(DictionaryInfo dictionaryInfo, boolean onDevice) {
                 this.dictionaryInfo = dictionaryInfo;
@@ -655,7 +651,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
 
     }
 
-    private void setMyListAdapater() {
+    private void setMyListAdapter() {
         final String filter = filterSearchView == null ? "" : filterSearchView.getQuery()
                               .toString();
         final String[] filters = filter.trim().toLowerCase().split("(\\s|-)+");
@@ -716,8 +712,8 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                 continue;
             }
             final IndexInfo indexInfo = sortedIndexInfos.get(i);
-            final View button = IsoUtils.INSTANCE.setupButton(textButton, imageButton, dictionaryInfo,
-                                indexInfo, application.languageButtonPixels);
+            final View button = IsoUtils.INSTANCE.setupButton(textButton, imageButton,
+                    indexInfo);
 
             if (canLaunch) {
                 button.setOnClickListener(

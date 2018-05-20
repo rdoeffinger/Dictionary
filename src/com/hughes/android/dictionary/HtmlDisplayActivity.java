@@ -20,12 +20,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.hughes.util.StringUtil;
@@ -34,14 +33,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-public final class HtmlDisplayActivity extends ActionBarActivity {
+public final class HtmlDisplayActivity extends AppCompatActivity {
 
-    static final String LOG = "QuickDic";
+    private static final String LOG = "QuickDic";
 
-    static final String HTML_RES = "html_res";
-    static final String HTML = "html";
-    static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
-    static final String SHOW_OK_BUTTON = "showOKButton";
+    private static final String HTML_RES = "html_res";
+    private static final String HTML = "html";
+    private static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
+    private static final String SHOW_OK_BUTTON = "showOKButton";
 
     public static Intent getHelpLaunchIntent(Context c) {
         final Intent intent = new Intent(c, HtmlDisplayActivity.class);

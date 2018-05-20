@@ -26,17 +26,17 @@ public class TransliteratorManager {
     private static boolean starting = false;
     private static boolean ready = false;
     private static ThreadSetup threadSetup = null;
-    private static LRUCacheMap<String, Transliterator> cache = new LRUCacheMap<String, Transliterator>(4);
+    private static final LRUCacheMap<String, Transliterator> cache = new LRUCacheMap<>(4);
 
     // Whom to notify when we're all set up and ready to go.
-    private static List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
+    private static final List<Callback> callbacks = new ArrayList<>();
 
     public static Transliterator get(String rules) {
         // DO NOT make the method synchronized!
         // synchronizing on the class would break the whole
         // asynchronous init concept, since the runnable
         // then holds the same lock as the init function needs.
-        Transliterator result = null;
+        Transliterator result;
         synchronized (cache) {
             result = cache.get(rules);
             if (result == null) {
@@ -74,9 +74,9 @@ public class TransliteratorManager {
                 System.out.println("Wrong transliteration: " + transliterated);
             }
 
-            final List<Callback> callbacks = new ArrayList<TransliteratorManager.Callback>();
+            final List<Callback> callbacks;
             synchronized (TransliteratorManager.class) {
-                callbacks.addAll(TransliteratorManager.callbacks);
+                callbacks = new ArrayList<>(TransliteratorManager.callbacks);
                 ready = true;
             }
             for (final Callback callback : callbacks) {

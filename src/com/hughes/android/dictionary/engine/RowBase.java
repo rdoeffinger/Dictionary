@@ -30,7 +30,7 @@ public abstract class RowBase extends IndexedObject {
     /**
      * the Index owning this RowBase.
      */
-    public final Index index;
+    final Index index;
 
     /**
      * Where this RowBase points to.
@@ -49,7 +49,7 @@ public abstract class RowBase extends IndexedObject {
         this.referenceIndex = extra == -1 ? raf.readInt() : ((extra << 16) + raf.readUnsignedShort()); // what this points to.
     }
 
-    public RowBase(final int referenceIndex, final int thisRowIndex, final Index index) {
+    RowBase(final int referenceIndex, final int thisRowIndex, final Index index) {
         super(thisRowIndex);
         this.index = index;
         this.referenceIndex = referenceIndex;
@@ -124,7 +124,7 @@ public abstract class RowBase extends IndexedObject {
         return tokenRow;
     }
 
-    public void setTokenRow(TokenRow tokenRow) {
+    void setTokenRow(TokenRow tokenRow) {
         assert this.tokenRow == null;
         assert tokenRow != null;
         this.tokenRow = tokenRow;
@@ -155,14 +155,16 @@ public abstract class RowBase extends IndexedObject {
                 extra = rowType & 0x1f;
                 rowType = (rowType >> 5) - 1;
             }
-            if (rowType == 0) {
-                return new PairEntry.Row(raf, listIndex, index, extra);
-            } else if (rowType == 1 || rowType == 3) {
-                return new TokenRow(raf, listIndex, index, /* hasMainEntry */rowType == 1, extra);
-            } else if (rowType == 2) {
-                return new TextEntry.Row(raf, listIndex, index, extra);
-            } else if (rowType == 4) {
-                return new HtmlEntry.Row(raf, listIndex, index, extra);
+            switch (rowType) {
+                case 0:
+                    return new PairEntry.Row(raf, listIndex, index, extra);
+                case 1:
+                case 3:
+                    return new TokenRow(raf, listIndex, index, /* hasMainEntry */rowType == 1, extra);
+                case 2:
+                    return new TextEntry.Row(raf, listIndex, index, extra);
+                case 4:
+                    return new HtmlEntry.Row(raf, listIndex, index, extra);
             }
             throw new RuntimeException("Invalid rowType:" + rowType);
         }
@@ -204,7 +206,7 @@ public abstract class RowBase extends IndexedObject {
         }
     }
 
-    public int getSideLength(boolean swapPairEntries) {
+    int getSideLength(boolean swapPairEntries) {
         return getRawText(false).length();
     }
 

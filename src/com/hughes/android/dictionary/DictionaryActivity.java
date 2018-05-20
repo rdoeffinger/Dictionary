@@ -29,10 +29,11 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
@@ -76,7 +77,6 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
@@ -85,7 +85,6 @@ import com.hughes.android.dictionary.engine.EntrySource;
 import com.hughes.android.dictionary.engine.HtmlEntry;
 import com.hughes.android.dictionary.engine.Index;
 import com.hughes.android.dictionary.engine.Index.IndexEntry;
-import com.hughes.android.dictionary.engine.Language.LanguageResources;
 import com.hughes.android.dictionary.engine.PairEntry;
 import com.hughes.android.dictionary.engine.PairEntry.Pair;
 import com.hughes.android.dictionary.engine.RowBase;
@@ -111,7 +110,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -119,44 +117,44 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DictionaryActivity extends ActionBarActivity {
+public class DictionaryActivity extends AppCompatActivity {
 
-    static final String LOG = "QuickDic";
+    private static final String LOG = "QuickDic";
 
-    DictionaryApplication application;
+    private DictionaryApplication application;
 
-    File dictFile = null;
-    FileChannel dictRaf = null;
-    String dictFileTitleName = null;
+    private File dictFile = null;
+    private FileChannel dictRaf = null;
+    private String dictFileTitleName = null;
 
-    Dictionary dictionary = null;
+    private Dictionary dictionary = null;
 
-    int indexIndex = 0;
+    private int indexIndex = 0;
 
-    Index index = null;
+    private Index index = null;
 
-    List<RowBase> rowsToShow = null; // if not null, just show these rows.
+    private List<RowBase> rowsToShow = null; // if not null, just show these rows.
 
-    final Random rand = new Random();
+    private final Random rand = new Random();
 
-    final Handler uiHandler = new Handler();
+    private final Handler uiHandler = new Handler();
 
     private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
-        public Thread newThread(Runnable r) {
+        public Thread newThread(@NonNull Runnable r) {
             return new Thread(r, "searchExecutor");
         }
     });
 
     private SearchOperation currentSearchOperation = null;
 
-    TextToSpeech textToSpeech;
-    volatile boolean ttsReady;
+    private TextToSpeech textToSpeech;
+    private volatile boolean ttsReady;
 
-    Typeface typeface;
-    DictionaryApplication.Theme theme = DictionaryApplication.Theme.LIGHT;
-    int textColorFg = Color.BLACK;
-    int fontSizeSp;
+    private Typeface typeface;
+    private DictionaryApplication.Theme theme = DictionaryApplication.Theme.LIGHT;
+    private int textColorFg = Color.BLACK;
+    private int fontSizeSp;
 
     private ListView listView;
     private ListView getListView() {
@@ -174,11 +172,12 @@ public class DictionaryActivity extends ActionBarActivity {
         return getListView().getAdapter();
     }
 
-    SearchView searchView;
-    ImageButton languageButton;
-    SearchView.OnQueryTextListener onQueryTextListener;
+    private SearchView searchView;
+    private ImageButton languageButton;
+    private SearchView.OnQueryTextListener onQueryTextListener;
 
-    MenuItem nextWordMenuItem, previousWordMenuItem, randomWordMenuItem;
+    private MenuItem nextWordMenuItem;
+    private MenuItem previousWordMenuItem;
 
     // Never null.
     private File wordList = null;
@@ -186,7 +185,7 @@ public class DictionaryActivity extends ActionBarActivity {
     private boolean clickOpensContextMenu = false;
 
     // Visible for testing.
-    ListAdapter indexAdapter = null;
+    private ListAdapter indexAdapter = null;
 
     /**
      * For some languages, loading the transliterators used in this search takes
@@ -278,8 +277,8 @@ public class DictionaryActivity extends ActionBarActivity {
 
         final Intent intent = getIntent();
         String intentAction = intent.getAction();
-        /**
-         * @author Dominik Köppl Querying the Intent
+        /*
+          @author Dominik Köppl Querying the Intent
          *         com.hughes.action.ACTION_SEARCH_DICT is the advanced query
          *         Arguments: SearchManager.QUERY -> the phrase to search from
          *         -> language in which the phrase is written to -> to which
@@ -328,8 +327,8 @@ public class DictionaryActivity extends ActionBarActivity {
 
             }
         }
-        /**
-         * @author Dominik Köppl Querying the Intent Intent.ACTION_SEARCH is a
+        /*
+          @author Dominik Köppl Querying the Intent Intent.ACTION_SEARCH is a
          *         simple query Arguments follow from android standard (see
          *         documentation)
          */
@@ -364,8 +363,8 @@ public class DictionaryActivity extends ActionBarActivity {
                 return;
             }
         }
-        /**
-         * @author Dominik Köppl If no dictionary is chosen, use the default
+        /*
+          @author Dominik Köppl If no dictionary is chosen, use the default
          *         dictionary specified in the preferences If this step does
          *         fail (no default dictionary specified), show a toast and
          *         abort.
@@ -419,7 +418,7 @@ public class DictionaryActivity extends ActionBarActivity {
             finish();
             return;
         }
-        if (dictRaf == null && dictFilename != null)
+        if (dictRaf == null)
             dictFile = new File(dictFilename);
 
         ttsReady = false;
@@ -502,25 +501,31 @@ public class DictionaryActivity extends ActionBarActivity {
         }).start();
 
         String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.otf.jpg");
-        if ("SYSTEM".equals(fontName)) {
-            typeface = Typeface.DEFAULT;
-        } else if ("SERIF".equals(fontName)) {
-            typeface = Typeface.SERIF;
-        } else if ("SANS_SERIF".equals(fontName)) {
-            typeface = Typeface.SANS_SERIF;
-        } else if ("MONOSPACE".equals(fontName)) {
-            typeface = Typeface.MONOSPACE;
-        } else {
-            if ("FreeSerif.ttf.jpg".equals(fontName)) {
-                fontName = "FreeSerif.otf.jpg";
-            }
-            try {
-                typeface = Typeface.createFromAsset(getAssets(), fontName);
-            } catch (Exception e) {
-                Log.w(LOG, "Exception trying to use typeface, using default.", e);
-                Toast.makeText(this, getString(R.string.fontFailure, e.getLocalizedMessage()),
-                               Toast.LENGTH_LONG).show();
-            }
+        switch (fontName) {
+            case "SYSTEM":
+                typeface = Typeface.DEFAULT;
+                break;
+            case "SERIF":
+                typeface = Typeface.SERIF;
+                break;
+            case "SANS_SERIF":
+                typeface = Typeface.SANS_SERIF;
+                break;
+            case "MONOSPACE":
+                typeface = Typeface.MONOSPACE;
+                break;
+            default:
+                if ("FreeSerif.ttf.jpg".equals(fontName)) {
+                    fontName = "FreeSerif.otf.jpg";
+                }
+                try {
+                    typeface = Typeface.createFromAsset(getAssets(), fontName);
+                } catch (Exception e) {
+                    Log.w(LOG, "Exception trying to use typeface, using default.", e);
+                    Toast.makeText(this, getString(R.string.fontFailure, e.getLocalizedMessage()),
+                            Toast.LENGTH_LONG).show();
+                }
+                break;
         }
         if (typeface == null) {
             Log.w(LOG, "Unable to create typeface, using default.");
@@ -662,16 +667,11 @@ public class DictionaryActivity extends ActionBarActivity {
         showKeyboard();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     /**
      * Invoked when MyWebView returns, since the user might have clicked some
      * hypertext in the MyWebView.
      */
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         super.onActivityResult(requestCode, resultCode, result);
         if (result != null && result.hasExtra(C.SEARCH_TOKEN)) {
@@ -756,7 +756,7 @@ public class DictionaryActivity extends ActionBarActivity {
         manager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
     }
 
-    void updateLangButton() {
+    private void updateLangButton() {
         final int flagId = IsoUtils.INSTANCE.getFlagIdForIsoCode(index.shortName);
         if (flagId != 0) {
             languageButton.setImageResource(flagId);
@@ -813,7 +813,7 @@ public class DictionaryActivity extends ActionBarActivity {
                               searchView.getQuery().toString(), false);
     }
 
-    void onLanguageButtonLongClick(final Context context) {
+    private void onLanguageButtonLongClick(final Context context) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.select_dictionary_dialog);
         dialog.setTitle(R.string.selectDictionary);
@@ -846,7 +846,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 for (int i = 0; dictionaryInfo.indexInfos != null && i < dictionaryInfo.indexInfos.size(); ++i) {
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
                     final View button = IsoUtils.INSTANCE.createButton(parent.getContext(),
-                                        dictionaryInfo, indexInfo, application.languageButtonPixels);
+                            indexInfo, application.languageButtonPixels);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(getApplicationContext(),
                                             application.getPath(dictionaryInfo.uncompressedFilename),
@@ -897,7 +897,7 @@ public class DictionaryActivity extends ActionBarActivity {
         dialog.show();
     }
 
-    void onUpDownButton(final boolean up) {
+    private void onUpDownButton(final boolean up) {
         if (isFiltered()) {
             return;
         }
@@ -922,7 +922,7 @@ public class DictionaryActivity extends ActionBarActivity {
         defocusSearchText();
     }
 
-    void onRandomWordButton() {
+    private void onRandomWordButton() {
         int destIndexEntry = rand.nextInt(index.sortedIndexEntries.size());
         final Index.IndexEntry dest = index.sortedIndexEntries.get(destIndexEntry);
         setSearchText(dest.token, false);
@@ -933,8 +933,6 @@ public class DictionaryActivity extends ActionBarActivity {
     // --------------------------------------------------------------------------
     // Options Menu
     // --------------------------------------------------------------------------
-
-    final Random random = new Random();
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
@@ -966,7 +964,7 @@ public class DictionaryActivity extends ActionBarActivity {
             });
         }
 
-        randomWordMenuItem = menu.add(getString(R.string.randomWord));
+        final MenuItem randomWordMenuItem = menu.add(getString(R.string.randomWord));
         randomWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -1187,7 +1185,7 @@ public class DictionaryActivity extends ActionBarActivity {
                 Log.w(LOG, "Skipping findExact on index " + index.shortName);
             }
         }
-        if (numFound != 1 || indexToUse == -1) {
+        if (numFound != 1) {
             indexToUse = defaultIndexToUse;
         }
         // Without this extra delay, the call to jumpToRow that this
@@ -1205,7 +1203,7 @@ public class DictionaryActivity extends ActionBarActivity {
      * Called when user clicks outside of search text, so that they can start
      * typing again immediately.
      */
-    void defocusSearchText() {
+    private void defocusSearchText() {
         // Log.d(LOG, "defocusSearchText");
         // Request focus so that if we start typing again, it clears the text
         // input.
@@ -1216,7 +1214,7 @@ public class DictionaryActivity extends ActionBarActivity {
         // searchView.selectAll();
     }
 
-    protected void onListItemClick(ListView l, View v, int rowIdx, long id) {
+    private void onListItemClick(ListView l, View v, int rowIdx, long id) {
         defocusSearchText();
         if (clickOpensContextMenu && dictRaf != null) {
             openContextMenu(v);
@@ -1229,7 +1227,7 @@ public class DictionaryActivity extends ActionBarActivity {
     }
 
     @SuppressLint("SimpleDateFormat")
-    void onAppendToWordList(final RowBase row) {
+    private void onAppendToWordList(final RowBase row) {
         defocusSearchText();
 
         final StringBuilder rawText = new StringBuilder();
@@ -1250,11 +1248,10 @@ public class DictionaryActivity extends ActionBarActivity {
                            getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()),
                            Toast.LENGTH_LONG).show();
         }
-        return;
     }
 
     @SuppressWarnings("deprecation")
-    void onCopy(final RowBase row) {
+    private void onCopy(final RowBase row) {
         defocusSearchText();
 
         Log.d(LOG, "Copy, row=" + row);
@@ -1316,7 +1313,6 @@ public class DictionaryActivity extends ActionBarActivity {
         // Disable the listener, because sometimes it doesn't work.
         searchView.setOnQueryTextListener(null);
         searchView.setQuery(text, false);
-        moveCursorToRight();
         searchView.setOnQueryTextListener(onQueryTextListener);
 
         if (triggerSearch) {
@@ -1331,24 +1327,6 @@ public class DictionaryActivity extends ActionBarActivity {
 
     private void setSearchText(final String text, final boolean triggerSearch) {
         setSearchText(text, triggerSearch, true);
-    }
-
-    // private long cursorDelayMillis = 100;
-    private void moveCursorToRight() {
-        // if (searchText.getLayout() != null) {
-        // cursorDelayMillis = 100;
-        // // Surprising, but this can crash when you rotate...
-        // Selection.moveToRightEdge(searchView.getQuery(),
-        // searchText.getLayout());
-        // } else {
-        // uiHandler.postDelayed(new Runnable() {
-        // @Override
-        // public void run() {
-        // moveCursorToRight();
-        // }
-        // }, cursorDelayMillis);
-        // cursorDelayMillis = Math.min(10 * 1000, 2 * cursorDelayMillis);
-        // }
     }
 
     // --------------------------------------------------------------------------
@@ -1398,7 +1376,7 @@ public class DictionaryActivity extends ActionBarActivity {
         getListView().setSelected(true);
     }
 
-    static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
     final class SearchOperation implements Runnable {
 
@@ -1478,12 +1456,6 @@ public class DictionaryActivity extends ActionBarActivity {
             0);
     }
 
-    static ViewGroup.LayoutParams WEIGHT_1 = new LinearLayout.LayoutParams(
-        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f);
-
-    static ViewGroup.LayoutParams WEIGHT_0 = new LinearLayout.LayoutParams(
-        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.0f);
-
     final class IndexAdapter extends BaseAdapter {
 
         private static final float PADDING_DEFAULT_DP = 8;
@@ -1510,7 +1482,7 @@ public class DictionaryActivity extends ActionBarActivity {
         IndexAdapter(final Index index, final List<RowBase> rows, final List<String> toHighlight) {
             this.index = index;
             this.rows = rows;
-            this.toHighlight = new LinkedHashSet<String>(toHighlight);
+            this.toHighlight = new LinkedHashSet<>(toHighlight);
             getMetrics();
         }
 
@@ -1770,7 +1742,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
     }
 
-    static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+");
+    private static final Pattern CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+");
 
     private void createTokenLinkSpans(final TextView textView, final Spannable spannable,
                                       final String text) {
@@ -1785,9 +1757,9 @@ public class DictionaryActivity extends ActionBarActivity {
         }
     }
 
-    String selectedSpannableText = null;
+    private String selectedSpannableText = null;
 
-    int selectedSpannableIndex = -1;
+    private int selectedSpannableIndex = -1;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -1816,17 +1788,17 @@ public class DictionaryActivity extends ActionBarActivity {
         }
     }
 
-    final TextViewLongClickListener textViewLongClickListenerIndex0 = new TextViewLongClickListener(
+    private final TextViewLongClickListener textViewLongClickListenerIndex0 = new TextViewLongClickListener(
         0);
 
-    final TextViewLongClickListener textViewLongClickListenerIndex1 = new TextViewLongClickListener(
+    private final TextViewLongClickListener textViewLongClickListenerIndex1 = new TextViewLongClickListener(
         1);
 
     // --------------------------------------------------------------------------
     // SearchText
     // --------------------------------------------------------------------------
 
-    void onSearchTextChange(final String text) {
+    private void onSearchTextChange(final String text) {
         if ("thadolina".equals(text)) {
             final Dialog dialog = new Dialog(getListView().getContext());
             dialog.setContentView(R.layout.thadolina_dialog);
@@ -1865,11 +1837,11 @@ public class DictionaryActivity extends ActionBarActivity {
     // Filtered results.
     // --------------------------------------------------------------------------
 
-    boolean isFiltered() {
+    private boolean isFiltered() {
         return rowsToShow != null;
     }
 
-    void setFiltered(final SearchOperation searchOperation) {
+    private void setFiltered(final SearchOperation searchOperation) {
         if (nextWordMenuItem != null) {
             nextWordMenuItem.setEnabled(false);
             previousWordMenuItem.setEnabled(false);
@@ -1878,7 +1850,7 @@ public class DictionaryActivity extends ActionBarActivity {
         setListAdapter(new IndexAdapter(index, rowsToShow, searchOperation.searchTokens));
     }
 
-    void clearFiltered() {
+    private void clearFiltered() {
         if (nextWordMenuItem != null) {
             nextWordMenuItem.setEnabled(true);
             previousWordMenuItem.setEnabled(true);

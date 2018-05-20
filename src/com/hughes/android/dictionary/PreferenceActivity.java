@@ -45,8 +45,8 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
             prefs.edit().putString(getString(R.string.wordListFileKey), application.getWordListFile().getAbsolutePath()).commit();
         }
 
-        /**
-         * @author Dominik Köppl Preference: select default dictionary As this
+        /*
+          @author Dominik Köppl Preference: select default dictionary As this
          *         list is dynamically generated, we have to do it in this
          *         fashion
          */
@@ -80,11 +80,6 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
         super.onResume();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onContentChanged() {
-        super.onContentChanged();
     }
 
     @Override

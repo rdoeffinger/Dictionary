@@ -22,8 +22,6 @@ import android.widget.TextView;
 
 public final class AboutActivity extends Activity {
 
-    public static final String CURRENT_DICT_INFO = "currentDictInfo";
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {

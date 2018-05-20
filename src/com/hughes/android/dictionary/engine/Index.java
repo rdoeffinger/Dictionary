@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- *
- */
-
 package com.hughes.android.dictionary.engine;
 
 import com.hughes.android.dictionary.DictionaryInfo;
@@ -32,12 +28,10 @@ import com.hughes.util.raf.UniformRAFList;
 import com.ibm.icu.text.Transliterator;
 
 import java.io.DataInput;
-import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -55,7 +49,7 @@ import java.util.regex.Pattern;
 
 public final class Index implements RAFSerializable<Index> {
 
-    static final int CACHE_SIZE = 5000;
+    private static final int CACHE_SIZE = 5000;
 
     public final Dictionary dict;
 
@@ -64,7 +58,7 @@ public final class Index implements RAFSerializable<Index> {
 
     // persisted: tells how the entries are sorted.
     public final Language sortLanguage;
-    final String normalizerRules;
+    private final String normalizerRules;
 
     // Built from the two above.
     private Transliterator normalizer;
@@ -73,7 +67,7 @@ public final class Index implements RAFSerializable<Index> {
     public final List<IndexEntry> sortedIndexEntries;
 
     // persisted.
-    public final Set<String> stoplist;
+    private final Set<String> stoplist;
 
     // One big list!
     // Various sub-types.
@@ -82,7 +76,8 @@ public final class Index implements RAFSerializable<Index> {
     public final boolean swapPairEntries;
 
     // Version 2:
-    int mainTokenCount = -1;
+    @SuppressWarnings("WeakerAccess")
+    public int mainTokenCount = -1;
 
     // --------------------------------------------------------------------------
 
@@ -95,9 +90,9 @@ public final class Index implements RAFSerializable<Index> {
         this.sortLanguage = sortLanguage;
         this.normalizerRules = normalizerRules;
         this.swapPairEntries = swapPairEntries;
-        sortedIndexEntries = new ArrayList<IndexEntry>();
+        sortedIndexEntries = new ArrayList<>();
         this.stoplist = stoplist;
-        rows = new ArrayList<RowBase>();
+        rows = new ArrayList<>();
 
         normalizer = null;
     }
@@ -105,6 +100,7 @@ public final class Index implements RAFSerializable<Index> {
     /**
      * Deferred initialization because it can be slow.
      */
+    @SuppressWarnings("WeakerAccess")
     public synchronized Transliterator normalizer() {
         if (normalizer == null) {
             normalizer = TransliteratorManager.get(normalizerRules);
@@ -116,6 +112,7 @@ public final class Index implements RAFSerializable<Index> {
      * Note that using this comparator probably involves doing too many text
      * normalizations.
      */
+    @SuppressWarnings("WeakerAccess")
     public NormalizeComparator getSortComparator() {
         return new NormalizeComparator(normalizer(), sortLanguage.getCollator(), dict.dictFileVersion);
     }
@@ -139,7 +136,7 @@ public final class Index implements RAFSerializable<Index> {
                                                 dict.dictFileVersion, dict.dictInfo + " idx " + languageCode + ": "), CACHE_SIZE, true);
         if (dict.dictFileVersion >= 7) {
             int count = StringUtil.readVarInt(raf);
-            stoplist = new HashSet<String>(count);
+            stoplist = new HashSet<>(count);
             for (int i = 0; i < count; ++i) {
                 stoplist.add(raf.readUTF());
             }
@@ -181,7 +178,7 @@ public final class Index implements RAFSerializable<Index> {
     private final class IndexEntrySerializer implements RAFSerializer<IndexEntry> {
         private final FileChannel ch;
 
-        public IndexEntrySerializer(FileChannel ch) {
+        IndexEntrySerializer(FileChannel ch) {
             this.ch = ch;
         }
 
@@ -200,7 +197,7 @@ public final class Index implements RAFSerializable<Index> {
         public final String token;
         private final String normalizedToken;
         public final int startRow;
-        public final int numRows; // doesn't count the token row!
+        final int numRows; // doesn't count the token row!
         public List<HtmlEntry> htmlEntries;
 
         public IndexEntry(final Index index, final String token, final String normalizedToken,
@@ -211,10 +208,10 @@ public final class Index implements RAFSerializable<Index> {
             this.normalizedToken = normalizedToken;
             this.startRow = startRow;
             this.numRows = numRows;
-            this.htmlEntries = new ArrayList<HtmlEntry>();
+            this.htmlEntries = new ArrayList<>();
         }
 
-        public IndexEntry(final Index index, final FileChannel ch, final DataInput raf) throws IOException {
+        IndexEntry(final Index index, final FileChannel ch, final DataInput raf) throws IOException {
             token = raf.readUTF();
             if (index.dict.dictFileVersion >= 7) {
                 startRow = StringUtil.readVarInt(raf);
@@ -273,12 +270,12 @@ public final class Index implements RAFSerializable<Index> {
             return String.format("%s@%d(%d)", token, startRow, numRows);
         }
 
-        public String normalizedToken() {
+        String normalizedToken() {
             return normalizedToken;
         }
     }
 
-    static final TransformingList.Transformer<IndexEntry, String> INDEX_ENTRY_TO_TOKEN = new TransformingList.Transformer<IndexEntry, String>() {
+    private static final TransformingList.Transformer<IndexEntry, String> INDEX_ENTRY_TO_TOKEN = new TransformingList.Transformer<IndexEntry, String>() {
         @Override
         public String transform(IndexEntry t1) {
             return t1.token;
@@ -300,12 +297,12 @@ public final class Index implements RAFSerializable<Index> {
         return index != -1 ? sortedIndexEntries.get(index) : null;
     }
 
-    private int compareIdx(String token, final Comparator sortCollator, int idx) {
+    private int compareIdx(String token, final Comparator<Object> sortCollator, int idx) {
         final IndexEntry entry = sortedIndexEntries.get(idx);
         return NormalizeComparator.compareWithoutDash(token, entry.normalizedToken(), sortCollator, dict.dictFileVersion);
     }
 
-    private int findMatchLen(final Comparator sortCollator, String a, String b) {
+    private int findMatchLen(final Comparator<Object> sortCollator, String a, String b) {
         int start = 0;
         int end = Math.min(a.length(), b.length());
         while (start < end)
@@ -319,13 +316,13 @@ public final class Index implements RAFSerializable<Index> {
         return start;
     }
 
-    public int findInsertionPointIndex(String token, final AtomicBoolean interrupted) {
+    private int findInsertionPointIndex(String token, final AtomicBoolean interrupted) {
         token = normalizeToken(token);
 
         int start = 0;
         int end = sortedIndexEntries.size();
 
-        final Comparator sortCollator = sortLanguage.getCollator();
+        final Comparator<Object> sortCollator = sortLanguage.getCollator();
         while (start < end) {
             final int mid = (start + end) / 2;
             if (interrupted.get()) {
@@ -337,8 +334,7 @@ public final class Index implements RAFSerializable<Index> {
             if (comp == 0)
                 comp = sortCollator.compare(token, midEntry.normalizedToken());
             if (comp == 0) {
-                final int result = windBackCase(token, mid, interrupted);
-                return result;
+                return windBackCase(token, mid, interrupted);
             } else if (comp < 0) {
                 // System.out.println("Upper bound: " + midEntry + ", norm=" +
                 // midEntry.normalizedToken() + ", mid=" + mid);
@@ -398,7 +394,7 @@ public final class Index implements RAFSerializable<Index> {
 
     private static final int MAX_SEARCH_ROWS = 1000;
 
-    private final Map<String, Integer> prefixToNumRows = new HashMap<String, Integer>();
+    private final Map<String, Integer> prefixToNumRows = new HashMap<>();
 
     private synchronized final int getUpperBoundOnRowsStartingWith(final String normalizedPrefix,
             final int maxRows, final AtomicBoolean interrupted) {
@@ -423,7 +419,7 @@ public final class Index implements RAFSerializable<Index> {
                 break;
             }
         }
-        prefixToNumRows.put(normalizedPrefix, numRows);
+        prefixToNumRows.put(normalizedPrefix, rowCount);
         return rowCount;
     }
 
@@ -431,9 +427,9 @@ public final class Index implements RAFSerializable<Index> {
         final String searchText, final List<String> searchTokens,
         final AtomicBoolean interrupted) {
         final long startMills = System.currentTimeMillis();
-        final List<RowBase> result = new ArrayList<RowBase>();
+        final List<RowBase> result = new ArrayList<>();
 
-        final Set<String> normalizedNonStoplist = new HashSet<String>();
+        final Set<String> normalizedNonStoplist = new HashSet<>();
 
         String bestPrefix = null;
         int leastRows = Integer.MAX_VALUE;
@@ -477,8 +473,8 @@ public final class Index implements RAFSerializable<Index> {
                            + ", searchTokens=" + searchTokens);
 
         // Place to store the things that match.
-        final Map<RowMatchType, List<RowBase>> matches = new EnumMap<RowMatchType, List<RowBase>>(
-            RowMatchType.class);
+        final Map<RowMatchType, List<RowBase>> matches = new EnumMap<>(
+                RowMatchType.class);
         for (final RowMatchType rowMatchType : RowMatchType.values()) {
             if (rowMatchType != RowMatchType.NO_MATCH) {
                 matches.put(rowMatchType, new ArrayList<RowBase>());
@@ -497,7 +493,7 @@ public final class Index implements RAFSerializable<Index> {
 
         final String searchToken = bestPrefix;
         final int insertionPointIndex = findInsertionPointIndex(searchToken, interrupted);
-        final Set<RowKey> rowsAlreadySeen = new HashSet<RowBase.RowKey>();
+        final Set<RowKey> rowsAlreadySeen = new HashSet<>();
         for (int index = insertionPointIndex; index < sortedIndexEntries.size()
                 && matchCount < MAX_SEARCH_ROWS; ++index) {
             if (interrupted.get()) {
@@ -537,7 +533,7 @@ public final class Index implements RAFSerializable<Index> {
         final RowBase.LengthComparator lengthComparator = new RowBase.LengthComparator(
             swapPairEntries);
         for (final Collection<RowBase> rows : matches.values()) {
-            final List<RowBase> ordered = new ArrayList<RowBase>(rows);
+            final List<RowBase> ordered = new ArrayList<>(rows);
             Collections.sort(ordered, lengthComparator);
             result.addAll(ordered);
         }

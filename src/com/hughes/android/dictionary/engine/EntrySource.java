@@ -24,8 +24,10 @@ import java.io.IOException;
 public class EntrySource extends IndexedObject {
 
     final String name;
+    @SuppressWarnings("CanBeFinal")
     int numEntries;
 
+    @SuppressWarnings("WeakerAccess")
     public EntrySource(final int index, final String name, int numEntries) {
         super(index);
         this.name = name;

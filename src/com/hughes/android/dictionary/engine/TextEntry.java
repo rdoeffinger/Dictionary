@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 
 public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntry> {
 
-    final String text;
+    private final String text;
 
-    public TextEntry(final Dictionary dictionary, final DataInput raf, final int index)
+    private TextEntry(final Dictionary dictionary, final DataInput raf, final int index)
     throws IOException {
         super(dictionary, raf, index);
         text = raf.readUTF();
@@ -80,7 +80,7 @@ public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntr
             super(raf, thisRowIndex, index, extra);
         }
 
-        public TextEntry getEntry() {
+        TextEntry getEntry() {
             return index.dict.textEntries.get(referenceIndex);
         }
 

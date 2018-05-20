@@ -39,7 +39,7 @@
 
     <!-- Dark theme -->
 
-    <style name="Theme.Default" parent="AppBaseThemeDark"></style>
+    <style name="Theme.Default" parent="AppBaseThemeDark" />
 
     <style name="Theme.Default.TokenRow.Fg" parent="Theme.Default">
 
@@ -57,7 +57,7 @@
 
     <!-- Light theme -->
 
-    <style name="Theme.Light" parent="AppBaseThemeLight"></style>
+    <style name="Theme.Light" parent="AppBaseThemeLight" />
 
     <style name="Theme.Light.TokenRow.Fg" parent="Theme.Light">
 

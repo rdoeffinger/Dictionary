@@ -20,12 +20,12 @@ import java.util.Comparator;
 
 public class NormalizeComparator implements Comparator<String> {
 
-    final Transliterator normalizer;
-    final Comparator<String> comparator;
-    int version;
+    private final Transliterator normalizer;
+    private final Comparator<Object> comparator;
+    private final int version;
 
     public NormalizeComparator(final Transliterator normalizer,
-                               final Comparator<String> comparator, int version) {
+                               final Comparator<Object> comparator, int version) {
         this.normalizer = normalizer;
         this.comparator = comparator;
         this.version = version;
@@ -33,7 +33,7 @@ public class NormalizeComparator implements Comparator<String> {
 
     // Handles comparison between items containing "-".
     // Also replaces other problematic cases like "thorn".
-    public static int compareWithoutDash(final String a, final String b, final Comparator c, int version) {
+    public static int compareWithoutDash(final String a, final String b, final Comparator<Object> c, int version) {
         if (version < 7) return 0;
         String s1 = a.replace("-", "").replace("þ", "th").replace("Þ", "Th");
         String s2 = b.replace("-", "").replace("þ", "th").replace("Þ", "Th");

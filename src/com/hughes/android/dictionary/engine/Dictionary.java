@@ -16,7 +16,6 @@ package com.hughes.android.dictionary.engine;
 
 import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.util.CachingList;
-import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
@@ -36,14 +35,14 @@ import java.util.List;
 
 public class Dictionary implements RAFSerializable<Dictionary> {
 
-    static final int CACHE_SIZE = 5000;
+    private static final int CACHE_SIZE = 5000;
 
-    static final int CURRENT_DICT_VERSION = 7;
-    static final String END_OF_DICTIONARY = "END OF DICTIONARY";
+    private static final int CURRENT_DICT_VERSION = 7;
+    private static final String END_OF_DICTIONARY = "END OF DICTIONARY";
 
     // persisted
     final int dictFileVersion;
-    final long creationMillis;
+    private final long creationMillis;
     public final String dictInfo;
     public final List<PairEntry> pairEntries;
     public final List<TextEntry> textEntries;
@@ -61,12 +60,12 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         this.dictFileVersion = CURRENT_DICT_VERSION;
         this.creationMillis = System.currentTimeMillis();
         this.dictInfo = dictInfo;
-        pairEntries = new ArrayList<PairEntry>();
-        textEntries = new ArrayList<TextEntry>();
-        htmlEntries = new ArrayList<HtmlEntry>();
+        pairEntries = new ArrayList<>();
+        textEntries = new ArrayList<>();
+        htmlEntries = new ArrayList<>();
         htmlData = null;
-        sources = new ArrayList<EntrySource>();
-        indices = new ArrayList<Index>();
+        sources = new ArrayList<>();
+        indices = new ArrayList<>();
     }
 
     public Dictionary(final FileChannel ch) throws IOException {
@@ -83,7 +82,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         try {
             final RAFList<EntrySource> rafSources = RAFList.create(ch, new EntrySource.Serializer(
                     this), ch.position(), dictFileVersion, dictInfo + " sources: ");
-            sources = new ArrayList<EntrySource>(rafSources);
+            sources = new ArrayList<>(rafSources);
             ch.position(rafSources.getEndOffset());
 
             pairEntries = CachingList.create(
@@ -107,8 +106,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             indices = CachingList.createFullyCached(RAFList.create(ch, new IndexSerializer(ch),
                                                     ch.position(), dictFileVersion, dictInfo + " index: "));
         } catch (RuntimeException e) {
-            final IOException ioe = new IOException("RuntimeException loading dictionary", e);
-            throw ioe;
+            throw new IOException("RuntimeException loading dictionary", e);
         }
         final String end = raf.readUTF();
         if (!end.equals(END_OF_DICTIONARY)) {
@@ -142,7 +140,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     private final class IndexSerializer implements RAFListSerializer<Index> {
         private final FileChannel ch;
 
-        public IndexSerializer(FileChannel ch) {
+        IndexSerializer(FileChannel ch) {
             this.ch = ch;
         }
 

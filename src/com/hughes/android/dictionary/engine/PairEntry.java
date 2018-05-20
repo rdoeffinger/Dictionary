@@ -15,7 +15,6 @@
 package com.hughes.android.dictionary.engine;
 
 import com.hughes.util.StringUtil;
-import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFListSerializerSkippable;
 import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
@@ -36,7 +35,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
 
     public PairEntry(final EntrySource entrySource) {
         super(entrySource);
-        pairs = new ArrayList<Pair>(1);
+        pairs = new ArrayList<>(1);
     }
 
     public PairEntry(final EntrySource entrySource, final String lang1, final String lang2) {
@@ -52,7 +51,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         if (size == 1) pairs = Collections.singletonList(new Pair(raf.readUTF(), raf.readUTF()));
         else
         {
-            pairs = new ArrayList<PairEntry.Pair>(size);
+            pairs = new ArrayList<>(size);
             for (int i = 0; i < size; ++i) {
                 pairs.add(new Pair(raf.readUTF(), raf.readUTF()));
             }
@@ -198,7 +197,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
 
     }
 
-    public String getRawText(final boolean compact) {
+    private String getRawText(final boolean compact) {
         if (compact) {
             return this.pairs.get(0).toStringTab();
         }
@@ -236,6 +235,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
         public final String lang1;
         public final String lang2;
 
+        @SuppressWarnings("WeakerAccess")
         public Pair(final String lang1, final String lang2) {
             this.lang1 = lang1;
             this.lang2 = lang2;
@@ -250,7 +250,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
             return lang1 + " :: " + lang2;
         }
 
-        public String toStringTab() {
+        String toStringTab() {
             return lang1 + "\t" + lang2;
         }
 

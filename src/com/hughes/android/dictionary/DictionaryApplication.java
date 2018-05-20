@@ -14,7 +14,6 @@
 
 package com.hughes.android.dictionary;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,18 +28,10 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.hughes.android.dictionary.CollatorWrapper;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
-import com.hughes.android.dictionary.engine.Language;
-import com.hughes.android.dictionary.engine.Language.LanguageResources;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
 import com.hughes.util.ListUtil;
@@ -127,14 +118,14 @@ public enum DictionaryApplication {
         private static final long serialVersionUID = -1444177164708201263L;
         // User-ordered list, persisted, just the ones that are/have been
         // present.
-        final List<String> dictionaryFilesOrdered = new ArrayList<String>();
+        final List<String> dictionaryFilesOrdered = new ArrayList<>();
 
-        final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new HashMap<String, DictionaryInfo>();
+        final Map<String, DictionaryInfo> uncompressedFilenameToDictionaryInfo = new HashMap<>();
 
         /**
          * Sometimes a deserialized version of this data structure isn't valid.
-         * @return
          */
+        @SuppressWarnings("ConstantConditions")
         boolean isValid() {
             return uncompressedFilenameToDictionaryInfo != null && dictionaryFilesOrdered != null;
         }
@@ -148,7 +139,7 @@ public enum DictionaryApplication {
         if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO != null) {
             return;
         }
-        DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO = new HashMap<String, DictionaryInfo>();
+        DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO = new HashMap<>();
         final BufferedReader reader = new BufferedReader(
             new InputStreamReader(context.getResources().openRawResource(R.raw.dictionary_info)));
         try {
@@ -168,8 +159,6 @@ public enum DictionaryApplication {
             reader.close();
         } catch (IOException e) {}
     }
-
-    private File dictDir;
 
     public synchronized void init(Context c) {
         if (appContext != null) {
@@ -292,7 +281,7 @@ public enum DictionaryApplication {
         if (dir.isEmpty()) {
             dir = selectDefaultDir();
         }
-        dictDir = new File(dir);
+        File dictDir = new File(dir);
         dictDir.mkdirs();
         if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             appContext.getExternalFilesDirs(null);
@@ -336,13 +325,13 @@ public enum DictionaryApplication {
 
     String defaultLangISO2 = Locale.getDefault().getLanguage().toLowerCase();
     String defaultLangName = null;
-    final Map<String, String> fileToNameCache = new HashMap<String, String>();
+    final Map<String, String> fileToNameCache = new HashMap<>();
 
     public List<IndexInfo> sortedIndexInfos(List<IndexInfo> indexInfos) {
         // Hack to put the default locale first in the name.
         if (indexInfos.size() > 1 &&
                 indexInfos.get(1).shortName.toLowerCase().equals(defaultLangISO2)) {
-            List<IndexInfo> result = new ArrayList<DictionaryInfo.IndexInfo>(indexInfos);
+            List<IndexInfo> result = new ArrayList<>(indexInfos);
             ListUtil.swap(result, 0, 1);
             return result;
         }
@@ -406,7 +395,7 @@ public enum DictionaryApplication {
         PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
-    final Comparator collator = USE_COLLATOR ? CollatorWrapper.getInstance() : String.CASE_INSENSITIVE_ORDER;
+    final Comparator<Object> collator = USE_COLLATOR ? CollatorWrapper.getInstance() : null;
     final Comparator<String> uncompressedFilenameComparator = new Comparator<String>() {
         @Override
         public int compare(String uncompressedFilename1, String uncompressedFilename2) {
@@ -421,7 +410,7 @@ public enum DictionaryApplication {
                     return 1;
                 }
             }
-            return collator.compare(name1, name2);
+            return collator != null ? collator.compare(name1, name2) : name1.compareToIgnoreCase(name2);
         }
     };
     final Comparator<DictionaryInfo> dictionaryInfoComparator = new Comparator<DictionaryInfo>() {
@@ -459,7 +448,7 @@ public enum DictionaryApplication {
                 // Are there dictionaries on the device that we didn't know
                 // about already?
                 // Pick them up and put them at the end of the list.
-                final List<String> toAddSorted = new ArrayList<String>();
+                final List<String> toAddSorted = new ArrayList<>();
                 final File[] dictDirFiles = getDictDir().listFiles();
                 if (dictDirFiles != null) {
                     for (final File file : dictDirFiles) {
@@ -514,7 +503,7 @@ public enum DictionaryApplication {
         }).start();
     }
 
-    public boolean matchesFilters(final DictionaryInfo dictionaryInfo, final String[] filters) {
+    private boolean matchesFilters(final DictionaryInfo dictionaryInfo, final String[] filters) {
         if (filters == null) {
             return true;
         }
@@ -528,8 +517,8 @@ public enum DictionaryApplication {
     }
 
     public synchronized List<DictionaryInfo> getDictionariesOnDevice(String[] filters) {
-        final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(
-            dictionaryConfig.dictionaryFilesOrdered.size());
+        final List<DictionaryInfo> result = new ArrayList<>(
+                dictionaryConfig.dictionaryFilesOrdered.size());
         for (final String uncompressedFilename : dictionaryConfig.dictionaryFilesOrdered) {
             final DictionaryInfo dictionaryInfo = dictionaryConfig.uncompressedFilenameToDictionaryInfo
                                                   .get(uncompressedFilename);
@@ -541,11 +530,11 @@ public enum DictionaryApplication {
     }
 
     public List<DictionaryInfo> getDownloadableDictionaries(String[] filters) {
-        final List<DictionaryInfo> result = new ArrayList<DictionaryInfo>(
-            dictionaryConfig.dictionaryFilesOrdered.size());
+        final List<DictionaryInfo> result = new ArrayList<>(
+                dictionaryConfig.dictionaryFilesOrdered.size());
 
-        final Map<String, DictionaryInfo> remaining = new HashMap<String, DictionaryInfo>(
-            DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO);
+        final Map<String, DictionaryInfo> remaining = new HashMap<>(
+                DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO);
         remaining.keySet().removeAll(dictionaryConfig.dictionaryFilesOrdered);
         for (final DictionaryInfo dictionaryInfo : remaining.values()) {
             if (matchesFilters(dictionaryInfo, filters)) {
@@ -554,10 +543,6 @@ public enum DictionaryApplication {
         }
         Collections.sort(result, dictionaryInfoComparator);
         return result;
-    }
-
-    public synchronized boolean isDictionaryOnDevice(String uncompressedFilename) {
-        return dictionaryConfig.uncompressedFilenameToDictionaryInfo.get(uncompressedFilename) != null;
     }
 
     public boolean updateAvailable(final DictionaryInfo dictionaryInfo) {
@@ -569,9 +554,7 @@ public enum DictionaryApplication {
     }
 
     public DictionaryInfo getDownloadable(final String uncompressedFilename) {
-        final DictionaryInfo downloadable = DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO
-                                            .get(uncompressedFilename);
-        return downloadable;
+        return DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO.get(uncompressedFilename);
     }
 
 }

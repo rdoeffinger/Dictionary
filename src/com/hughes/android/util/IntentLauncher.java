@@ -8,8 +8,8 @@ import android.view.View.OnClickListener;
 
 public class IntentLauncher implements OnClickListener {
 
-    final Context context;
-    final Intent intent;
+    private final Context context;
+    private final Intent intent;
 
     public IntentLauncher(final Context context, final Intent intent) {
         this.context = context;
