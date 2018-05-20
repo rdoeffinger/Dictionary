@@ -36,7 +36,7 @@ public enum IsoUtils {
     // Useful:
     // http://www.loc.gov/standards/iso639-2/php/code_list.php
     private final Map<String, LanguageResources> isoCodeToResources = new HashMap<String, LanguageResources>();
-    private IsoUtils() {
+    IsoUtils() {
         isoCodeToResources.put("AF", new LanguageResources("Afrikaans", R.string.AF,
                                R.drawable.flag_of_south_africa));
         isoCodeToResources.put("SQ", new LanguageResources("Albanian", R.string.SQ,

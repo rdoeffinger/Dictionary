@@ -109,7 +109,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 
     static final class DataSerializer implements RAFListSerializer<HtmlEntry> {
         @Override
-        public HtmlEntry read(DataInput raf, final int index) throws IOException {
+        public HtmlEntry read(DataInput raf, final int index) {
             assert false;
             return null;
         }
@@ -127,7 +127,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         }
 
         @Override
-        public void write(DataOutput raf, byte[] t) throws IOException {
+        public void write(DataOutput raf, byte[] t) {
             assert false;
         }
     }

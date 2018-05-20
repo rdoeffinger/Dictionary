@@ -41,7 +41,7 @@ public final class AboutActivity extends Activity {
             }
         } catch (Exception e) {
         }
-        TextView titleView = (TextView)findViewById(R.id.titleText);
+        TextView titleView = findViewById(R.id.titleText);
         titleView.setText("QuickDic " + ver);
     }
 

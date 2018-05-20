@@ -194,7 +194,7 @@ public final class Index implements RAFSerializable<Index> {
         public void write(DataOutput raf, IndexEntry t) throws IOException {
             t.write(raf);
         }
-    };
+    }
 
     public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
         public final String token;

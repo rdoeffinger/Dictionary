@@ -93,7 +93,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
         final DictionaryApplication application = DictionaryApplication.INSTANCE;
         File dictDir = application.getDictDir();
         if (!dictDir.isDirectory() || !dictDir.canWrite() ||
-                !application.checkFileCreate(dictDir)) {
+                !DictionaryApplication.checkFileCreate(dictDir)) {
             String dirs = "";
             String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
             if (new File(externalDir).canWrite())

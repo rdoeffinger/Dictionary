@@ -107,8 +107,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             indices = CachingList.createFullyCached(RAFList.create(ch, new IndexSerializer(ch),
                                                     ch.position(), dictFileVersion, dictInfo + " index: "));
         } catch (RuntimeException e) {
-            final IOException ioe = new IOException("RuntimeException loading dictionary");
-            ioe.initCause(e);
+            final IOException ioe = new IOException("RuntimeException loading dictionary", e);
             throw ioe;
         }
         final String end = raf.readUTF();
@@ -156,11 +155,11 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         public void write(DataOutput raf, Index t) throws IOException {
             t.write(raf);
         }
-    };
+    }
 
     final RAFListSerializer<HtmlEntry> htmlEntryIndexSerializer = new RAFListSerializer<HtmlEntry>() {
         @Override
-        public void write(DataOutput raf, HtmlEntry t) throws IOException {
+        public void write(DataOutput raf, HtmlEntry t) {
             assert false;
         }
 

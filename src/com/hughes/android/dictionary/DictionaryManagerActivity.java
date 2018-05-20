@@ -241,7 +241,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
         } catch (Exception e) {
             String msg = getString(R.string.unzippingFailed, dest + ": " + e.getMessage());
             File dir = application.getDictDir();
-            if (!dir.canWrite() || !application.checkFileCreate(dir)) {
+            if (!dir.canWrite() || !DictionaryApplication.checkFileCreate(dir)) {
                 msg = getString(R.string.notWritable, dir.getAbsolutePath());
             }
             new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
@@ -326,7 +326,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
                                                 getListView().getContext()).inflate(
                                                 R.layout.dictionary_manager_header_row_downloadable, getListView(), false);
 
-        showDownloadable = (ToggleButton) downloadableDictionariesHeaderRow
+        showDownloadable = downloadableDictionariesHeaderRow
                            .findViewById(R.id.hideDownloadable);
         showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
@@ -513,7 +513,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             }
         });
 
-        application.onCreateGlobalOptionsMenu(this, menu);
+        DictionaryApplication.onCreateGlobalOptionsMenu(this, menu);
         return true;
     }
 
@@ -669,12 +669,12 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             row = LayoutInflater.from(parent.getContext()).inflate(
                        R.layout.dictionary_manager_row, parent, false);
         }
-        final TextView name = (TextView) row.findViewById(R.id.dictionaryName);
-        final TextView details = (TextView) row.findViewById(R.id.dictionaryDetails);
+        final TextView name = row.findViewById(R.id.dictionaryName);
+        final TextView details = row.findViewById(R.id.dictionaryDetails);
         name.setText(application.getDictionaryName(dictionaryInfo.uncompressedFilename));
 
         final boolean updateAvailable = application.updateAvailable(dictionaryInfo);
-        final Button downloadButton = (Button) row.findViewById(R.id.downloadButton);
+        final Button downloadButton = row.findViewById(R.id.downloadButton);
         final DictionaryInfo downloadable = application.getDownloadable(dictionaryInfo.uncompressedFilename);
         boolean broken = false;
         if (!dictionaryInfo.isValid()) {
@@ -698,7 +698,7 @@ public class DictionaryManagerActivity extends ActionBarActivity {
             downloadButton.setVisibility(View.GONE);
         }
 
-        LinearLayout buttons = (LinearLayout) row.findViewById(R.id.dictionaryLauncherButtons);
+        LinearLayout buttons = row.findViewById(R.id.dictionaryLauncherButtons);
 
         final List<IndexInfo> sortedIndexInfos = application
                 .sortedIndexInfos(dictionaryInfo.indexInfos);

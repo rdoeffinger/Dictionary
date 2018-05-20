@@ -820,7 +820,7 @@ public class DictionaryActivity extends ActionBarActivity {
 
         final List<DictionaryInfo> installedDicts = application.getDictionariesOnDevice(null);
 
-        ListView listView = (ListView) dialog.findViewById(android.R.id.list);
+        ListView listView = dialog.findViewById(android.R.id.list);
         final Button button = new Button(listView.getContext());
         final String name = getString(R.string.dictionaryManager);
         button.setText(name);
@@ -995,7 +995,7 @@ public class DictionaryActivity extends ActionBarActivity {
                     final Context context = getListView().getContext();
                     final Dialog dialog = new Dialog(context);
                     dialog.setContentView(R.layout.about_dictionary_dialog);
-                    final TextView textView = (TextView) dialog.findViewById(R.id.text);
+                    final TextView textView = dialog.findViewById(R.id.text);
 
                     dialog.setTitle(dictFileTitleName);
 
@@ -1045,7 +1045,7 @@ public class DictionaryActivity extends ActionBarActivity {
             });
         }
 
-        application.onCreateGlobalOptionsMenu(this, menu);
+        DictionaryApplication.onCreateGlobalOptionsMenu(this, menu);
 
         return true;
     }
@@ -1062,7 +1062,7 @@ public class DictionaryActivity extends ActionBarActivity {
         if (clickOpensContextMenu && (row instanceof HtmlEntry.Row ||
             (row instanceof TokenRow && ((TokenRow)row).getIndexEntry().htmlEntries.size() > 0))) {
             final List<HtmlEntry> html = row instanceof TokenRow ? ((TokenRow)row).getIndexEntry().htmlEntries : Collections.singletonList(((HtmlEntry.Row)row).getEntry());
-            final String highlight = row instanceof HtmlEntry.Row ? ((HtmlEntry.Row)row).getTokenRow(true).getToken() : null;
+            final String highlight = row instanceof HtmlEntry.Row ? row.getTokenRow(true).getToken() : null;
             final MenuItem open = menu.add("Open");
             open.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 public boolean onMenuItemClick(MenuItem item) {
@@ -1831,7 +1831,7 @@ public class DictionaryActivity extends ActionBarActivity {
             final Dialog dialog = new Dialog(getListView().getContext());
             dialog.setContentView(R.layout.thadolina_dialog);
             dialog.setTitle("Ti amo, amore mio!");
-            final ImageView imageView = (ImageView) dialog.findViewById(R.id.thadolina_image);
+            final ImageView imageView = dialog.findViewById(R.id.thadolina_image);
             imageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
