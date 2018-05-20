@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 
@@ -18,8 +18,8 @@ configurations {
     smallicu
 }
 dependencies {
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'com.android.support:design:25.4.0'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:design:25.3.1'
     // Note: you can just replace "smallicu" by implementation
     // and remove the "compile files" part if you do not
     // care about the size of the apk
