@@ -4,41 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <!--
-
-    <LinearLayout
-        android:id="@+id/SearchBarLinearLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/LangButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:minWidth="50dip"
-            android:text="" />
-
-        <EditText
-            android:id="@+id/SearchText"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:hint="@string/searchText"
-            android:imeOptions="actionSearch|flagNoEnterAction|flagNoExtractUi"
-            android:inputType="text" />
-
-        <ImageButton
-            android:id="@+id/ClearSearchTextButton"
-            style="@style/BorderlessButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_input_delete" />
-
-    </LinearLayout>
-
- -->
-
     <ListView
         android:id="@id/android:list"
         android:layout_width="fill_parent"
