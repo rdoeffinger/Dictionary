@@ -141,6 +141,9 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         public synchronized void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
+            if (DownloadManager.ACTION_NOTIFICATION_CLICKED.equals(action)) {
+                startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 final long downloadId = intent.getLongExtra(
                                             DownloadManager.EXTRA_DOWNLOAD_ID, 0);
@@ -340,9 +343,9 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion)
             .commit();
         }
-
-        registerReceiver(broadcastReceiver, new IntentFilter(
-                             DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        IntentFilter downloadManagerIntents = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        downloadManagerIntents.addAction(DownloadManager.ACTION_NOTIFICATION_CLICKED);
+        registerReceiver(broadcastReceiver, downloadManagerIntents);
 
         setMyListAdapter();
         registerForContextMenu(getListView());
@@ -658,6 +661,46 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         setListAdapter(new MyListAdapter(filters));
     }
 
+    private boolean isDownloadActive(String downloadUrl, boolean cancel) {
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        final DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterByStatus(DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_PENDING | DownloadManager.STATUS_RUNNING);
+        final Cursor cursor = downloadManager.query(query);
+
+        // Due to a bug, cursor is null instead of empty when
+        // the download manager is disabled.
+        if (cursor == null) {
+            if (cancel) {
+                String msg = getString(R.string.downloadManagerQueryFailed);
+                new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
+                .setMessage(getString(R.string.downloadFailed, msg))
+                .setNeutralButton("Close", null).show();
+            }
+            return cancel;
+        }
+
+        String destFile;
+        try {
+            destFile = new File(new URL(downloadUrl).getPath()).getName();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid download URL!", e);
+        }
+        while (cursor.moveToNext()) {
+            if (downloadUrl.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_URI))))
+                break;
+            if (destFile.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))))
+                break;
+        }
+        boolean active = !cursor.isAfterLast();
+        if (active && cancel) {
+            long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
+            finishedDownloadIds.add(downloadId);
+            downloadManager.remove(downloadId);
+        }
+        cursor.close();
+        return active;
+    }
+
     private View createDictionaryRow(final DictionaryInfo dictionaryInfo,
                                      final ViewGroup parent, View row, boolean canLaunch) {
 
@@ -690,6 +733,9 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                 }
             });
             downloadButton.setVisibility(View.VISIBLE);
+
+            if (isDownloadActive(downloadable.downloadUrl, false))
+                downloadButton.setText("X");
         } else {
             downloadButton.setVisibility(View.GONE);
         }
@@ -756,55 +802,32 @@ public class DictionaryManagerActivity extends AppCompatActivity {
     }
 
     private synchronized void downloadDictionary(final String downloadUrl, long bytes, Button downloadButton) {
+        if (isDownloadActive(downloadUrl, true)) {
+            downloadButton
+            .setText(getString(
+                         R.string.downloadButton,
+                         bytes / 1024.0 / 1024.0));
+            return;
+        }
+        Request request = new Request(
+            Uri.parse(downloadUrl));
+
         String destFile;
         try {
             destFile = new File(new URL(downloadUrl).getPath()).getName();
         } catch (MalformedURLException e) {
             throw new RuntimeException("Invalid download URL!", e);
         }
-        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        final DownloadManager.Query query = new DownloadManager.Query();
-        query.setFilterByStatus(DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_PENDING | DownloadManager.STATUS_RUNNING);
-        final Cursor cursor = downloadManager.query(query);
-
-        // Due to a bug, cursor is null instead of empty when
-        // the download manager is disabled.
-        if (cursor == null) {
-            String msg = getString(R.string.downloadManagerQueryFailed);
-            new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
-            .setMessage(getString(R.string.downloadFailed, msg))
-            .setNeutralButton("Close", null).show();
-            return;
-        }
-
-        while (cursor.moveToNext()) {
-            if (downloadUrl.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_URI))))
-                break;
-            if (destFile.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))))
-                break;
-        }
-        if (!cursor.isAfterLast()) {
-            downloadManager.remove(cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID)));
-            downloadButton
-            .setText(getString(
-                         R.string.downloadButton,
-                         bytes / 1024.0 / 1024.0));
-            cursor.close();
-            return;
-        }
-        cursor.close();
-        Request request = new Request(
-            Uri.parse(downloadUrl));
-
         Log.d(LOG, "Downloading to: " + destFile);
         request.setTitle(destFile);
-
         File destFilePath = new File(application.getDictDir(), destFile);
         destFilePath.delete();
         try {
             request.setDestinationUri(Uri.fromFile(destFilePath));
         } catch (Exception e) {
         }
+
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 
         try {
             downloadManager.enqueue(request);
