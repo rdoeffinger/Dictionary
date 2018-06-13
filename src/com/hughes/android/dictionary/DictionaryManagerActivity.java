@@ -83,6 +83,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -223,15 +224,24 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                 }
             }
             zipFile = new ZipInputStream(new BufferedInputStream(zipFileStream));
-            final ZipEntry zipEntry = zipFile.getNextEntry();
-            Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
-            File targetFile = new File(application.getDictDir(), zipEntry.getName());
-            if (targetFile.exists()) {
-                targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
-                targetFile = new File(application.getDictDir(), zipEntry.getName());
+            ZipEntry zipEntry = null;
+            while ((zipEntry = zipFile.getNextEntry()) != null) {
+                // Note: this check prevents security issues like accidental path
+                // traversal, which unfortunately ZipInputStream has no protection against.
+                // So take extra care when changing it.
+                if (!Pattern.matches("[-A-Za-z]+\\.quickdic", zipEntry.getName())) {
+                    Log.w(LOG, "Invalid zip entry: " + zipEntry.getName());
+                    continue;
+                }
+                Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
+                File targetFile = new File(application.getDictDir(), zipEntry.getName());
+                if (targetFile.exists()) {
+                    targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
+                    targetFile = new File(application.getDictDir(), zipEntry.getName());
+                }
+                zipOut = new FileOutputStream(targetFile);
+                copyStream(zipFile, zipOut);
             }
-            zipOut = new FileOutputStream(targetFile);
-            copyStream(zipFile, zipOut);
             application.backgroundUpdateDictionaries(dictionaryUpdater);
             if (!isFinishing())
                 Toast.makeText(context, getString(R.string.installationFinished, dest),
