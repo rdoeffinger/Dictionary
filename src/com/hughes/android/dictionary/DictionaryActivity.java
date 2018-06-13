@@ -238,8 +238,9 @@ public class DictionaryActivity extends AppCompatActivity {
             }
             dictRaf = null;
         }
-        Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()),
-                       Toast.LENGTH_LONG).show();
+        if (!isFinishing())
+            Toast.makeText(this, getString(R.string.invalidDictionary, "", e.getMessage()),
+                           Toast.LENGTH_LONG).show();
         startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
         finish();
     }
@@ -413,7 +414,8 @@ public class DictionaryActivity extends AppCompatActivity {
         }
 
         if (dictFilename == null) {
-            Toast.makeText(this, getString(R.string.no_dict_file), Toast.LENGTH_LONG).show();
+            if (!isFinishing())
+                Toast.makeText(this, getString(R.string.no_dict_file), Toast.LENGTH_LONG).show();
             startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
             finish();
             return;
@@ -522,8 +524,9 @@ public class DictionaryActivity extends AppCompatActivity {
                     typeface = Typeface.createFromAsset(getAssets(), fontName);
                 } catch (Exception e) {
                     Log.w(LOG, "Exception trying to use typeface, using default.", e);
-                    Toast.makeText(this, getString(R.string.fontFailure, e.getLocalizedMessage()),
-                            Toast.LENGTH_LONG).show();
+                    if (!isFinishing())
+                        Toast.makeText(this, getString(R.string.fontFailure, e.getLocalizedMessage()),
+                                Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -1244,9 +1247,10 @@ public class DictionaryActivity extends AppCompatActivity {
             out.close();
         } catch (Exception e) {
             Log.e(LOG, "Unable to append to " + wordList.getAbsolutePath(), e);
-            Toast.makeText(this,
-                           getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()),
-                           Toast.LENGTH_LONG).show();
+            if (!isFinishing())
+                Toast.makeText(this,
+                               getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()),
+                               Toast.LENGTH_LONG).show();
         }
     }
 
