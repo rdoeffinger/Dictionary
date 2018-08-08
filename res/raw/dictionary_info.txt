@@ -101,6 +101,7 @@ EN-cmn.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-
 EN-cu.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-cu.quickdic.v007.zip	1492116561318	586465	545620	2	EN	5207	1877	cu	6283	5778	(EN)Wiktionary-based EN-cu dictionary.
 EN-grc.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-grc.quickdic.v007.zip	1450306079857	2929733	2863566	2	EN	11778	1223	grc	9538	7624	(EN)Wiktionary-based EN-grc dictionary.
 EN-haw.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-haw.quickdic.v007.zip	1450306121065	295800	275409	2	EN	3847	1099	haw	1737	1546	(EN)Wiktionary-based EN-haw dictionary.
+EN-rom.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-rom.quickdic.v007.zip	1533767223728	2021989	1870901	2	EN	20483	11655	rom	29202	26295	(EN)Wiktionary-based EN-rom dictionary.
 EN-scn.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-scn.quickdic.v007.zip	1490308002289	296506	277950	2	EN	3585	1194	scn	2486	2286	(EN)Wiktionary-based EN-scn dictionary.
 EN-yue.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN-yue.quickdic.v007.zip	1450306146319	1784435	1726130	2	EN	4506	1407	yue	21736	20940	(EN)Wiktionary-based EN-yue dictionary.
 EN.quickdic	http://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/EN.quickdic.v007.zip	1450142478375	92606781	91833088	1	EN	616698	610998	Wiktionary-based EN dictionary.
