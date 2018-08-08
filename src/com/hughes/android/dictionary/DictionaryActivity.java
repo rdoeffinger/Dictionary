@@ -1436,7 +1436,7 @@ public class DictionaryActivity extends AppCompatActivity {
                     Log.d(LOG, "interrupted, skipping searchFinished.");
                 }
             } catch (Exception e) {
-                Log.e(LOG, "Failure during search (can happen during Activity close.");
+                Log.e(LOG, "Failure during search (can happen during Activity close): " + e.getMessage());
             } finally {
                 synchronized (this) {
                     done = true;
