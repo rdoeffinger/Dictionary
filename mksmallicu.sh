@@ -5,7 +5,7 @@ DST="$2"
 mkdir -p $(dirname "$DST")
 cp $1 "$DST"
 zip -ws -d "$DST" com/ibm/icu/impl/data/icudt*b/*.res com/ibm/icu/impl/data/icudt*b/*.spp com/ibm/icu/impl/data/icudt*b/unames.icu
-zip -d "$DST" com/ibm/icu/impl/data/icudt*b/brkitr/* com/ibm/icu/impl/data/icudt*b/curr/* com/ibm/icu/impl/data/icudt*b/lang/* com/ibm/icu/impl/data/icudt*b/rbnf/* com/ibm/icu/impl/data/icudt*b/region/* com/ibm/icu/impl/data/icudt*b/unit/* com/ibm/icu/impl/data/icudt*b/zone/*
+zip -d "$DST" com/ibm/icu/impl/data/icudt57b/brkitr/cjdict.dict com/ibm/icu/impl/data/icudt*b/curr/* com/ibm/icu/impl/data/icudt*b/lang/* com/ibm/icu/impl/data/icudt*b/rbnf/* com/ibm/icu/impl/data/icudt*b/region/* com/ibm/icu/impl/data/icudt*b/unit/* com/ibm/icu/impl/data/icudt*b/zone/*
 zip -d "$DST" com/ibm/icu/impl/data/Holiday*.class
 zip -d "$DST" com/ibm/icu/impl/duration/*
 zip -d "$DST" com/ibm/icu/impl/ICULangDataTables*.class com/ibm/icu/impl/ICURegionDataTables*.class com/ibm/icu/impl/*Currency*.class com/ibm/icu/impl/TrieIter*.class com/ibm/icu/impl/*Format.class com/ibm/icu/impl/*TimeZone*.class com/ibm/icu/impl/*ZoneMeta*.class com/ibm/icu/impl/LocaleDisplay*.class com/ibm/icu/impl/RelativeDate*.class
