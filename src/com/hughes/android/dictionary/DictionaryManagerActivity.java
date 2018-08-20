@@ -224,7 +224,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                 }
             }
             zipFile = new ZipInputStream(new BufferedInputStream(zipFileStream));
-            ZipEntry zipEntry = null;
+            ZipEntry zipEntry;
             while ((zipEntry = zipFile.getNextEntry()) != null) {
                 // Note: this check prevents security issues like accidental path
                 // traversal, which unfortunately ZipInputStream has no protection against.
@@ -258,14 +258,15 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         } finally {
             try {
                 if (zipOut != null) zipOut.close();
-            } catch (IOException e) {}
+            } catch (IOException ignored) {}
             try {
                 if (zipFile != null) zipFile.close();
-            } catch (IOException e) {}
+            } catch (IOException ignored) {}
             try {
                 if (zipFileStream != null) zipFileStream.close();
-            } catch (IOException e) {}
-            if (localZipFile != null && delete) localZipFile.delete();
+            } catch (IOException ignored) {}
+            if (localZipFile != null && delete) //noinspection ResultOfMethodCallIgnored
+                localZipFile.delete();
         }
         return result;
     }
@@ -838,6 +839,14 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         }
 
         DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+
+        if (downloadManager == null) {
+            String msg = getString(R.string.downloadManagerQueryFailed);
+            new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
+                    .setMessage(getString(R.string.downloadFailed, msg))
+                    .setNeutralButton("Close", null).show();
+            return;
+        }
 
         try {
             downloadManager.enqueue(request);

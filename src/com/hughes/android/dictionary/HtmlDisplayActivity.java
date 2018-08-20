@@ -86,7 +86,7 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
             html = StringUtil.readToString(res);
             try {
                 res.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         } else {
             html = getIntent().getStringExtra(HTML);

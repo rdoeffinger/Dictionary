@@ -157,7 +157,7 @@ public enum DictionaryApplication {
         }
         try {
             reader.close();
-        } catch (IOException e) {}
+        } catch (IOException ignored) {}
     }
 
     public synchronized void init(Context c) {
@@ -256,7 +256,7 @@ public enum DictionaryApplication {
         File efd = null;
         try {
             efd = appContext.getExternalFilesDir(null);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (efd != null) {
             efd.mkdirs();
@@ -295,7 +295,7 @@ public enum DictionaryApplication {
         try {
             testfile.delete();
             res = testfile.createNewFile() & testfile.delete();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return res;
     }

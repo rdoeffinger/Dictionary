@@ -14,6 +14,8 @@
 
 package com.hughes.android.dictionary.engine;
 
+import android.support.annotation.NonNull;
+
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializerSkippable;
 import com.hughes.util.raf.RAFSerializable;
@@ -219,7 +221,7 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     }
 
     @Override
-    public int compareTo(final PairEntry that) {
+    public int compareTo(@NonNull final PairEntry that) {
         return this.getRawText(false).compareTo(that.getRawText(false));
     }
 

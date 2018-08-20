@@ -103,7 +103,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
                 File efd = null;
                 try {
                     efd = getApplicationContext().getExternalFilesDir(null);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 if (efd != null) {
                     String externalFilesDir = efd.getAbsolutePath();

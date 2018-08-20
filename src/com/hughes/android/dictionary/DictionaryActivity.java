@@ -1285,7 +1285,7 @@ public class DictionaryActivity extends AppCompatActivity {
             Log.d(LOG, "Trying to hide soft keyboard.");
             final InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             View focus = getCurrentFocus();
-            if (focus != null) {
+            if (inputManager != null && focus != null) {
                 inputManager.hideSoftInputFromWindow(focus.getWindowToken(),
                                                      InputMethodManager.HIDE_NOT_ALWAYS);
             }
@@ -1501,7 +1501,7 @@ public class DictionaryActivity extends AppCompatActivity {
                 DisplayMetrics dm = new DisplayMetrics();
                 getWindowManager().getDefaultDisplay().getMetrics(dm);
                 scale = dm.density;
-            } catch (NullPointerException e)
+            } catch (NullPointerException ignored)
             {}
             // Convert the dps to pixels, based on density scale
             mPaddingDefault = (int) (PADDING_DEFAULT_DP * scale + 0.5f);

@@ -86,7 +86,7 @@ public class PersistentObjectCache {
                 Log.e(getClass().getSimpleName(), "Deserialization failed: " + src, e);
                 try {
                     if (in != null) in.close();
-                } catch (IOException e2) {}
+                } catch (IOException ignored) {}
                 return null;
             }
             objects.put(filename, object);
@@ -108,7 +108,7 @@ public class PersistentObjectCache {
         }
         try {
             if (out != null) out.close();
-        } catch (IOException e) {}
+        } catch (IOException ignored) {}
     }
 
     private PersistentObjectCache(final Context context) {

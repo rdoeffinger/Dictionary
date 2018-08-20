@@ -37,7 +37,7 @@ public final class AboutActivity extends Activity {
                 PackageInfo p = pm.getPackageInfo(getPackageName(), 0);
                 ver = p.versionName + " (ID " + p.versionCode + ")";
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         TextView titleView = findViewById(R.id.titleText);
         titleView.setText("QuickDic " + ver);
