@@ -5,10 +5,6 @@
     android:versionCode="103"
     android:versionName="5.4.8" >
 
-    <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="26" />
-
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />

@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -43,7 +43,6 @@ def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "Util"
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "27.0.3"
     lintOptions {
         disable "MissingTranslation"
     }
@@ -77,5 +76,6 @@ android {
         applicationId 'de.reimardoeffinger.quickdic'
         targetSdkVersion 26
         resConfigs "de", "es", "fr", "it", "ja", "pt", "pt-rBR", "ru", "zh-rCN"
+        minSdkVersion = 10
     }
 }
