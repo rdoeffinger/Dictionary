@@ -82,6 +82,35 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
+    private String suggestedPaths(String suffix) {
+        String dirs = "";
+        String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        if (new File(externalDir).canWrite())
+            dirs += "\n" + externalDir + "/quickDic" + suffix;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            File[] files = getApplicationContext().getExternalFilesDirs(null);
+            for (File f : files) {
+                if (f.canWrite())
+                    dirs += "\n" + f.getAbsolutePath() + suffix;
+            }
+        } else {
+            File efd = null;
+            try {
+                efd = getApplicationContext().getExternalFilesDir(null);
+            } catch (Exception ignored) {
+            }
+            if (efd != null) {
+                String externalFilesDir = efd.getAbsolutePath();
+                if (new File(externalFilesDir).canWrite())
+                    dirs += "\n" + externalFilesDir + suffix;
+            }
+        }
+        File fd = getApplicationContext().getFilesDir();
+        if (fd.canWrite())
+            dirs += "\n" + fd.getAbsolutePath() + suffix;
+        return dirs;
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences p, String v) {
         DictionaryApplication.INSTANCE.init(getApplicationContext());
@@ -89,31 +118,19 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
         File dictDir = application.getDictDir();
         if (!dictDir.isDirectory() || !dictDir.canWrite() ||
                 !DictionaryApplication.checkFileCreate(dictDir)) {
-            String dirs = "";
-            String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-            if (new File(externalDir).canWrite())
-                dirs += "\n" + externalDir + "/quickDic";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                File[] files = getApplicationContext().getExternalFilesDirs(null);
-                for (File f : files) {
-                    if (f.canWrite())
-                        dirs += "\n" + f.getAbsolutePath();
-                }
-            } else {
-                File efd = null;
-                try {
-                    efd = getApplicationContext().getExternalFilesDir(null);
-                } catch (Exception ignored) {
-                }
-                if (efd != null) {
-                    String externalFilesDir = efd.getAbsolutePath();
-                    if (new File(externalFilesDir).canWrite())
-                        dirs += "\n" + externalFilesDir;
-                }
-            }
-            File fd = getApplicationContext().getFilesDir();
-            if (fd.canWrite())
-                dirs += "\n" + fd.getAbsolutePath();
+            String dirs = suggestedPaths("");
+            new AlertDialog.Builder(this).setTitle(getString(R.string.error))
+            .setMessage(getString(R.string.chosenNotWritable) + dirs)
+            .setNeutralButton("Close", null).show();
+        }
+        File wordlist = application.getWordListFile();
+        boolean ok = false;
+        try {
+            ok = wordlist.canWrite() || wordlist.createNewFile();
+        } catch (Exception ignored) {
+        }
+        if (!ok) {
+            String dirs = suggestedPaths("/wordList.txt");
             new AlertDialog.Builder(this).setTitle(getString(R.string.error))
             .setMessage(getString(R.string.chosenNotWritable) + dirs)
             .setNeutralButton("Close", null).show();
