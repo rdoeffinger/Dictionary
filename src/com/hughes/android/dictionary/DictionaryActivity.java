@@ -1604,19 +1604,6 @@ public class DictionaryActivity extends AppCompatActivity {
                 col1.setTextColor(textColorFg);
                 col2.setTextColor(textColorFg);
 
-                // Set the columns in the table.
-                if (r > 0) {
-                    final TextView bullet = new TextView(tableRow.getContext());
-                    bullet.setText(" •");
-                    tableRow.addView(bullet);
-                }
-                tableRow.addView(col1, layoutParams);
-                if (r > 0) {
-                    final TextView bullet = new TextView(tableRow.getContext());
-                    bullet.setText(" •");
-                    tableRow.addView(bullet);
-                }
-                tableRow.addView(col2, layoutParams);
                 col1.setWidth(1);
                 col2.setWidth(1);
 
@@ -1634,13 +1621,37 @@ public class DictionaryActivity extends AppCompatActivity {
                     col2.setOnLongClickListener(textViewLongClickListenerIndex1);
                 }
 
+                // Set the columns in the table.
+                if (r == 0) {
+                    tableRow.addView(col1, layoutParams);
+                    tableRow.addView(col2, layoutParams);
+                } else {
+                    for (int i = 0; i < 2; i++) {
+                        final TextView bullet = new TextView(tableRow.getContext());
+                        bullet.setText(" • ");
+                        LinearLayout wrapped = new LinearLayout(context);
+                        wrapped.setOrientation(LinearLayout.HORIZONTAL);
+                        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0);
+                        wrapped.addView(bullet, p1);
+                        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                        wrapped.addView(i == 0 ? col1 : col2, p2);
+                        tableRow.addView(wrapped, layoutParams);
+                    }
+                }
+
                 result.addView(tableRow);
             }
 
             for (int r = 0; r < rowCount; ++r) {
                 final TableRow tableRow = (TableRow)result.getChildAt(r);
-                final TextView col1 = (TextView)tableRow.getChildAt(r == 0 ? 0 : 1);
-                final TextView col2 = (TextView)tableRow.getChildAt(r == 0 ? 1 : 3);
+                View left = tableRow.getChildAt(0);
+                View right = tableRow.getChildAt(1);
+                if (r > 0) {
+                    left = ((ViewGroup)left).getChildAt(1);
+                    right = ((ViewGroup)right).getChildAt(1);
+                }
+                final TextView col1 = (TextView)left;
+                final TextView col2 = (TextView)right;
 
                 // Set what's in the columns.
                 final Pair pair = entry.pairs.get(r);
