@@ -31,12 +31,16 @@ public class NormalizeComparator implements Comparator<String> {
         this.version = version;
     }
 
+    public static String withoutDash(final String a) {
+        return a.replace("-", "").replace("þ", "th").replace("Þ", "Th");
+    }
+
     // Handles comparison between items containing "-".
     // Also replaces other problematic cases like "thorn".
     public static int compareWithoutDash(final String a, final String b, final Comparator<Object> c, int version) {
         if (version < 7) return 0;
-        String s1 = a.replace("-", "").replace("þ", "th").replace("Þ", "Th");
-        String s2 = b.replace("-", "").replace("þ", "th").replace("Þ", "Th");
+        String s1 = withoutDash(a);
+        String s2 = withoutDash(b);
         return c.compare(s1, s2);
     }
 

@@ -410,7 +410,8 @@ public final class Index implements RAFSerializable<Index> {
                 return -1;
             }
             final IndexEntry indexEntry = sortedIndexEntries.get(index);
-            if (!indexEntry.normalizedToken.startsWith(normalizedPrefix)) {
+            if (!indexEntry.normalizedToken.startsWith(normalizedPrefix) &&
+                !NormalizeComparator.withoutDash(indexEntry.normalizedToken).startsWith(normalizedPrefix)) {
                 break;
             }
             rowCount += indexEntry.numRows + indexEntry.htmlEntries.size();
@@ -500,7 +501,8 @@ public final class Index implements RAFSerializable<Index> {
                 return null;
             }
             final IndexEntry indexEntry = sortedIndexEntries.get(index);
-            if (!indexEntry.normalizedToken.startsWith(searchToken)) {
+            if (!indexEntry.normalizedToken.startsWith(searchToken) &&
+                !NormalizeComparator.withoutDash(indexEntry.normalizedToken).startsWith(searchToken)) {
                 break;
             }
 
