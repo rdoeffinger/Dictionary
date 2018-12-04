@@ -1,8 +1,6 @@
 
 package com.hughes.android.dictionary.engine;
 
-import android.support.annotation.NonNull;
-
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFListSerializerSkippable;
@@ -139,7 +137,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     }
 
     @Override
-    public int compareTo(@NonNull HtmlEntry another) {
+    public int compareTo(/*@NonNull*/ HtmlEntry another) {
         if (title.compareTo(another.title) != 0) {
             return title.compareTo(another.title);
         }
