@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!-- Global. -->
+    <string name="about">QuicDic-i buruz</string>
+    <string name="settings">Ezarpenak</string>
+    <string name="help">Laguntza</string>
+    <string name="reportIssue">Akatsen berri eman</string>
+    <string name="browserDownload">Deskargatu nabigatzailean</string>
+    <string name="no_dict_file">Zehaztu ezarpenetan lehenetsitako hiztegia.</string>
+
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">Hiztegi kudeatzailea</string>
+    <string name="dictionariesOnDevice">Gailuko hiztegiak</string>
+    <string name="downloadableDictionaries">Hiztegi eskuragarriak</string>
+    <string name="sortDicts">Hiztegiak sailkatu</string>
+    <string name="downloadButton">%.1fMB</string>
+    <string name="updateAvailable">Berritu!</string>
+    <string name="moveToTop">Gora mugitu</string>
+    <string name="deleteDictionary">Ezabatu hiztegia</string>
+    <string name="indexInfo">%1$s: %2$,d hitz</string>
+    <string name="managerShow">Erakutsi</string>
+    <string name="managerHide">Izkuatu</string>
+    <string name="error">Akatsa</string>
+    <string name="unableToReadDictionaryDir">Ezin da hiztegi-directorioa irakurri: \n
+ %1$s\n
+ \n
+ Android kanpoko gordelekuaren directorioa: \n
+ %2$s</string>
+
+    <!-- Download. -->
+    <string name="downloadFailed">Akatsa deskargatzean: \n
+       %s.</string>
+    <string name="downloadManagerQueryFailed">Ezin da deskarga kudeatzailea abiatu. Desaktibatuta dago ala falta da?</string>
+    <string name="unzippingDictionary">Hiztegia deskonprimatzen:\n
+   %s</string>
+    <string name="unzippingFailed">Akatsa deskonprimatzean:\n
+   %s</string>
+    <string name="installationFinished">Installazioa bukatu da: \n
+       %s.</string>
+    <string name="notWritable">%s hiztegi-kokapena ez da idazgarria, aldatu ezarpenetan.</string>
+
+    <!-- DictionaryActivity -->
+    <string name="searchText">Bilatu testua</string>
+    <string name="selectDictionary">Hautatu hiztegia...</string>
+    <string name="addToWordList">Gehitu hitzen zerrendara: %s</string>
+    <string name="searchForSelection">Bilatu: %s</string>
+    <string name="failedAddingToWordList">Akatsa hitz zerrendara gehitzean: %s</string>
+    <string name="invalidDictionary">Hiztegi baliogabea: file=%1$s, error=%2$s</string>
+    <string name="noSearchResults">Ez dago emaitzarik bilaketarako.</string>
+    <string name="aboutDictionary">Hiztegiari buruz</string>
+    <string name="fontFailure">Akatsa letrarekin: %s</string>
+    <string name="seeAlso">Begiratu ere: %1$s (%2$s)</string>
+    <string name="speak">Hitz egin</string>
+    <string name="speak_left">Entzun ezkerraldea</string>
+    <string name="speak_right">Entzun eskumaldea</string>
+    <string name="nextWord">Hurrengo hitza</string>
+    <string name="previousWord">Aurreko hitza</string>
+    <string name="randomWord">Ausazko hitza</string>
+    <string name="TTSbroken">TTS-a ez dabil gailu honetan</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">Fitxategia: %s</string>
+    <string name="dictionarySize">Tamaina: %d byte</string>
+    <string name="dictionaryCreationTime">Sortua: %tc</string>
+    <string name="indexName">Indizea: %s</string>
+    <string name="mainTokenCount">Hitz zenbaketa: %,d</string>
+    <string name="sources">Iturriak</string>
+    <string name="sourceInfo">%1$s : %2$,d sarrera</string>
+
+    <!-- About. -->
+    <string name="contactMe">QuickDic erabiltzen baduzu, gustoko nuke zugandik entzutea. Zoritxarrez ez naiz hiztegien edukien erantzule (formatuarena soilik), beste iturriak sortutakoa baita. Bidali iradokizunak, akatsak, komentarioak edo agur mezu arina hona:</string>
+    <string name="webPage">Informazio gehiagorako, begiratu:</string>
+    <string name="contributionsFrom">Ekarpenak egin dituzte:</string>
+    <string name="license">QuickDic-ek Apache 2.0 lizentziapean argitaratutako kodea dauka, Google-k erregistratutakoa.</string>
+
+    <!-- Preferences -->
+
+    <string name="defaultDicTitle">Hiztegi lehenetsia</string>
+    <string name="defaultDicSummary">Irekitzeko direktorioa, besterik adierazten ez denean.</string>
+    <string name="quickdicDirectoryTitle">QuickDic directorioa</string>
+    <string name="quickdicDirectorySummary">QuickDic-ek hiztegiak gordetzeko darabilen direktoria (hutsik utzi karpeta lehenetsia kanpoko gordelekuan izateko).</string>
+    <string name="wordListFileTitle">Hitz zerrenda fitxategia</string>
+    <string name="wordListFileSummary">Fitxategi lokala, zeinetan hitz zerrenda atxikituko den.</string>
+    <string name="fontTitle">Hiztegiaren letra mota</string>
+    <string name="fontSummary">Hiztegiak erakusteko letra mota.</string>
+    <string name="fontSizeTitle">Letra tamaina</string>
+    <string name="fontSizeSummary">Letraren tamaina hiztegiaren lerroetarako.</string>
+    <string name="saveOnlyFirstSubentryTitle">Gorde bakarrik lehen azpi-sarrera</string>
+    <string name="saveOnlyFirstSubentrySummary">Azpisarrera anitzak dituzten sarreretako, idatzi bakarrik lehen hitza.</string>
+    <string name="clickOpensContextMenuTitle">Sakatzeak kontestu-menua irekitzen du</string>
+    <string name="clickOpensContextMenuSummary">Ireki kontestu-menua sarrerak sakatzean (luze sakatzeak beti irekiko du kontestu-menua)</string>
+    <string name="showPrevNextButtonsTitle">Erakutsi gora/behera botoiak</string>
+    <string name="showPrevNextButtonsSummary">Ezkutatu edo erakutsi hurrengo/aurreko hitzen botoiak hiztegi-bistan.</string>
+    <string name="themeTitle">Gaia</string>
+    <string name="themeSummary">Interfazearen kolore gaia</string>
+    <string name="chosenNotWritable">Hautatutako direktorioan ezin da idatzi, saiatu hauetako batekin</string>
+
+</resources>
