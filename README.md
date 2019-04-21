@@ -29,6 +29,6 @@ And approximation of the steps for generating dictionaries:
    For a more manual approach, the commands it runs are something like
   `./run.sh --lang1=ES --lang2=PT --lang1Stoplist=data/inputs/stoplists/es.txt \
   --dictOut=data/outputs/ES-PT.quickdic \
-  --dictInfo="(EN)Wiktionary-based ES-PT dictionary. --input1=data/inputs/wikiSplit/en/EN.data" \
+  --dictInfo="(EN)Wiktionary-based ES-PT dictionary." --input1=data/inputs/wikiSplit/en/EN.data \
   --input1Name=enwikitionary --input1Format=EnTranslationToTranslation \
   --input1LangPattern1=es --input1LangPattern2=pt`
