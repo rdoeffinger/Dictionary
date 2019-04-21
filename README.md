@@ -1,15 +1,22 @@
+# QuickDic
+An offline dictionary for Android.
+
+## Cloning
 Make sure you use the `--recursive` option to clone, or otherwise
 make sure the `Util` submodule is correctly checked out.
 
 If you want to generate dictionaries, clone the DictionaryPC
 repository as well. It needs to be at the same level as this one, not
 inside it.
+
+## Compiling
 To compile the APK, just open this repository in Android Studio.
 You can also use Gradle directly.
 Note that compilation is only tested on Linux.
 It is possible to disable the smallicu/makesmallicu step if it causes
 issues, though help to debug any such issue would be welcome.
 
+## Generating dictionaries
 And approximation of the steps for generating dictionaries:
 1. Go into the DictionaryPC repository
 2. Run `data/downloadInputs.sh` to get the data
