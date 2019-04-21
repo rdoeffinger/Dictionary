@@ -1,20 +1,21 @@
 Make sure you use the `--recursive` option to clone, or otherwise
 make sure the `Util` submodule is correctly checked out.
-If you want to generate dictionaries also manually clone the DictionaryPC
-repository, it needs to be at the same level as this one, not inside it.
 
+If you want to generate dictionaries, clone the DictionaryPC
+repository as well. It needs to be at the same level as this one, not
+inside it.
 To compile the APK, just open this repository in Android Studio.
-You can also use gradle directly.
+You can also use Gradle directly.
 Note that compilation is only tested on Linux.
 It is possible to disable the smallicu/makesmallicu step if it causes
 issues, though help to debug any such issue would be welcome.
 
 And approximation of the steps for generating dictionaries:
-1. go into the DictionaryPC repository
-2. run `data/downloadInputs.sh` to get the data
-3. run `./compile.sh` (probably needs quite a few things to be installed or paths in it configured)
-4. run `./WiktionarySplitter.sh`
-5. run `./generate_dictionaries.sh`
+1. Go into the DictionaryPC repository
+2. Run `data/downloadInputs.sh` to get the data
+3. Run `./compile.sh` (probably needs quite a few things to be installed or paths in it configured)
+4. Run `./WiktionarySplitter.sh`
+5. Run `./generate_dictionaries.sh`
    You might want to edit the settings at the start of the file
    so it does not generate all dictionaries, and edit its input files
    like EN-trans-dictlist.txt to add new dictionaries.
