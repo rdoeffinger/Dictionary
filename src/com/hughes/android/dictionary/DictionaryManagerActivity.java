@@ -27,6 +27,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -820,8 +821,11 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                          bytes / 1024.0 / 1024.0));
             return;
         }
-        Request request = new Request(
-            Uri.parse(downloadUrl));
+        // API 19 and earlier have issues with github URLs, both http and https.
+        // Really old (~API 10) DownloadManager cannot handle https at all.
+        // Work around both with in one.
+        String altUrl = downloadUrl.replace("https://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/", "http://ffmpeg.org/~reimar/dict/");
+        Request request = new Request(Uri.parse(Build.VERSION.SDK_INT < 21 ? altUrl : downloadUrl));
 
         String destFile;
         try {
