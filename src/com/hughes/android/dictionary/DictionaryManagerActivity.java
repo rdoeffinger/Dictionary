@@ -346,6 +346,9 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        Disable version update notification, I don't maintain the text really
+        and I don't think it is very useful.
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
         if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(
@@ -355,6 +358,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion)
             .commit();
         }
+        */
         IntentFilter downloadManagerIntents = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         downloadManagerIntents.addAction(DownloadManager.ACTION_NOTIFICATION_CLICKED);
         registerReceiver(broadcastReceiver, downloadManagerIntents);
