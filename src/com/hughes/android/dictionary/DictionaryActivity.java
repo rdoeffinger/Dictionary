@@ -1633,7 +1633,7 @@ public class DictionaryActivity extends AppCompatActivity {
                         wrapped.setOrientation(LinearLayout.HORIZONTAL);
                         LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0);
                         wrapped.addView(bullet, p1);
-                        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
                         wrapped.addView(i == 0 ? col1 : col2, p2);
                         tableRow.addView(wrapped, layoutParams);
                     }
