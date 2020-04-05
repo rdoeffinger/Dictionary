@@ -226,6 +226,7 @@ public enum IsoUtils {
         } else {
             ImageButton button = new ImageButton(context);
             button.setImageResource(languageResources.flagId);
+            button.setContentDescription(isoCodeToLocalizedLanguageName(button.getContext(), indexInfo.shortName));
             button.setScaleType(ImageView.ScaleType.FIT_CENTER);
             result = button;
         }
