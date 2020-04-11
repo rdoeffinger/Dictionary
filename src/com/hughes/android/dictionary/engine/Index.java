@@ -125,9 +125,6 @@ public final class Index implements RAFSerializable<Index> {
         sortLanguage = Language.lookup(languageCode);
         normalizerRules = raf.readUTF();
         swapPairEntries = raf.readBoolean();
-        if (sortLanguage == null) {
-            throw new IOException("Unsupported language: " + languageCode);
-        }
         if (dict.dictFileVersion >= 2) {
             mainTokenCount = raf.readInt();
         }

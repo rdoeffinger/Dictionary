@@ -846,7 +846,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
                 final LinearLayout result = new LinearLayout(parent.getContext());
 
-                for (int i = 0; dictionaryInfo.indexInfos != null && i < dictionaryInfo.indexInfos.size(); ++i) {
+                for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
                     final View button = IsoUtils.INSTANCE.createButton(parent.getContext(),
                             indexInfo, application.languageButtonPixels);

@@ -43,7 +43,7 @@
 
     <!-- DictionaryActivity -->
     <string name="searchText">Bilatu testua</string>
-    <string name="selectDictionary">Hautatu hiztegia...</string>
+    <string name="selectDictionary">Hautatu hiztegia…</string>
     <string name="addToWordList">Gehitu hitzen zerrendara: %s</string>
     <string name="searchForSelection">Bilatu: %s</string>
     <string name="failedAddingToWordList">Akatsa hitz zerrendara gehitzean: %s</string>

@@ -31,6 +31,7 @@ import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -214,7 +215,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             out.seek(dataPos);
             out.writeShort(h.entrySource.index());
             out.writeUTF(h.title);
-            byte[] data = h.getHtml().getBytes("UTF-8");
+            byte[] data = h.getHtml().getBytes(StandardCharsets.UTF_8);
             out.writeInt(data.length);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             GZIPOutputStream gzout = new GZIPOutputStream(baos);

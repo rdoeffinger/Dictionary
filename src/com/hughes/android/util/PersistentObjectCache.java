@@ -43,7 +43,7 @@ public class PersistentObjectCache {
     private final File dir;
     private final Map<String, Object> objects = new HashMap<>();
 
-    class ConstrainedOIS extends ObjectInputStream {
+    static class ConstrainedOIS extends ObjectInputStream {
         ConstrainedOIS(InputStream in) throws IOException {
             super(in);
         }

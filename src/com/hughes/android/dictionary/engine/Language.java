@@ -66,7 +66,7 @@ public class Language {
             return new Comparator<Object>() {
                 @Override
                 public int compare(Object o, Object t1) {
-                    return String.class.cast(o).compareToIgnoreCase(String.class.cast(t1));
+                    return ((String)o).compareToIgnoreCase((String)t1);
                 }
             };
         // TODO: consider if this should be cached - but must be thread-safe

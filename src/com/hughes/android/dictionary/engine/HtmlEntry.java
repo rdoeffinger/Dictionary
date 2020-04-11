@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     }
 
     private void writeData(DataOutput raf) throws IOException {
-        final byte[] bytes = getHtml().getBytes("UTF-8");
+        final byte[] bytes = getHtml().getBytes(StandardCharsets.UTF_8);
         StringUtil.writeVarInt(raf, bytes.length);
         raf.write(bytes);
     }
@@ -264,11 +265,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
                 return html;
             }
             if (data != null) {
-                try {
-                    html = new String(data.get(index), "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("Dictionary HTML data corrupted", e);
-                }
+                html = new String(data.get(index), StandardCharsets.UTF_8);
                 htmlRef = new SoftReference<>(html);
                 return html;
             }
@@ -285,7 +282,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
             }
             try {
                 final byte[] bytes = StringUtil.unzipFully(zipBytes, numBytes);
-                html = new String(bytes, "UTF-8");
+                html = new String(bytes, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw new RuntimeException("Dictionary HTML data corrupted", e);
             }
