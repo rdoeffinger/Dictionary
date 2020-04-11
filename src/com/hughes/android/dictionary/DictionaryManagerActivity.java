@@ -522,7 +522,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri
-                               .parse("https://github.com/rdoeffinger/Dictionary/releases/v0.2-dictionaries"));
+                               .parse("https://github.com/rdoeffinger/Dictionary/releases/v0.3-dictionaries"));
                 startActivity(intent);
                 return false;
             }
@@ -829,6 +829,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         // Really old (~API 10) DownloadManager cannot handle https at all.
         // Work around both with in one.
         String altUrl = downloadUrl.replace("https://github.com/rdoeffinger/Dictionary/releases/download/v0.2-dictionaries/", "http://ffmpeg.org/~reimar/dict/");
+        altUrl = altUrl.replace("https://github.com/rdoeffinger/Dictionary/releases/download/v0.3-dictionaries/", "http://ffmpeg.org/~reimar/dict/");
         Request request = new Request(Uri.parse(Build.VERSION.SDK_INT < 21 ? altUrl : downloadUrl));
 
         String destFile;
