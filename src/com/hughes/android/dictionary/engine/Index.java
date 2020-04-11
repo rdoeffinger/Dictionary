@@ -58,7 +58,7 @@ public final class Index implements RAFSerializable<Index> {
 
     // persisted: tells how the entries are sorted.
     public final Language sortLanguage;
-    private final String normalizerRules;
+    public final String normalizerRules;
 
     // Built from the two above.
     private Transliterator normalizer;
@@ -67,7 +67,7 @@ public final class Index implements RAFSerializable<Index> {
     public final List<IndexEntry> sortedIndexEntries;
 
     // persisted.
-    private final Set<String> stoplist;
+    public final Set<String> stoplist;
 
     // One big list!
     // Various sub-types.

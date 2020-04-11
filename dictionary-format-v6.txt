@@ -1,0 +1,158 @@
+This is a quick write-up of the old dictionary file format, v6.
+v6 is troublesome as it relies on Java serialization and thus
+there will be references to Java types.
+This hasn't been checked for correctness and likely has some bugs.
+Also, I really should have used some standard format for writing this...
+
+===========================================
+
+Some basic types:
+
+[Short]
+  2 bytes: big-endian, signed value (note: negative values generally not used here)
+
+[Int]
+  4 bytes: big-endian, signed value (note: negative values generally not used here)
+
+[Long]
+  8 bytes: big-endian, signed value (note: negative values generally not used here)
+
+
+[String]
+  [Short]: string length
+  n bytes: string, modified UTF-8, n is value from previous element
+           note: no zero termination
+
+======================================================
+
+[Dictionary]
+
+[Int]: version, fixed value 6
+[Long]: file creation time (in milliseconds since Jan. 1st 1970)
+[String]: dictionary information (human-readable)
+
+list_of([source])
+list_of([pair_entry])
+list_of([text_entry])
+list_of([html_entry]) (since v5)
+list_of([index])
+
+[String]: string "END OF DICTIONARY" (length value 17)
+
+===========================
+
+All list_of entries describe a list of elements.
+These elements can have variable size, thus an index (table-of-contents, TOC)
+is needed.
+To reduce the cost of this table and enable more efficient compression,
+multiple entries can be stored in a block that gets one single index entry.
+I.e. it is only possible to do random-access to the start of a block,
+seeking to elements further inside the block must be done via reading.
+Caching should be used to reduce the performance impact of this (so
+that when entries 5, 4, 3 etc. of a block are read sequentially,
+parsing and decompression is done only once).
+
+These lists have the following base format:
+
+[Int]: number of entries in the list (must be >= 0) (<size>)
+
+<toc size>=<size>*8 + 8 bytes:
+  table-of-contents.
+  [Long] offset value for each block of entries.
+  Followed by a final [Long] offset value to the end of the list data (<end offset>).
+  Each offset is an absolute file position.
+
+<end offset>-<toc size>-<start of toc> bytes:
+  entry data
+
+==========================================================
+
+[source]
+
+[String]: name of source, e.g. "enwiktionary"
+[Int]: number of entries from that source (since v3) (I kind of wouldn't rely on that one
+being useful/correct...)
+
+========================================================
+
+[pair entry]
+
+[Short]: source index (see list_of([source])) (since v1)
+[Int]: number of pairs in this entry (<num_pairs>)
+<num_pairs> times:
+  [String]: in first language
+  [String]: in second language (possibly empty)
+
+=================================================
+
+[text_entry]
+
+[Short]: source index (see list_of([source])) (since v1)
+[String]: text
+
+===========================================
+
+[html_entry]
+
+[Short]: source index (see list_of([source])) (since v1)
+[String]: title for HTML entry
+[Int]: length of decompressed data in bytes (<declen>)
+[Int]: length of compressed data in bytes (<len>)
+<len> bytes: HTML page data, UTF-8 encoded, gzip compressed
+
+=====================================
+
+[index]
+
+Note: this structure is used for binary search.
+It is thus critical that all entries are correctly
+sorted.
+The sorting is according to libicu, however as Java
+and Android versions do not match special hacks
+have been added, like ignoring "-" for the comparison
+(unless that makes them equal, then they are
+compared including the dash).
+
+[String]: index short name
+[String]: index long name
+[String]: language ISO code (sort order depends on this)
+[String]: ICU normalizer rules to apply for sorting/searching
+1 byte: swap pair entries (if != 0, this index is for the second language entries in [pair_entry])
+[Int]: number of main tokens (?) (since v2)
+list_of([index_entry])
+[Int]: size of stop list set following (since v4)
+Set<String> stop list words (since v4)
+uniform_list_of([row])
+
+
+with uniform_list_of:
+[Int]: number of entries in list <num_entries>
+[Int]: size of entry <entry_size>
+<num_entries>*<entry_size> bytes: data
+
+
+================================================
+
+[index_entry]
+
+[String]: token
+[Int]: start index into uniform_list_of([row])
+[Int]: number of rows covered
+1 byte: <has_normalized>
+if <has_normalized> != 0:
+  [String]: normalized token
+list_of([Int]) list of indices into list_of(html_entry) (since v6)
+
+=======================================
+
+[row]
+
+1 byte: <type>
+[Int]: index
+
+<type> means:
+1: index into list_of([pair_entry])
+2: index into list_of([index_entry]) (mark as "main word header" entry)
+3: index into list_of([text_entry])
+4: index into list_of([index_entry]) (mark as "extra info/translation" entry)
+5: index into list_of([html_entry])

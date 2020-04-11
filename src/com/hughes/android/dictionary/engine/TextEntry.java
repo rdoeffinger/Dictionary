@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntry> {
 
-    private final String text;
+    public final String text;
 
     private TextEntry(final Dictionary dictionary, final DataInput raf, final int index)
     throws IOException {

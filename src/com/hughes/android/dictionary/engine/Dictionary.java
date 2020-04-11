@@ -20,11 +20,13 @@ import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
@@ -32,6 +34,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 public class Dictionary implements RAFSerializable<Dictionary> {
 
@@ -117,6 +120,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     @Override
     public void write(DataOutput out) throws IOException {
         RandomAccessFile raf = (RandomAccessFile)out;
+        if (dictFileVersion < 7) throw new RuntimeException("write function cannot write formats older than v7!");
         raf.writeInt(dictFileVersion);
         raf.writeLong(creationMillis);
         raf.writeUTF(dictInfo);
@@ -133,6 +137,208 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 128, true);
         System.out.println("indices start: " + raf.getFilePointer());
         RAFList.write(raf, indices, new IndexSerializer(null));
+        System.out.println("end: " + raf.getFilePointer());
+        raf.writeUTF(END_OF_DICTIONARY);
+    }
+
+    private void writev6Sources(RandomAccessFile out) throws IOException {
+        out.writeInt(sources.size());
+        long tocPos = out.getFilePointer();
+        out.seek(tocPos + sources.size() * 8 + 8);
+        for (EntrySource s : sources) {
+            long dataPos = out.getFilePointer();
+            out.seek(tocPos);
+            out.writeLong(dataPos);
+            tocPos += 8;
+            out.seek(dataPos);
+            out.writeUTF(s.getName());
+            out.writeInt(s.getNumEntries());
+        }
+        long dataPos = out.getFilePointer();
+        out.seek(tocPos);
+        out.writeLong(dataPos);
+        out.seek(dataPos);
+    }
+
+    private void writev6PairEntries(RandomAccessFile out) throws IOException {
+        out.writeInt(pairEntries.size());
+        long tocPos = out.getFilePointer();
+        out.seek(tocPos + pairEntries.size() * 8 + 8);
+        for (PairEntry pe : pairEntries) {
+            long dataPos = out.getFilePointer();
+            out.seek(tocPos);
+            out.writeLong(dataPos);
+            tocPos += 8;
+            out.seek(dataPos);
+            out.writeShort(pe.entrySource.index());
+            out.writeInt(pe.pairs.size());
+            for (PairEntry.Pair p : pe.pairs) {
+                out.writeUTF(p.lang1);
+                out.writeUTF(p.lang2);
+            }
+        }
+        long dataPos = out.getFilePointer();
+        out.seek(tocPos);
+        out.writeLong(dataPos);
+        out.seek(dataPos);
+    }
+
+    private void writev6TextEntries(RandomAccessFile out) throws IOException {
+        out.writeInt(textEntries.size());
+        long tocPos = out.getFilePointer();
+        out.seek(tocPos + textEntries.size() * 8 + 8);
+        for (TextEntry t : textEntries) {
+            long dataPos = out.getFilePointer();
+            out.seek(tocPos);
+            out.writeLong(dataPos);
+            tocPos += 8;
+            out.seek(dataPos);
+            out.writeShort(t.entrySource.index());
+            out.writeUTF(t.text);
+        }
+        long dataPos = out.getFilePointer();
+        out.seek(tocPos);
+        out.writeLong(dataPos);
+        out.seek(dataPos);
+    }
+
+    private void writev6HtmlEntries(RandomAccessFile out) throws IOException {
+        out.writeInt(htmlEntries.size());
+        long tocPos = out.getFilePointer();
+        out.seek(tocPos + htmlEntries.size() * 8 + 8);
+        for (HtmlEntry h : htmlEntries) {
+            long dataPos = out.getFilePointer();
+            out.seek(tocPos);
+            out.writeLong(dataPos);
+            tocPos += 8;
+            out.seek(dataPos);
+            out.writeShort(h.entrySource.index());
+            out.writeUTF(h.title);
+            byte[] data = h.getHtml().getBytes("UTF-8");
+            out.writeInt(data.length);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GZIPOutputStream gzout = new GZIPOutputStream(baos);
+            gzout.write(data);
+            gzout.close();
+            out.writeInt(baos.size());
+            out.write(baos.toByteArray());
+        }
+        long dataPos = out.getFilePointer();
+        out.seek(tocPos);
+        out.writeLong(dataPos);
+        out.seek(dataPos);
+    }
+
+    private void writev6HtmlIndices(RandomAccessFile out, List<HtmlEntry> entries) throws IOException {
+        out.writeInt(entries.size());
+        long tocPos = out.getFilePointer();
+        out.seek(tocPos + entries.size() * 8 + 8);
+        for (HtmlEntry e : entries) {
+            long dataPos = out.getFilePointer();
+            out.seek(tocPos);
+            out.writeLong(dataPos);
+            tocPos += 8;
+            out.seek(dataPos);
+            out.writeInt(e.index());
+        }
+        long dataPos = out.getFilePointer();
+        out.seek(tocPos);
+        out.writeLong(dataPos);
+        out.seek(dataPos);
+    }
+
+    private void writev6IndexEntries(RandomAccessFile out, List<Index.IndexEntry> entries) throws IOException {
+        out.writeInt(entries.size());
+        long tocPos = out.getFilePointer();
+        out.seek(tocPos + entries.size() * 8 + 8);
+        for (Index.IndexEntry e : entries) {
+            long dataPos = out.getFilePointer();
+            out.seek(tocPos);
+            out.writeLong(dataPos);
+            tocPos += 8;
+            out.seek(dataPos);
+            out.writeUTF(e.token);
+            out.writeInt(e.startRow);
+            out.writeInt(e.numRows);
+            final boolean hasNormalizedForm = !e.token.equals(e.normalizedToken());
+            out.writeBoolean(hasNormalizedForm);
+            if (hasNormalizedForm) out.writeUTF(e.normalizedToken());
+            writev6HtmlIndices(out, e.htmlEntries);
+        }
+        long dataPos = out.getFilePointer();
+        out.seek(tocPos);
+        out.writeLong(dataPos);
+        out.seek(dataPos);
+    }
+
+    private void writev6Index(RandomAccessFile out) throws IOException {
+        out.writeInt(indices.size());
+        long tocPos = out.getFilePointer();
+        out.seek(tocPos + indices.size() * 8 + 8);
+        for (Index idx : indices) {
+            long dataPos = out.getFilePointer();
+            out.seek(tocPos);
+            out.writeLong(dataPos);
+            tocPos += 8;
+            out.seek(dataPos);
+            out.writeUTF(idx.shortName);
+            out.writeUTF(idx.longName);
+            out.writeUTF(idx.sortLanguage.getIsoCode());
+            out.writeUTF(idx.normalizerRules);
+            out.writeBoolean(idx.swapPairEntries);
+            out.writeInt(idx.mainTokenCount);
+            writev6IndexEntries(out, idx.sortedIndexEntries);
+
+            // write stoplist, serializing the whole Set *shudder*
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(idx.stoplist);
+            oos.close();
+            final byte[] bytes = baos.toByteArray();
+            out.writeInt(bytes.length);
+            out.write(bytes);
+
+            out.writeInt(idx.rows.size());
+            out.writeInt(5);
+            for (RowBase r : idx.rows) {
+                int type = 0;
+                if (r instanceof PairEntry.Row) {
+                    type = 0;
+                } else if (r instanceof TokenRow) {
+                    final TokenRow tokenRow = (TokenRow)r;
+                    type = tokenRow.hasMainEntry ? 1 : 3;
+                } else if (r instanceof TextEntry.Row) {
+                    type = 2;
+                } else if (r instanceof HtmlEntry.Row) {
+                    type = 4;
+                } else {
+                    throw new RuntimeException("Row type not supported for v6");
+                }
+                out.writeByte(type);
+                out.writeInt(r.referenceIndex);
+            }
+        }
+        long dataPos = out.getFilePointer();
+        out.seek(tocPos);
+        out.writeLong(dataPos);
+        out.seek(dataPos);
+    }
+
+    public void writev6(DataOutput out) throws IOException {
+        RandomAccessFile raf = (RandomAccessFile)out;
+        raf.writeInt(6);
+        raf.writeLong(creationMillis);
+        raf.writeUTF(dictInfo);
+        System.out.println("sources start: " + raf.getFilePointer());
+        writev6Sources(raf);
+        System.out.println("pair start: " + raf.getFilePointer());
+        writev6PairEntries(raf);
+        System.out.println("text start: " + raf.getFilePointer());
+        writev6TextEntries(raf);
+        System.out.println("html index start: " + raf.getFilePointer());
+        writev6HtmlEntries(raf);
+        System.out.println("indices start: " + raf.getFilePointer());
+        writev6Index(raf);
         System.out.println("end: " + raf.getFilePointer());
         raf.writeUTF(END_OF_DICTIONARY);
     }
