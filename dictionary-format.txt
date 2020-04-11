@@ -108,7 +108,7 @@ the start of the next block must be used to find the end
 of the compressed data and signal the end of input to the
 inflater, and whatever data the inflater produces is the
 decompressed input (note: this might be an implementation
-detail, you might need the decompressed size to decompress
+detail, you might not need the decompressed size to decompress
 and parse the contained data, but it prevents things like
 the inflater overreading and producing spurious errors).
 
