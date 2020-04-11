@@ -158,9 +158,7 @@ public final class Index implements RAFSerializable<Index> {
         raf.writeUTF(sortLanguage.getIsoCode());
         raf.writeUTF(normalizerRules);
         raf.writeBoolean(swapPairEntries);
-        if (dict.dictFileVersion >= 2) {
-            raf.writeInt(mainTokenCount);
-        }
+        raf.writeInt(mainTokenCount);
         RAFList.write(raf, sortedIndexEntries, new IndexEntrySerializer(null), 32, true);
         StringUtil.writeVarInt(raf, stoplist.size());
         for (String i : stoplist) {

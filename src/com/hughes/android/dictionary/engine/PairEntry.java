@@ -62,10 +62,10 @@ public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntr
     public void write(DataOutput raf) throws IOException {
         super.write(raf);
         StringUtil.writeVarInt(raf, pairs.size());
-        for (int i = 0; i < pairs.size(); ++i) {
-            assert pairs.get(i).lang1.length() > 0;
-            raf.writeUTF(pairs.get(i).lang1);
-            raf.writeUTF(pairs.get(i).lang2);
+        for (Pair p : pairs) {
+            assert p.lang1.length() > 0;
+            raf.writeUTF(p.lang1);
+            raf.writeUTF(p.lang2);
         }
     }
 
