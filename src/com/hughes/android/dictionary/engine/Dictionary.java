@@ -14,14 +14,10 @@
 
 package com.hughes.android.dictionary.engine;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
@@ -32,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.util.CachingList;
@@ -49,7 +44,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
 
     // persisted
     final int dictFileVersion;
-    private final long creationMillis;
+    public final long creationMillis;
     public final String dictInfo;
     public final List<PairEntry> pairEntries;
     public final List<TextEntry> textEntries;
@@ -141,283 +136,6 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 128, true);
         System.out.println("indices start: " + raf.getFilePointer());
         RAFList.write(raf, indices, new IndexSerializer(null));
-        System.out.println("end: " + raf.getFilePointer());
-        raf.writeUTF(END_OF_DICTIONARY);
-    }
-
-    private void writev6Sources(RandomAccessFile out) throws IOException {
-        ByteArrayOutputStream toc = new ByteArrayOutputStream();
-        DataOutputStream tocout = new DataOutputStream(toc);
-
-        out.writeInt(sources.size());
-        long tocPos = out.getFilePointer();
-        out.seek(tocPos + sources.size() * 8 + 8);
-        for (EntrySource s : sources) {
-            long dataPos = out.getFilePointer();
-            tocout.writeLong(dataPos);
-
-            out.writeUTF(s.getName());
-            out.writeInt(s.getNumEntries());
-        }
-        long dataPos = out.getFilePointer();
-        tocout.writeLong(dataPos);
-        tocout.close();
-
-        out.seek(tocPos);
-        out.write(toc.toByteArray());
-        out.seek(dataPos);
-    }
-
-    private void writev6PairEntries(RandomAccessFile out) throws IOException {
-        ByteArrayOutputStream toc = new ByteArrayOutputStream();
-        DataOutputStream tocout = new DataOutputStream(toc);
-
-        long tocPos = out.getFilePointer();
-        long dataPos = tocPos + 4 + pairEntries.size() * 8 + 8;
-
-        out.seek(dataPos);
-        DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
-
-        tocout.writeInt(pairEntries.size());
-        for (PairEntry pe : pairEntries) {
-            tocout.writeLong(dataPos + outb.size());
-
-            outb.writeShort(pe.entrySource.index());
-            outb.writeInt(pe.pairs.size());
-            for (PairEntry.Pair p : pe.pairs) {
-                outb.writeUTF(p.lang1);
-                outb.writeUTF(p.lang2);
-            }
-        }
-        dataPos += outb.size();
-        outb.flush();
-        tocout.writeLong(dataPos);
-        tocout.close();
-
-        out.seek(tocPos);
-        out.write(toc.toByteArray());
-        out.seek(dataPos);
-    }
-
-    private void writev6TextEntries(RandomAccessFile out) throws IOException {
-        ByteArrayOutputStream toc = new ByteArrayOutputStream();
-        DataOutputStream tocout = new DataOutputStream(toc);
-
-        out.writeInt(textEntries.size());
-        long tocPos = out.getFilePointer();
-        out.seek(tocPos + textEntries.size() * 8 + 8);
-        for (TextEntry t : textEntries) {
-            long dataPos = out.getFilePointer();
-            tocout.writeLong(dataPos);
-
-            out.writeShort(t.entrySource.index());
-            out.writeUTF(t.text);
-        }
-        long dataPos = out.getFilePointer();
-        tocout.writeLong(dataPos);
-        tocout.close();
-
-        out.seek(tocPos);
-        out.write(toc.toByteArray());
-        out.seek(dataPos);
-    }
-
-    private void writev6EmptyList(RandomAccessFile out) throws IOException {
-        out.writeInt(0);
-        out.writeLong(out.getFilePointer() + 8);
-    }
-
-    private void writev6HtmlEntries(RandomAccessFile out) throws IOException {
-        ByteArrayOutputStream toc = new ByteArrayOutputStream();
-        DataOutputStream tocout = new DataOutputStream(toc);
-
-        long tocPos = out.getFilePointer();
-        long dataPos = tocPos + 4 + htmlEntries.size() * 8 + 8;
-
-        out.seek(dataPos);
-        DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
-
-        tocout.writeInt(htmlEntries.size());
-        for (HtmlEntry h : htmlEntries) {
-            tocout.writeLong(dataPos + outb.size());
-
-            outb.writeShort(h.entrySource.index());
-            outb.writeUTF(h.title);
-            byte[] data = h.getHtml().getBytes(StandardCharsets.UTF_8);
-            outb.writeInt(data.length);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            GZIPOutputStream gzout = new GZIPOutputStream(baos);
-            gzout.write(data);
-            gzout.close();
-            outb.writeInt(baos.size());
-            outb.write(baos.toByteArray());
-        }
-        dataPos += outb.size();
-        outb.flush();
-        tocout.writeLong(dataPos);
-        tocout.close();
-
-        out.seek(tocPos);
-        out.write(toc.toByteArray());
-        out.seek(dataPos);
-    }
-
-    private void writev6HtmlIndices(DataOutputStream out, long pos, List<HtmlEntry> entries) throws IOException {
-        long dataPos = pos + 4 + entries.size() * 8 + 8;
-
-        out.writeInt(entries.size());
-
-        // TOC is trivial, so optimize writing it
-        for (int i = 0; i < entries.size(); i++) {
-            out.writeLong(dataPos);
-            dataPos += 4;
-        }
-        out.writeLong(dataPos);
-
-        for (HtmlEntry e : entries) {
-            out.writeInt(e.index());
-        }
-    }
-
-    private void writev6IndexEntries(RandomAccessFile out, List<Index.IndexEntry> entries, int[] prunedRowIdx) throws IOException {
-        ByteArrayOutputStream toc = new ByteArrayOutputStream();
-        DataOutputStream tocout = new DataOutputStream(toc);
-
-        long tocPos = out.getFilePointer();
-        long dataPos = tocPos + 4 + entries.size() * 8 + 8;
-
-        out.seek(dataPos);
-        DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
-
-        tocout.writeInt(entries.size());
-        for (Index.IndexEntry e : entries) {
-            tocout.writeLong(dataPos + outb.size());
-
-            outb.writeUTF(e.token);
-
-            int startRow = e.startRow;
-            int numRows = e.numRows;
-            if (prunedRowIdx != null) {
-                // note: the start row will always be a TokenRow
-                // and thus never be pruned
-                int newNumRows = 1;
-                for (int i = 1; i < numRows; i++) {
-                    if (prunedRowIdx[startRow + i] >= 0) newNumRows++;
-                }
-                startRow = prunedRowIdx[startRow];
-                numRows = newNumRows;
-            }
-
-            outb.writeInt(startRow);
-            outb.writeInt(numRows);
-            final boolean hasNormalizedForm = !e.token.equals(e.normalizedToken());
-            outb.writeBoolean(hasNormalizedForm);
-            if (hasNormalizedForm) outb.writeUTF(e.normalizedToken());
-            writev6HtmlIndices(outb, dataPos + outb.size(),
-                               prunedRowIdx == null ? e.htmlEntries : Collections.<HtmlEntry>emptyList());
-        }
-        dataPos += outb.size();
-        outb.flush();
-        tocout.writeLong(dataPos);
-        tocout.close();
-
-        out.seek(tocPos);
-        out.write(toc.toByteArray());
-        out.seek(dataPos);
-    }
-
-    private void writev6Index(RandomAccessFile out, boolean skipHtml) throws IOException {
-        ByteArrayOutputStream toc = new ByteArrayOutputStream();
-        DataOutputStream tocout = new DataOutputStream(toc);
-
-        out.writeInt(indices.size());
-        long tocPos = out.getFilePointer();
-        out.seek(tocPos + indices.size() * 8 + 8);
-        for (Index idx : indices) {
-            // create pruned index for skipHtml feature
-            int[] prunedRowIdx = null;
-            int prunedSize = 0;
-            if (skipHtml) {
-                prunedRowIdx = new int[idx.rows.size()];
-                for (int i = 0; i < idx.rows.size(); i++) {
-                    final RowBase r = idx.rows.get(i);
-                    // prune Html entries
-                    boolean pruned = r instanceof HtmlEntry.Row;
-                    prunedRowIdx[i] = pruned ? -1 : prunedSize;
-                    if (!pruned) prunedSize++;
-                }
-            }
-
-            long dataPos = out.getFilePointer();
-            tocout.writeLong(dataPos);
-
-            out.writeUTF(idx.shortName);
-            out.writeUTF(idx.longName);
-            out.writeUTF(idx.sortLanguage.getIsoCode());
-            out.writeUTF(idx.normalizerRules);
-            out.writeBoolean(idx.swapPairEntries);
-            out.writeInt(idx.mainTokenCount);
-            writev6IndexEntries(out, idx.sortedIndexEntries, prunedRowIdx);
-
-            // write stoplist, serializing the whole Set *shudder*
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            final ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(idx.stoplist);
-            oos.close();
-            final byte[] bytes = baos.toByteArray();
-
-
-            DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
-            outb.writeInt(bytes.length);
-            outb.write(bytes);
-
-            outb.writeInt(skipHtml ? prunedSize : idx.rows.size());
-            outb.writeInt(5);
-            for (RowBase r : idx.rows) {
-                int type = 0;
-                if (r instanceof PairEntry.Row) {
-                    type = 0;
-                } else if (r instanceof TokenRow) {
-                    final TokenRow tokenRow = (TokenRow)r;
-                    type = tokenRow.hasMainEntry ? 1 : 3;
-                } else if (r instanceof TextEntry.Row) {
-                    type = 2;
-                } else if (r instanceof HtmlEntry.Row) {
-                    type = 4;
-                    if (skipHtml) continue;
-                } else {
-                    throw new RuntimeException("Row type not supported for v6");
-                }
-                outb.writeByte(type);
-                outb.writeInt(r.referenceIndex);
-            }
-            outb.flush();
-        }
-        long dataPos = out.getFilePointer();
-        tocout.writeLong(dataPos);
-        tocout.close();
-
-        out.seek(tocPos);
-        out.write(toc.toByteArray());
-        out.seek(dataPos);
-    }
-
-    public void writev6(DataOutput out, boolean skipHtml) throws IOException {
-        RandomAccessFile raf = (RandomAccessFile)out;
-        raf.writeInt(6);
-        raf.writeLong(creationMillis);
-        raf.writeUTF(dictInfo);
-        System.out.println("sources start: " + raf.getFilePointer());
-        writev6Sources(raf);
-        System.out.println("pair start: " + raf.getFilePointer());
-        writev6PairEntries(raf);
-        System.out.println("text start: " + raf.getFilePointer());
-        writev6TextEntries(raf);
-        System.out.println("html index start: " + raf.getFilePointer());
-        if (skipHtml) writev6EmptyList(raf);
-        else writev6HtmlEntries(raf);
-        System.out.println("indices start: " + raf.getFilePointer());
-        writev6Index(raf, skipHtml);
         System.out.println("end: " + raf.getFilePointer());
         raf.writeUTF(END_OF_DICTIONARY);
     }
