@@ -14,12 +14,12 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.util.IndexedObject;
-import com.hughes.util.StringUtil;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import com.hughes.util.IndexedObject;
+import com.hughes.util.StringUtil;
 
 public abstract class AbstractEntry extends IndexedObject {
 

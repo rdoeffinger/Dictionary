@@ -14,19 +14,6 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.android.dictionary.DictionaryInfo;
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
-import com.hughes.android.dictionary.engine.RowBase.RowKey;
-import com.hughes.util.CachingList;
-import com.hughes.util.StringUtil;
-import com.hughes.util.TransformingList;
-import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFSerializable;
-import com.hughes.util.raf.RAFSerializer;
-import com.hughes.util.raf.SerializableSerializer;
-import com.hughes.util.raf.UniformRAFList;
-import com.ibm.icu.text.Transliterator;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -39,13 +26,26 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+
+import com.hughes.android.dictionary.DictionaryInfo;
+import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.RowBase.RowKey;
+import com.hughes.util.CachingList;
+import com.hughes.util.StringUtil;
+import com.hughes.util.TransformingList;
+import com.hughes.util.raf.RAFList;
+import com.hughes.util.raf.RAFSerializable;
+import com.hughes.util.raf.RAFSerializer;
+import com.hughes.util.raf.SerializableSerializer;
+import com.hughes.util.raf.UniformRAFList;
+import com.ibm.icu.text.Transliterator;
 
 public final class Index implements RAFSerializable<Index> {
 

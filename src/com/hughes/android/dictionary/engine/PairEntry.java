@@ -14,11 +14,6 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.util.StringUtil;
-import com.hughes.util.raf.RAFListSerializerSkippable;
-import com.hughes.util.raf.RAFSerializable;
-import com.ibm.icu.text.Transliterator;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -27,6 +22,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.hughes.util.StringUtil;
+import com.hughes.util.raf.RAFListSerializerSkippable;
+import com.hughes.util.raf.RAFSerializable;
+import com.ibm.icu.text.Transliterator;
 
 public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntry>,
     Comparable<PairEntry> {

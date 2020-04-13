@@ -14,12 +14,11 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.ibm.icu.text.Transliterator;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.hughes.util.LRUCacheMap;
+import com.ibm.icu.text.Transliterator;
 
 public class TransliteratorManager {
 

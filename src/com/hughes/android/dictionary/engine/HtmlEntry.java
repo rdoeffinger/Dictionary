@@ -1,21 +1,20 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.util.StringUtil;
-import com.hughes.util.raf.RAFListSerializer;
-import com.hughes.util.raf.RAFListSerializerSkippable;
-import com.ibm.icu.text.Transliterator;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.hughes.util.StringUtil;
+import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFListSerializerSkippable;
+import com.ibm.icu.text.Transliterator;
 
 public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 

@@ -14,10 +14,6 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.util.IndexedObject;
-import com.hughes.util.raf.RAFListSerializer;
-import com.ibm.icu.text.Transliterator;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -25,6 +21,10 @@ import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.hughes.util.IndexedObject;
+import com.hughes.util.raf.RAFListSerializer;
+import com.ibm.icu.text.Transliterator;
 
 public abstract class RowBase extends IndexedObject {
     /**

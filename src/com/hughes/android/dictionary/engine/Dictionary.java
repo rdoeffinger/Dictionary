@@ -14,12 +14,6 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.android.dictionary.DictionaryInfo;
-import com.hughes.util.CachingList;
-import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFListSerializer;
-import com.hughes.util.raf.RAFSerializable;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -36,6 +30,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
+
+import com.hughes.android.dictionary.DictionaryInfo;
+import com.hughes.util.CachingList;
+import com.hughes.util.raf.RAFList;
+import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.RAFSerializable;
 
 public class Dictionary implements RAFSerializable<Dictionary> {
 

@@ -14,13 +14,13 @@
 
 package com.hughes.android.dictionary.engine;
 
-import com.hughes.android.dictionary.CollatorWrapper;
-import com.hughes.android.dictionary.DictionaryApplication;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import com.hughes.android.dictionary.CollatorWrapper;
+import com.hughes.android.dictionary.DictionaryApplication;
 
 public class Language {
 
