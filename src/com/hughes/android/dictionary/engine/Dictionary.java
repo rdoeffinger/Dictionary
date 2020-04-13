@@ -203,6 +203,11 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         out.seek(dataPos);
     }
 
+    private void writev6EmptyList(RandomAccessFile out) throws IOException {
+        out.writeInt(0);
+        out.writeLong(out.getFilePointer() + 8);
+    }
+
     private void writev6HtmlEntries(RandomAccessFile out) throws IOException {
         out.writeInt(htmlEntries.size());
         long tocPos = out.getFilePointer();
@@ -248,7 +253,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         out.seek(dataPos);
     }
 
-    private void writev6IndexEntries(RandomAccessFile out, List<Index.IndexEntry> entries) throws IOException {
+    private void writev6IndexEntries(RandomAccessFile out, List<Index.IndexEntry> entries, int[] prunedRowIdx) throws IOException {
         out.writeInt(entries.size());
         long tocPos = out.getFilePointer();
         out.seek(tocPos + entries.size() * 8 + 8);
@@ -259,12 +264,26 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             tocPos += 8;
             out.seek(dataPos);
             out.writeUTF(e.token);
-            out.writeInt(e.startRow);
-            out.writeInt(e.numRows);
+
+            int startRow = e.startRow;
+            int numRows = e.numRows;
+            if (prunedRowIdx != null) {
+                // note: the start row will always be a TokenRow
+                // and thus never be pruned
+                int newNumRows = 1;
+                for (int i = 1; i < numRows; i++) {
+                    if (prunedRowIdx[startRow + i] >= 0) newNumRows++;
+                }
+                startRow = prunedRowIdx[startRow];
+                numRows = newNumRows;
+            }
+
+            out.writeInt(startRow);
+            out.writeInt(numRows);
             final boolean hasNormalizedForm = !e.token.equals(e.normalizedToken());
             out.writeBoolean(hasNormalizedForm);
             if (hasNormalizedForm) out.writeUTF(e.normalizedToken());
-            writev6HtmlIndices(out, e.htmlEntries);
+            writev6HtmlIndices(out, prunedRowIdx == null ? e.htmlEntries : Collections.<HtmlEntry>emptyList());
         }
         long dataPos = out.getFilePointer();
         out.seek(tocPos);
@@ -272,11 +291,25 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         out.seek(dataPos);
     }
 
-    private void writev6Index(RandomAccessFile out) throws IOException {
+    private void writev6Index(RandomAccessFile out, boolean skipHtml) throws IOException {
         out.writeInt(indices.size());
         long tocPos = out.getFilePointer();
         out.seek(tocPos + indices.size() * 8 + 8);
         for (Index idx : indices) {
+            // create pruned index for skipHtml feature
+            int[] prunedRowIdx = null;
+            int prunedSize = 0;
+            if (skipHtml) {
+                prunedRowIdx = new int[idx.rows.size()];
+                for (int i = 0; i < idx.rows.size(); i++) {
+                    final RowBase r = idx.rows.get(i);
+                    // prune Html entries
+                    boolean pruned = r instanceof HtmlEntry.Row;
+                    prunedRowIdx[i] = pruned ? -1 : prunedSize;
+                    if (!pruned) prunedSize++;
+                }
+            }
+
             long dataPos = out.getFilePointer();
             out.seek(tocPos);
             out.writeLong(dataPos);
@@ -288,7 +321,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             out.writeUTF(idx.normalizerRules);
             out.writeBoolean(idx.swapPairEntries);
             out.writeInt(idx.mainTokenCount);
-            writev6IndexEntries(out, idx.sortedIndexEntries);
+            writev6IndexEntries(out, idx.sortedIndexEntries, prunedRowIdx);
 
             // write stoplist, serializing the whole Set *shudder*
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -299,7 +332,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             out.writeInt(bytes.length);
             out.write(bytes);
 
-            out.writeInt(idx.rows.size());
+            out.writeInt(skipHtml ? prunedSize : idx.rows.size());
             out.writeInt(5);
             for (RowBase r : idx.rows) {
                 int type = 0;
@@ -312,6 +345,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
                     type = 2;
                 } else if (r instanceof HtmlEntry.Row) {
                     type = 4;
+                    if (skipHtml) continue;
                 } else {
                     throw new RuntimeException("Row type not supported for v6");
                 }
@@ -325,7 +359,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         out.seek(dataPos);
     }
 
-    public void writev6(DataOutput out) throws IOException {
+    public void writev6(DataOutput out, boolean skipHtml) throws IOException {
         RandomAccessFile raf = (RandomAccessFile)out;
         raf.writeInt(6);
         raf.writeLong(creationMillis);
@@ -337,9 +371,10 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         System.out.println("text start: " + raf.getFilePointer());
         writev6TextEntries(raf);
         System.out.println("html index start: " + raf.getFilePointer());
-        writev6HtmlEntries(raf);
+        if (skipHtml) writev6EmptyList(raf);
+        else writev6HtmlEntries(raf);
         System.out.println("indices start: " + raf.getFilePointer());
-        writev6Index(raf);
+        writev6Index(raf, skipHtml);
         System.out.println("end: " + raf.getFilePointer());
         raf.writeUTF(END_OF_DICTIONARY);
     }
