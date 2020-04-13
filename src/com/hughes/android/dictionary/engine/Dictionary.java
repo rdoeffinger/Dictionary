@@ -14,11 +14,14 @@
 
 package com.hughes.android.dictionary.engine;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
@@ -143,63 +146,79 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     }
 
     private void writev6Sources(RandomAccessFile out) throws IOException {
+        ByteArrayOutputStream toc = new ByteArrayOutputStream();
+        DataOutputStream tocout = new DataOutputStream(toc);
+
         out.writeInt(sources.size());
         long tocPos = out.getFilePointer();
         out.seek(tocPos + sources.size() * 8 + 8);
         for (EntrySource s : sources) {
             long dataPos = out.getFilePointer();
-            out.seek(tocPos);
-            out.writeLong(dataPos);
-            tocPos += 8;
-            out.seek(dataPos);
+            tocout.writeLong(dataPos);
+
             out.writeUTF(s.getName());
             out.writeInt(s.getNumEntries());
         }
         long dataPos = out.getFilePointer();
+        tocout.writeLong(dataPos);
+        tocout.close();
+
         out.seek(tocPos);
-        out.writeLong(dataPos);
+        out.write(toc.toByteArray());
         out.seek(dataPos);
     }
 
     private void writev6PairEntries(RandomAccessFile out) throws IOException {
-        out.writeInt(pairEntries.size());
+        ByteArrayOutputStream toc = new ByteArrayOutputStream();
+        DataOutputStream tocout = new DataOutputStream(toc);
+
         long tocPos = out.getFilePointer();
-        out.seek(tocPos + pairEntries.size() * 8 + 8);
+        long dataPos = tocPos + 4 + pairEntries.size() * 8 + 8;
+
+        out.seek(dataPos);
+        DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
+
+        tocout.writeInt(pairEntries.size());
         for (PairEntry pe : pairEntries) {
-            long dataPos = out.getFilePointer();
-            out.seek(tocPos);
-            out.writeLong(dataPos);
-            tocPos += 8;
-            out.seek(dataPos);
-            out.writeShort(pe.entrySource.index());
-            out.writeInt(pe.pairs.size());
+            tocout.writeLong(dataPos + outb.size());
+
+            outb.writeShort(pe.entrySource.index());
+            outb.writeInt(pe.pairs.size());
             for (PairEntry.Pair p : pe.pairs) {
-                out.writeUTF(p.lang1);
-                out.writeUTF(p.lang2);
+                outb.writeUTF(p.lang1);
+                outb.writeUTF(p.lang2);
             }
         }
-        long dataPos = out.getFilePointer();
+        dataPos += outb.size();
+        outb.flush();
+        tocout.writeLong(dataPos);
+        tocout.close();
+
         out.seek(tocPos);
-        out.writeLong(dataPos);
+        out.write(toc.toByteArray());
         out.seek(dataPos);
     }
 
     private void writev6TextEntries(RandomAccessFile out) throws IOException {
+        ByteArrayOutputStream toc = new ByteArrayOutputStream();
+        DataOutputStream tocout = new DataOutputStream(toc);
+
         out.writeInt(textEntries.size());
         long tocPos = out.getFilePointer();
         out.seek(tocPos + textEntries.size() * 8 + 8);
         for (TextEntry t : textEntries) {
             long dataPos = out.getFilePointer();
-            out.seek(tocPos);
-            out.writeLong(dataPos);
-            tocPos += 8;
-            out.seek(dataPos);
+            tocout.writeLong(dataPos);
+
             out.writeShort(t.entrySource.index());
             out.writeUTF(t.text);
         }
         long dataPos = out.getFilePointer();
+        tocout.writeLong(dataPos);
+        tocout.close();
+
         out.seek(tocPos);
-        out.writeLong(dataPos);
+        out.write(toc.toByteArray());
         out.seek(dataPos);
     }
 
@@ -209,61 +228,72 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     }
 
     private void writev6HtmlEntries(RandomAccessFile out) throws IOException {
-        out.writeInt(htmlEntries.size());
+        ByteArrayOutputStream toc = new ByteArrayOutputStream();
+        DataOutputStream tocout = new DataOutputStream(toc);
+
         long tocPos = out.getFilePointer();
-        out.seek(tocPos + htmlEntries.size() * 8 + 8);
+        long dataPos = tocPos + 4 + htmlEntries.size() * 8 + 8;
+
+        out.seek(dataPos);
+        DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
+
+        tocout.writeInt(htmlEntries.size());
         for (HtmlEntry h : htmlEntries) {
-            long dataPos = out.getFilePointer();
-            out.seek(tocPos);
-            out.writeLong(dataPos);
-            tocPos += 8;
-            out.seek(dataPos);
-            out.writeShort(h.entrySource.index());
-            out.writeUTF(h.title);
+            tocout.writeLong(dataPos + outb.size());
+
+            outb.writeShort(h.entrySource.index());
+            outb.writeUTF(h.title);
             byte[] data = h.getHtml().getBytes(StandardCharsets.UTF_8);
-            out.writeInt(data.length);
+            outb.writeInt(data.length);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             GZIPOutputStream gzout = new GZIPOutputStream(baos);
             gzout.write(data);
             gzout.close();
-            out.writeInt(baos.size());
-            out.write(baos.toByteArray());
+            outb.writeInt(baos.size());
+            outb.write(baos.toByteArray());
         }
-        long dataPos = out.getFilePointer();
+        dataPos += outb.size();
+        outb.flush();
+        tocout.writeLong(dataPos);
+        tocout.close();
+
         out.seek(tocPos);
-        out.writeLong(dataPos);
+        out.write(toc.toByteArray());
         out.seek(dataPos);
     }
 
-    private void writev6HtmlIndices(RandomAccessFile out, List<HtmlEntry> entries) throws IOException {
+    private void writev6HtmlIndices(DataOutputStream out, long pos, List<HtmlEntry> entries) throws IOException {
+        long dataPos = pos + 4 + entries.size() * 8 + 8;
+
         out.writeInt(entries.size());
-        long tocPos = out.getFilePointer();
-        out.seek(tocPos + entries.size() * 8 + 8);
-        for (HtmlEntry e : entries) {
-            long dataPos = out.getFilePointer();
-            out.seek(tocPos);
+
+        // TOC is trivial, so optimize writing it
+        for (int i = 0; i < entries.size(); i++) {
             out.writeLong(dataPos);
-            tocPos += 8;
-            out.seek(dataPos);
+            dataPos += 4;
+        }
+        out.writeLong(dataPos);
+
+        for (HtmlEntry e : entries) {
             out.writeInt(e.index());
         }
-        long dataPos = out.getFilePointer();
-        out.seek(tocPos);
-        out.writeLong(dataPos);
-        out.seek(dataPos);
     }
 
     private void writev6IndexEntries(RandomAccessFile out, List<Index.IndexEntry> entries, int[] prunedRowIdx) throws IOException {
-        out.writeInt(entries.size());
+        ByteArrayOutputStream toc = new ByteArrayOutputStream();
+        DataOutputStream tocout = new DataOutputStream(toc);
+
         long tocPos = out.getFilePointer();
-        out.seek(tocPos + entries.size() * 8 + 8);
+        long dataPos = tocPos + 4 + entries.size() * 8 + 8;
+
+        out.seek(dataPos);
+        DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
+
+        tocout.writeInt(entries.size());
         for (Index.IndexEntry e : entries) {
-            long dataPos = out.getFilePointer();
-            out.seek(tocPos);
-            out.writeLong(dataPos);
-            tocPos += 8;
-            out.seek(dataPos);
-            out.writeUTF(e.token);
+            tocout.writeLong(dataPos + outb.size());
+
+            outb.writeUTF(e.token);
 
             int startRow = e.startRow;
             int numRows = e.numRows;
@@ -278,20 +308,28 @@ public class Dictionary implements RAFSerializable<Dictionary> {
                 numRows = newNumRows;
             }
 
-            out.writeInt(startRow);
-            out.writeInt(numRows);
+            outb.writeInt(startRow);
+            outb.writeInt(numRows);
             final boolean hasNormalizedForm = !e.token.equals(e.normalizedToken());
-            out.writeBoolean(hasNormalizedForm);
-            if (hasNormalizedForm) out.writeUTF(e.normalizedToken());
-            writev6HtmlIndices(out, prunedRowIdx == null ? e.htmlEntries : Collections.<HtmlEntry>emptyList());
+            outb.writeBoolean(hasNormalizedForm);
+            if (hasNormalizedForm) outb.writeUTF(e.normalizedToken());
+            writev6HtmlIndices(outb, dataPos + outb.size(),
+                               prunedRowIdx == null ? e.htmlEntries : Collections.<HtmlEntry>emptyList());
         }
-        long dataPos = out.getFilePointer();
+        dataPos += outb.size();
+        outb.flush();
+        tocout.writeLong(dataPos);
+        tocout.close();
+
         out.seek(tocPos);
-        out.writeLong(dataPos);
+        out.write(toc.toByteArray());
         out.seek(dataPos);
     }
 
     private void writev6Index(RandomAccessFile out, boolean skipHtml) throws IOException {
+        ByteArrayOutputStream toc = new ByteArrayOutputStream();
+        DataOutputStream tocout = new DataOutputStream(toc);
+
         out.writeInt(indices.size());
         long tocPos = out.getFilePointer();
         out.seek(tocPos + indices.size() * 8 + 8);
@@ -311,10 +349,8 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             }
 
             long dataPos = out.getFilePointer();
-            out.seek(tocPos);
-            out.writeLong(dataPos);
-            tocPos += 8;
-            out.seek(dataPos);
+            tocout.writeLong(dataPos);
+
             out.writeUTF(idx.shortName);
             out.writeUTF(idx.longName);
             out.writeUTF(idx.sortLanguage.getIsoCode());
@@ -329,11 +365,14 @@ public class Dictionary implements RAFSerializable<Dictionary> {
             oos.writeObject(idx.stoplist);
             oos.close();
             final byte[] bytes = baos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes);
 
-            out.writeInt(skipHtml ? prunedSize : idx.rows.size());
-            out.writeInt(5);
+
+            DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(out.getFD())));
+            outb.writeInt(bytes.length);
+            outb.write(bytes);
+
+            outb.writeInt(skipHtml ? prunedSize : idx.rows.size());
+            outb.writeInt(5);
             for (RowBase r : idx.rows) {
                 int type = 0;
                 if (r instanceof PairEntry.Row) {
@@ -349,13 +388,17 @@ public class Dictionary implements RAFSerializable<Dictionary> {
                 } else {
                     throw new RuntimeException("Row type not supported for v6");
                 }
-                out.writeByte(type);
-                out.writeInt(r.referenceIndex);
+                outb.writeByte(type);
+                outb.writeInt(r.referenceIndex);
             }
+            outb.flush();
         }
         long dataPos = out.getFilePointer();
+        tocout.writeLong(dataPos);
+        tocout.close();
+
         out.seek(tocPos);
-        out.writeLong(dataPos);
+        out.write(toc.toByteArray());
         out.seek(dataPos);
     }
 
