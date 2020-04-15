@@ -44,10 +44,11 @@ public class NormalizeComparator implements Comparator<String> {
         return c.compare(s1, s2);
     }
 
-    @Override
-    public int compare(final String s1, final String s2) {
-        final String n1 = normalizer == null ? s1.toLowerCase() : normalizer.transform(s1);
-        final String n2 = normalizer == null ? s2.toLowerCase() : normalizer.transform(s2);
+    public String normalize(String s) {
+        return normalizer == null ? s.toLowerCase() : normalizer.transform(s);
+    }
+
+    public int compareNormalized(final String s1, final String s2, final String n1, final String n2) {
         int cn = compareWithoutDash(n1, n2, comparator, version);
         if (cn != 0) {
             return cn;
@@ -57,6 +58,13 @@ public class NormalizeComparator implements Comparator<String> {
             return cn;
         }
         return comparator.compare(s1, s2);
+    }
+
+    @Override
+    public int compare(final String s1, final String s2) {
+        final String n1 = normalize(s1);
+        final String n2 = normalize(s2);
+        return compareNormalized(s1, s2, n1, n2);
     }
 
 }
