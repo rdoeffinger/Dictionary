@@ -18,11 +18,11 @@ import java.util.Locale;
 
 import java.text.Collator;
 
-final public class CollatorWrapper {
-static public Collator getInstance() {
+public final class CollatorWrapper {
+public static Collator getInstance() {
     return Collator.getInstance();
 }
-static public Collator getInstanceStrengthIdentical(Locale l) {
+public static Collator getInstanceStrengthIdentical(Locale l) {
     Collator c = Collator.getInstance(l);
     c.setStrength(Collator.IDENTICAL);
     return c;

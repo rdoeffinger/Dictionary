@@ -225,6 +225,7 @@ public final class Index implements RAFSerializable<Index> {
                         public HtmlEntry get(int i) {
                             return index.dict.htmlEntries.get(htmlEntryIndices[i]);
                         }
+
                         @Override
                         public int size() {
                             return htmlEntryIndices.length;
@@ -367,7 +368,7 @@ public final class Index implements RAFSerializable<Index> {
         return result;
     }
 
-    private final int windBackCase(final String token, int result, final AtomicBoolean interrupted) {
+    private int windBackCase(final String token, int result, final AtomicBoolean interrupted) {
         while (result > 0 && sortedIndexEntries.get(result - 1).normalizedToken().equals(token)) {
             --result;
             if (interrupted.get()) {
@@ -385,8 +386,8 @@ public final class Index implements RAFSerializable<Index> {
 
     private final Map<String, Integer> prefixToNumRows = new HashMap<>();
 
-    private synchronized final int getUpperBoundOnRowsStartingWith(final String normalizedPrefix,
-            final int maxRows, final AtomicBoolean interrupted) {
+    private synchronized int getUpperBoundOnRowsStartingWith(final String normalizedPrefix,
+                                                             final int maxRows, final AtomicBoolean interrupted) {
         final Integer numRows = prefixToNumRows.get(normalizedPrefix);
         if (numRows != null) {
             return numRows;
@@ -525,7 +526,7 @@ public final class Index implements RAFSerializable<Index> {
             swapPairEntries);
         for (final Collection<RowBase> rows : matches.values()) {
             final List<RowBase> ordered = new ArrayList<>(rows);
-            Collections.sort(ordered, lengthComparator);
+            ordered.sort(lengthComparator);
             result.addAll(ordered);
         }
 

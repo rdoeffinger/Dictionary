@@ -29,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 
-import com.hughes.android.dictionary.CollatorWrapper;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
@@ -64,9 +63,9 @@ public enum DictionaryApplication {
     // Leave it enabled by default for correctness except
     // for my known broken development/performance test device config.
     //static public final boolean USE_COLLATOR = !android.os.Build.FINGERPRINT.equals("Samsung/cm_tassve/tassve:4.4.4/KTU84Q/20150211:userdebug/release-keys");
-    static public final boolean USE_COLLATOR = true;
+    public static final boolean USE_COLLATOR = true;
 
-    static public final TransliteratorManager.ThreadSetup threadBackground = new TransliteratorManager.ThreadSetup() {
+    public static final TransliteratorManager.ThreadSetup threadBackground = new TransliteratorManager.ThreadSetup() {
         @Override
         public void onThreadStart() {
             // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
@@ -289,7 +288,7 @@ public enum DictionaryApplication {
         return dictDir;
     }
 
-    static public boolean checkFileCreate(File dir) {
+    public static boolean checkFileCreate(File dir) {
         boolean res = false;
         File testfile = new File(dir, "quickdic_writetest");
         try {
@@ -382,7 +381,7 @@ public enum DictionaryApplication {
     }
 
     public synchronized void sortDictionaries() {
-        Collections.sort(dictionaryConfig.dictionaryFilesOrdered, uncompressedFilenameComparator);
+        dictionaryConfig.dictionaryFilesOrdered.sort(uncompressedFilenameComparator);
         PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
@@ -406,7 +405,7 @@ public enum DictionaryApplication {
                         && !name2.startsWith(defaultLangName + "-")) {
                     return -1;
                 } else if (name2.startsWith(defaultLangName + "-")
-                           && !name1.startsWith(defaultLangName + "-")) {
+                        && !name1.startsWith(defaultLangName + "-")) {
                     return 1;
                 }
             }
@@ -479,7 +478,7 @@ public enum DictionaryApplication {
                     Log.w(LOG, "dictDir is not a directory: " + getDictDir().getPath());
                 }
                 if (!toAddSorted.isEmpty()) {
-                    Collections.sort(toAddSorted, uncompressedFilenameComparator);
+                    toAddSorted.sort(uncompressedFilenameComparator);
                     newDictionaryConfig.dictionaryFilesOrdered.addAll(toAddSorted);
                 }
 
@@ -541,7 +540,7 @@ public enum DictionaryApplication {
                 result.add(dictionaryInfo);
             }
         }
-        Collections.sort(result, dictionaryInfoComparator);
+        result.sort(dictionaryInfoComparator);
         return result;
     }
 

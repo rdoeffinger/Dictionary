@@ -6,8 +6,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.ref.SoftReference;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -121,7 +119,7 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     static final class DataDeserializer implements RAFListSerializer<DataInputBuffer> {
         @Override
         public DataInputBuffer read(DataInput raf, final int index) throws IOException {
-            return HtmlEntry.readData(raf);
+            return readData(raf);
         }
 
         @Override

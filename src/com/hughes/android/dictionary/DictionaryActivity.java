@@ -285,7 +285,7 @@ public class DictionaryActivity extends AppCompatActivity {
          *         -> language in which the phrase is written to -> to which
          *         language shall be translated
          */
-        if (intentAction != null && intentAction.equals("com.hughes.action.ACTION_SEARCH_DICT")) {
+        if ("com.hughes.action.ACTION_SEARCH_DICT".equals(intentAction)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             String from = intent.getStringExtra("from");
             if (from != null)
@@ -1243,7 +1243,7 @@ public class DictionaryActivity extends AppCompatActivity {
         try {
             wordList.getParentFile().mkdirs();
             final PrintWriter out = new PrintWriter(new FileWriter(wordList, true));
-            out.println(rawText.toString());
+            out.println(rawText);
             out.close();
         } catch (Exception e) {
             Log.e(LOG, "Unable to append to " + wordList.getAbsolutePath(), e);
@@ -1373,7 +1373,7 @@ public class DictionaryActivity extends AppCompatActivity {
         }, 20);
     }
 
-    private final void jumpToRow(final int row) {
+    private void jumpToRow(final int row) {
         Log.d(LOG, "jumpToRow: " + row + ", refocusSearchText=" + false);
         // getListView().requestFocusFromTouch();
         getListView().setSelectionFromTop(row, 0);
@@ -1406,7 +1406,7 @@ public class DictionaryActivity extends AppCompatActivity {
         }
 
         public String toString() {
-            return String.format("SearchOperation(%s,%s)", searchText, interrupted.toString());
+            return String.format("SearchOperation(%s,%s)", searchText, interrupted);
         }
 
         @Override

@@ -144,7 +144,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             final String action = intent.getAction();
 
             if (DownloadManager.ACTION_NOTIFICATION_CLICKED.equals(action)) {
-                startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(getLaunchIntent(getApplicationContext()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 final long downloadId = intent.getLongExtra(
@@ -688,7 +688,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         if (cursor == null) {
             if (cancel) {
                 String msg = getString(R.string.downloadManagerQueryFailed);
-                new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
+                new AlertDialog.Builder(this).setTitle(getString(R.string.error))
                 .setMessage(getString(R.string.downloadFailed, msg))
                 .setNeutralButton("Close", null).show();
             }
@@ -851,7 +851,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
 
         if (downloadManager == null) {
             String msg = getString(R.string.downloadManagerQueryFailed);
-            new AlertDialog.Builder(DictionaryManagerActivity.this).setTitle(getString(R.string.error))
+            new AlertDialog.Builder(this).setTitle(getString(R.string.error))
                     .setMessage(getString(R.string.downloadFailed, msg))
                     .setNeutralButton("Close", null).show();
             return;
