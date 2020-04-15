@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.util.CachingList;
+import com.hughes.util.DataInputBuffer;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFSerializable;
@@ -49,7 +51,7 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     public final List<PairEntry> pairEntries;
     public final List<TextEntry> textEntries;
     public final List<HtmlEntry> htmlEntries;
-    public final List<byte[]> htmlData;
+    public final List<DataInputBuffer> htmlData;
     public final List<EntrySource> sources;
     public final List<Index> indices;
 
@@ -71,46 +73,47 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     }
 
     public Dictionary(final FileChannel ch) throws IOException {
-        DataInput raf = new DataInputStream(Channels.newInputStream(ch));
-        dictFileVersion = raf.readInt();
+        MappedByteBuffer wholefile = ch.map(FileChannel.MapMode.READ_ONLY, 0, ch.size());
+        DataInputBuffer in = new DataInputBuffer(wholefile, 0);
+        dictFileVersion = in.readInt();
         if (dictFileVersion < 0 || dictFileVersion > CURRENT_DICT_VERSION) {
             throw new IOException("Invalid dictionary version: " + dictFileVersion);
         }
-        creationMillis = raf.readLong();
-        dictInfo = raf.readUTF();
+        creationMillis = in.readLong();
+        dictInfo = in.readUTF();
 
         // Load the sources, then seek past them, because reading them later
         // disrupts the offset.
         try {
-            final RAFList<EntrySource> rafSources = RAFList.create(ch, new EntrySource.Serializer(
-                    this), ch.position(), dictFileVersion, dictInfo + " sources: ");
+            final RAFList<EntrySource> rafSources = RAFList.create(in, new EntrySource.Serializer(
+                    this), dictFileVersion, dictInfo + " sources: ");
             sources = new ArrayList<>(rafSources);
             ch.position(rafSources.getEndOffset());
 
             pairEntries = CachingList.create(
-                              RAFList.create(ch, new PairEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " pairs: "),
+                              RAFList.create(in, new PairEntry.Serializer(this), dictFileVersion, dictInfo + " pairs: "),
                               CACHE_SIZE, false);
             textEntries = CachingList.create(
-                              RAFList.create(ch, new TextEntry.Serializer(this), ch.position(), dictFileVersion, dictInfo + " text: "),
+                              RAFList.create(in, new TextEntry.Serializer(this), dictFileVersion, dictInfo + " text: "),
                               CACHE_SIZE, true);
             if (dictFileVersion >= 5) {
                 htmlEntries = CachingList.create(
-                                  RAFList.create(ch, new HtmlEntry.Serializer(this, ch), ch.position(), dictFileVersion, dictInfo + " html: "),
+                                  RAFList.create(in, new HtmlEntry.Serializer(this), dictFileVersion, dictInfo + " html: "),
                                   CACHE_SIZE, false);
             } else {
                 htmlEntries = Collections.emptyList();
             }
             if (dictFileVersion >= 7) {
-                htmlData = RAFList.create(ch, new HtmlEntry.DataDeserializer(), ch.position(), dictFileVersion, dictInfo + " html: ");
+                htmlData = RAFList.create(in, new HtmlEntry.DataDeserializer(), dictFileVersion, dictInfo + " html: ");
             } else {
                 htmlData = null;
             }
-            indices = CachingList.createFullyCached(RAFList.create(ch, new IndexSerializer(ch),
-                                                    ch.position(), dictFileVersion, dictInfo + " index: "));
+            indices = CachingList.createFullyCached(RAFList.create(in, new IndexSerializer(),
+                                                    dictFileVersion, dictInfo + " index: "));
         } catch (RuntimeException e) {
             throw new IOException("RuntimeException loading dictionary", e);
         }
-        final String end = raf.readUTF();
+        final String end = in.readUTF();
         if (!end.equals(END_OF_DICTIONARY)) {
             throw new IOException("Dictionary seems corrupt: " + end);
         }
@@ -130,26 +133,20 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         System.out.println("text start: " + raf.getFilePointer());
         RAFList.write(raf, textEntries, new TextEntry.Serializer(this));
         System.out.println("html index start: " + raf.getFilePointer());
-        RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this, null), 64, true);
+        RAFList.write(raf, htmlEntries, new HtmlEntry.Serializer(this), 64, true);
         System.out.println("html data start: " + raf.getFilePointer());
         assert htmlData == null;
         RAFList.write(raf, htmlEntries, new HtmlEntry.DataSerializer(), 128, true);
         System.out.println("indices start: " + raf.getFilePointer());
-        RAFList.write(raf, indices, new IndexSerializer(null));
+        RAFList.write(raf, indices, new IndexSerializer());
         System.out.println("end: " + raf.getFilePointer());
         raf.writeUTF(END_OF_DICTIONARY);
     }
 
     private final class IndexSerializer implements RAFListSerializer<Index> {
-        private final FileChannel ch;
-
-        IndexSerializer(FileChannel ch) {
-            this.ch = ch;
-        }
-
         @Override
         public Index read(DataInput raf, final int readIndex) throws IOException {
-            return new Index(Dictionary.this, ch, raf);
+            return new Index(Dictionary.this, (DataInputBuffer)raf);
         }
 
         @Override

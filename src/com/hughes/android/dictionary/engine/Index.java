@@ -19,7 +19,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +37,7 @@ import com.hughes.android.dictionary.DictionaryInfo;
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.RowBase.RowKey;
 import com.hughes.util.CachingList;
+import com.hughes.util.DataInputBuffer;
 import com.hughes.util.StringUtil;
 import com.hughes.util.TransformingList;
 import com.hughes.util.raf.RAFList;
@@ -117,7 +117,7 @@ public final class Index implements RAFSerializable<Index> {
         return new NormalizeComparator(normalizer(), sortLanguage.getCollator(), dict.dictFileVersion);
     }
 
-    public Index(final Dictionary dict, final FileChannel inp, final DataInput raf) throws IOException {
+    public Index(final Dictionary dict, final DataInputBuffer raf) throws IOException {
         this.dict = dict;
         shortName = raf.readUTF();
         longName = raf.readUTF();
@@ -129,7 +129,7 @@ public final class Index implements RAFSerializable<Index> {
             mainTokenCount = raf.readInt();
         }
         sortedIndexEntries = CachingList.create(
-                                 RAFList.create(inp, new IndexEntrySerializer(dict.dictFileVersion == 6 ? inp : null), inp.position(),
+                                 RAFList.create(raf, new IndexEntrySerializer(),
                                                 dict.dictFileVersion, dict.dictInfo + " idx " + languageCode + ": "), CACHE_SIZE, true);
         if (dict.dictFileVersion >= 7) {
             int count = StringUtil.readVarInt(raf);
@@ -143,7 +143,7 @@ public final class Index implements RAFSerializable<Index> {
             stoplist = Collections.emptySet();
         }
         rows = CachingList.create(
-                   UniformRAFList.create(inp, new RowBase.Serializer(this), inp.position()),
+                   UniformRAFList.create(raf, new RowBase.Serializer(this)),
                    CACHE_SIZE, true);
     }
 
@@ -156,7 +156,7 @@ public final class Index implements RAFSerializable<Index> {
         raf.writeUTF(normalizerRules);
         raf.writeBoolean(swapPairEntries);
         raf.writeInt(mainTokenCount);
-        RAFList.write(raf, sortedIndexEntries, new IndexEntrySerializer(null), 32, true);
+        RAFList.write(raf, sortedIndexEntries, new IndexEntrySerializer(), 32, true);
         StringUtil.writeVarInt(raf, stoplist.size());
         for (String i : stoplist) {
             raf.writeUTF(i);
@@ -171,15 +171,9 @@ public final class Index implements RAFSerializable<Index> {
     }
 
     private final class IndexEntrySerializer implements RAFSerializer<IndexEntry> {
-        private final FileChannel ch;
-
-        IndexEntrySerializer(FileChannel ch) {
-            this.ch = ch;
-        }
-
         @Override
         public IndexEntry read(DataInput raf) throws IOException {
-            return new IndexEntry(Index.this, ch, raf);
+            return new IndexEntry(Index.this, raf);
         }
 
         @Override
@@ -206,7 +200,7 @@ public final class Index implements RAFSerializable<Index> {
             this.htmlEntries = new ArrayList<>();
         }
 
-        IndexEntry(final Index index, final FileChannel ch, final DataInput raf) throws IOException {
+        IndexEntry(final Index index, final DataInput raf) throws IOException {
             token = raf.readUTF();
             if (index.dict.dictFileVersion >= 7) {
                 startRow = StringUtil.readVarInt(raf);
@@ -239,8 +233,8 @@ public final class Index implements RAFSerializable<Index> {
                 }
             } else if (index.dict.dictFileVersion >= 6) {
                 this.htmlEntries = CachingList.create(
-                                       RAFList.create(ch, index.dict.htmlEntryIndexSerializer,
-                                                      ch.position(), index.dict.dictFileVersion,
+                                       RAFList.create((DataInputBuffer)raf, index.dict.htmlEntryIndexSerializer,
+                                                      index.dict.dictFileVersion,
                                                       index.dict.dictInfo + " htmlEntries: "), 1, false);
             } else {
                 this.htmlEntries = Collections.emptyList();

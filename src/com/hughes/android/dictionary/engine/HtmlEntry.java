@@ -6,11 +6,13 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.ref.SoftReference;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.hughes.util.DataInputBuffer;
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.RAFListSerializerSkippable;
@@ -30,11 +32,11 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         lazyHtmlLoader = null;
     }
 
-    public HtmlEntry(Dictionary dictionary, FileChannel ch, DataInput raf, final int index)
+    public HtmlEntry(Dictionary dictionary, DataInput raf, final int index)
     throws IOException {
         super(dictionary, raf, index);
         title = raf.readUTF();
-        lazyHtmlLoader = new LazyHtmlLoader(ch, raf, dictionary.htmlData, index);
+        lazyHtmlLoader = new LazyHtmlLoader(raf, dictionary.htmlData, index);
         html = null;
     }
 
@@ -49,11 +51,9 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         raf.write(bytes);
     }
 
-    private static byte[] readData(DataInput raf) throws IOException {
+    private static DataInputBuffer readData(DataInput raf) throws IOException {
         int len = StringUtil.readVarInt(raf);
-        final byte[] bytes = new byte[Math.min(len, 20 * 1024 * 1024)];
-        raf.readFully(bytes);
-        return bytes;
+        return ((DataInputBuffer)raf).slice(len);
     }
 
     String getHtml() {
@@ -75,16 +75,14 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     static final class Serializer implements RAFListSerializerSkippable<HtmlEntry> {
 
         final Dictionary dictionary;
-        final FileChannel ch;
 
-        Serializer(Dictionary dictionary, FileChannel ch) {
+        Serializer(Dictionary dictionary) {
             this.dictionary = dictionary;
-            this.ch = ch;
         }
 
         @Override
         public HtmlEntry read(DataInput raf, final int index) throws IOException {
-            return new HtmlEntry(dictionary, ch, raf, index);
+            return new HtmlEntry(dictionary, raf, index);
         }
 
         @Override
@@ -120,14 +118,14 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         }
     }
 
-    static final class DataDeserializer implements RAFListSerializer<byte[]> {
+    static final class DataDeserializer implements RAFListSerializer<DataInputBuffer> {
         @Override
-        public byte[] read(DataInput raf, final int index) throws IOException {
+        public DataInputBuffer read(DataInput raf, final int index) throws IOException {
             return HtmlEntry.readData(raf);
         }
 
         @Override
-        public void write(DataOutput raf, byte[] t) {
+        public void write(DataOutput raf, DataInputBuffer t) {
             assert false;
         }
     }
@@ -228,34 +226,26 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
 
     @SuppressWarnings("WeakerAccess")
     public static final class LazyHtmlLoader {
-        final DataInput raf;
-        final FileChannel ch;
-        final long offset;
+        final DataInputBuffer buf;
         final int numBytes;
-        final int numZipBytes;
-        final List<byte[]> data;
+        final List<DataInputBuffer> data;
         final int index;
 
         // Not sure this volatile is right, but oh well.
         volatile SoftReference<String> htmlRef = new SoftReference<>(null);
 
-        private LazyHtmlLoader(FileChannel ch, final DataInput inp, List<byte[]> data, int index) throws IOException {
+        private LazyHtmlLoader(final DataInput inp, List<DataInputBuffer> data, int index) throws IOException {
             this.data = data;
             this.index = index;
             if (data != null) {
-                this.raf = null;
-                this.ch = null;
-                this.offset = 0;
+                buf = null;
                 this.numBytes = -1;
-                this.numZipBytes = -1;
                 return;
             }
-            raf = inp;
-            this.ch = ch;
-            numBytes = Math.min(raf.readInt(), 20 * 1024 * 1024);
-            numZipBytes = Math.min(raf.readInt(), 20 * 1024 * 1024);
-            offset = ch.position();
-            raf.skipBytes(numZipBytes);
+            numBytes = Math.min(inp.readInt(), 20 * 1024 * 1024);
+            int numZipBytes = Math.min(inp.readInt(), 20 * 1024 * 1024);
+            DataInputBuffer b = (DataInputBuffer)inp;
+            buf = b.slice(numZipBytes);
         }
 
         String getHtml() {
@@ -264,21 +254,15 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
                 return html;
             }
             if (data != null) {
-                html = new String(data.get(index), StandardCharsets.UTF_8);
+                html = data.get(index).asString();
                 htmlRef = new SoftReference<>(html);
                 return html;
             }
             System.out.println("Loading Html: numBytes=" + numBytes + ", numZipBytes="
-                               + numZipBytes);
-            final byte[] zipBytes = new byte[numZipBytes];
-            synchronized (ch) {
-                try {
-                    ch.position(offset);
-                    raf.readFully(zipBytes);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to read HTML data from dictionary", e);
-                }
-            }
+                               + buf.limit());
+            final byte[] zipBytes = new byte[buf.limit()];
+            buf.rewind();
+            buf.readFully(zipBytes);
             try {
                 final byte[] bytes = StringUtil.unzipFully(zipBytes, numBytes);
                 html = new String(bytes, StandardCharsets.UTF_8);
