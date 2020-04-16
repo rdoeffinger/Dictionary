@@ -213,7 +213,11 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     public static String formatQuickdicUrl(final String indexShortName, final String text) {
         assert !indexShortName.contains(":");
         assert text.length() > 0;
-        return String.format("q://d?%s&%s", indexShortName, StringUtil.encodeForUrl(text));
+        StringBuilder s = new StringBuilder("q://d?");
+        s.append(indexShortName);
+        s.append("&");
+        s.append(StringUtil.encodeForUrl(text));
+        return s.toString();
     }
 
     public static boolean isQuickdicUrl(String url) {
