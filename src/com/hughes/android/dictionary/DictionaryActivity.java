@@ -1351,7 +1351,9 @@ public class DictionaryActivity extends AppCompatActivity {
         Log.d(LOG, "searchFinished: " + searchOperation + ", searchResult=" + searchResult);
 
         currentSearchOperation = null;
-        uiHandler.postDelayed(new Runnable() {
+        // Note: it's important to post to the ListView, otherwise
+        // the jumpToRow will randomly not work.
+        getListView().post(new Runnable() {
             @Override
             public void run() {
                 if (currentSearchOperation == null) {
@@ -1370,7 +1372,7 @@ public class DictionaryActivity extends AppCompatActivity {
                     Log.d(LOG, "More coming, waiting for currentSearchOperation.");
                 }
             }
-        }, 20);
+        });
     }
 
     private void jumpToRow(final int row) {
