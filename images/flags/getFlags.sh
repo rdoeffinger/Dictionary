@@ -4,16 +4,12 @@ OLD_DIR=`pwd`
 DIR=`dirname $0`
 cd $DIR
 
-curl commons.wikimedia.org/wiki/Sovereign-state_flags | 
-    egrep -o "\"[^\"]+\"" | 
-    egrep Flag_of | 
-    egrep upload\\.wikimedia | 
-    sed -E 's!^.*(upload.*\svg)/.*$!\1!' | 
-    sed 's!thumb/!!' > flag_files.txt
+curl https://commons.wikimedia.org/wiki/Sovereign-state_flags |
+    egrep -o 'src="[^"]+/Flag_of_[^/"]+\.svg' |
+    sed -e 's#src="##' -e 's#thumb/##' > flag_files.txt
 
-for i in `cat flag_files.txt`
-do
-  curl --remote-name $i
-done
+while read i ; do
+  curl --remote-name "$i"
+done < flag_files.txt
 
 cd $OLD_DIR
