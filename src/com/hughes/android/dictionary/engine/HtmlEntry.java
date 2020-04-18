@@ -267,7 +267,8 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
             buf.readFully(zipBytes);
             try {
                 final byte[] bytes = StringUtil.unzipFully(zipBytes, numBytes);
-                html = new String(bytes, StandardCharsets.UTF_8);
+                // Cannot use StandardCharsets due to older Android.
+                html = new String(bytes, "UTF-8");
             } catch (IOException e) {
                 throw new RuntimeException("Dictionary HTML data corrupted", e);
             }
