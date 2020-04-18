@@ -37,6 +37,8 @@ public class MyWebView extends WebView {
         super(context, attrs);
         getSettings().setSupportZoom(true);
         getSettings().setBuiltInZoomControls(true);
+        // TODO: check why AUTO does not work and consider using it (API 29/Android 10 only)
+        //getSettings().setForceDark(WebSettings.FORCE_DARK_ON);
 
         final WebViewClient webViewClient = new WebViewClient() {
             @Override
