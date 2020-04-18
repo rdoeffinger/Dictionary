@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -380,7 +381,7 @@ public enum DictionaryApplication {
     }
 
     public synchronized void sortDictionaries() {
-        dictionaryConfig.dictionaryFilesOrdered.sort(uncompressedFilenameComparator);
+        Collections.sort(dictionaryConfig.dictionaryFilesOrdered, uncompressedFilenameComparator);
         PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
@@ -477,7 +478,7 @@ public enum DictionaryApplication {
                     Log.w(LOG, "dictDir is not a directory: " + getDictDir().getPath());
                 }
                 if (!toAddSorted.isEmpty()) {
-                    toAddSorted.sort(uncompressedFilenameComparator);
+                    Collections.sort(toAddSorted, uncompressedFilenameComparator);
                     newDictionaryConfig.dictionaryFilesOrdered.addAll(toAddSorted);
                 }
 
@@ -539,7 +540,7 @@ public enum DictionaryApplication {
                 result.add(dictionaryInfo);
             }
         }
-        result.sort(dictionaryInfoComparator);
+        Collections.sort(result, dictionaryInfoComparator);
         return result;
     }
 
