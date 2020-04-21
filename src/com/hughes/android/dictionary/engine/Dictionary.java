@@ -50,6 +50,9 @@ public class Dictionary implements RAFSerializable<Dictionary> {
     public final List<DataInputBuffer> htmlData;
     public final List<EntrySource> sources;
     public final List<Index> indices;
+    // Could be a local variable in constructor, but
+    // this way avoids a native-image VM bug.
+    private final MappedByteBuffer wholefile;
 
     /**
      * dictFileVersion 1 adds: <li>links to sources? dictFileVersion 2 adds: <li>
@@ -66,10 +69,11 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         htmlData = null;
         sources = new ArrayList<>();
         indices = new ArrayList<>();
+        wholefile = null;
     }
 
     public Dictionary(final FileChannel ch) throws IOException {
-        MappedByteBuffer wholefile = ch.map(FileChannel.MapMode.READ_ONLY, 0, ch.size());
+        wholefile = ch.map(FileChannel.MapMode.READ_ONLY, 0, ch.size());
         DataInputBuffer in = new DataInputBuffer(wholefile, 0);
         dictFileVersion = in.readInt();
         if (dictFileVersion < 0 || dictFileVersion > CURRENT_DICT_VERSION) {
