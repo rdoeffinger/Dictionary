@@ -156,3 +156,32 @@ list_of([Int]) list of indices into list_of(html_entry) (since v6)
 3: index into list_of([text_entry])
 4: index into list_of([index_entry]) (mark as "extra info/translation" entry)
 5: index into list_of([html_entry])
+
+=======================================
+
+Set<String>
+
+Java serialization of java.util.HashSet.
+First part consists always the same 40 bytes:
+    0xac, 0xed, // magic
+    0x00, 0x05, // version
+    0x73, // object
+    0x72, // class
+    // Java String "java.util.HashSet"
+    0x00, 0x11, 0x6a, 0x61, 0x76, 0x61, 0x2e, 0x75, 0x74, 0x69,
+    0x6c, 0x2e, 0x48, 0x61, 0x73, 0x68, 0x53, 0x65, 0x74,
+    // serialization ID
+    0xba, 0x44, 0x85, 0x95, 0x96, 0xb8, 0xb7, 0x34,
+    0x03, // flags: serialized, custom serialization function
+    0x00, 0x00, // fields count
+    0x78, // blockdata end
+    0x70, // null (superclass)
+    0x77, 0x0c // blockdata short, 0xc bytes
+
+[Int]: capacity. Not used for anything, but set to >= <num_entries>
+[Float]: capacity factor. May affect performance of old QuickDic versions, set to 0.75f
+[Int]: <num_entries>
+<num_entries> times:
+    1 byte 0x74: String type
+    [String]: stop word
+1 byte 0x78: blockdata end
