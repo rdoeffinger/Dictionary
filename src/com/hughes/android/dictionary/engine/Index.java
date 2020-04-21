@@ -41,13 +41,11 @@ import com.hughes.util.DataInputBuffer;
 import com.hughes.util.StringUtil;
 import com.hughes.util.TransformingList;
 import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFSerializable;
 import com.hughes.util.raf.RAFSerializer;
-import com.hughes.util.raf.SerializableSerializer;
 import com.hughes.util.raf.UniformRAFList;
 import com.ibm.icu.text.Transliterator;
 
-public final class Index implements RAFSerializable<Index> {
+public final class Index {
 
     private static final int CACHE_SIZE = 5000;
 
@@ -138,7 +136,14 @@ public final class Index implements RAFSerializable<Index> {
                 stoplist.add(raf.readUTF());
             }
         } else if (dict.dictFileVersion >= 4) {
-            stoplist = new SerializableSerializer<Set<String>>().read(raf);
+            raf.readInt(); // length
+            raf.skipBytes(52);
+            stoplist = new HashSet<>();
+            byte b;
+            while ((b = raf.readByte()) == 0x74) {
+                stoplist.add(raf.readUTF());
+            }
+            if (b != 0x78) throw new IOException("Invalid data in dictionary stoplist!");
         } else {
             stoplist = Collections.emptySet();
         }
@@ -147,7 +152,6 @@ public final class Index implements RAFSerializable<Index> {
                    CACHE_SIZE, true);
     }
 
-    @Override
     public void write(final DataOutput out) throws IOException {
         RandomAccessFile raf = (RandomAccessFile)out;
         raf.writeUTF(shortName);
@@ -182,7 +186,7 @@ public final class Index implements RAFSerializable<Index> {
         }
     }
 
-    public static final class IndexEntry implements RAFSerializable<Index.IndexEntry> {
+    public static final class IndexEntry {
         public final String token;
         private final String normalizedToken;
         public final int startRow;

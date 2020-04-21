@@ -31,9 +31,8 @@ import com.hughes.util.CachingList;
 import com.hughes.util.DataInputBuffer;
 import com.hughes.util.raf.RAFList;
 import com.hughes.util.raf.RAFListSerializer;
-import com.hughes.util.raf.RAFSerializable;
 
-public class Dictionary implements RAFSerializable<Dictionary> {
+public class Dictionary {
 
     private static final int CACHE_SIZE = 5000;
 
@@ -119,7 +118,6 @@ public class Dictionary implements RAFSerializable<Dictionary> {
         }
     }
 
-    @Override
     public void write(DataOutput out) throws IOException {
         RandomAccessFile raf = (RandomAccessFile)out;
         if (dictFileVersion < 7) throw new RuntimeException("write function cannot write formats older than v7!");

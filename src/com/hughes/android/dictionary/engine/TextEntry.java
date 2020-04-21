@@ -22,10 +22,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.hughes.util.raf.RAFListSerializer;
-import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
 
-public class TextEntry extends AbstractEntry implements RAFSerializable<TextEntry> {
+public class TextEntry extends AbstractEntry {
 
     public final String text;
 

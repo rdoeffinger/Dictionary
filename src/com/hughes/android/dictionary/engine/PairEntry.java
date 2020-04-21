@@ -25,11 +25,9 @@ import java.util.regex.Pattern;
 
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializerSkippable;
-import com.hughes.util.raf.RAFSerializable;
 import com.ibm.icu.text.Transliterator;
 
-public class PairEntry extends AbstractEntry implements RAFSerializable<PairEntry>,
-    Comparable<PairEntry> {
+public class PairEntry extends AbstractEntry implements Comparable<PairEntry> {
 
     public final List<Pair> pairs;
 
