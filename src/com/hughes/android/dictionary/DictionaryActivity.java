@@ -265,6 +265,10 @@ public class DictionaryActivity extends AppCompatActivity {
         ed.apply();
     }
 
+    private void addToSearchHistory() {
+        addToSearchHistory(searchView.getQuery().toString());
+    }
+
     private void addToSearchHistory(String text) {
         if (text == null || text.isEmpty()) return;
         int exists = searchHistory.indexOf(text);
@@ -617,7 +621,9 @@ public class DictionaryActivity extends AppCompatActivity {
 
             @Override
             public boolean onSuggestionClick(int position) {
-                setSearchText(searchHistory.get(position), true);
+                String h = searchHistory.get(position);
+                addToSearchHistory(h);
+                setSearchText(h, true);
                 return true;
             }
         });
@@ -652,6 +658,7 @@ public class DictionaryActivity extends AppCompatActivity {
         for (int i = savedHistory.size() - 1; i >= 0; i--) {
             addToSearchHistory(savedHistory.get(i));
         }
+        addToSearchHistory(text);
 
         setSearchText(text, true);
         Log.d(LOG, "Trying to restore searchText=" + text);
@@ -711,7 +718,7 @@ public class DictionaryActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(LOG, "OnQueryTextListener: onQueryTextSubmit: " + searchView.getQuery());
-                addToSearchHistory(searchView.getQuery().toString());
+                addToSearchHistory();
                 hideKeyboard();
                 return true;
             }
@@ -782,6 +789,7 @@ public class DictionaryActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        addToSearchHistory();
         saveSearchHistory();
     }
 
@@ -896,6 +904,7 @@ public class DictionaryActivity extends AppCompatActivity {
             searchView.requestFocus();
         }
         if (searchView.getQuery().toString().length() > 0) {
+            addToSearchHistory();
             searchView.setQuery("", false);
         }
         showKeyboard();
@@ -1297,6 +1306,7 @@ public class DictionaryActivity extends AppCompatActivity {
             @Override
             public void run() {
                 setIndexAndSearchText(actualIndexToUse, selectedText, true);
+                addToSearchHistory(selectedText);
             }
         }, 100);
     }
@@ -1426,7 +1436,6 @@ public class DictionaryActivity extends AppCompatActivity {
         if (hideKeyboard) {
             hideKeyboard();
         }
-        addToSearchHistory(text);
     }
 
     private void setSearchText(final String text, final boolean triggerSearch) {
