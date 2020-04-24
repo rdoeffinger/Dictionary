@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -32,6 +34,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -65,6 +68,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -101,6 +105,7 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -147,6 +152,9 @@ public class DictionaryActivity extends AppCompatActivity {
     });
 
     private SearchOperation currentSearchOperation = null;
+    private final int MAX_SEARCH_HISTORY = 10;
+    private final ArrayList<String> searchHistory = new ArrayList<>(MAX_SEARCH_HISTORY);
+    private MatrixCursor searchHistoryCursor = new MatrixCursor(new String[] {"_id", "search"});
 
     private TextToSpeech textToSpeech;
     private volatile boolean ttsReady;
@@ -173,6 +181,7 @@ public class DictionaryActivity extends AppCompatActivity {
     }
 
     private SearchView searchView;
+    private AutoCompleteTextView searchTextView;
     private ImageButton languageButton;
     private SearchView.OnQueryTextListener onQueryTextListener;
 
@@ -243,6 +252,23 @@ public class DictionaryActivity extends AppCompatActivity {
                            Toast.LENGTH_LONG).show();
         startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
         finish();
+    }
+
+    private void addToSearchHistory(String text) {
+        if (text == null || text.isEmpty()) return;
+        int exists = searchHistory.indexOf(text);
+        if (exists >= 0) searchHistory.remove(exists);
+        else if (searchHistory.size() >= MAX_SEARCH_HISTORY) searchHistory.remove(searchHistory.size() - 1);
+        searchHistory.add(0, text);
+        searchHistoryCursor = new MatrixCursor(new String[] {"_id", "search"});
+        for (int i = 0; i < searchHistory.size(); i++) {
+            final Object[] row = {i, searchHistory.get(i)};
+            searchHistoryCursor.addRow(row);
+        }
+        if (searchView.getSuggestionsAdapter().getCursor() != null) {
+            searchView.getSuggestionsAdapter().swapCursor(searchHistoryCursor);
+            searchView.getSuggestionsAdapter().notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -571,6 +597,37 @@ public class DictionaryActivity extends AppCompatActivity {
         if (text == null) {
             text = "";
         }
+
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                setSearchText(searchHistory.get(position), true);
+                return true;
+            }
+        });
+        searchView.setSuggestionsAdapter(new CursorAdapter(this, text.isEmpty() ? searchHistoryCursor : null, 0) {
+            @Override
+            public View newView(Context context, Cursor c, ViewGroup p) {
+                TextView v = new TextView(context);
+                v.setTextColor(textColorFg);
+                v.setTypeface(typeface);
+                v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 4 * fontSizeSp / 3);
+                return v;
+            }
+            @Override
+            public void bindView(View v, Context context, Cursor c) {
+                TextView t = (TextView)v;
+                t.setText(c.getString(1));
+            }
+        });
+        // Set up search history
+        addToSearchHistory(text);
+
         setSearchText(text, true);
         Log.d(LOG, "Trying to restore searchText=" + text);
 
@@ -629,6 +686,7 @@ public class DictionaryActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(LOG, "OnQueryTextListener: onQueryTextSubmit: " + searchView.getQuery());
+                addToSearchHistory(searchView.getQuery().toString());
                 hideKeyboard();
                 return true;
             }
@@ -642,6 +700,7 @@ public class DictionaryActivity extends AppCompatActivity {
         };
         searchView.setOnQueryTextListener(onQueryTextListener);
         searchView.setFocusable(true);
+        searchTextView = (AutoCompleteTextView)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
                 FrameLayout.LayoutParams.WRAP_CONTENT, 1);
         customSearchView.addView(searchView, lp);
@@ -742,14 +801,23 @@ public class DictionaryActivity extends AppCompatActivity {
                     Log.d(LOG, "Trying to show soft keyboard.");
                     final boolean searchTextHadFocus = searchView.hasFocus();
                     searchView.requestFocusFromTouch();
+                    searchTextView.requestFocus();
                     final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     manager.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
+                    manager.showSoftInput(searchTextView, InputMethodManager.SHOW_IMPLICIT);
                     if (!searchTextHadFocus) {
                         defocusSearchText();
                     }
                 }
             }, delay);
         }
+        searchView.post(new Runnable() {
+            @Override
+            public void run() {
+                searchTextView.setThreshold(0);
+                searchTextView.showDropDown();
+            }
+        });
     }
 
     private void hideKeyboard() {
@@ -1854,6 +1922,8 @@ public class DictionaryActivity extends AppCompatActivity {
         currentSearchOperation = new SearchOperation(text, index);
         searchExecutor.execute(currentSearchOperation);
         ((FloatingActionButton)findViewById(R.id.floatSearchButton)).setImageResource(text.length() > 0 ? R.drawable.ic_clear_black_24dp : R.drawable.ic_search_black_24dp);
+        searchView.getSuggestionsAdapter().swapCursor(text.isEmpty() ? searchHistoryCursor : null);
+        searchView.getSuggestionsAdapter().notifyDataSetChanged();
     }
 
     // --------------------------------------------------------------------------
