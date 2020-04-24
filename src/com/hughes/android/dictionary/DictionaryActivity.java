@@ -222,6 +222,7 @@ public class DictionaryActivity extends AppCompatActivity {
         Log.d(LOG, "onSaveInstanceState: " + searchView.getQuery().toString());
         outState.putString(C.INDEX_SHORT_NAME, index.shortName);
         outState.putString(C.SEARCH_TOKEN, searchView.getQuery().toString());
+        outState.putStringArrayList(C.SEARCH_HISTORY, searchHistory);
     }
 
     private int getMatchLen(String search, Index.IndexEntry e) {
@@ -252,6 +253,16 @@ public class DictionaryActivity extends AppCompatActivity {
                            Toast.LENGTH_LONG).show();
         startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
         finish();
+    }
+
+    private void saveSearchHistory() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor ed = prefs.edit();
+        for (int i = 0; i < searchHistory.size(); i++) {
+            ed.putString("history" + i, searchHistory.get(i));
+        }
+        ed.remove("history" + searchHistory.size());
+        ed.apply();
     }
 
     private void addToSearchHistory(String text) {
@@ -625,8 +636,22 @@ public class DictionaryActivity extends AppCompatActivity {
                 t.setText(c.getString(1));
             }
         });
+
         // Set up search history
-        addToSearchHistory(text);
+        ArrayList<String> savedHistory = null;
+        if (savedInstanceState != null) savedHistory = savedInstanceState.getStringArrayList(C.SEARCH_HISTORY);
+        if (savedHistory != null && !savedHistory.isEmpty()) {
+        } else {
+            savedHistory = new ArrayList<>();
+            for (int i = 0; i < MAX_SEARCH_HISTORY; i++) {
+                String h = prefs.getString("history" + i, null);
+                if (h == null) break;
+                savedHistory.add(h);
+            }
+        }
+        for (int i = savedHistory.size() - 1; i >= 0; i--) {
+            addToSearchHistory(savedHistory.get(i));
+        }
 
         setSearchText(text, true);
         Log.d(LOG, "Trying to restore searchText=" + text);
@@ -752,6 +777,12 @@ public class DictionaryActivity extends AppCompatActivity {
         }
         prefs.remove(C.SEARCH_TOKEN); // Don't need to save search token.
         prefs.commit();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveSearchHistory();
     }
 
     @Override
@@ -1395,6 +1426,7 @@ public class DictionaryActivity extends AppCompatActivity {
         if (hideKeyboard) {
             hideKeyboard();
         }
+        addToSearchHistory(text);
     }
 
     private void setSearchText(final String text, final boolean triggerSearch) {
