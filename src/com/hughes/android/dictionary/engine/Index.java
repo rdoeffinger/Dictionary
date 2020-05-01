@@ -530,7 +530,7 @@ public final class Index {
             swapPairEntries);
         for (final Collection<RowBase> rows : matches.values()) {
             final List<RowBase> ordered = new ArrayList<>(rows);
-            ordered.sort(lengthComparator);
+            Collections.sort(ordered, lengthComparator);
             result.addAll(ordered);
         }
 
