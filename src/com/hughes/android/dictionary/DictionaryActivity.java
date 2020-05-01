@@ -880,6 +880,11 @@ public class DictionaryActivity extends AppCompatActivity {
         updateTTSLanguage(indexIndex);
     }
 
+    @SuppressWarnings("deprecation")
+    private void speak(String text) {
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
     private void updateTTSLanguage(int i) {
         if (!ttsReady || index == null || textToSpeech == null) {
             Log.d(LOG, "Can't updateTTSLanguage.");
@@ -1236,8 +1241,7 @@ public class DictionaryActivity extends AppCompatActivity {
             speak.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(android.view.MenuItem item) {
-                    textToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH,
-                                       new HashMap<String, String>());
+                    speak(textToSpeak);
                     return false;
                 }
             });
@@ -1253,8 +1257,7 @@ public class DictionaryActivity extends AppCompatActivity {
                     String text = "";
                     for (Pair p : pairs) text += p.get(idx);
                     text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
-                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH,
-                                       new HashMap<String, String>());
+                    speak(text);
                     return false;
                 }
             });
@@ -1267,8 +1270,7 @@ public class DictionaryActivity extends AppCompatActivity {
                     String text = "";
                     for (Pair p : pairs) text += p.get(idx);
                     text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
-                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH,
-                                       new HashMap<String, String>());
+                    speak(text);
                     return false;
                 }
             });
