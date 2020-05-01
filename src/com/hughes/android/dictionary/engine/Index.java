@@ -136,10 +136,11 @@ public final class Index {
                 stoplist.add(raf.readUTF());
             }
         } else if (dict.dictFileVersion >= 4) {
-            raf.readInt(); // length
-            raf.skipBytes(52);
             stoplist = new HashSet<>();
-            byte b;
+            raf.readInt(); // length
+            raf.skipBytes(18);
+            byte b = raf.readByte();
+            raf.skipBytes(b == 'L' ? 71 : 33);
             while ((b = raf.readByte()) == 0x74) {
                 stoplist.add(raf.readUTF());
             }
