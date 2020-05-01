@@ -21,7 +21,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.util.TypedValue;

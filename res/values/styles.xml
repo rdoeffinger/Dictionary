@@ -5,7 +5,7 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseThemeLight" parent="@style/Theme.AppCompat.Light">
-
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -22,6 +22,7 @@
     </style>
 
     <style name="AppBaseThemeDark" parent="@style/Theme.AppCompat">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to

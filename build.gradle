@@ -27,6 +27,7 @@ dependencies {
     implementation files("$buildDir/icu4j-57.1.small.jar") {
         builtBy 'makesmallicu'
     }
+    implementation 'com.android.support:preference-v7:25.3.1'
 }
 
 task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
@@ -40,6 +41,12 @@ task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
 }
 
 def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "Util"
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+}
 
 android {
     compileSdkVersion 29

@@ -19,13 +19,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.Environment;
-import android.preference.ListPreference;
-import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.ListPreference;
 
 import java.io.File;
 import java.util.List;
 
-public class PreferenceActivity extends android.preference.PreferenceActivity
+public class PreferenceActivity extends AppCompatActivity
     implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     static boolean prefsMightHaveChanged = false;
@@ -51,21 +52,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity
          *         fashion
          */
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
-        ListPreference defaultDic = (ListPreference) findPreference(getResources().getString(
-                                        R.string.defaultDicKey));
-        List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
-
-        final CharSequence[] entries = new CharSequence[dicts.size()];
-        final CharSequence[] entryvalues = new CharSequence[dicts.size()];
-
-        for (int i = 0; i < entries.length; ++i) {
-            entries[i] = dicts.get(i).dictInfo;
-            entryvalues[i] = dicts.get(i).uncompressedFilename;
-        }
-
-        defaultDic.setEntries(entries);
-        defaultDic.setEntryValues(entryvalues);
+        setContentView(R.layout.preference_activity);
     }
 
     @Override
