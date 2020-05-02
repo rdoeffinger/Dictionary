@@ -188,6 +188,14 @@ public class Dictionary {
         return result;
     }
 
+    // get DictionaryInfo for case when Dictionary cannot be opened
+    private static DictionaryInfo getErrorDictionaryInfo(final File file) {
+        final DictionaryInfo dictionaryInfo = new DictionaryInfo();
+        dictionaryInfo.uncompressedFilename = file.getName();
+        dictionaryInfo.uncompressedBytes = file.length();
+        return dictionaryInfo;
+    }
+
     public static DictionaryInfo getDictionaryInfo(final File file) {
         RandomAccessFile raf = null;
         try {
@@ -199,10 +207,11 @@ public class Dictionary {
             raf.close();
             return dictionaryInfo;
         } catch (IOException e) {
-            final DictionaryInfo dictionaryInfo = new DictionaryInfo();
-            dictionaryInfo.uncompressedFilename = file.getName();
-            dictionaryInfo.uncompressedBytes = file.length();
-            return dictionaryInfo;
+            return getErrorDictionaryInfo(file);
+        } catch (IllegalArgumentException e) {
+            // Most likely due to a Buffer.limit beyond size of file,
+            // do not crash just because of a truncated dictionary file
+            return getErrorDictionaryInfo(file);
         } finally {
             if (raf != null) {
                 try {
