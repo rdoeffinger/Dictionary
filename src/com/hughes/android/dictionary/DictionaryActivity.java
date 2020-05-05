@@ -109,7 +109,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -732,7 +731,7 @@ public class DictionaryActivity extends AppCompatActivity {
         };
         searchView.setOnQueryTextListener(onQueryTextListener);
         searchView.setFocusable(true);
-        searchTextView = (AutoCompleteTextView)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchTextView = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
                 FrameLayout.LayoutParams.WRAP_CONTENT, 1);
         customSearchView.addView(searchView, lp);

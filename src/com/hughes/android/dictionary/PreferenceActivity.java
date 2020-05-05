@@ -21,10 +21,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.preference.ListPreference;
 
 import java.io.File;
-import java.util.List;
 
 public class PreferenceActivity extends AppCompatActivity
     implements SharedPreferences.OnSharedPreferenceChangeListener {
