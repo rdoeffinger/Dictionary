@@ -151,8 +151,10 @@ public class DictionaryActivity extends AppCompatActivity {
     });
 
     private SearchOperation currentSearchOperation = null;
-    private final int MAX_SEARCH_HISTORY = 10;
-    private final ArrayList<String> searchHistory = new ArrayList<>(MAX_SEARCH_HISTORY);
+    private final int MAX_SEARCH_HISTORY = 100;
+    private final int DEFAULT_SEARCH_HISTORY = 10;
+    private int searchHistoryLimit;
+    private final ArrayList<String> searchHistory = new ArrayList<>(DEFAULT_SEARCH_HISTORY);
     private MatrixCursor searchHistoryCursor = new MatrixCursor(new String[] {"_id", "search"});
 
     private TextToSpeech textToSpeech;
@@ -260,7 +262,9 @@ public class DictionaryActivity extends AppCompatActivity {
         for (int i = 0; i < searchHistory.size(); i++) {
             ed.putString("history" + i, searchHistory.get(i));
         }
-        ed.remove("history" + searchHistory.size());
+        for (int i = searchHistory.size(); i <= MAX_SEARCH_HISTORY; i++) {
+            ed.remove("history" + i);
+        }
         ed.apply();
     }
 
@@ -269,10 +273,10 @@ public class DictionaryActivity extends AppCompatActivity {
     }
 
     private void addToSearchHistory(String text) {
-        if (text == null || text.isEmpty()) return;
+        if (text == null || text.isEmpty() || searchHistoryLimit == 0) return;
         int exists = searchHistory.indexOf(text);
         if (exists >= 0) searchHistory.remove(exists);
-        else if (searchHistory.size() >= MAX_SEARCH_HISTORY) searchHistory.remove(searchHistory.size() - 1);
+        else if (searchHistory.size() >= searchHistoryLimit) searchHistory.remove(searchHistory.size() - 1);
         searchHistory.add(0, text);
         searchHistoryCursor = new MatrixCursor(new String[] {"_id", "search"});
         for (int i = 0; i < searchHistory.size(); i++) {
@@ -581,6 +585,13 @@ public class DictionaryActivity extends AppCompatActivity {
             fontSizeSp = 14;
         }
 
+        final String searchHistoryLimitStr = prefs.getString(getString(R.string.historySizeKey), "" + DEFAULT_SEARCH_HISTORY);
+        try {
+            searchHistoryLimit = Math.min(Integer.parseInt(searchHistoryLimitStr.trim()), MAX_SEARCH_HISTORY);
+        } catch (NumberFormatException e) {
+            searchHistoryLimit = DEFAULT_SEARCH_HISTORY;
+        }
+
         // ContextMenu.
         registerForContextMenu(getListView());
 
@@ -648,7 +659,7 @@ public class DictionaryActivity extends AppCompatActivity {
         if (savedHistory != null && !savedHistory.isEmpty()) {
         } else {
             savedHistory = new ArrayList<>();
-            for (int i = 0; i < MAX_SEARCH_HISTORY; i++) {
+            for (int i = 0; i < searchHistoryLimit; i++) {
                 String h = prefs.getString("history" + i, null);
                 if (h == null) break;
                 savedHistory.add(h);

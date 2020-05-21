@@ -104,4 +104,8 @@
     <string name="themeSummary">User-interface color theme.</string>
     <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
 
+    <string name="historySizeKey" translatable="false">historySize</string>
+    <string name="historySizeTitle">Search history entries</string>
+    <string name="historySizeSummary">The number of search history entries to save and display.</string>
+
 </resources>

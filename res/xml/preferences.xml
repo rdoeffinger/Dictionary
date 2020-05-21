@@ -76,4 +76,12 @@
     android:entryValues="@array/themeKeys"
   />
 
+  <EditTextPreference
+    android:key="@string/historySizeKey"
+    android:title="@string/historySizeTitle"
+    android:summary="@string/historySizeSummary"
+    android:defaultValue="10"
+    android:persistent="true"
+  />
+
 </PreferenceScreen>  

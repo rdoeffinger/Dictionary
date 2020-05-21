@@ -91,4 +91,7 @@
     <string name="themeSummary">Auswahl des Farbschemas für das Wörterbuch und die Menüs.</string>
     <string name="chosenNotWritable">Ausgewähltes Verzeichnis nicht beschreibbar, versuche eines von</string>
 
+    <string name="historySizeTitle">Einträge Sucherverlauf</string>
+    <string name="historySizeSummary">Wieviele Einträge der Sucherverlauf maximal speichern und anzeigen soll.</string>
+
 </resources>
