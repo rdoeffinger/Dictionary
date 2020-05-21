@@ -853,7 +853,10 @@ public class DictionaryActivity extends AppCompatActivity {
             @Override
             public void run() {
                 searchTextView.setThreshold(0);
-                searchTextView.showDropDown();
+                try {
+                    searchTextView.showDropDown();
+                // ignore any errors, in particular BadTokenException happens a lot
+                } catch (Exception e) {}
             }
         });
     }

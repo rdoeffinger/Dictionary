@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.nio.BufferUnderflowException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -211,6 +212,10 @@ public class Dictionary {
         } catch (IllegalArgumentException e) {
             // Most likely due to a Buffer.limit beyond size of file,
             // do not crash just because of a truncated dictionary file
+            return getErrorDictionaryInfo(file);
+        } catch (BufferUnderflowException e) {
+            // Most likely due to a read beyond the buffer limit set,
+            // do not crash just because of a truncated or corrupt dictionary file
             return getErrorDictionaryInfo(file);
         } finally {
             if (raf != null) {
