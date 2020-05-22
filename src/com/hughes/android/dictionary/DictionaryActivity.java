@@ -1583,11 +1583,11 @@ public class DictionaryActivity extends AppCompatActivity {
         else if (typeface == Typeface.SANS_SERIF) { style = "font-family: sans-serif;"; }
         else if (typeface == Typeface.MONOSPACE) { style = "font-family: monospace;"; }
         if (application.getSelectedTheme() == DictionaryApplication.Theme.DEFAULT)
-            style += "background-color: black; color: white;";
+            style += "body { background-color: black; color: white; } a { color: #00aaff; }";
         // Log.d(LOG, "html=" + html);
         startActivityForResult(
             HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
-                    "<html><head><meta name=\"viewport\" content=\"width=device-width\"></head><body style=\"%s\">%s</body></html>", style, html),
+                    "<html><head><meta name=\"viewport\" content=\"width=device-width\"><style type=\"text/css\">%s</style></head><body>%s</body></html>", style, html),
                                               htmlTextToHighlight, false),
             0);
     }
