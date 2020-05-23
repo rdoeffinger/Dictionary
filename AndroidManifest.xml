@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hughes.android.dictionary"
     android:installLocation="auto"
-    android:versionCode="110"
-    android:versionName="5.5.5" >
+    android:versionCode="111"
+    android:versionName="5.5.6" >
 
     <uses-feature
         android:name="android.hardware.touchscreen"
