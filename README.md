@@ -17,10 +17,11 @@ It is possible to disable the smallicu/makesmallicu step if it causes
 issues, though help to debug any such issue would be welcome.
 
 ## Generating dictionaries
-And approximation of the steps for generating dictionaries:
+An approximation of the steps for generating dictionaries:
 1. Go into the DictionaryPC repository
 2. Run `data/downloadInputs.sh` to get the data
 3. Run `./compile.sh` (probably needs quite a few things to be installed or paths in it configured)
+   Alternatively, download a release binary: https://github.com/rdoeffinger/DictionaryPC/releases
 4. Run `./WiktionarySplitter.sh`
 5. Run `./generate_dictionaries.sh`
    You might want to edit the settings at the start of the file
