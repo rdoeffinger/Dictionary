@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Copyright 2015 Reimar Döffinger\nCopyright 2009-2013 Google Inc."
+            android:text="Copyright 2015-2020 Reimar Döffinger\nCopyright 2009-2013 Google Inc."
             android:textAppearance="?android:attr/textAppearanceSmall"
             tools:ignore="HardcodedText" />
 
