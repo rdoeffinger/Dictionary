@@ -20,11 +20,13 @@
   <string-array name="themeKeys" translatable="false">
     <item>themeLight</item>
     <item>themeDefault</item>
+    <item>themeSystem</item>
   </string-array>
 
   <string-array name="themes">
     <item>Light theme</item>
     <item>Dark theme (default)</item>
+    <item>System theme</item>
   </string-array>
 
 </resources>
