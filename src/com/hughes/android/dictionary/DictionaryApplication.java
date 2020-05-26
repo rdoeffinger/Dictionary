@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -313,6 +314,12 @@ public enum DictionaryApplication {
         final String theme = prefs.getString(appContext.getString(R.string.themeKey), "themeLight");
         if (theme.equals("themeLight")) {
             return Theme.LIGHT;
+        } else if (theme.equals("themeSystem")) {
+            int mode = (appContext.getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK);
+            return ((mode == Configuration.UI_MODE_NIGHT_YES) ?
+                    Theme.DEFAULT :
+                    Theme.LIGHT);
         } else {
             return Theme.DEFAULT;
         }
