@@ -12,6 +12,7 @@
   <string-array name="themes">
     <item>亮色主题</item>
     <item>暗色主题（默认）</item>
+    <item>系统主题</item>
   </string-array>
 
 </resources>

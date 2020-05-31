@@ -12,6 +12,7 @@
   <string-array name="themes">
     <item>Tema claro</item>
     <item>Tema padrão</item>
+    <item>Tema do sistema</item>
   </string-array>
 
 </resources>
