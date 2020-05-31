@@ -12,6 +12,7 @@
   <string-array name="themes">
     <item>ライト テーマ</item>
     <item>デフォルト テーマ</item>
+    <item>システムテーマ</item>
   </string-array>
 
 </resources>

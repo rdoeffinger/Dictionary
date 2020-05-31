@@ -12,6 +12,7 @@
   <string-array name="themes">
     <item>Tema luminoso</item>
     <item>Tema predeterminado</item>
+    <item>Tema del sistema</item>
   </string-array>
 
 </resources>
