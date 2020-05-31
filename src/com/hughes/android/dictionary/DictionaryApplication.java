@@ -317,9 +317,9 @@ public enum DictionaryApplication {
         } else if (theme.equals("themeSystem")) {
             int mode = (appContext.getResources().getConfiguration().uiMode &
                         Configuration.UI_MODE_NIGHT_MASK);
-            return ((mode == Configuration.UI_MODE_NIGHT_YES) ?
-                    Theme.DEFAULT :
-                    Theme.LIGHT);
+            return ((mode == Configuration.UI_MODE_NIGHT_NO) ?
+                    Theme.LIGHT:
+                    Theme.DEFAULT);
         } else {
             return Theme.DEFAULT;
         }
