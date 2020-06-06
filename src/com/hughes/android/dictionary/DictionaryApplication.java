@@ -311,7 +311,7 @@ public enum DictionaryApplication {
 
     public Theme getSelectedTheme() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-        final String theme = prefs.getString(appContext.getString(R.string.themeKey), "themeLight");
+        final String theme = prefs.getString(appContext.getString(R.string.themeKey), "themeSystem");
         if (theme.equals("themeLight")) {
             return Theme.LIGHT;
         } else if (theme.equals("themeSystem")) {
