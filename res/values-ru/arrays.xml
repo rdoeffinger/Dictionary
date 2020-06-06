@@ -11,8 +11,8 @@
 
   <string-array name="themes">
     <item>Светлая тема</item>
-    <item>Тёмная тема (по умолчанию)</item>
-    <item>Системная тема</item>
+    <item>Тёмная тема</item>
+    <item>Системная тема (по умолчанию)</item>
   </string-array>
 
 </resources>

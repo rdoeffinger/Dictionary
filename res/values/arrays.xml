@@ -25,8 +25,8 @@
 
   <string-array name="themes">
     <item>Light theme</item>
-    <item>Dark theme (default)</item>
-    <item>System theme</item>
+    <item>Dark theme</item>
+    <item>System theme (default)</item>
   </string-array>
 
 </resources>
