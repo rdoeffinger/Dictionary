@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.2'
+        classpath 'com.android.tools.build:gradle:4.0.0'
     }
 }
 
@@ -28,6 +28,7 @@ dependencies {
         builtBy 'makesmallicu'
     }
     implementation 'com.android.support:preference-v7:25.3.1'
+//    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
 }
 
 task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
@@ -81,8 +82,15 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
+	// disabled since it breaks AndroidStudio, claims "default activity not found"
+//        multiDexEnabled true
         targetSdkVersion 29
         resConfigs "de", "es", "eu", "fr", "it", "ja", "pt", "pt-rBR", "ru", "zh-rCN"
         minSdkVersion 10
     }
+//    compileOptions {
+//        coreLibraryDesugaringEnabled true
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 }
