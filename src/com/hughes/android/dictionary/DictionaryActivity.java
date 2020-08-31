@@ -1579,11 +1579,11 @@ public class DictionaryActivity extends AppCompatActivity {
     private void showHtml(final List<HtmlEntry> htmlEntries, final String htmlTextToHighlight) {
         String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
         String style = "";
-        if (typeface == Typeface.SERIF) { style = "font-family: serif;"; }
-        else if (typeface == Typeface.SANS_SERIF) { style = "font-family: sans-serif;"; }
-        else if (typeface == Typeface.MONOSPACE) { style = "font-family: monospace;"; }
+        if (typeface == Typeface.SERIF) { style = "* { font-family: serif; } "; }
+        else if (typeface == Typeface.SANS_SERIF) { style = "* { font-family: sans-serif; } "; }
+        else if (typeface == Typeface.MONOSPACE) { style = "* { font-family: monospace; } "; }
         if (application.getSelectedTheme() == DictionaryApplication.Theme.DEFAULT)
-            style += "body { background-color: black; color: white; } a { color: #00aaff; }";
+            style += "body { background-color: #121212; color: #797979; } a { color: #94a8b5; }";
         // Log.d(LOG, "html=" + html);
         startActivityForResult(
             HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
