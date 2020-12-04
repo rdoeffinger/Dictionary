@@ -312,6 +312,7 @@ public final class Index {
     }
 
     private int findInsertionPointIndex(String token, final AtomicBoolean interrupted) {
+        String orig_token = token;
         token = normalizeToken(token);
 
         int start = 0;
@@ -329,7 +330,8 @@ public final class Index {
             if (comp == 0)
                 comp = sortCollator.compare(token, midEntry.normalizedToken());
             if (comp == 0) {
-                return windBackCase(token, mid, interrupted);
+                start = end = mid;
+                break;
             } else if (comp < 0) {
                 // System.out.println("Upper bound: " + midEntry + ", norm=" +
                 // midEntry.normalizedToken() + ", mid=" + mid);
@@ -364,6 +366,23 @@ public final class Index {
             String next = sortedIndexEntries.get(start).normalizedToken();
             if (findMatchLen(sortCollator, token, prev) >= findMatchLen(sortCollator, token, next))
                 start--;
+        }
+
+        // If the search term was normalized, try to find an exact match first
+        if (!orig_token.equalsIgnoreCase(token)) {
+            int matchLen = findMatchLen(sortCollator, token, sortedIndexEntries.get(start).normalizedToken());
+            int scan = start;
+            while (scan >= 0 && scan < sortedIndexEntries.size()) {
+                IndexEntry e = sortedIndexEntries.get(scan);
+                if (e.token.equalsIgnoreCase(orig_token))
+                {
+                    return scan;
+                }
+                if (matchLen > findMatchLen(sortCollator, token, e.normalizedToken()))
+                    break;
+                if (interrupted.get()) return start;
+                scan++;
+            }
         }
 
         // If we search for a substring of a string that's in there, return
