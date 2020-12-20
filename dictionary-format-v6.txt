@@ -1,7 +1,10 @@
 This is a quick write-up of the old dictionary file format, v6.
+It is the format that is (unfortunately) still used by the Tolino
+ebook readers. The ConvertToV6 tool can be used to convert
+the new format to this old one.
 v6 is troublesome as it relies on Java serialization and thus
 there will be references to Java types.
-This hasn't been checked for correctness and likely has some bugs.
+This hasn't been checked much for correctness and likely has some bugs.
 Also, I really should have used some standard format for writing this...
 
 ===========================================

@@ -1,7 +1,7 @@
 This is a quick write-up of the dictionary file format, v7.
-v6 is troublesome as it relies on Java serialization and thus
-I won't even attempt to document it.
-This hasn't been checked for correctness and likely has some bugs.
+v6 is troublesome as it relies on Java serialization but is now
+also documented in dictionary-format-v6.txt.
+This hasn't been checked much for correctness and likely has some bugs.
 Also, I really should have used some standard format for writing this...
 
 ===========================================
