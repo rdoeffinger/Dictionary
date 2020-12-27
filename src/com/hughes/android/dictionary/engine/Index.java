@@ -14,8 +14,11 @@
 
 package com.hughes.android.dictionary.engine;
 
+import java.io.BufferedOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
@@ -28,6 +31,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -166,7 +170,9 @@ public final class Index {
         for (String i : stoplist) {
             raf.writeUTF(i);
         }
-        UniformRAFList.write(raf, rows, new RowBase.Serializer(this), 3 /* bytes per entry */);
+        DataOutputStream outb = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(raf.getFD())));
+        UniformRAFList.write(outb, rows, new RowBase.Serializer(this), 3 /* bytes per entry */);
+        outb.flush();
     }
 
     public void print(final PrintStream out) {
@@ -195,14 +201,14 @@ public final class Index {
         public List<HtmlEntry> htmlEntries;
 
         public IndexEntry(final Index index, final String token, final String normalizedToken,
-                          final int startRow, final int numRows) {
+                          final int startRow, final int numRows, final List<HtmlEntry> htmlEntries) {
             assert token.equals(token.trim());
             assert token.length() > 0;
             this.token = token;
             this.normalizedToken = normalizedToken;
             this.startRow = startRow;
             this.numRows = numRows;
-            this.htmlEntries = new ArrayList<>();
+            this.htmlEntries = htmlEntries;
         }
 
         IndexEntry(final Index index, final DataInput raf) throws IOException {
@@ -564,7 +570,7 @@ public final class Index {
             return normalizer.transliterate(searchToken);
         } else {
             // Do our best since the Transliterators aren't up yet.
-            return searchToken.toLowerCase();
+            return searchToken.toLowerCase(Locale.US);
         }
     }
 

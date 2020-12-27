@@ -15,6 +15,7 @@
 package com.hughes.android.dictionary.engine;
 
 import java.util.Comparator;
+import java.util.Locale;
 
 import com.ibm.icu.text.Transliterator;
 
@@ -45,7 +46,7 @@ public class NormalizeComparator implements Comparator<String> {
     }
 
     public String normalize(String s) {
-        return normalizer == null ? s.toLowerCase() : normalizer.transform(s);
+        return normalizer == null ? s.toLowerCase(Locale.US) : normalizer.transform(s);
     }
 
     public int compareNormalized(final String s1, final String s2, final String n1, final String n2) {
