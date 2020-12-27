@@ -203,7 +203,7 @@ public final class Index {
         public IndexEntry(final Index index, final String token, final String normalizedToken,
                           final int startRow, final int numRows, final List<HtmlEntry> htmlEntries) {
             assert token.equals(token.trim());
-            assert token.length() > 0;
+            assert !token.isEmpty();
             this.token = token;
             this.normalizedToken = normalizedToken;
             this.startRow = startRow;
