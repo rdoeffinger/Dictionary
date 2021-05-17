@@ -84,6 +84,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -681,17 +682,8 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         final DownloadManager.Query query = new DownloadManager.Query();
         query.setFilterByStatus(DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_PENDING | DownloadManager.STATUS_RUNNING);
-        final Cursor cursor = downloadManager.query(query);
-
-        // Due to a bug, cursor is null instead of empty when
-        // the download manager is disabled.
+        final Cursor cursor = downloadManagerQuery(downloadManager, query, cancel);
         if (cursor == null) {
-            if (cancel) {
-                String msg = getString(R.string.downloadManagerQueryFailed);
-                new AlertDialog.Builder(this).setTitle(getString(R.string.error))
-                .setMessage(getString(R.string.downloadFailed, msg))
-                .setNeutralButton("Close", null).show();
-            }
             return cancel;
         }
 
@@ -715,6 +707,31 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         }
         cursor.close();
         return active;
+    }
+
+    private Cursor downloadManagerQuery(DownloadManager downloadManager, DownloadManager.Query query, boolean cancel) {
+        final Cursor cursor;
+        try {
+            cursor = downloadManager.query(query);
+        } catch (SecurityException se) {
+            Log.w(LOG, "Failed to query download manager", se);
+            showDownloadFailedAlert(getString(R.string.downloadManagerQueryPermissionDenied));
+            return null;
+        }
+
+        // Due to a bug, cursor is null instead of empty when
+        // the download manager is disabled.
+        if (cursor == null && cancel) {
+            showDownloadFailedAlert(getString(R.string.downloadManagerQueryFailed));
+        }
+
+        return cursor;
+    }
+
+    private void showDownloadFailedAlert(String msg) {
+        new AlertDialog.Builder(this).setTitle(getString(R.string.error))
+                .setMessage(getString(R.string.downloadFailed, msg))
+                .setNeutralButton("Close", null).show();
     }
 
     private View createDictionaryRow(final DictionaryInfo dictionaryInfo,
