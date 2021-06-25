@@ -291,6 +291,9 @@ public class DictionaryActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // when called via special search intents avoid focusing the search field
+        // and thus popping up the keyboard
+        boolean focusSearchView = true;
         DictionaryApplication.INSTANCE.init(getApplicationContext());
         application = DictionaryApplication.INSTANCE;
         // This needs to be before super.onCreate, otherwise ActionbarSherlock
@@ -330,6 +333,7 @@ public class DictionaryActivity extends AppCompatActivity {
          *         language shall be translated
          */
         if ("com.hughes.action.ACTION_SEARCH_DICT".equals(intentAction)) {
+            focusSearchView = false;
             String query = intent.getStringExtra(SearchManager.QUERY);
             String from = intent.getStringExtra("from");
             if (from != null)
@@ -378,11 +382,13 @@ public class DictionaryActivity extends AppCompatActivity {
          *         documentation)
          */
         if (intentAction != null && intentAction.equals(Intent.ACTION_SEARCH)) {
+            focusSearchView = false;
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (query != null)
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
         }
         if (intentAction != null && intentAction.equals(Intent.ACTION_SEND)) {
+            focusSearchView = false;
             String query = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (query != null)
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
@@ -391,6 +397,7 @@ public class DictionaryActivity extends AppCompatActivity {
          * This processes text on M+ devices where QuickDic shows up in the context menu.
          */
         if (intentAction != null && intentAction.equals(Intent.ACTION_PROCESS_TEXT)) {
+            focusSearchView = false;
             String query = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT);
             if (query != null) {
                 getIntent().putExtra(C.SEARCH_TOKEN, query);
@@ -676,7 +683,7 @@ public class DictionaryActivity extends AppCompatActivity {
         setDictionaryPrefs(this, dictFile, index.shortName);
 
         updateLangButton();
-        searchView.requestFocus();
+        if (focusSearchView) searchView.requestFocus();
 
         // http://stackoverflow.com/questions/2833057/background-listview-becomes-black-when-scrolling
 //        getListView().setCacheColorHint(0);
