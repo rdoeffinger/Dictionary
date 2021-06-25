@@ -14,10 +14,7 @@
 
 package com.hughes.android.dictionary.engine;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,14 +53,36 @@ public class PairEntry extends AbstractEntry implements Comparable<PairEntry> {
         }
     }
 
+    private void fastWriteUTF(DataOutput raf, String s) throws IOException {
+        int pos = 2;
+        char[] in = s.toCharArray();
+        byte[] out = new byte[in.length * 3 + 2];
+        for (char c: in) {
+            if (c < 128) out[pos++] = (byte)c;
+            else if (c < 2048) {
+                out[pos++] = (byte) (0xc0 | (c >> 6));
+                out[pos++] = (byte) (0x80 | (c & 0x3f));
+            } else {
+                out[pos++] = (byte) (0xe0 | (c >> 12));
+                out[pos++] = (byte) (0x80 | ((c >> 6) & 0x3f));
+                out[pos++] = (byte) (0x80 | (c & 0x3f));
+            }
+        }
+        int utflen = pos - 2;
+        assert utflen < 0x10000;
+        out[0] = (byte)(utflen >> 8);
+        out[1] = (byte)utflen;
+        raf.write(out, 0, pos);
+    }
+
     @Override
     public void write(DataOutput raf) throws IOException {
         super.write(raf);
         StringUtil.writeVarInt(raf, pairs.size());
         for (Pair p : pairs) {
             assert p.lang1.length() > 0;
-            raf.writeUTF(p.lang1);
-            raf.writeUTF(p.lang2);
+            fastWriteUTF(raf, p.lang1);
+            fastWriteUTF(raf, p.lang2);
         }
     }
 
