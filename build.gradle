@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
     dependencies {
@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'com.android.application'
 
 repositories {
-    jcenter()
+    mavenCentral()
     google()
 }
 configurations {
@@ -28,7 +28,7 @@ dependencies {
         builtBy 'makesmallicu'
     }
     implementation 'com.android.support:preference-v7:25.3.1'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }
 
 task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
@@ -50,7 +50,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     lintOptions {
         disable "MissingTranslation"
     }
@@ -83,7 +83,7 @@ android {
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
         multiDexEnabled true
-        targetSdkVersion 29
+        targetSdkVersion 30
         resConfigs "de", "es", "eu", "fr", "it", "ja", "pt", "pt-rBR", "ru", "zh-rCN"
         minSdkVersion 10
     }
