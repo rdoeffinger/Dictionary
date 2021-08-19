@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -235,12 +236,12 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                     continue;
                 }
                 Log.d(LOG, "Unzipping entry: " + zipEntry.getName());
-                File targetFile = new File(application.getDictDir(), zipEntry.getName());
-                if (targetFile.exists()) {
-                    targetFile.renameTo(new File(targetFile.getAbsolutePath().replace(".quickdic", ".bak.quickdic")));
-                    targetFile = new File(application.getDictDir(), zipEntry.getName());
+                DocumentFile targetFile = application.getDictDir().findFile(zipEntry.getName());
+                if (targetFile != null && targetFile.exists()) {
+                    targetFile.renameTo(zipEntry.getName().replace(".quickdic", ".bak.quickdic"));
                 }
-                zipOut = new FileOutputStream(targetFile);
+                targetFile = application.getDictDir().createFile("", zipEntry.getName());
+                zipOut = context.getContentResolver().openAssetFileDescriptor(targetFile.getUri(), "wt").createOutputStream();
                 copyStream(zipFile, zipOut);
             }
             application.backgroundUpdateDictionaries(dictionaryUpdater);
@@ -250,9 +251,9 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             result = true;
         } catch (Exception e) {
             String msg = getString(R.string.unzippingFailed, dest + ": " + e.getMessage());
-            File dir = application.getDictDir();
+            DocumentFile dir = application.getDictDir();
             if (!dir.canWrite() || !DictionaryApplication.checkFileCreate(dir)) {
-                msg = getString(R.string.notWritable, dir.getAbsolutePath());
+                msg = getString(R.string.notWritable, dir.getUri().getPath());
             }
             new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
             Log.e(LOG, "Failed to unzip.", e);
@@ -266,8 +267,10 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             try {
                 if (zipFileStream != null) zipFileStream.close();
             } catch (IOException ignored) {}
-            if (localZipFile != null && delete) //noinspection ResultOfMethodCallIgnored
-                localZipFile.delete();
+            if (delete) {
+                if (localZipFile != null) localZipFile.delete();
+                else context.getContentResolver().delete(zipUri, null);
+            }
         }
         return result;
     }
@@ -279,8 +282,8 @@ public class DictionaryManagerActivity extends AppCompatActivity {
     }
 
     private void readableCheckAndError(boolean requestPermission) {
-        final File dictDir = application.getDictDir();
-        if (dictDir.canRead() && dictDir.canExecute()) return;
+        final DocumentFile dictDir = application.getDictDir();
+        if (dictDir.canRead()) return;
         blockAutoLaunch = true;
         if (requestPermission &&
                 ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -296,7 +299,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         builder.setTitle(getString(R.string.error));
         builder.setMessage(getString(
                                R.string.unableToReadDictionaryDir,
-                               dictDir.getAbsolutePath(),
+                               dictDir.getUri().toString(),
                                Environment.getExternalStorageDirectory()));
         builder.setNeutralButton("Close", null);
         builder.create().show();
@@ -484,7 +487,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                 prefs.contains(C.INDEX_SHORT_NAME)) {
             Log.d(LOG, "Skipping DictionaryManager, going straight to dictionary.");
             startActivity(DictionaryActivity.getLaunchIntent(getApplicationContext(),
-                          new File(prefs.getString(C.DICT_FILE, "")),
+                          prefs.getString(C.DICT_FILE, ""),
                           prefs.getString(C.INDEX_SHORT_NAME, ""),
                           ""));
             finish();
@@ -797,7 +800,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                 button.setOnClickListener(
                     new IntentLauncher(buttons.getContext(),
                                        DictionaryActivity.getLaunchIntent(getApplicationContext(),
-                                               application.getPath(dictionaryInfo.uncompressedFilename),
+                                               application.getPath(dictionaryInfo.uncompressedFilename).getUri().toString(),
                                                indexInfo.shortName, "")));
 
             }
@@ -820,7 +823,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         if (canLaunch) {
             row.setOnClickListener(new IntentLauncher(parent.getContext(),
                                    DictionaryActivity.getLaunchIntent(getApplicationContext(),
-                                           application.getPath(dictionaryInfo.uncompressedFilename),
+                                           application.getPath(dictionaryInfo.uncompressedFilename).getUri().toString(),
                                            dictionaryInfo.indexInfos.get(0).shortName, "")));
             // do not setFocusable, for keyboard navigation
             // offering only the index buttons is better.
@@ -856,11 +859,13 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         }
         Log.d(LOG, "Downloading to: " + destFile);
         request.setTitle(destFile);
-        File destFilePath = new File(application.getDictDir(), destFile);
-        destFilePath.delete();
+        DocumentFile destFilePath = application.getDictDir().findFile(destFile);
+        if (destFilePath != null) destFilePath.delete();
+        destFilePath = application.getDictDir().createFile("", destFile);
         try {
-            request.setDestinationUri(Uri.fromFile(destFilePath));
+            request.setDestinationUri(destFilePath.getUri());
         } catch (Exception e) {
+            if (destFilePath != null) destFilePath.delete();
         }
 
         DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
@@ -875,7 +880,8 @@ public class DictionaryManagerActivity extends AppCompatActivity {
 
         try {
             downloadManager.enqueue(request);
-        } catch (SecurityException e) {
+        } catch (Exception e) {
+            if (destFilePath != null) destFilePath.delete();
             request = new Request(Uri.parse(downloadUrl));
             request.setTitle(destFile);
             downloadManager.enqueue(request);

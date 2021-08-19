@@ -28,6 +28,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -101,6 +102,8 @@ import com.hughes.util.StringUtil;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -120,6 +123,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class DictionaryActivity extends AppCompatActivity {
 
@@ -127,7 +131,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
     private DictionaryApplication application;
 
-    private File dictFile = null;
+    private DocumentFile dictFile = null;
     private FileChannel dictRaf = null;
     private String dictFileTitleName = null;
 
@@ -190,7 +194,7 @@ public class DictionaryActivity extends AppCompatActivity {
     private MenuItem previousWordMenuItem;
 
     // Never null.
-    private File wordList = null;
+    private DocumentFile wordList = null;
     private boolean saveOnlyFirstSubentry = false;
     private boolean clickOpensContextMenu = false;
 
@@ -207,10 +211,10 @@ public class DictionaryActivity extends AppCompatActivity {
     public DictionaryActivity() {
     }
 
-    public static Intent getLaunchIntent(Context c, final File dictFile, final String indexShortName,
+    public static Intent getLaunchIntent(Context c, final String dictFile, final String indexShortName,
                                          final String searchToken) {
         final Intent intent = new Intent(c, DictionaryActivity.class);
-        intent.putExtra(C.DICT_FILE, dictFile.getPath());
+        intent.putExtra(C.DICT_FILE, dictFile);
         intent.putExtra(C.INDEX_SHORT_NAME, indexShortName);
         intent.putExtra(C.SEARCH_TOKEN, searchToken);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -437,8 +441,9 @@ public class DictionaryActivity extends AppCompatActivity {
             for (int i = 0; dictFilename == null && i < dics.size(); ++i) {
                 try {
                     Log.d(LOG, "Checking dictionary " + dics.get(i).uncompressedFilename);
-                    final File dictfile = application.getPath(dics.get(i).uncompressedFilename);
-                    Dictionary dic = new Dictionary(new RandomAccessFile(dictfile, "r").getChannel());
+                    final DocumentFile dictfile = application.getPath(dics.get(i).uncompressedFilename);
+                    FileChannel c = getContentResolver().openAssetFileDescriptor(dictfile.getUri(), "r").createInputStream().getChannel();
+                    Dictionary dic = new Dictionary(c);
                     for (int j = 0; j < dic.indices.size(); ++j) {
                         Index idx = dic.indices.get(j);
                         Log.d(LOG, "Checking index " + idx.shortName);
@@ -471,8 +476,10 @@ public class DictionaryActivity extends AppCompatActivity {
             finish();
             return;
         }
-        if (dictRaf == null)
-            dictFile = new File(dictFilename);
+        if (dictRaf == null) {
+            Uri u = Uri.parse(dictFilename);
+            dictFile = "content".equals(u.getScheme()) ? DocumentFile.fromSingleUri(getApplicationContext(), u) : DocumentFile.fromFile(new File(u.getPath()));
+        }
 
         ttsReady = false;
         textToSpeech = new TextToSpeech(getApplicationContext(), new OnInitListener() {
@@ -486,7 +493,7 @@ public class DictionaryActivity extends AppCompatActivity {
         try {
             if (dictRaf == null) {
                 dictFileTitleName = application.getDictionaryName(dictFile.getName());
-                dictRaf = new RandomAccessFile(dictFile, "r").getChannel();
+                dictRaf = getContentResolver().openAssetFileDescriptor(dictFile.getUri(), "r").createInputStream().getChannel();
             }
             this.setTitle("QuickDic: " + dictFileTitleName);
             dictionary = new Dictionary(dictRaf);
@@ -791,12 +798,12 @@ public class DictionaryActivity extends AppCompatActivity {
         }
     }
 
-    private static void setDictionaryPrefs(final Context context, final File dictFile,
+    private static void setDictionaryPrefs(final Context context, final DocumentFile dictFile,
                                            final String indexShortName) {
         final SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(
                 context).edit();
         if (dictFile != null) {
-            prefs.putString(C.DICT_FILE, dictFile.getPath());
+            prefs.putString(C.DICT_FILE, dictFile.getUri().toString());
             prefs.putString(C.INDEX_SHORT_NAME, indexShortName);
         }
         prefs.remove(C.SEARCH_TOKEN); // Don't need to save search token.
@@ -985,7 +992,7 @@ public class DictionaryActivity extends AppCompatActivity {
                             indexInfo, application.languageButtonPixels);
                     final IntentLauncher intentLauncher = new IntentLauncher(parent.getContext(),
                             getLaunchIntent(getApplicationContext(),
-                                            application.getPath(dictionaryInfo.uncompressedFilename),
+                                            application.getPath(dictionaryInfo.uncompressedFilename).getUri().toString(),
                     indexInfo.shortName, searchView.getQuery().toString())) {
                         @Override
                         protected void onGo() {
@@ -1142,7 +1149,7 @@ public class DictionaryActivity extends AppCompatActivity {
                         }
                         builder.append(dictionaryInfo.dictInfo).append("\n\n");
                         if (dictFile != null) {
-                            builder.append(getString(R.string.dictionaryPath, dictFile.getPath()))
+                            builder.append(getString(R.string.dictionaryPath, dictFile.getUri().toString()))
                             .append("\n");
                         }
                         builder.append(
@@ -1372,15 +1379,14 @@ public class DictionaryActivity extends AppCompatActivity {
         Log.d(LOG, "Writing : " + rawText);
 
         try {
-            wordList.getParentFile().mkdirs();
-            final PrintWriter out = new PrintWriter(new FileWriter(wordList, true));
+            final PrintStream out = new PrintStream(getContentResolver().openOutputStream(wordList.getUri(), "wa"));
             out.println(rawText);
             out.close();
         } catch (Exception e) {
-            Log.e(LOG, "Unable to append to " + wordList.getAbsolutePath(), e);
+            Log.e(LOG, "Unable to append to " + wordList.getUri().getPath(), e);
             if (!isFinishing())
                 Toast.makeText(this,
-                               getString(R.string.failedAddingToWordList, wordList.getAbsolutePath()),
+                               getString(R.string.failedAddingToWordList, wordList.getUri().getPath()),
                                Toast.LENGTH_LONG).show();
         }
     }

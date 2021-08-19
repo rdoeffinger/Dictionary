@@ -1,12 +1,76 @@
 package com.hughes.android.dictionary;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
+import android.text.InputType;
+import android.widget.EditText;
 
 import java.util.List;
 
 public class PreferenceFragment extends PreferenceFragmentCompat {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0x3253) {
+            if (resultCode == Activity.RESULT_OK) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                getActivity().getContentResolver().takePersistableUriPermission(data.getData(), Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                prefs.edit().putString(getResources().getString(R.string.quickdicDirectoryKey), data.getDataString()).commit();
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (preference.getKey().equals(getResources().getString(R.string.quickdicDirectoryKey))) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            String current = prefs.getString(getResources().getString(R.string.quickdicDirectoryKey), "");
+            EditText t = new EditText(getActivity());
+            t.setText(current);
+            t.setInputType(InputType.TYPE_CLASS_TEXT);
+            AlertDialog.Builder b = new AlertDialog.Builder(getActivity())
+                    .setTitle(getActivity().getString(R.string.quickdicDirectoryTitle))
+                    .setView(t)
+                    .setNegativeButton(getString(android.R.string.cancel), null)
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                            prefs.edit().putString(getResources().getString(R.string.quickdicDirectoryKey), t.getText().toString()).commit();
+                        }
+                    });
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                b.setNeutralButton(getString(R.string.choose), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+                        startActivityForResult(intent, 0x3253);
+                    }
+                });
+            }
+            b.create().show();
+            return true;
+        }
+        return super.onPreferenceTreeClick(preference);
+    }
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String s) {
         final DictionaryApplication application = DictionaryApplication.INSTANCE;

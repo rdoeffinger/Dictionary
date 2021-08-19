@@ -22,6 +22,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -263,7 +264,7 @@ public enum DictionaryApplication {
             if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 appContext.getExternalFilesDirs(null);
             }
-            if (efd.isDirectory() && efd.canWrite() && checkFileCreate(efd)) {
+            if (efd.isDirectory() && efd.canWrite() && checkFileCreate(DocumentFile.fromFile(efd))) {
                 return efd.getAbsolutePath();
             }
         }
@@ -273,7 +274,7 @@ public enum DictionaryApplication {
         return dir;
     }
 
-    public synchronized File getDictDir() {
+    public synchronized DocumentFile getDictDir() {
         // This metaphor doesn't work, because we've already reset
         // prefsMightHaveChanged.
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -281,32 +282,40 @@ public enum DictionaryApplication {
         if (dir.isEmpty()) {
             dir = selectDefaultDir();
         }
-        File dictDir = new File(dir);
-        dictDir.mkdirs();
+        DocumentFile dictDir = null;
+        Uri dirUri = Uri.parse(dir);
+        if ("content".equals(dirUri.getScheme())) {
+            dictDir = DocumentFile.fromTreeUri(appContext, dirUri);
+        } else {
+            File df = new File(dir);
+            df.mkdirs();
+            dictDir = DocumentFile.fromFile(df);
+        }
         if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             appContext.getExternalFilesDirs(null);
         }
         return dictDir;
     }
 
-    public static boolean checkFileCreate(File dir) {
-        boolean res = false;
-        File testfile = new File(dir, "quickdic_writetest");
-        try {
-            testfile.delete();
-            res = testfile.createNewFile() & testfile.delete();
-        } catch (Exception ignored) {
-        }
-        return res;
+    public static boolean checkFileCreate(DocumentFile dir) {
+        DocumentFile testfile = dir.findFile("quickdic_writetest");
+        if (testfile != null) testfile.delete();
+        if (testfile != null && testfile.exists()) return false;
+        testfile = dir.createFile("", "quickdic_writetest");
+        if (testfile == null) return false;
+        return testfile.exists() & testfile.delete();
     }
 
-    public File getWordListFile() {
+    public DocumentFile getWordListFile() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
         String file = prefs.getString(appContext.getString(R.string.wordListFileKey), "");
         if (file.isEmpty()) {
-            return new File(getDictDir(), "wordList.txt");
+            DocumentFile d = getDictDir();
+            DocumentFile f = d.findFile("wordList.txt");
+            return f != null ? f : d.createFile("" , "wordList.txt");
         }
-        return new File(file);
+        Uri u = Uri.parse(file);
+        return "content".equals(u.getScheme()) ? DocumentFile.fromSingleUri(appContext, u) : DocumentFile.fromFile(new File(u.getPath()));
     }
 
     public Theme getSelectedTheme() {
@@ -325,8 +334,9 @@ public enum DictionaryApplication {
         }
     }
 
-    public File getPath(String uncompressedFilename) {
-        return new File(getDictDir(), uncompressedFilename);
+    public DocumentFile getPath(String uncompressedFilename) {
+        DocumentFile res = getDictDir().findFile(uncompressedFilename);
+        return res != null ? res : DocumentFile.fromFile(new File(uncompressedFilename));
     }
 
     String defaultLangISO2 = Locale.getDefault().getLanguage().toLowerCase();
@@ -442,8 +452,8 @@ public enum DictionaryApplication {
                 }
                 final DictionaryConfig newDictionaryConfig = new DictionaryConfig();
                 for (final String uncompressedFilename : oldDictionaryConfig.dictionaryFilesOrdered) {
-                    final File dictFile = getPath(uncompressedFilename);
-                    final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(dictFile);
+                    final DocumentFile dictFile = getPath(uncompressedFilename);
+                    final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(dictFile, appContext.getContentResolver());
                     if (dictionaryInfo.isValid() || dictFile.exists()) {
                         newDictionaryConfig.dictionaryFilesOrdered.add(uncompressedFilename);
                         newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
@@ -455,9 +465,9 @@ public enum DictionaryApplication {
                 // about already?
                 // Pick them up and put them at the end of the list.
                 final List<String> toAddSorted = new ArrayList<>();
-                final File[] dictDirFiles = getDictDir().listFiles();
+                final DocumentFile[] dictDirFiles = getDictDir().listFiles();
                 if (dictDirFiles != null) {
-                    for (final File file : dictDirFiles) {
+                    for (final DocumentFile file : dictDirFiles) {
                         if (file.getName().endsWith(".zip")) {
                             if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO
                                     .containsKey(file.getName().replace(".zip", ""))) {
@@ -472,9 +482,9 @@ public enum DictionaryApplication {
                             // We have it in our list already.
                             continue;
                         }
-                        final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(file);
+                        final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(file, appContext.getContentResolver());
                         if (!dictionaryInfo.isValid()) {
-                            Log.e(LOG, "Unable to parse dictionary: " + file.getPath());
+                            Log.e(LOG, "Unable to parse dictionary: " + file.getUri().getPath());
                         }
 
                         toAddSorted.add(file.getName());
@@ -482,7 +492,7 @@ public enum DictionaryApplication {
                             file.getName(), dictionaryInfo);
                     }
                 } else {
-                    Log.w(LOG, "dictDir is not a directory: " + getDictDir().getPath());
+                    Log.w(LOG, "dictDir is not a directory: " + getDictDir().getUri().getPath());
                 }
                 if (!toAddSorted.isEmpty()) {
                     Collections.sort(toAddSorted, uncompressedFilenameComparator);

@@ -82,6 +82,7 @@
     <string name="quickdicDirectoryKey" translatable="false">quickdicDirectory</string>
     <string name="quickdicDirectoryTitle">QuickDic directory</string>
     <string name="quickdicDirectorySummary">The directory where QuickDic stores dictionaries (empty for default quickDic folder on external storage).</string>
+    <string name="choose">choose</string>
     <string name="wordListFileKey" translatable="false">wordListFile</string>
     <string name="wordListFileTitle">Word list file</string>
     <string name="wordListFileSummary">The local file where the word list will be appended.</string>

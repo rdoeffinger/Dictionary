@@ -1,13 +1,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <ListPreference 
+  <ListPreference
     android:key="@string/defaultDicKey"
     android:title="@string/defaultDicTitle"
     android:summary="@string/defaultDicSummary"
     android:persistent="true"
   />
 
-  <EditTextPreference
+  <Preference
     android:key="@string/quickdicDirectoryKey"
     android:title="@string/quickdicDirectoryTitle" 
     android:summary="@string/quickdicDirectorySummary"
@@ -15,16 +15,16 @@
     android:persistent="true"
   />
 
-    
-	<EditTextPreference
-	  android:key="@string/wordListFileKey"
+
+  <EditTextPreference
+    android:key="@string/wordListFileKey"
     android:title="@string/wordListFileTitle" 
     android:summary="@string/wordListFileSummary"
-		android:defaultValue=""
+    android:defaultValue=""
     android:persistent="true"
-	/>
- 
-   <ListPreference 
+  />
+
+   <ListPreference
     android:key="@string/fontKey"
     android:title="@string/fontTitle"
     android:summary="@string/fontSummary"
@@ -33,7 +33,7 @@
     android:entries="@array/fonts"
     android:entryValues="@array/fontKeys"
   />
- 
+
   <EditTextPreference
     android:key="@string/fontSizeKey"
     android:title="@string/fontSizeTitle" 
@@ -42,7 +42,7 @@
     android:persistent="true"
   />
 
-  <CheckBoxPreference 
+  <CheckBoxPreference
     android:key="@string/saveOnlyFirstSubentryKey"
     android:title="@string/saveOnlyFirstSubentryTitle"
     android:summary="@string/saveOnlyFirstSubentrySummary"
@@ -50,7 +50,7 @@
     android:persistent="true"
   />
 
-  <CheckBoxPreference 
+  <CheckBoxPreference
     android:key="@string/clickOpensContextMenuKey"
     android:title="@string/clickOpensContextMenuTitle"
     android:summary="@string/clickOpensContextMenuSummary"
@@ -58,15 +58,15 @@
     android:persistent="true"
   />
 
-  <CheckBoxPreference 
+  <CheckBoxPreference
     android:key="@string/showPrevNextButtonsKey"
     android:title="@string/showPrevNextButtonsTitle"
     android:summary="@string/showPrevNextButtonsSummary"
     android:defaultValue="true"
     android:persistent="true"
   />
-  
-  <ListPreference 
+
+  <ListPreference
     android:key="@string/themeKey"
     android:title="@string/themeTitle"
     android:summary="@string/themeSummary"
@@ -84,4 +84,4 @@
     android:persistent="true"
   />
 
-</PreferenceScreen>  
+</PreferenceScreen>

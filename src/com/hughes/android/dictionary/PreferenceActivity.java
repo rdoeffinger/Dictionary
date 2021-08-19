@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 
@@ -38,10 +39,10 @@ public class PreferenceActivity extends AppCompatActivity
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getString(getString(R.string.quickdicDirectoryKey), "").equals("")) {
-            prefs.edit().putString(getString(R.string.quickdicDirectoryKey), application.getDictDir().getAbsolutePath()).commit();
+            prefs.edit().putString(getString(R.string.quickdicDirectoryKey), application.getDictDir().getUri().getPath()).commit();
         }
         if (prefs.getString(getString(R.string.wordListFileKey), "").equals("")) {
-            prefs.edit().putString(getString(R.string.wordListFileKey), application.getWordListFile().getAbsolutePath()).commit();
+            prefs.edit().putString(getString(R.string.wordListFileKey), application.getWordListFile().getUri().getPath()).commit();
         }
 
         /*
@@ -100,7 +101,7 @@ public class PreferenceActivity extends AppCompatActivity
     public void onSharedPreferenceChanged(SharedPreferences p, String v) {
         DictionaryApplication.INSTANCE.init(getApplicationContext());
         final DictionaryApplication application = DictionaryApplication.INSTANCE;
-        File dictDir = application.getDictDir();
+        DocumentFile dictDir = application.getDictDir();
         if (!dictDir.isDirectory() || !dictDir.canWrite() ||
                 !DictionaryApplication.checkFileCreate(dictDir)) {
             String dirs = suggestedPaths("");
@@ -108,10 +109,10 @@ public class PreferenceActivity extends AppCompatActivity
             .setMessage(getString(R.string.chosenNotWritable) + dirs)
             .setNeutralButton("Close", null).show();
         }
-        File wordlist = application.getWordListFile();
+        DocumentFile wordlist = application.getWordListFile();
         boolean ok = false;
         try {
-            ok = wordlist.canWrite() || wordlist.createNewFile();
+            ok = wordlist.canWrite();
         } catch (Exception ignored) {
         }
         if (!ok) {

@@ -14,9 +14,13 @@
 
 package com.hughes.android.dictionary.engine;
 
+import android.content.ContentResolver;
+import android.support.v4.provider.DocumentFile;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
@@ -190,22 +194,22 @@ public class Dictionary {
     }
 
     // get DictionaryInfo for case when Dictionary cannot be opened
-    private static DictionaryInfo getErrorDictionaryInfo(final File file) {
+    private static DictionaryInfo getErrorDictionaryInfo(final DocumentFile file) {
         final DictionaryInfo dictionaryInfo = new DictionaryInfo();
         dictionaryInfo.uncompressedFilename = file.getName();
         dictionaryInfo.uncompressedBytes = file.length();
         return dictionaryInfo;
     }
 
-    public static DictionaryInfo getDictionaryInfo(final File file) {
-        RandomAccessFile raf = null;
+    public static DictionaryInfo getDictionaryInfo(final DocumentFile file, final ContentResolver r) {
+        FileInputStream s = null;
         try {
-            raf = new RandomAccessFile(file, "r");
-            final Dictionary dict = new Dictionary(raf.getChannel());
+            s = r.openAssetFileDescriptor(file.getUri(), "r").createInputStream();
+            final Dictionary dict = new Dictionary(s.getChannel());
             final DictionaryInfo dictionaryInfo = dict.getDictionaryInfo();
             dictionaryInfo.uncompressedFilename = file.getName();
             dictionaryInfo.uncompressedBytes = file.length();
-            raf.close();
+            s.close();
             return dictionaryInfo;
         } catch (IOException e) {
             return getErrorDictionaryInfo(file);
@@ -218,9 +222,9 @@ public class Dictionary {
             // do not crash just because of a truncated or corrupt dictionary file
             return getErrorDictionaryInfo(file);
         } finally {
-            if (raf != null) {
+            if (s != null) {
                 try {
-                    raf.close();
+                    s.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
