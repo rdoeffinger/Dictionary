@@ -373,7 +373,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
                         }
                         intent.putExtra(C.DICT_FILE, application.getPath(info.uncompressedFilename)
-                                        .toString());
+                                        .getUri().toString());
                         break;
                     }
                 }
@@ -428,7 +428,7 @@ public class DictionaryActivity extends AppCompatActivity {
         if (intent.getStringExtra(C.DICT_FILE) == null) {
             String dictfile = prefs.getString(getString(R.string.defaultDicKey), null);
             if (dictfile != null)
-                intent.putExtra(C.DICT_FILE, application.getPath(dictfile).toString());
+                intent.putExtra(C.DICT_FILE, application.getPath(dictfile).getUri().toString());
         }
         String dictFilename = intent.getStringExtra(C.DICT_FILE);
         if (dictFilename == null && intent.getStringExtra(C.SEARCH_TOKEN) != null) {
@@ -449,14 +449,14 @@ public class DictionaryActivity extends AppCompatActivity {
                         Log.d(LOG, "Checking index " + idx.shortName);
                         if (idx.findExact(search) != null) {
                             Log.d(LOG, "Found exact match");
-                            dictFilename = dictfile.toString();
+                            dictFilename = dictfile.getUri().toString();
                             intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
                             break;
                         }
                         int matchLen = getMatchLen(search, idx.findInsertionPoint(search, dummy));
                         Log.d(LOG, "Found partial match length " + matchLen);
                         if (matchLen > bestMatchLen) {
-                            bestFname = dictfile.toString();
+                            bestFname = dictfile.getUri().toString();
                             bestIndex = idx.shortName;
                             bestMatchLen = matchLen;
                         }
