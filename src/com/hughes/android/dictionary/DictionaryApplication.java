@@ -306,16 +306,20 @@ public enum DictionaryApplication {
         return testfile.exists() & testfile.delete();
     }
 
+    private DocumentFile defaultWordListFile() {
+        DocumentFile d = getDictDir();
+        DocumentFile f = d.findFile("wordList.txt");
+        return f != null ? f : d.createFile("" , "wordList.txt");
+    }
+
     public DocumentFile getWordListFile() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
         String file = prefs.getString(appContext.getString(R.string.wordListFileKey), "");
-        if (file.isEmpty()) {
-            DocumentFile d = getDictDir();
-            DocumentFile f = d.findFile("wordList.txt");
-            return f != null ? f : d.createFile("" , "wordList.txt");
-        }
+        if (file.isEmpty()) return defaultWordListFile();
         Uri u = Uri.parse(file);
-        return "content".equals(u.getScheme()) ? DocumentFile.fromSingleUri(appContext, u) : DocumentFile.fromFile(new File(u.getPath()));
+        if ("content".equals(u.getScheme())) return DocumentFile.fromSingleUri(appContext, u);
+        if (u.getPath() == null) return defaultWordListFile();
+        return DocumentFile.fromFile(new File(u.getPath()));
     }
 
     public Theme getSelectedTheme() {
