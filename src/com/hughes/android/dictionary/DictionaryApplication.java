@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,9 +40,11 @@ import com.hughes.util.ListUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -445,6 +448,45 @@ public enum DictionaryApplication {
         }
     };
 
+    // get DictionaryInfo for case when Dictionary cannot be opened
+    private static DictionaryInfo getErrorDictionaryInfo(final DocumentFile file) {
+        final DictionaryInfo dictionaryInfo = new DictionaryInfo();
+        dictionaryInfo.uncompressedFilename = file.getName();
+        dictionaryInfo.uncompressedBytes = file.length();
+        return dictionaryInfo;
+    }
+
+    public static DictionaryInfo getDictionaryInfo(final DocumentFile file, final ContentResolver r) {
+        FileInputStream s = null;
+        try {
+            s = r.openAssetFileDescriptor(file.getUri(), "r").createInputStream();
+            final Dictionary dict = new Dictionary(s.getChannel());
+            final DictionaryInfo dictionaryInfo = dict.getDictionaryInfo();
+            dictionaryInfo.uncompressedFilename = file.getName();
+            dictionaryInfo.uncompressedBytes = file.length();
+            s.close();
+            return dictionaryInfo;
+        } catch (IOException e) {
+            return getErrorDictionaryInfo(file);
+        } catch (IllegalArgumentException e) {
+            // Most likely due to a Buffer.limit beyond size of file,
+            // do not crash just because of a truncated dictionary file
+            return getErrorDictionaryInfo(file);
+        } catch (BufferUnderflowException e) {
+            // Most likely due to a read beyond the buffer limit set,
+            // do not crash just because of a truncated or corrupt dictionary file
+            return getErrorDictionaryInfo(file);
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public void backgroundUpdateDictionaries(final Runnable onUpdateFinished) {
         new Thread(new Runnable() {
             @Override
@@ -457,7 +499,7 @@ public enum DictionaryApplication {
                 final DictionaryConfig newDictionaryConfig = new DictionaryConfig();
                 for (final String uncompressedFilename : oldDictionaryConfig.dictionaryFilesOrdered) {
                     final DocumentFile dictFile = getPath(uncompressedFilename);
-                    final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(dictFile, appContext.getContentResolver());
+                    final DictionaryInfo dictionaryInfo = getDictionaryInfo(dictFile, appContext.getContentResolver());
                     if (dictionaryInfo.isValid() || dictFile.exists()) {
                         newDictionaryConfig.dictionaryFilesOrdered.add(uncompressedFilename);
                         newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
@@ -486,7 +528,7 @@ public enum DictionaryApplication {
                             // We have it in our list already.
                             continue;
                         }
-                        final DictionaryInfo dictionaryInfo = Dictionary.getDictionaryInfo(file, appContext.getContentResolver());
+                        final DictionaryInfo dictionaryInfo = getDictionaryInfo(file, appContext.getContentResolver());
                         if (!dictionaryInfo.isValid()) {
                             Log.e(LOG, "Unable to parse dictionary: " + file.getUri().getPath());
                         }
