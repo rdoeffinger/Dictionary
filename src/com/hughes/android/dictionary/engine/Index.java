@@ -366,7 +366,8 @@ public final class Index {
         }
 
         // if the word before is the better match, move
-        // our result to it
+        // our result to it.
+        // This fixes up the binary search result if no match is found.
         if (start > 0 && start < sortedIndexEntries.size()) {
             String prev = sortedIndexEntries.get(start - 1).normalizedToken();
             String next = sortedIndexEntries.get(start).normalizedToken();
@@ -374,10 +375,19 @@ public final class Index {
                 start--;
         }
 
-        // If the search term was normalized, try to find an exact match first
+        // If we search for a substring of a string that's in there, return
+        // that.
+        // This fixes up the binary search result if there are multiple entries
+        // that compare equal in sort order so we go to the first one.
+        int result = Math.min(start, sortedIndexEntries.size() - 1);
+        result = windBackCase(sortedIndexEntries.get(result).normalizedToken(), result, interrupted);
+
+        // If the search term was normalized, try to find an exact match first.
+        // This only searches downward, so it is important that the previous
+        // steps gave resulted in the very first potential candidate.
         if (!orig_token.equalsIgnoreCase(token)) {
             int matchLen = findMatchLen(sortCollator, token, sortedIndexEntries.get(start).normalizedToken());
-            int scan = start;
+            int scan = result;
             while (scan >= 0 && scan < sortedIndexEntries.size()) {
                 IndexEntry e = sortedIndexEntries.get(scan);
                 if (e.token.equalsIgnoreCase(orig_token))
@@ -391,10 +401,6 @@ public final class Index {
             }
         }
 
-        // If we search for a substring of a string that's in there, return
-        // that.
-        int result = Math.min(start, sortedIndexEntries.size() - 1);
-        result = windBackCase(sortedIndexEntries.get(result).normalizedToken(), result, interrupted);
         return result;
     }
 
