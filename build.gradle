@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 
@@ -50,7 +50,8 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdk 33
+    namespace "com.hughes.android.dictionary"
     lintOptions {
         disable "MissingTranslation"
     }
@@ -83,7 +84,7 @@ android {
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
         multiDexEnabled true
-        targetSdkVersion 30
+        targetSdkVersion 33
         resConfigs "de", "es", "eu", "fr", "it", "ja", "pt", "pt-rBR", "ru", "zh-rCN"
         minSdkVersion 10
     }
