@@ -35,7 +35,7 @@
     <!-- DictionaryActivity -->
     <string name="searchText">Suchtext</string>
     <string name="selectDictionary">Wörterbuch wählen…</string>
-    <string name="addToWordList">Zum Wortliste hinzufügen: %s</string>
+    <string name="addToWordList">Zur Wortliste hinzufügen: %s</string>
     <string name="searchForSelection">Suche: %s</string>
     <string name="failedAddingToWordList">Fehler beim Hinzufügen zur Wortliste: %s</string>
     <string name="invalidDictionary">Fehlerhaftes Wörterbuch: Datei=%1$s, Fehler=%2$s</string>
