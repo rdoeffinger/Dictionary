@@ -6,6 +6,7 @@
     <string name="settings">Настройки</string>
     <string name="help">Справка</string>
     <string name="reportIssue">Сообщить об ошибке</string>
+    <string name="browserDownload">Загрузить в браузере</string>
     <string name="no_dict_file">Укажите в настройках словарь по умолчанию.</string>
 
     <!-- DictionaryManagerActivity -->
@@ -21,10 +22,12 @@
     <string name="managerShow">Показать</string>
     <string name="managerHide">Скрыть</string>
     <string name="error">Ошибка</string>
+    <string name="unableToReadDictionaryDir">Не удалось прочитать каталог словарей: \n%1$s\n\n Каталог внешнего хранилища Android: \n%2$s</string>
 
     <!-- Download. -->
     <string name="downloadFailed">Загрузить не удалось: \n%s.</string>
     <string name="downloadManagerQueryFailed">Не удалось связаться с менеджером загрузок.\nМожет быть, он выключен или отсутствует?</string>
+    <string name="downloadManagerQueryPermissionDenied">Нет доступа к интернету</string>
     <string name="unzippingDictionary">Распаковка словаря: \n%s</string>
     <string name="unzippingFailed">Распаковать не удалось: \n%s</string>
     <string name="installationFinished">Установка завершена: \n%s.</string>
@@ -36,6 +39,7 @@
     <string name="addToWordList">Добавить в список слов: %s</string>
     <string name="searchForSelection">Искать: %s</string>
     <string name="failedAddingToWordList">Не удалось добавить в список слов: %s</string>
+    <string name="invalidDictionary">Неверный словарь: файл=%1$s, ошибка=%2$s</string>
     <string name="noSearchResults">Ничего не найдено.</string>
     <string name="aboutDictionary">О словаре</string>
     <string name="fontFailure">Ошибка шрифтов: %s</string>
@@ -71,6 +75,7 @@
     <string name="defaultDicSummary">Словарь, который будет использоваться, если не указан никакой другой.</string>
     <string name="quickdicDirectoryTitle">Каталог QuickDic</string>
     <string name="quickdicDirectorySummary">Каталог, в котором QuickDic хранит словари (оставьте пустым, чтобы использовать путь по умолчанию).</string>
+    <string name="choose">выбрать</string>
     <string name="wordListFileTitle">Файл списка слов</string>
     <string name="wordListFileSummary">Локальный файл, в который будут добавляться слова.</string>
     <string name="fontTitle">Шрифт словаря</string>
@@ -86,5 +91,7 @@
     <string name="themeTitle">Тема</string>
     <string name="themeSummary">Цветовая тема пользовательского интерфейса.</string>
     <string name="chosenNotWritable">Выбранный каталог недоступен для записи, попробуйте один из</string>
-
+    
+    <string name="historySizeTitle">Записи истории поиска</string>
+    <string name="historySizeSummary">Количество записей истории поиска, которые можно сохранить и отобразить.</string>
 </resources>
