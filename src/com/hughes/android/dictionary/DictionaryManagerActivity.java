@@ -31,18 +31,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.v4.provider.DocumentFile;
-import android.support.v7.preference.PreferenceManager;
+import android.os.Looper;
+import androidx.documentfile.provider.DocumentFile;
+import androidx.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.SearchView.OnQueryTextListener;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -364,7 +365,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         */
         IntentFilter downloadManagerIntents = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         downloadManagerIntents.addAction(DownloadManager.ACTION_NOTIFICATION_CLICKED);
-        registerReceiver(broadcastReceiver, downloadManagerIntents);
+        ContextCompat.registerReceiver(this, broadcastReceiver, downloadManagerIntents, ContextCompat.RECEIVER_EXPORTED);
 
         setMyListAdapter();
         registerForContextMenu(getListView());
@@ -459,7 +460,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        uiHandler = new Handler();
+        uiHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -510,7 +511,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             return false; // testing the menu is not very interesting
         }
         final MenuItem sort = menu.add(getString(R.string.sortDicts));
-        MenuItemCompat.setShowAsAction(sort, MenuItem.SHOW_AS_ACTION_NEVER);
+        sort.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         sort.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 application.sortDictionaries();
@@ -520,7 +521,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         });
 
         final MenuItem browserDownload = menu.add(getString(R.string.browserDownload));
-        MenuItemCompat.setShowAsAction(browserDownload, MenuItem.SHOW_AS_ACTION_NEVER);
+        browserDownload.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         browserDownload.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent(Intent.ACTION_VIEW);
