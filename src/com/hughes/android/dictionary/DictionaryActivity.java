@@ -28,19 +28,22 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.provider.DocumentFile;
-import android.support.v7.preference.PreferenceManager;
+import android.os.Looper;
+import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
+import androidx.core.widget.TextViewCompat;
+import androidx.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.core.view.MenuItemCompat;
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.SearchView.OnQueryTextListener;
+import androidx.appcompat.widget.Toolbar;
 import android.text.ClipboardManager;
 import android.text.InputType;
 import android.text.Spannable;
@@ -100,12 +103,8 @@ import com.hughes.android.util.NonLinkClickableSpan;
 import com.hughes.util.StringUtil;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,7 +122,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class DictionaryActivity extends AppCompatActivity {
 
@@ -145,7 +143,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
     private final Random rand = new Random();
 
-    private final Handler uiHandler = new Handler();
+    private final Handler uiHandler = new Handler(Looper.getMainLooper());
 
     private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
@@ -316,7 +314,7 @@ public class DictionaryActivity extends AppCompatActivity {
         setContentView(R.layout.dictionary_activity);
 
         theme = application.getSelectedTheme();
-        textColorFg = getResources().getColor(theme.tokenRowFgColor);
+        textColorFg = ContextCompat.getColor(this, theme.tokenRowFgColor);
 
         if (dictRaf != null) {
             try {
@@ -756,7 +754,7 @@ public class DictionaryActivity extends AppCompatActivity {
         };
         searchView.setOnQueryTextListener(onQueryTextListener);
         searchView.setFocusable(true);
-        searchTextView = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchTextView = searchView.findViewById(R.id.search_src_text);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
                 FrameLayout.LayoutParams.WRAP_CONTENT, 1);
         customSearchView.addView(searchView, lp);
@@ -1085,7 +1083,7 @@ public class DictionaryActivity extends AppCompatActivity {
             // Next word.
             nextWordMenuItem = menu.add(getString(R.string.nextWord))
                                .setIcon(R.drawable.arrow_down_float);
-            MenuItemCompat.setShowAsAction(nextWordMenuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            nextWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             nextWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -1097,7 +1095,7 @@ public class DictionaryActivity extends AppCompatActivity {
             // Previous word.
             previousWordMenuItem = menu.add(getString(R.string.previousWord))
                                    .setIcon(R.drawable.arrow_up_float);
-            MenuItemCompat.setShowAsAction(previousWordMenuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            previousWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             previousWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -1118,7 +1116,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
         {
             final MenuItem dictionaryManager = menu.add(getString(R.string.dictionaryManager));
-            MenuItemCompat.setShowAsAction(dictionaryManager, MenuItem.SHOW_AS_ACTION_NEVER);
+            dictionaryManager.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             dictionaryManager.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
                     startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
@@ -1130,7 +1128,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
         {
             final MenuItem aboutDictionary = menu.add(getString(R.string.aboutDictionary));
-            MenuItemCompat.setShowAsAction(aboutDictionary, MenuItem.SHOW_AS_ACTION_NEVER);
+            aboutDictionary.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             aboutDictionary.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 public boolean onMenuItemClick(final MenuItem menuItem) {
                     final Context context = getListView().getContext();
@@ -1847,7 +1845,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
                 textView.setTypeface(typeface);
                 if (isTokenRow) {
-                    textView.setTextAppearance(context, theme.tokenRowFg);
+                    TextViewCompat.setTextAppearance(textView, theme.tokenRowFg);
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 4 * fontSizeSp / 3);
                 } else {
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);

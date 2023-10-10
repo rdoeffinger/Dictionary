@@ -23,9 +23,9 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.support.v4.provider.DocumentFile;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v4.view.MenuItemCompat;
+import androidx.documentfile.provider.DocumentFile;
+import androidx.preference.PreferenceManager;
+import androidx.core.view.MenuItemCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -207,7 +207,7 @@ public enum DictionaryApplication {
         final Context c = context.getApplicationContext();
 
         final MenuItem preferences = menu.add(c.getString(R.string.settings));
-        MenuItemCompat.setShowAsAction(preferences, MenuItem.SHOW_AS_ACTION_NEVER);
+        preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 PreferenceActivity.prefsMightHaveChanged = true;
@@ -218,7 +218,7 @@ public enum DictionaryApplication {
         });
 
         final MenuItem help = menu.add(c.getString(R.string.help));
-        MenuItemCompat.setShowAsAction(help, MenuItem.SHOW_AS_ACTION_NEVER);
+        help.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent(c));
@@ -227,7 +227,7 @@ public enum DictionaryApplication {
         });
 
         final MenuItem reportIssue = menu.add(c.getString(R.string.reportIssue));
-        MenuItemCompat.setShowAsAction(reportIssue, MenuItem.SHOW_AS_ACTION_NEVER);
+        reportIssue.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         reportIssue.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -239,7 +239,7 @@ public enum DictionaryApplication {
         });
 
         final MenuItem about = menu.add(c.getString(R.string.about));
-        MenuItemCompat.setShowAsAction(about, MenuItem.SHOW_AS_ACTION_NEVER);
+        about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 final Intent intent = new Intent(c, AboutActivity.class);

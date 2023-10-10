@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.2'
     }
 }
 
@@ -18,8 +18,11 @@ configurations {
     smallicu
 }
 dependencies {
-    implementation 'com.android.support:appcompat-v7:25.3.1'
-    implementation 'com.android.support:design:25.3.1'
+    def core_version = "1.12.0"
+
+    implementation "androidx.core:core:$core_version"
+    implementation "androidx.preference:preference:1.0.0"
+    implementation "com.google.android.material:material:1.0.0"
     // Note: you can just replace "smallicu" by implementation
     // and remove the "compile files" part if you do not
     // care about the size of the apk
@@ -27,17 +30,13 @@ dependencies {
     implementation files("$buildDir/icu4j-57.1.small.jar") {
         builtBy 'makesmallicu'
     }
-    implementation 'com.android.support:preference-v7:25.3.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }
 
 task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
     inputs.file "mksmallicu.sh"
     inputs.file "${configurations.smallicu.resolve()[0]}"
-    outputs.dir "$buildDir"
     outputs.file "$buildDir/icu4j-57.1.small.jar"
-    // necessary due to gradle bug: GRADLE-2638
-    new File("$buildDir").mkdirs()
     commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-57.1.small.jar"
 }
 
@@ -50,11 +49,8 @@ allprojects {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     namespace "com.hughes.android.dictionary"
-    lintOptions {
-        disable "MissingTranslation"
-    }
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -84,13 +80,16 @@ android {
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
         multiDexEnabled true
-        targetSdkVersion 33
-        resConfigs "de", "es", "eu", "fr", "it", "ja", "pt", "pt-rBR", "ru", "zh-rCN"
-        minSdkVersion 10
+        targetSdkVersion 34
+        resourceConfigurations += ['de', 'es', 'eu', 'fr', 'it', 'ja', 'pt', 'pt-rBR', 'ru', 'zh-rCN']
+        minSdkVersion 14
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lint {
+        disable 'MissingTranslation'
     }
 }

@@ -19,9 +19,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.Environment;
-import android.support.v4.provider.DocumentFile;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
+import androidx.documentfile.provider.DocumentFile;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import java.io.File;
 

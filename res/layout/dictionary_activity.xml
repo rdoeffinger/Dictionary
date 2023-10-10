@@ -18,7 +18,7 @@
      <!-- force fabSize to mini, otherwise it is normal on some
           phones and mini on others, with not particular sense to it.
           Also leaves more space for content. -->
-     <android.support.design.widget.FloatingActionButton
+     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatSwapButton"
         app:fabSize="mini"
         app:useCompatPadding="true"
@@ -30,7 +30,7 @@
         android:onClick="onLanguageButtonClick"
         android:src="@drawable/ic_swap_horiz_black_24dp" />
 
-     <android.support.design.widget.FloatingActionButton
+     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatSearchButton"
         app:fabSize="mini"
         app:useCompatPadding="true"
