@@ -1595,6 +1595,9 @@ public class DictionaryActivity extends AppCompatActivity {
         else if (typeface == Typeface.MONOSPACE) { style = "font-family: monospace;"; }
         if (application.getSelectedTheme() == DictionaryApplication.Theme.DEFAULT)
             style += "body { background-color: black; color: white; } a { color: #00aaff; }";
+        // Dictionaries currently all contain http:// links.
+        // Regenerating all will not happen soon, so for now replace all occurrences instead.
+        html = html.replace("http://", "https://");
         // Log.d(LOG, "html=" + html);
         startActivityForResult(
             HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
