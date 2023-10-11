@@ -116,10 +116,16 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         }
     }
 
-    static final class DataDeserializer implements RAFListSerializer<DataInputBuffer> {
+    static final class DataDeserializer implements RAFListSerializerSkippable<DataInputBuffer> {
         @Override
         public DataInputBuffer read(DataInput raf, final int index) throws IOException {
             return readData(raf);
+        }
+
+        @Override
+        public void skip(DataInput raf, final int index) throws IOException {
+            int len = StringUtil.readVarInt(raf);
+            raf.skipBytes(len);
         }
 
         @Override
