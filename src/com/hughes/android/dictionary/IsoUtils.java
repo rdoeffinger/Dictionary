@@ -60,7 +60,8 @@ public enum IsoUtils {
                                R.drawable.flag_of_the_peoples_republic_of_china));
         isoCodeToResources.put("yue", new LanguageResources("Cantonese", R.string.yue,
                                R.drawable.flag_of_hong_kong));
-        isoCodeToResources.put("CA", new LanguageResources("Catalan", R.string.CA));
+        isoCodeToResources.put("CA", new LanguageResources("Catalan", R.string.CA,
+                               R.drawable.flag_of_catalonia));        
         isoCodeToResources.put("HR", new LanguageResources("Croatian", R.string.HR,
                                R.drawable.flag_of_croatia));
         isoCodeToResources.put("CS", new LanguageResources("Czech", R.string.CS,
