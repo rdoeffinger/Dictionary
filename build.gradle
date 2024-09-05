@@ -27,8 +27,8 @@ dependencies {
     // Note: you can just replace "smallicu" by implementation
     // and remove the "compile files" part if you do not
     // care about the size of the apk
-    smallicu 'com.ibm.icu:icu4j:57.1'
-    implementation files("$buildDir/icu4j-57.1.small.jar") {
+    smallicu 'com.ibm.icu:icu4j:57.2'
+    implementation files("$buildDir/icu4j-57.2.small.jar") {
         builtBy 'makesmallicu'
     }
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
@@ -37,8 +37,8 @@ dependencies {
 task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
     inputs.file "mksmallicu.sh"
     inputs.file "${configurations.smallicu.resolve()[0]}"
-    outputs.file "$buildDir/icu4j-57.1.small.jar"
-    commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-57.1.small.jar"
+    outputs.file "$buildDir/icu4j-57.2.small.jar"
+    commandLine "./mksmallicu.sh", "${configurations.smallicu.resolve()[0]}", "$buildDir/icu4j-57.2.small.jar"
 }
 
 def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "Util"
