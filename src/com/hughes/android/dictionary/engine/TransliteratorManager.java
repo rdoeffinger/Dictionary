@@ -14,8 +14,11 @@
 
 package com.hughes.android.dictionary.engine;
 
+import android.os.Build;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.hughes.util.LRUCacheMap;
 import com.ibm.icu.text.Transliterator;
@@ -76,6 +79,10 @@ public class TransliteratorManager {
             } catch (StackOverflowError e) {
                 // This seems to happen with Android 14 on some Pixel 7 devices
                 System.out.println("Transliterator load failed with stack overflow" + e.getMessage());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Locale.setDefault(Locale.Category.FORMAT, Locale.US);
+                    Locale.setDefault(Locale.Category.DISPLAY, Locale.US);
+                }
             }
 
             final List<Callback> callbacks;
