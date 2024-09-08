@@ -71,18 +71,9 @@ public class TransliteratorManager {
                 if (threadSetup != null) threadSetup.onThreadStart();
             }
             System.out.println("Starting Transliterator load.");
-            try {
-                final String transliterated = get(Language.en.getDefaultNormalizerRules()).transliterate("Îñţérñåţîöñåļîžåţîờñ");
-                if (!"internationalization".equals(transliterated)) {
-                    System.out.println("Wrong transliteration: " + transliterated);
-                }
-            } catch (StackOverflowError e) {
-                // This seems to happen with Android 14 on some Pixel 7 devices
-                System.out.println("Transliterator load failed with stack overflow" + e.getMessage());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Locale.setDefault(Locale.Category.FORMAT, Locale.US);
-                    Locale.setDefault(Locale.Category.DISPLAY, Locale.US);
-                }
+            final String transliterated = get(Language.en.getDefaultNormalizerRules()).transliterate("Îñţérñåţîöñåļîžåţîờñ");
+            if (!"internationalization".equals(transliterated)) {
+                System.out.println("Wrong transliteration: " + transliterated);
             }
 
             final List<Callback> callbacks;
