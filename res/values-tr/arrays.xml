@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string-array name="fonts">
+    <item>FreeSerif</item>
+    <item>Sistem öntanımlı</item>
+    <item>Sistem serif</item>
+    <item>Sistem sans-serif</item>
+    <item>Sistem eş aralıklı</item>
+  </string-array>
+
+  <string-array name="themes">
+    <item>Açık tema</item>
+    <item>Koyu tema</item>
+    <item>Sistem teması (öntanımlı)</item>
+  </string-array>
+
+</resources>

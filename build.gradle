@@ -84,7 +84,7 @@ android {
         applicationId 'de.reimardoeffinger.quickdic'
         multiDexEnabled = true
         targetSdkVersion 36
-        resourceConfigurations += ['de', 'es', 'eu', 'fr', 'it', 'ja', 'pt', 'pt-rBR', 'ru', 'zh-rCN']
+        resourceConfigurations += ['de', 'es', 'eu', 'fr', 'it', 'ja', 'pt', 'pt-rBR', 'ru', 'tr', 'zh-rCN']
         minSdkVersion 21
     }
     compileOptions {
