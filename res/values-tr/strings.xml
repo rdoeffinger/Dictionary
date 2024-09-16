@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Global. -->
+    <string name="about">QuickDic hakkında</string>
+    <string name="settings">Ayarlar</string>
+    <string name="help">Yardım</string>
+    <string name="reportIssue">Sorun bildir</string>
+    <string name="browserDownload">Tarayıcıda indir</string>
+    <string name="no_dict_file">Lütfen ayarlarda öntanımlı bir sözlük belirleyin.</string>
+
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">Sözlük yöneticisi</string>
+    <string name="dictionariesOnDevice">Aygıttaki sözlükler</string>
+    <string name="downloadableDictionaries">İndirilebilir sözlükler</string>
+    <string name="sortDicts">Sözlükleri sırala</string>
+    <string name="downloadButton">%.1fMB</string>
+    <string name="updateAvailable">Güncelle!</string>
+    <string name="moveToTop">En üste taşı</string>
+    <string name="deleteDictionary">Sözlüğü sil</string>
+    <string name="indexInfo">%1$s: %2$,d sözcük</string>
+    <string name="managerShow">Göster</string>
+    <string name="managerHide">Gizle</string>
+    <string name="error">Hata</string>
+    <string name="unableToReadDictionaryDir">Sözlük dizini okunamıyor: \n%1$s\n\nAndroid harici depolama dizini: \n%2$s</string>
+
+    <!-- Download. -->
+    <string name="downloadFailed">İndirme başarısız: \n%s.</string>
+    <string name="downloadManagerQueryFailed">İndirme yöneticisi sorgulanamadı.\nDevre dışı veya eksik mi?</string>
+    <string name="downloadManagerQueryPermissionDenied">İnternet izni reddedildi</string>
+    <string name="unzippingDictionary">Sözlük çıkartılıyor: \n%s</string>
+    <string name="unzippingFailed">Çıkartma başarısız: \n%s</string>
+    <string name="installationFinished">Kurulum tamamlandı: \n%s.</string>
+    <string name="notWritable">Sözlük konumu %s yazılabilir değil, ayarlarda değiştirin.</string>
+
+    <!-- DictionaryActivity -->
+    <string name="searchText">Metin Ara</string>
+    <string name="selectDictionary">Sözlük seç…</string>
+    <string name="addToWordList">Sözcük listesine ekle: %s</string>
+    <string name="searchForSelection">Ara: %s</string>
+    <string name="failedAddingToWordList">Sözcük listesine eklenemedi: %s</string>
+    <string name="invalidDictionary">Geçersiz sözlük: dosya=%1$s, hata=%2$s</string>
+    <string name="noSearchResults">Arama sonucu yok.</string>
+    <string name="aboutDictionary">Sözlük hakkında</string>
+    <string name="fontFailure">Yazı tipi hatası: %s</string>
+    <string name="seeAlso">Ayrıca bakın: %1$s (%2$s)</string>
+    <string name="speak">Oku</string>
+    <string name="speak_left">Sol tarafı oku</string>
+    <string name="speak_right">Sağ tarafı oku</string>
+    <string name="nextWord">Sonraki sözcük</string>
+    <string name="previousWord">Önceki sözcük</string>
+    <string name="randomWord">Rastgele sözcük</string>
+    <string name="TTSbroken">Metin okuma bu aygıtta çalışmıyor</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">Dosya: %s</string>
+    <string name="dictionarySize">Boyut: %,d bayt</string>
+    <string name="dictionaryCreationTime">Oluşturuldu: %tc</string>
+    <string name="indexName">İndeks: %s</string>
+    <string name="mainTokenCount">Sözcük sayısı: %,d</string>
+    <string name="sources">Kaynaklar</string>
+    <string name="sourceInfo">%1$s : %2$,d girdi</string>
+
+    <!-- About. -->
+    <string name="contactMe">QuickDic kullanıyorsanız, sizden haber almak isterim.
+  Başka kaynaklardan oluşturulduğu için maalesef sözlük içeriği (biçimlendirme dışında) için sorumluluk alamıyorum.
+  Lütfen yorumlarınızı, önerilerinizi, hata bildirimlerinizi gönderin veya yalnızca hızlı bir merhaba deyin:</string>
+    <string name="webPage">Daha fazla bilgi için:</string>
+    <string name="contributionsFrom">Katkıda bulunanlar:</string>
+    <string name="license">QuickDic, telif hakkı Google\'a ait olan ve Apache 2.0 lisansı altında yayınlanan kod içerir.</string>
+
+    <!-- Preferences -->
+
+    <string name="defaultDicTitle">Öntanımlı Sözlük</string>
+    <string name="defaultDicSummary">Başka hiçbir şey belirtilmediğinde kullanılacak dizin.</string>
+    <string name="quickdicDirectoryTitle">QuickDic dizini</string>
+    <string name="quickdicDirectorySummary">QuickDic\'in sözlükleri kaydettiği dizin (harici depolama alanındaki öntanımlı quickDic klasörü için boş bırakın).</string>
+    <string name="choose">seç</string>
+    <string name="wordListFileTitle">Sözcük listesi dosyası</string>
+    <string name="wordListFileSummary">Sözcük listesinin ekleneceği yerel dosya.</string>
+    <string name="fontTitle">Sözlük yazı tipi</string>
+    <string name="fontSummary">Sözlükleri görüntülemek için kullanılan yazı tipi.</string>
+    <string name="fontSizeTitle">Yazı tipi boyutu</string>
+    <string name="fontSizeSummary">Sözlük satırları için yazı tipi boyutu.</string>
+    <string name="saveOnlyFirstSubentryTitle">Yalnızca ilk alt girdiyi kaydet</string>
+    <string name="saveOnlyFirstSubentrySummary">Birden fazla alt girdisi olan girdiler için, sözcük listesine yalnızca ilkini yaz.</string>
+    <string name="clickOpensContextMenuTitle">Tıklandığında içerik menüsü açılır</string>
+    <string name="clickOpensContextMenuSummary">Girdilere tıklandığında içerik menüsünü aç (uzun tıklama her zaman içerik menüsünü açacaktır).</string>
+    <string name="showPrevNextButtonsTitle">Yukarı/aşağı düğmelerini göster</string>
+    <string name="showPrevNextButtonsSummary">Sözlük görünümünde önceki ve sonraki sözcük düğmelerini göster veya gizle.</string>
+    <string name="themeTitle">Kullanıcı arayüzü teması</string>
+    <string name="themeSummary">Kullanıcı arayüzü renk teması.</string>
+    <string name="chosenNotWritable">Seçilen dizin yazılabilir değil, şunlardan birini deneyin</string>
+
+    <string name="historySizeTitle">Arama geçmişi girdileri</string>
+    <string name="historySizeSummary">Kaydedilecek ve görüntülenecek arama geçmişi girdilerinin sayısı.</string>
+
+</resources>
