@@ -1524,6 +1524,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
     private void showHtml(final List<HtmlEntry> htmlEntries, final String htmlTextToHighlight) {
         String html = HtmlEntry.htmlBody(htmlEntries, index.shortName);
+        String title = HtmlEntry.firstTitle(htmlEntries);
         String style = "";
         if (typeface == Typeface.SERIF) { style = "font-family: serif;"; }
         else if (typeface == Typeface.SANS_SERIF) { style = "font-family: sans-serif;"; }
@@ -1541,7 +1542,7 @@ public class DictionaryActivity extends AppCompatActivity {
         startActivityForResult(
             HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
                     "<html><head><meta name=\"viewport\" content=\"width=device-width\"><style type=\"text/css\">%s</style></head><body>%s</body></html>", style, html),
-                                              htmlTextToHighlight, false),
+                                              htmlTextToHighlight, title, false),
             0);
     }
 

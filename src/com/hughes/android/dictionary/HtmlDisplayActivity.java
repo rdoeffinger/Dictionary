@@ -40,6 +40,7 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
 
     private static final String HTML_RES = "html_res";
     private static final String HTML = "html";
+    private static final String TITLE = "title";
     private static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
     private static final String SHOW_OK_BUTTON = "showOKButton";
 
@@ -56,11 +57,13 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
     }
 
     public static Intent getHtmlIntent(Context c, final String html, final String textToHighlight,
-                                       final boolean showOkButton) {
+                                       final String title, final boolean showOkButton) {
         final Intent intent = new Intent(c, HtmlDisplayActivity.class);
         intent.putExtra(HTML, html);
         intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight == null ? "" : textToHighlight);
         intent.putExtra(SHOW_OK_BUTTON, showOkButton);
+        if (title != null)
+            intent.putExtra(TITLE, title);
         return intent;
     }
 
@@ -79,6 +82,10 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        final String title = getIntent().getStringExtra(TITLE);
+        if (title != null)
+            setTitle(title);
 
         final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
         String html;
