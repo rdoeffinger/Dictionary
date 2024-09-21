@@ -215,6 +215,10 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
         return result.toString();
     }
 
+    public static String firstTitle(final List<HtmlEntry> htmlEntries) {
+        return htmlEntries.isEmpty() ? null : htmlEntries.get(0).title;
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static String formatQuickdicUrl(final String indexShortName, final String text) {
         assert !indexShortName.contains(":");
