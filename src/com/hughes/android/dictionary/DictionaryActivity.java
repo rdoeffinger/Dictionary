@@ -17,6 +17,7 @@ package com.hughes.android.dictionary;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.SearchManager;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,14 +38,13 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.view.MenuItemCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.appcompat.widget.Toolbar;
-import android.text.ClipboardManager;
+import android.content.ClipboardManager;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -1397,7 +1397,7 @@ public class DictionaryActivity extends AppCompatActivity {
         final StringBuilder result = new StringBuilder();
         result.append(row.getRawText(false));
         final ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        clipboardManager.setText(result.toString());
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("Dictionary", result.toString()));
         Log.d(LOG, "Copied: " + result);
     }
 
