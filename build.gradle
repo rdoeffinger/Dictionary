@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.6.0'
+        classpath 'com.android.tools.build:gradle:8.11.0'
     }
 }
 
@@ -32,10 +32,11 @@ dependencies {
     //implementation files("$buildDir/icu4j-57.2.small.jar") {
     //    builtBy 'makesmallicu'
     //}
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 }
 
-task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
+tasks.register('makesmallicu', Exec) {
+    dependsOn configurations.smallicu
     inputs.file "mksmallicu.sh"
     inputs.file "${configurations.smallicu.resolve()[0]}"
     outputs.file "$buildDir/icu4j-57.2.small.jar"
@@ -45,21 +46,23 @@ task makesmallicu (type:Exec, dependsOn: configurations.smallicu) {
 def utildir = hasProperty("quickdicUtilDir") ? quickdicUtilDir : "Util"
 
 allprojects {
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
     }
 }
 
 android {
-    compileSdk 34
-    namespace "com.hughes.android.dictionary"
+    compileSdk = 36
+    namespace = "com.hughes.android.dictionary"
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
         }
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources = true
         }
     }
     sourceSets {
@@ -81,13 +84,13 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
-        multiDexEnabled true
-        targetSdkVersion 34
+        multiDexEnabled = true
+        targetSdkVersion 36
         resourceConfigurations += ['de', 'es', 'eu', 'fr', 'it', 'ja', 'pt', 'pt-rBR', 'ru', 'zh-rCN']
         minSdkVersion 14
     }
     compileOptions {
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
