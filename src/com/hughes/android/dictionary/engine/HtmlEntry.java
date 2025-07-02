@@ -218,12 +218,9 @@ public class HtmlEntry extends AbstractEntry implements Comparable<HtmlEntry> {
     @SuppressWarnings("WeakerAccess")
     public static String formatQuickdicUrl(final String indexShortName, final String text) {
         assert !indexShortName.contains(":");
-        assert text.length() > 0;
-        StringBuilder s = new StringBuilder("q://d?");
-        s.append(indexShortName);
-        s.append("&");
-        s.append(StringUtil.encodeForUrl(text));
-        return s.toString();
+        assert !text.isEmpty();
+        return "q://d?" + indexShortName + "&" +
+                StringUtil.encodeForUrl(text);
     }
 
     public static boolean isQuickdicUrl(String url) {

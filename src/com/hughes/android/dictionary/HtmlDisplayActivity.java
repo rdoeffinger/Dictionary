@@ -91,7 +91,7 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
         } else {
             html = getIntent().getStringExtra(HTML);
         }
-        final MyWebView webView = (MyWebView) findViewById(R.id.webView);
+        final MyWebView webView = findViewById(R.id.webView);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String fontSize = prefs.getString(getString(R.string.fontSizeKey), "14");
         int fontSizeSp;
@@ -113,14 +113,14 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
         webView.activity = this;
 
         final String textToHighlight = getIntent().getStringExtra(TEXT_TO_HIGHLIGHT);
-        if (textToHighlight != null && !"".equals(textToHighlight)) {
+        if (textToHighlight != null && !textToHighlight.isEmpty()) {
             Log.d(LOG, "NOT Highlighting text: " + textToHighlight);
             // This isn't working:
             // webView.findAll(textToHighlight);
             // webView.showFindDialog(textToHighlight, false);
         }
 
-        final Button okButton = (Button) findViewById(R.id.okButton);
+        final Button okButton = findViewById(R.id.okButton);
         if (!getIntent().getBooleanExtra(SHOW_OK_BUTTON, true)) {
             okButton.setVisibility(Button.GONE);
         }
@@ -128,7 +128,7 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        final MyWebView webView = (MyWebView)findViewById(R.id.webView);
+        final MyWebView webView = findViewById(R.id.webView);
         if (webView.canGoBack()) webView.goBack();
         else super.onBackPressed();
     }

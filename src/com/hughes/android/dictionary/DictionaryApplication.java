@@ -18,19 +18,17 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.PreferenceManager;
-import androidx.core.view.MenuItemCompat;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 
 import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
@@ -70,13 +68,10 @@ public enum DictionaryApplication {
     //static public final boolean USE_COLLATOR = !android.os.Build.FINGERPRINT.equals("Samsung/cm_tassve/tassve:4.4.4/KTU84Q/20150211:userdebug/release-keys");
     public static final boolean USE_COLLATOR = true;
 
-    public static final TransliteratorManager.ThreadSetup threadBackground = new TransliteratorManager.ThreadSetup() {
-        @Override
-        public void onThreadStart() {
-            // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
-            // can make Transliterator go from 20 seconds to 3 minutes (!)
-            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LESS_FAVORABLE);
-        }
+    public static final TransliteratorManager.ThreadSetup threadBackground = () -> {
+        // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
+        // can make Transliterator go from 20 seconds to 3 minutes (!)
+        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LESS_FAVORABLE);
     };
 
     // Static, determined by resources (and locale).
@@ -149,7 +144,7 @@ public enum DictionaryApplication {
         try {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.length() == 0 || line.charAt(0) == '#') {
+                if (line.isEmpty() || line.charAt(0) == '#') {
                     continue;
                 }
                 final DictionaryInfo dictionaryInfo = new DictionaryInfo(line);
@@ -190,14 +185,10 @@ public enum DictionaryApplication {
         // Theme stuff.
         appContext.setTheme(getSelectedTheme().themeId);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-        prefs.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                                  String key) {
-                Log.d("QuickDic", "prefs changed: " + key);
-                if (key.equals(appContext.getString(R.string.themeKey))) {
-                    appContext.setTheme(getSelectedTheme().themeId);
-                }
+        prefs.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
+            Log.d("QuickDic", "prefs changed: " + key);
+            if (key.equals(appContext.getString(R.string.themeKey))) {
+                appContext.setTheme(getSelectedTheme().themeId);
             }
         });
     }
@@ -208,44 +199,36 @@ public enum DictionaryApplication {
 
         final MenuItem preferences = menu.add(c.getString(R.string.settings));
         preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        preferences.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                PreferenceActivity.prefsMightHaveChanged = true;
-                final Intent intent = new Intent(c, PreferenceActivity.class);
-                context.startActivity(intent);
-                return false;
-            }
+        preferences.setOnMenuItemClickListener(menuItem -> {
+            PreferenceActivity.prefsMightHaveChanged = true;
+            final Intent intent = new Intent(c, PreferenceActivity.class);
+            context.startActivity(intent);
+            return false;
         });
 
         final MenuItem help = menu.add(c.getString(R.string.help));
         help.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        help.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent(c));
-                return false;
-            }
+        help.setOnMenuItemClickListener(menuItem -> {
+            context.startActivity(HtmlDisplayActivity.getHelpLaunchIntent(c));
+            return false;
         });
 
         final MenuItem reportIssue = menu.add(c.getString(R.string.reportIssue));
         reportIssue.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        reportIssue.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                final Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri
-                               .parse("https://github.com/rdoeffinger/Dictionary/issues"));
-                context.startActivity(intent);
-                return false;
-            }
+        reportIssue.setOnMenuItemClickListener(menuItem -> {
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri
+                           .parse("https://github.com/rdoeffinger/Dictionary/issues"));
+            context.startActivity(intent);
+            return false;
         });
 
         final MenuItem about = menu.add(c.getString(R.string.about));
         about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                final Intent intent = new Intent(c, AboutActivity.class);
-                context.startActivity(intent);
-                return false;
-            }
+        about.setOnMenuItemClickListener(menuItem -> {
+            final Intent intent = new Intent(c, AboutActivity.class);
+            context.startActivity(intent);
+            return false;
         });
     }
 
@@ -419,33 +402,27 @@ public enum DictionaryApplication {
     }
 
     final Comparator<Object> collator = USE_COLLATOR ? CollatorWrapper.getInstance() : null;
-    final Comparator<String> uncompressedFilenameComparator = new Comparator<String>() {
-        @Override
-        public int compare(String uncompressedFilename1, String uncompressedFilename2) {
-            final String name1 = getDictionaryName(uncompressedFilename1);
-            final String name2 = getDictionaryName(uncompressedFilename2);
-            if (defaultLangName.length() > 0) {
-                if (name1.startsWith(defaultLangName + "-")
-                        && !name2.startsWith(defaultLangName + "-")) {
-                    return -1;
-                } else if (name2.startsWith(defaultLangName + "-")
-                        && !name1.startsWith(defaultLangName + "-")) {
-                    return 1;
-                }
+    final Comparator<String> uncompressedFilenameComparator = (uncompressedFilename1, uncompressedFilename2) -> {
+        final String name1 = getDictionaryName(uncompressedFilename1);
+        final String name2 = getDictionaryName(uncompressedFilename2);
+        if (!defaultLangName.isEmpty()) {
+            if (name1.startsWith(defaultLangName + "-")
+                    && !name2.startsWith(defaultLangName + "-")) {
+                return -1;
+            } else if (name2.startsWith(defaultLangName + "-")
+                    && !name1.startsWith(defaultLangName + "-")) {
+                return 1;
             }
-            return collator != null ? collator.compare(name1, name2) : name1.compareToIgnoreCase(name2);
         }
+        return collator != null ? collator.compare(name1, name2) : name1.compareToIgnoreCase(name2);
     };
-    final Comparator<DictionaryInfo> dictionaryInfoComparator = new Comparator<DictionaryInfo>() {
-        @Override
-        public int compare(DictionaryInfo d1, DictionaryInfo d2) {
-            // Single-index dictionaries first.
-            if (d1.indexInfos.size() != d2.indexInfos.size()) {
-                return d1.indexInfos.size() - d2.indexInfos.size();
-            }
-            return uncompressedFilenameComparator.compare(d1.uncompressedFilename,
-                    d2.uncompressedFilename);
+    final Comparator<DictionaryInfo> dictionaryInfoComparator = (d1, d2) -> {
+        // Single-index dictionaries first.
+        if (d1.indexInfos.size() != d2.indexInfos.size()) {
+            return d1.indexInfos.size() - d2.indexInfos.size();
         }
+        return uncompressedFilenameComparator.compare(d1.uncompressedFilename,
+                d2.uncompressedFilename);
     };
 
     // get DictionaryInfo for case when Dictionary cannot be opened
@@ -457,9 +434,7 @@ public enum DictionaryApplication {
     }
 
     public static DictionaryInfo getDictionaryInfo(final DocumentFile file, final ContentResolver r) {
-        FileInputStream s = null;
-        try {
-            s = r.openAssetFileDescriptor(file.getUri(), "r").createInputStream();
+        try (FileInputStream s = r.openAssetFileDescriptor(file.getUri(), "r").createInputStream()) {
             final Dictionary dict = new Dictionary(s.getChannel());
             final DictionaryInfo dictionaryInfo = dict.getDictionaryInfo();
             dictionaryInfo.uncompressedFilename = file.getName();
@@ -476,91 +451,80 @@ public enum DictionaryApplication {
             // Most likely due to a read beyond the buffer limit set,
             // do not crash just because of a truncated or corrupt dictionary file
             return getErrorDictionaryInfo(file);
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
     public void backgroundUpdateDictionaries(final Runnable onUpdateFinished) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final DictionaryConfig oldDictionaryConfig = new DictionaryConfig();
-                synchronized (DictionaryApplication.this) {
-                    oldDictionaryConfig.dictionaryFilesOrdered
-                    .addAll(dictionaryConfig.dictionaryFilesOrdered);
+        new Thread(() -> {
+            final DictionaryConfig oldDictionaryConfig = new DictionaryConfig();
+            synchronized (DictionaryApplication.this) {
+                oldDictionaryConfig.dictionaryFilesOrdered
+                .addAll(dictionaryConfig.dictionaryFilesOrdered);
+            }
+            final DictionaryConfig newDictionaryConfig = new DictionaryConfig();
+            for (final String uncompressedFilename : oldDictionaryConfig.dictionaryFilesOrdered) {
+                final DocumentFile dictFile = getPath(uncompressedFilename);
+                final DictionaryInfo dictionaryInfo = getDictionaryInfo(dictFile, appContext.getContentResolver());
+                if (dictionaryInfo.isValid() || dictFile.exists()) {
+                    newDictionaryConfig.dictionaryFilesOrdered.add(uncompressedFilename);
+                    newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
+                        uncompressedFilename, dictionaryInfo);
                 }
-                final DictionaryConfig newDictionaryConfig = new DictionaryConfig();
-                for (final String uncompressedFilename : oldDictionaryConfig.dictionaryFilesOrdered) {
-                    final DocumentFile dictFile = getPath(uncompressedFilename);
-                    final DictionaryInfo dictionaryInfo = getDictionaryInfo(dictFile, appContext.getContentResolver());
-                    if (dictionaryInfo.isValid() || dictFile.exists()) {
-                        newDictionaryConfig.dictionaryFilesOrdered.add(uncompressedFilename);
-                        newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
-                            uncompressedFilename, dictionaryInfo);
+            }
+
+            // Are there dictionaries on the device that we didn't know
+            // about already?
+            // Pick them up and put them at the end of the list.
+            final List<String> toAddSorted = new ArrayList<>();
+            final DocumentFile[] dictDirFiles = getDictDir().listFiles();
+            if (dictDirFiles != null) {
+                for (final DocumentFile file : dictDirFiles) {
+                    if (file.getName().endsWith(".zip")) {
+                        if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO
+                                .containsKey(file.getName().replace(".zip", ""))) {
+                            file.delete();
+                        }
                     }
-                }
-
-                // Are there dictionaries on the device that we didn't know
-                // about already?
-                // Pick them up and put them at the end of the list.
-                final List<String> toAddSorted = new ArrayList<>();
-                final DocumentFile[] dictDirFiles = getDictDir().listFiles();
-                if (dictDirFiles != null) {
-                    for (final DocumentFile file : dictDirFiles) {
-                        if (file.getName().endsWith(".zip")) {
-                            if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO
-                                    .containsKey(file.getName().replace(".zip", ""))) {
-                                file.delete();
-                            }
-                        }
-                        if (!file.getName().endsWith(".quickdic")) {
-                            continue;
-                        }
-                        if (newDictionaryConfig.uncompressedFilenameToDictionaryInfo
-                                .containsKey(file.getName())) {
-                            // We have it in our list already.
-                            continue;
-                        }
-                        final DictionaryInfo dictionaryInfo = getDictionaryInfo(file, appContext.getContentResolver());
-                        if (!dictionaryInfo.isValid()) {
-                            Log.e(LOG, "Unable to parse dictionary: " + file.getUri().getPath());
-                        }
-
-                        toAddSorted.add(file.getName());
-                        newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
-                            file.getName(), dictionaryInfo);
+                    if (!file.getName().endsWith(".quickdic")) {
+                        continue;
                     }
-                } else {
-                    Log.w(LOG, "dictDir is not a directory: " + getDictDir().getUri().getPath());
-                }
-                if (!toAddSorted.isEmpty()) {
-                    Collections.sort(toAddSorted, uncompressedFilenameComparator);
-                    newDictionaryConfig.dictionaryFilesOrdered.addAll(toAddSorted);
-                }
+                    if (newDictionaryConfig.uncompressedFilenameToDictionaryInfo
+                            .containsKey(file.getName())) {
+                        // We have it in our list already.
+                        continue;
+                    }
+                    final DictionaryInfo dictionaryInfo = getDictionaryInfo(file, appContext.getContentResolver());
+                    if (!dictionaryInfo.isValid()) {
+                        Log.e(LOG, "Unable to parse dictionary: " + file.getUri().getPath());
+                    }
 
-                try {
-                    PersistentObjectCache.getInstance()
-                    .write(C.DICTIONARY_CONFIGS, newDictionaryConfig);
-                } catch (Exception e) {
-                    Log.e(LOG, "Failed persisting dictionary configs", e);
+                    toAddSorted.add(file.getName());
+                    newDictionaryConfig.uncompressedFilenameToDictionaryInfo.put(
+                        file.getName(), dictionaryInfo);
                 }
+            } else {
+                Log.w(LOG, "dictDir is not a directory: " + getDictDir().getUri().getPath());
+            }
+            if (!toAddSorted.isEmpty()) {
+                Collections.sort(toAddSorted, uncompressedFilenameComparator);
+                newDictionaryConfig.dictionaryFilesOrdered.addAll(toAddSorted);
+            }
 
-                synchronized (DictionaryApplication.this) {
-                    dictionaryConfig = newDictionaryConfig;
-                }
+            try {
+                PersistentObjectCache.getInstance()
+                .write(C.DICTIONARY_CONFIGS, newDictionaryConfig);
+            } catch (Exception e) {
+                Log.e(LOG, "Failed persisting dictionary configs", e);
+            }
 
-                try {
-                    onUpdateFinished.run();
-                } catch (Exception e) {
-                    Log.e(LOG, "Exception running callback.", e);
-                }
+            synchronized (DictionaryApplication.this) {
+                dictionaryConfig = newDictionaryConfig;
+            }
+
+            try {
+                onUpdateFinished.run();
+            } catch (Exception e) {
+                Log.e(LOG, "Exception running callback.", e);
             }
         }).start();
     }

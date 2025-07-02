@@ -38,10 +38,10 @@ public class PreferenceActivity extends AppCompatActivity
         setTheme(application.getSelectedTheme().themeId);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getString(getString(R.string.quickdicDirectoryKey), "").equals("")) {
+        if (prefs.getString(getString(R.string.quickdicDirectoryKey), "").isEmpty()) {
             prefs.edit().putString(getString(R.string.quickdicDirectoryKey), application.getDictDir().getUri().getPath()).commit();
         }
-        if (prefs.getString(getString(R.string.wordListFileKey), "").equals("")) {
+        if (prefs.getString(getString(R.string.wordListFileKey), "").isEmpty()) {
             prefs.edit().putString(getString(R.string.wordListFileKey), application.getWordListFile().getUri().getPath()).commit();
         }
 

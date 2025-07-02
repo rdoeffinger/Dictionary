@@ -202,7 +202,7 @@ public abstract class RowBase extends IndexedObject {
         public int compare(RowBase row1, RowBase row2) {
             final int l1 = row1.getSideLength(swapPairEntries);
             final int l2 = row2.getSideLength(swapPairEntries);
-            return l1 < l2 ? -1 : l1 == l2 ? 0 : 1;
+            return Integer.compare(l1, l2);
         }
     }
 

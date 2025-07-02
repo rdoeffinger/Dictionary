@@ -38,7 +38,6 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -52,14 +51,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -82,6 +78,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -101,7 +98,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
     private ListView listView;
     private ListView getListView() {
         if (listView == null) {
-            listView = (ListView)findViewById(android.R.id.list);
+            listView = findViewById(android.R.id.list);
         }
         return listView;
     }
@@ -131,12 +128,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             if (uiHandler == null) {
                 return;
             }
-            uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    setMyListAdapter();
-                }
-            });
+            uiHandler.post(DictionaryManagerActivity.this::setMyListAdapter);
         }
     };
 
@@ -155,20 +147,23 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                 final DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(downloadId);
                 final DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                final Cursor cursor = downloadManager.query(query);
+                final String dest;
+                final int status;
+                final int reason;
+                try (final Cursor cursor = downloadManager.query(query)) {
+                    if (cursor == null || !cursor.moveToFirst()) {
+                        Log.e(LOG, "Couldn't find download.");
+                        return;
+                    }
 
-                if (cursor == null || !cursor.moveToFirst()) {
-                    Log.e(LOG, "Couldn't find download.");
-                    return;
+                    dest = cursor
+                            .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    status = cursor
+                            .getInt(cursor
+                                    .getColumnIndex(DownloadManager.COLUMN_STATUS));
+                    reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
                 }
-
-                final String dest = cursor
-                                    .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                final int status = cursor
-                                   .getInt(cursor
-                                           .getColumnIndex(DownloadManager.COLUMN_STATUS));
                 if (DownloadManager.STATUS_SUCCESSFUL != status) {
-                    final int reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
                     Log.w(LOG,
                           "Download failed: status=" + status +
                           ", reason=" + reason);
@@ -205,7 +200,6 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         File localZipFile = null;
         InputStream zipFileStream = null;
         ZipInputStream zipFile = null;
-        FileOutputStream zipOut = null;
         boolean result = false;
         try {
             if (zipUri.getScheme().equals("content")) {
@@ -242,8 +236,9 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                     targetFile.renameTo(zipEntry.getName().replace(".quickdic", ".bak.quickdic"));
                 }
                 targetFile = application.getDictDir().createFile("", zipEntry.getName());
-                zipOut = context.getContentResolver().openAssetFileDescriptor(targetFile.getUri(), "wt").createOutputStream();
-                copyStream(zipFile, zipOut);
+                try (FileOutputStream zipOut = context.getContentResolver().openAssetFileDescriptor(targetFile.getUri(), "wt").createOutputStream()) {
+                    copyStream(zipFile, zipOut);
+                }
             }
             application.backgroundUpdateDictionaries(dictionaryUpdater);
             if (!isFinishing())
@@ -259,9 +254,6 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show();
             Log.e(LOG, "Failed to unzip.", e);
         } finally {
-            try {
-                if (zipOut != null) zipOut.close();
-            } catch (IOException ignored) {}
             try {
                 if (zipFile != null) zipFile.close();
             } catch (IOException ignored) {}
@@ -343,12 +335,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
 
         showDownloadable = downloadableDictionariesHeaderRow
                            .findViewById(R.id.hideDownloadable);
-        showDownloadable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onShowDownloadableChanged();
-            }
-        });
+        showDownloadable.setOnCheckedChangeListener((buttonView, isChecked) -> onShowDownloadableChanged());
 
         /*
         Disable version update notification, I don't maintain the text really
@@ -512,24 +499,20 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         }
         final MenuItem sort = menu.add(getString(R.string.sortDicts));
         sort.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        sort.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                application.sortDictionaries();
-                setMyListAdapter();
-                return true;
-            }
+        sort.setOnMenuItemClickListener(menuItem -> {
+            application.sortDictionaries();
+            setMyListAdapter();
+            return true;
         });
 
         final MenuItem browserDownload = menu.add(getString(R.string.browserDownload));
         browserDownload.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        browserDownload.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                final Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri
-                               .parse("https://github.com/rdoeffinger/Dictionary/releases/v0.3-dictionaries"));
-                startActivity(intent);
-                return false;
-            }
+        browserDownload.setOnMenuItemClickListener(menuItem -> {
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri
+                           .parse("https://github.com/rdoeffinger/Dictionary/releases/v0.3-dictionaries"));
+            startActivity(intent);
+            return false;
         });
 
         DictionaryApplication.onCreateGlobalOptionsMenu(this, menu);
@@ -554,27 +537,20 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         if (position > 0 && row.onDevice) {
             final android.view.MenuItem moveToTopMenuItem =
                 menu.add(R.string.moveToTop);
-            moveToTopMenuItem.setOnMenuItemClickListener(new
-            android.view.MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    application.moveDictionaryToTop(row.dictionaryInfo);
-                    setMyListAdapter();
-                    return true;
-                }
+            moveToTopMenuItem.setOnMenuItemClickListener(item -> {
+                application.moveDictionaryToTop(row.dictionaryInfo);
+                setMyListAdapter();
+                return true;
             });
         }
 
         if (row.onDevice) {
             final android.view.MenuItem deleteMenuItem = menu.add(R.string.deleteDictionary);
             deleteMenuItem
-            .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    application.deleteDictionary(row.dictionaryInfo);
-                    setMyListAdapter();
-                    return true;
-                }
+            .setOnMenuItemClickListener(item -> {
+                application.deleteDictionary(row.dictionaryInfo);
+                setMyListAdapter();
+                return true;
             });
         }
     }
@@ -762,12 +738,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                          R.string.downloadButton,
                          downloadable.zipBytes / 1024.0 / 1024.0));
             downloadButton.setMinWidth(application.languageButtonPixels * 3 / 2);
-            downloadButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    downloadDictionary(downloadable.downloadUrl, downloadable.zipBytes, downloadButton);
-                }
-            });
+            downloadButton.setOnClickListener(arg0 -> downloadDictionary(downloadable.downloadUrl, downloadable.zipBytes, downloadButton));
             downloadButton.setVisibility(View.VISIBLE);
 
             if (isDownloadActive(downloadable.downloadUrl, false))

@@ -35,8 +35,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.core.widget.TextViewCompat;
 import androidx.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
-import androidx.annotation.NonNull;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.appcompat.app.ActionBar;
@@ -60,18 +59,14 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -118,7 +113,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,12 +139,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
 
-    private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
-        @Override
-        public Thread newThread(@NonNull Runnable r) {
-            return new Thread(r, "searchExecutor");
-        }
-    });
+    private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor(r -> new Thread(r, "searchExecutor"));
 
     private SearchOperation currentSearchOperation = null;
     private final int MAX_SEARCH_HISTORY = 100;
@@ -170,7 +159,7 @@ public class DictionaryActivity extends AppCompatActivity {
     private ListView listView;
     private ListView getListView() {
         if (listView == null) {
-            listView = (ListView)findViewById(android.R.id.list);
+            listView = findViewById(android.R.id.list);
         }
         return listView;
     }
@@ -480,12 +469,9 @@ public class DictionaryActivity extends AppCompatActivity {
         }
 
         ttsReady = false;
-        textToSpeech = new TextToSpeech(getApplicationContext(), new OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                ttsReady = true;
-                updateTTSLanguage(indexIndex);
-            }
+        textToSpeech = new TextToSpeech(getApplicationContext(), status -> {
+            ttsReady = true;
+            updateTTSLanguage(indexIndex);
         });
 
         try {
@@ -514,48 +500,31 @@ public class DictionaryActivity extends AppCompatActivity {
         index = dictionary.indices.get(indexIndex);
         getListView().setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         getListView().setEmptyView(findViewById(android.R.id.empty));
-        getListView().setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int row, long id) {
-                onListItemClick(getListView(), view, row, id);
-            }
-        });
+        getListView().setOnItemClickListener((parent, view, row, id) -> onListItemClick(getListView(), view, row, id));
 
         setListAdapter(new IndexAdapter(index));
 
         // Pre-load the Transliterator (will spawn its own thread)
-        TransliteratorManager.init(new TransliteratorManager.Callback() {
-            @Override
-            public void onTransliteratorReady() {
-                uiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onSearchTextChange(searchView.getQuery().toString());
-                    }
-                });
-            }
-        }, DictionaryApplication.threadBackground);
+        TransliteratorManager.init(() -> uiHandler.post(() -> onSearchTextChange(searchView.getQuery().toString())), DictionaryApplication.threadBackground);
 
         // Pre-load the collators.
-        new Thread(new Runnable() {
-            public void run() {
-                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LESS_FAVORABLE);
-                final long startMillis = System.currentTimeMillis();
-                try {
-                    for (final Index index : dictionary.indices) {
-                        final String searchToken = index.sortedIndexEntries.get(0).token;
-                        final IndexEntry entry = index.findExact(searchToken);
-                        if (entry == null || !searchToken.equals(entry.token)) {
-                            Log.e(LOG, "Couldn't find token: " + searchToken + ", " + (entry == null ? "null" : entry.token));
-                        }
+        new Thread(() -> {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_LESS_FAVORABLE);
+            final long startMillis = System.currentTimeMillis();
+            try {
+                for (final Index index : dictionary.indices) {
+                    final String searchToken = index.sortedIndexEntries.get(0).token;
+                    final IndexEntry entry = index.findExact(searchToken);
+                    if (entry == null || !searchToken.equals(entry.token)) {
+                        Log.e(LOG, "Couldn't find token: " + searchToken + ", " + (entry == null ? "null" : entry.token));
                     }
-                    indexPrepFinished = true;
-                } catch (Exception e) {
-                    Log.w(LOG,
-                          "Exception while prepping.  This can happen if dictionary is closed while search is happening.");
                 }
-                Log.d(LOG, "Prepping indices took:" + (System.currentTimeMillis() - startMillis));
+                indexPrepFinished = true;
+            } catch (Exception e) {
+                Log.w(LOG,
+                      "Exception while prepping.  This can happen if dictionary is closed while search is happening.");
             }
+            Log.d(LOG, "Prepping indices took:" + (System.currentTimeMillis() - startMillis));
         }).start();
 
         String fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.otf.jpg");
@@ -618,12 +587,9 @@ public class DictionaryActivity extends AppCompatActivity {
         onCreateSetupActionBarAndSearchView();
 
         View floatSwapButton = findViewById(R.id.floatSwapButton);
-        floatSwapButton.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                onLanguageButtonLongClick(v.getContext());
-                return true;
-            }
+        floatSwapButton.setOnLongClickListener(v -> {
+            onLanguageButtonLongClick(v.getContext());
+            return true;
         });
 
         // Set the search text from the intent, then the saved state.
@@ -668,8 +634,7 @@ public class DictionaryActivity extends AppCompatActivity {
         // Set up search history
         ArrayList<String> savedHistory = null;
         if (savedInstanceState != null) savedHistory = savedInstanceState.getStringArrayList(C.SEARCH_HISTORY);
-        if (savedHistory != null && !savedHistory.isEmpty()) {
-        } else {
+        if (savedHistory == null || savedHistory.isEmpty()) {
             savedHistory = new ArrayList<>();
             for (int i = 0; i < searchHistoryLimit; i++) {
                 String h = prefs.getString("history" + i, null);
@@ -709,12 +674,7 @@ public class DictionaryActivity extends AppCompatActivity {
         languageButton = new ImageButton(customSearchView.getContext());
         languageButton.setId(R.id.languageButton);
         languageButton.setScaleType(ScaleType.FIT_CENTER);
-        languageButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onLanguageButtonLongClick(v.getContext());
-            }
-        });
+        languageButton.setOnClickListener(v -> onLanguageButtonLongClick(v.getContext()));
         languageButton.setAdjustViewBounds(true);
         LinearLayout.LayoutParams lpb = new LinearLayout.LayoutParams(application.languageButtonPixels, LinearLayout.LayoutParams.MATCH_PARENT);
         customSearchView.addView(languageButton, lpb);
@@ -856,31 +816,25 @@ public class DictionaryActivity extends AppCompatActivity {
         // One way to replicate the problem:
         // Press the "task switch" button repeatedly to pause and resume
         for (int delay = 1; delay <= 101; delay += 100) {
-            searchView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d(LOG, "Trying to show soft keyboard.");
-                    final boolean searchTextHadFocus = searchView.hasFocus();
-                    searchView.requestFocusFromTouch();
-                    searchTextView.requestFocus();
-                    final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    manager.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
-                    manager.showSoftInput(searchTextView, InputMethodManager.SHOW_IMPLICIT);
-                    if (!searchTextHadFocus) {
-                        defocusSearchText();
-                    }
+            searchView.postDelayed(() -> {
+                Log.d(LOG, "Trying to show soft keyboard.");
+                final boolean searchTextHadFocus = searchView.hasFocus();
+                searchView.requestFocusFromTouch();
+                searchTextView.requestFocus();
+                final InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                manager.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT);
+                manager.showSoftInput(searchTextView, InputMethodManager.SHOW_IMPLICIT);
+                if (!searchTextHadFocus) {
+                    defocusSearchText();
                 }
             }, delay);
         }
-        searchView.post(new Runnable() {
-            @Override
-            public void run() {
-                searchTextView.setThreshold(0);
-                try {
-                    searchTextView.showDropDown();
-                // ignore any errors, in particular BadTokenException happens a lot
-                } catch (Exception e) {}
-            }
+        searchView.post(() -> {
+            searchTextView.setThreshold(0);
+            try {
+                searchTextView.showDropDown();
+            // ignore any errors, in particular BadTokenException happens a lot
+            } catch (Exception e) {}
         });
     }
 
@@ -933,7 +887,7 @@ public class DictionaryActivity extends AppCompatActivity {
         if (!searchView.hasFocus()) {
             searchView.requestFocus();
         }
-        if (searchView.getQuery().toString().length() > 0) {
+        if (!searchView.getQuery().toString().isEmpty()) {
             addToSearchHistory();
             searchView.setQuery("", false);
         }
@@ -1084,103 +1038,90 @@ public class DictionaryActivity extends AppCompatActivity {
             nextWordMenuItem = menu.add(getString(R.string.nextWord))
                                .setIcon(R.drawable.arrow_down_float);
             nextWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            nextWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    onUpDownButton(false);
-                    return true;
-                }
+            nextWordMenuItem.setOnMenuItemClickListener(item -> {
+                onUpDownButton(false);
+                return true;
             });
 
             // Previous word.
             previousWordMenuItem = menu.add(getString(R.string.previousWord))
                                    .setIcon(R.drawable.arrow_up_float);
             previousWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            previousWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    onUpDownButton(true);
-                    return true;
-                }
+            previousWordMenuItem.setOnMenuItemClickListener(item -> {
+                onUpDownButton(true);
+                return true;
             });
         }
 
         final MenuItem randomWordMenuItem = menu.add(getString(R.string.randomWord));
-        randomWordMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                onRandomWordButton();
-                return true;
-            }
+        randomWordMenuItem.setOnMenuItemClickListener(item -> {
+            onRandomWordButton();
+            return true;
         });
 
         {
             final MenuItem dictionaryManager = menu.add(getString(R.string.dictionaryManager));
             dictionaryManager.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-            dictionaryManager.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                public boolean onMenuItemClick(final MenuItem menuItem) {
-                    startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
-                    finish();
-                    return false;
-                }
+            dictionaryManager.setOnMenuItemClickListener(menuItem -> {
+                startActivity(DictionaryManagerActivity.getLaunchIntent(getApplicationContext()));
+                finish();
+                return false;
             });
         }
 
         {
             final MenuItem aboutDictionary = menu.add(getString(R.string.aboutDictionary));
             aboutDictionary.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-            aboutDictionary.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                public boolean onMenuItemClick(final MenuItem menuItem) {
-                    final Context context = getListView().getContext();
-                    final Dialog dialog = new Dialog(context);
-                    dialog.setContentView(R.layout.about_dictionary_dialog);
-                    final TextView textView = dialog.findViewById(R.id.text);
+            aboutDictionary.setOnMenuItemClickListener(menuItem -> {
+                final Context context = getListView().getContext();
+                final Dialog dialog = new Dialog(context);
+                dialog.setContentView(R.layout.about_dictionary_dialog);
+                final TextView textView = dialog.findViewById(R.id.text);
 
-                    dialog.setTitle(dictFileTitleName);
+                dialog.setTitle(dictFileTitleName);
 
-                    final StringBuilder builder = new StringBuilder();
-                    final DictionaryInfo dictionaryInfo = dictionary.getDictionaryInfo();
-                    if (dictionaryInfo != null) {
-                        try {
-                            dictionaryInfo.uncompressedBytes = dictRaf.size();
-                        } catch (IOException e) {
-                        }
-                        builder.append(dictionaryInfo.dictInfo).append("\n\n");
-                        if (dictFile != null) {
-                            builder.append(getString(R.string.dictionaryPath, dictFile.getUri().toString()))
-                            .append("\n");
-                        }
-                        builder.append(
-                            getString(R.string.dictionarySize, dictionaryInfo.uncompressedBytes))
+                final StringBuilder builder = new StringBuilder();
+                final DictionaryInfo dictionaryInfo = dictionary.getDictionaryInfo();
+                if (dictionaryInfo != null) {
+                    try {
+                        dictionaryInfo.uncompressedBytes = dictRaf.size();
+                    } catch (IOException e) {
+                    }
+                    builder.append(dictionaryInfo.dictInfo).append("\n\n");
+                    if (dictFile != null) {
+                        builder.append(getString(R.string.dictionaryPath, dictFile.getUri().toString()))
+                        .append("\n");
+                    }
+                    builder.append(
+                        getString(R.string.dictionarySize, dictionaryInfo.uncompressedBytes))
+                    .append("\n");
+                    builder.append(
+                        getString(R.string.dictionaryCreationTime,
+                                  dictionaryInfo.creationMillis)).append("\n");
+                    for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
+                        builder.append("\n");
+                        builder.append(getString(R.string.indexName, indexInfo.shortName))
                         .append("\n");
                         builder.append(
-                            getString(R.string.dictionaryCreationTime,
-                                      dictionaryInfo.creationMillis)).append("\n");
-                        for (final IndexInfo indexInfo : dictionaryInfo.indexInfos) {
-                            builder.append("\n");
-                            builder.append(getString(R.string.indexName, indexInfo.shortName))
-                            .append("\n");
-                            builder.append(
-                                getString(R.string.mainTokenCount, indexInfo.mainTokenCount))
-                            .append("\n");
-                        }
-                        builder.append("\n");
-                        builder.append(getString(R.string.sources)).append("\n");
-                        for (final EntrySource source : dictionary.sources) {
-                            builder.append(
-                                getString(R.string.sourceInfo, source.getName(),
-                                          source.getNumEntries())).append("\n");
-                        }
+                            getString(R.string.mainTokenCount, indexInfo.mainTokenCount))
+                        .append("\n");
                     }
-                    textView.setText(builder.toString());
-
-                    dialog.show();
-                    final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-                    layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-                    layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-                    dialog.getWindow().setAttributes(layoutParams);
-                    return false;
+                    builder.append("\n");
+                    builder.append(getString(R.string.sources)).append("\n");
+                    for (final EntrySource source : dictionary.sources) {
+                        builder.append(
+                            getString(R.string.sourceInfo, source.getName(),
+                                      source.getNumEntries())).append("\n");
+                    }
                 }
+                textView.setText(builder.toString());
+
+                dialog.show();
+                final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+                layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+                layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+                dialog.getWindow().setAttributes(layoutParams);
+                return false;
             });
         }
 
@@ -1199,48 +1140,40 @@ public class DictionaryActivity extends AppCompatActivity {
         final RowBase row = (RowBase) getListAdapter().getItem(adapterContextMenuInfo.position);
 
         if (clickOpensContextMenu && (row instanceof HtmlEntry.Row ||
-            (row instanceof TokenRow && ((TokenRow)row).getIndexEntry().htmlEntries.size() > 0))) {
+            (row instanceof TokenRow && !((TokenRow) row).getIndexEntry().htmlEntries.isEmpty()))) {
             final List<HtmlEntry> html = row instanceof TokenRow ? ((TokenRow)row).getIndexEntry().htmlEntries : Collections.singletonList(((HtmlEntry.Row)row).getEntry());
             final String highlight = row instanceof HtmlEntry.Row ? row.getTokenRow(true).getToken() : null;
             final MenuItem open = menu.add("Open");
-            open.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(MenuItem item) {
-                    showHtml(html, highlight);
-                    return false;
-                }
+            open.setOnMenuItemClickListener(item -> {
+                showHtml(html, highlight);
+                return false;
             });
         }
 
         final android.view.MenuItem addToWordlist = menu.add(getString(R.string.addToWordList,
                 wordList.getName()));
         addToWordlist
-        .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(android.view.MenuItem item) {
-                onAppendToWordList(row);
-                return false;
-            }
+        .setOnMenuItemClickListener(item -> {
+            onAppendToWordList(row);
+            return false;
         });
 
         final android.view.MenuItem share = menu.add("Share");
-        share.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(android.view.MenuItem item) {
-                Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, row.getTokenRow(true)
-                                     .getToken());
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-                                     row.getRawText(saveOnlyFirstSubentry));
-                startActivity(shareIntent);
-                return false;
-            }
+        share.setOnMenuItemClickListener(item -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, row.getTokenRow(true)
+                                 .getToken());
+            shareIntent.putExtra(Intent.EXTRA_TEXT,
+                                 row.getRawText(saveOnlyFirstSubentry));
+            startActivity(shareIntent);
+            return false;
         });
 
         final android.view.MenuItem copy = menu.add(android.R.string.copy);
-        copy.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(android.view.MenuItem item) {
-                onCopy(row);
-                return false;
-            }
+        copy.setOnMenuItemClickListener(item -> {
+            onCopy(row);
+            return false;
         });
 
         if (selectedSpannableText != null) {
@@ -1249,11 +1182,9 @@ public class DictionaryActivity extends AppCompatActivity {
                         R.string.searchForSelection,
                         selectedSpannableText));
             searchForSelection
-            .setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
-                    return false;
-                }
+            .setOnMenuItemClickListener(item -> {
+                jumpToTextFromHyperLink(selectedText, selectedSpannableIndex);
+                return false;
             });
             // Rats, this won't be shown:
             //searchForSelection.setIcon(R.drawable.abs__ic_search);
@@ -1263,41 +1194,32 @@ public class DictionaryActivity extends AppCompatActivity {
             final android.view.MenuItem speak = menu.add(R.string.speak);
             final String textToSpeak = row instanceof TokenRow ? ((TokenRow) row).getToken() : selectedSpannableText;
             updateTTSLanguage(row instanceof TokenRow ? indexIndex : selectedSpannableIndex);
-            speak.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    speak(textToSpeak);
-                    return false;
-                }
+            speak.setOnMenuItemClickListener(item -> {
+                speak(textToSpeak);
+                return false;
             });
         }
         if (row instanceof PairEntry.Row && ttsReady) {
             final List<Pair> pairs = ((PairEntry.Row)row).getEntry().pairs;
             final MenuItem speakLeft = menu.add(R.string.speak_left);
-            speakLeft.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    int idx = index.swapPairEntries ? 1 : 0;
-                    updateTTSLanguage(idx);
-                    String text = "";
-                    for (Pair p : pairs) text += p.get(idx);
-                    text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
-                    speak(text);
-                    return false;
-                }
+            speakLeft.setOnMenuItemClickListener(item -> {
+                int idx = index.swapPairEntries ? 1 : 0;
+                updateTTSLanguage(idx);
+                String text = "";
+                for (Pair p : pairs) text += p.get(idx);
+                text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
+                speak(text);
+                return false;
             });
             final MenuItem speakRight = menu.add(R.string.speak_right);
-            speakRight.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    int idx = index.swapPairEntries ? 0 : 1;
-                    updateTTSLanguage(idx);
-                    String text = "";
-                    for (Pair p : pairs) text += p.get(idx);
-                    text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
-                    speak(text);
-                    return false;
-                }
+            speakRight.setOnMenuItemClickListener(item -> {
+                int idx = index.swapPairEntries ? 0 : 1;
+                updateTTSLanguage(idx);
+                String text = "";
+                for (Pair p : pairs) text += p.get(idx);
+                text = text.replaceAll("\\{[^{}]*\\}", "").replace("{", "").replace("}", "");
+                speak(text);
+                return false;
             });
         }
     }
@@ -1329,12 +1251,9 @@ public class DictionaryActivity extends AppCompatActivity {
         // Without this extra delay, the call to jumpToRow that this
         // invokes doesn't always actually have any effect.
         final int actualIndexToUse = indexToUse;
-        getListView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setIndexAndSearchText(actualIndexToUse, selectedText, true);
-                addToSearchHistory(selectedText);
-            }
+        getListView().postDelayed(() -> {
+            setIndexAndSearchText(actualIndexToUse, selectedText, true);
+            addToSearchHistory(selectedText);
         }, 100);
     }
 
@@ -1488,24 +1407,21 @@ public class DictionaryActivity extends AppCompatActivity {
         currentSearchOperation = null;
         // Note: it's important to post to the ListView, otherwise
         // the jumpToRow will randomly not work.
-        getListView().post(new Runnable() {
-            @Override
-            public void run() {
-                if (currentSearchOperation == null) {
-                    if (searchResult != null) {
-                        if (isFiltered()) {
-                            clearFiltered();
-                        }
-                        jumpToRow(searchResult.startRow);
-                    } else if (searchOperation.multiWordSearchResult != null) {
-                        // Multi-row search....
-                        setFiltered(searchOperation);
-                    } else {
-                        throw new IllegalStateException("This should never happen.");
+        getListView().post(() -> {
+            if (currentSearchOperation == null) {
+                if (searchResult != null) {
+                    if (isFiltered()) {
+                        clearFiltered();
                     }
+                    jumpToRow(searchResult.startRow);
+                } else if (searchOperation.multiWordSearchResult != null) {
+                    // Multi-row search....
+                    setFiltered(searchOperation);
                 } else {
-                    Log.d(LOG, "More coming, waiting for currentSearchOperation.");
+                    throw new IllegalStateException("This should never happen.");
                 }
+            } else {
+                Log.d(LOG, "More coming, waiting for currentSearchOperation.");
             }
         });
     }
@@ -1563,12 +1479,7 @@ public class DictionaryActivity extends AppCompatActivity {
                       + (System.currentTimeMillis() - searchStartMillis)
                       + ", interrupted=" + interrupted.get());
                 if (!interrupted.get()) {
-                    uiHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            searchFinished(SearchOperation.this);
-                        }
-                    });
+                    uiHandler.post(() -> searchFinished(SearchOperation.this));
                 } else {
                     Log.d(LOG, "interrupted, skipping searchFinished.");
                 }
@@ -1743,10 +1654,8 @@ public class DictionaryActivity extends AppCompatActivity {
 
                 final TextView col1 = new TextView(tableRow.getContext());
                 final TextView col2 = new TextView(tableRow.getContext());
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-                    col1.setTextIsSelectable(true);
-                    col2.setTextIsSelectable(true);
-                }
+                col1.setTextIsSelectable(true);
+                col2.setTextIsSelectable(true);
                 col1.setTextColor(textColorFg);
                 col2.setTextColor(textColorFg);
 
@@ -1821,12 +1730,7 @@ public class DictionaryActivity extends AppCompatActivity {
                 col2.setText(col2Spannable);
             }
 
-            result.setOnClickListener(new TextView.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DictionaryActivity.this.onListItemClick(getListView(), v, position, position);
-                }
-            });
+            result.setOnClickListener(v -> DictionaryActivity.this.onListItemClick(getListView(), v, position, position));
 
             return result;
         }
@@ -1875,12 +1779,7 @@ public class DictionaryActivity extends AppCompatActivity {
                 };
                 textSpannable.setSpan(clickableSpan, 0, text.length(),
                         Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                textView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showHtml(htmlEntries, htmlTextToHighlight);
-                    }
-                });
+                textView.setOnClickListener(v -> showHtml(htmlEntries, htmlTextToHighlight));
             }
             textView.setText(textSpannable);
             return textView;
@@ -1965,13 +1864,10 @@ public class DictionaryActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.thadolina_dialog);
             dialog.setTitle("Ti amo, amore mio!");
             final ImageView imageView = dialog.findViewById(R.id.thadolina_image);
-            imageView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("https://sites.google.com/site/cfoxroxvday/vday2012"));
-                    startActivity(intent);
-                }
+            imageView.setOnClickListener(v -> {
+                final Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://sites.google.com/site/cfoxroxvday/vday2012"));
+                startActivity(intent);
             });
             dialog.show();
         }
@@ -1991,7 +1887,7 @@ public class DictionaryActivity extends AppCompatActivity {
         }
         currentSearchOperation = new SearchOperation(text, index);
         searchExecutor.execute(currentSearchOperation);
-        ((FloatingActionButton)findViewById(R.id.floatSearchButton)).setImageResource(text.length() > 0 ? R.drawable.ic_clear_black_24dp : R.drawable.ic_search_black_24dp);
+        ((FloatingActionButton)findViewById(R.id.floatSearchButton)).setImageResource(!text.isEmpty() ? R.drawable.ic_clear_black_24dp : R.drawable.ic_search_black_24dp);
         searchView.getSuggestionsAdapter().swapCursor(text.isEmpty() ? searchHistoryCursor : null);
         searchView.getSuggestionsAdapter().notifyDataSetChanged();
     }

@@ -14,11 +14,8 @@
 
 package com.hughes.android.dictionary.engine;
 
-import android.os.Build;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import com.hughes.util.LRUCacheMap;
 import com.ibm.icu.text.Transliterator;
@@ -64,26 +61,23 @@ public class TransliteratorManager {
         return false;
     }
 
-    private static final Runnable init = new Runnable() {
-        @Override
-        public void run() {
-            synchronized (TransliteratorManager.class) {
-                if (threadSetup != null) threadSetup.onThreadStart();
-            }
-            System.out.println("Starting Transliterator load.");
-            final String transliterated = get(Language.en.getDefaultNormalizerRules()).transliterate("Îñţérñåţîöñåļîžåţîờñ");
-            if (!"internationalization".equals(transliterated)) {
-                System.out.println("Wrong transliteration: " + transliterated);
-            }
+    private static final Runnable init = () -> {
+        synchronized (TransliteratorManager.class) {
+            if (threadSetup != null) threadSetup.onThreadStart();
+        }
+        System.out.println("Starting Transliterator load.");
+        final String transliterated = get(Language.en.getDefaultNormalizerRules()).transliterate("Îñţérñåţîöñåļîžåţîờñ");
+        if (!"internationalization".equals(transliterated)) {
+            System.out.println("Wrong transliteration: " + transliterated);
+        }
 
-            final List<Callback> callbacks;
-            synchronized (TransliteratorManager.class) {
-                callbacks = new ArrayList<>(TransliteratorManager.callbacks);
-                ready = true;
-            }
-            for (final Callback callback : callbacks) {
-                callback.onTransliteratorReady();
-            }
+        final List<Callback> callbacks;
+        synchronized (TransliteratorManager.class) {
+            callbacks = new ArrayList<>(TransliteratorManager.callbacks);
+            ready = true;
+        }
+        for (final Callback callback : callbacks) {
+            callback.onTransliteratorReady();
         }
     };
 

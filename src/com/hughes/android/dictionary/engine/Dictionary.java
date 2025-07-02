@@ -16,12 +16,9 @@ package com.hughes.android.dictionary.engine;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
-import java.nio.BufferUnderflowException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;

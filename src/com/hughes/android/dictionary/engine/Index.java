@@ -243,7 +243,7 @@ public final class Index {
                         }
                     };
                 }
-            } else if (index.dict.dictFileVersion >= 6) {
+            } else if (index.dict.dictFileVersion == 6) {
                 this.htmlEntries = CachingList.create(
                                        RAFList.create((DataInputBuffer)raf, index.dict.htmlEntryIndexSerializer,
                                                       index.dict.dictFileVersion,
@@ -276,12 +276,7 @@ public final class Index {
         }
     }
 
-    private static final TransformingList.Transformer<IndexEntry, String> INDEX_ENTRY_TO_TOKEN = new TransformingList.Transformer<IndexEntry, String>() {
-        @Override
-        public String transform(IndexEntry t1) {
-            return t1.token;
-        }
-    };
+    private static final TransformingList.Transformer<IndexEntry, String> INDEX_ENTRY_TO_TOKEN = t1 -> t1.token;
 
     public IndexEntry findExact(final String exactToken) {
         final int result = Collections.binarySearch(
@@ -504,7 +499,7 @@ public final class Index {
                 RowMatchType.class);
         for (final RowMatchType rowMatchType : RowMatchType.values()) {
             if (rowMatchType != RowMatchType.NO_MATCH) {
-                matches.put(rowMatchType, new ArrayList<RowBase>());
+                matches.put(rowMatchType, new ArrayList<>());
             }
         }
 

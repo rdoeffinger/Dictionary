@@ -80,7 +80,7 @@ public class PairEntry extends AbstractEntry implements Comparable<PairEntry> {
         super.write(raf);
         StringUtil.writeVarInt(raf, pairs.size());
         for (Pair p : pairs) {
-            assert p.lang1.length() > 0;
+            assert !p.lang1.isEmpty();
             fastWriteUTF(raf, p.lang1);
             fastWriteUTF(raf, p.lang2);
         }
@@ -256,7 +256,7 @@ public class PairEntry extends AbstractEntry implements Comparable<PairEntry> {
         public Pair(final String lang1, final String lang2) {
             this.lang1 = lang1;
             this.lang2 = lang2;
-            assert lang1.trim().length() > 0 && lang2.trim().length() > 0 : "Empty pair!!!";
+            assert !lang1.trim().isEmpty() && !lang2.trim().isEmpty() : "Empty pair!!!";
         }
 
         public Pair(final String lang1, final String lang2, final boolean swap) {
