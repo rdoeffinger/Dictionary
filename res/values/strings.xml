@@ -110,4 +110,8 @@
     <string name="historySizeTitle">Search history entries</string>
     <string name="historySizeSummary">The number of search history entries to save and display.</string>
 
+    <string name="commandHandlingKey" translatable="false">commandHandling</string>
+    <string name="commandHandlingTitle">Wiktionary commands</string>
+    <string name="commandHandlingSummary">How to handle Wiktionary commands in dictionary entries.</string>
+
 </resources>

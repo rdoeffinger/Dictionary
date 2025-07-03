@@ -84,4 +84,14 @@
     android:persistent="true"
   />
 
+  <ListPreference
+    android:key="@string/commandHandlingKey"
+    android:title="@string/commandHandlingTitle"
+    android:summary="@string/commandHandlingSummary"
+    android:persistent="true"
+    android:defaultValue="commandItalic"
+    android:entries="@array/commandHandling"
+    android:entryValues="@array/commandHandlingKeys"
+  />
+
 </PreferenceScreen>

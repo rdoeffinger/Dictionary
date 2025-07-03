@@ -184,6 +184,8 @@ public class DictionaryActivity extends AppCompatActivity {
     private DocumentFile wordList = null;
     private boolean saveOnlyFirstSubentry = false;
     private boolean clickOpensContextMenu = false;
+    private boolean filterCommands = true;
+    private boolean deleteCommands = false;
 
     // Visible for testing.
     private ListAdapter indexAdapter = null;
@@ -583,6 +585,11 @@ public class DictionaryActivity extends AppCompatActivity {
         clickOpensContextMenu = prefs.getBoolean(getString(R.string.clickOpensContextMenuKey),
                                 !getPackageManager().hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN));
         Log.d(LOG, "wordList=" + wordList + ", saveOnlyFirstSubentry=" + saveOnlyFirstSubentry);
+        final String commandHandling = prefs.getString(getString(R.string.commandHandlingKey), "commandItalic");
+        filterCommands = true;
+        deleteCommands = false;
+        if (commandHandling.equals("commandNone")) filterCommands = false;
+        else if (commandHandling.equals("commandRemove")) deleteCommands = true;
 
         onCreateSetupActionBarAndSearchView();
 
@@ -1616,6 +1623,23 @@ public class DictionaryActivity extends AppCompatActivity {
             }
         }
 
+        private String findWiktionaryCommands(String colText, ArrayList<int[]> pos, boolean remove) {
+            Matcher m = Pattern.compile("(\\{\\{[^{}]*\\}\\}|\\{[^{}]*\\})").matcher(colText);
+            StringBuilder res = new StringBuilder();
+            int last_pos = 0;
+            while (m.find()) {
+                res.append(colText, last_pos, m.start());
+                last_pos = m.end();
+                if (remove) continue;
+                int start = res.length();
+                String inner = m.group().replace("{", "").replace("}", "");
+                res.append(inner);
+                pos.add(new int[]{start, res.length()});
+            }
+            res.append(colText.substring(last_pos));
+            return res.toString();
+        }
+
         private void addBoldSpans(String token, String col1Text, Spannable col1Spannable) {
             int startPos = 0;
             while ((startPos = col1Text.indexOf(token, startPos)) != -1) {
@@ -1710,11 +1734,24 @@ public class DictionaryActivity extends AppCompatActivity {
 
                 // Set what's in the columns.
                 final Pair pair = entry.pairs.get(r);
-                final String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
-                final String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
+                String col1Text = index.swapPairEntries ? pair.lang2 : pair.lang1;
+                String col2Text = index.swapPairEntries ? pair.lang1 : pair.lang2;
+                ArrayList<int[]> col1Cursive = new ArrayList<>(), col2Cursive = new ArrayList<>();
+                if (filterCommands) {
+                    col1Text = findWiktionaryCommands(col1Text, col1Cursive, deleteCommands);
+                    col2Text = findWiktionaryCommands(col2Text, col2Cursive, deleteCommands);
+                }
                 final Spannable col1Spannable = new SpannableString(col1Text);
                 final Spannable col2Spannable = new SpannableString(col2Text);
 
+                for (final int[] pos: col1Cursive)
+                {
+                    col1Spannable.setSpan(new StyleSpan(Typeface.ITALIC), pos[0], pos[1], Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                }
+                for (final int[] pos: col2Cursive)
+                {
+                    col2Spannable.setSpan(new StyleSpan(Typeface.ITALIC), pos[0], pos[1], Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                }
                 // Bold the token instances in col1.
                 if (toHighlight != null) {
                     for (final String token : toHighlight) {

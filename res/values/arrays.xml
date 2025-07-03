@@ -29,4 +29,16 @@
     <item>System theme (default)</item>
   </string-array>
 
+  <string-array name="commandHandlingKeys" translatable="false">
+    <item>commandNone</item>
+    <item>commandItalic</item>
+    <item>commandRemove</item>
+  </string-array>
+
+  <string-array name="commandHandling">
+    <item>No handling</item>
+    <item>Italic font (default)</item>
+    <item>Remove</item>
+  </string-array>
+
 </resources>
