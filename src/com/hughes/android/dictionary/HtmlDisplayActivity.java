@@ -32,6 +32,7 @@ import com.hughes.util.StringUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public final class HtmlDisplayActivity extends AppCompatActivity {
 
@@ -101,13 +102,8 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
             fontSizeSp = 14;
         }
         webView.getSettings().setDefaultFontSize(fontSizeSp);
-        try {
-            // No way to get pure UTF-8 data into WebView
-            // Cannot use StandardCharsets due to older Android.
-            html = Base64.encodeToString(html.getBytes("UTF-8"), Base64.DEFAULT);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Missing UTF-8 support?!", e);
-        }
+        // No way to get pure UTF-8 data into WebView
+        html = Base64.encodeToString(html.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
         // Use loadURL to allow specifying a charset
         webView.loadUrl("data:text/html;charset=utf-8;base64," + html);
         webView.activity = this;
