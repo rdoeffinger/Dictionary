@@ -23,7 +23,7 @@ dependencies {
     implementation "androidx.core:core:$core_version"
     implementation "androidx.preference:preference:1.2.1"
     implementation "androidx.documentfile:documentfile:1.0.1"
-    implementation "com.google.android.material:material:1.10.0"
+    implementation "com.google.android.material:material:1.11.0"
     // Note: you can just replace "smallicu" by implementation
     // and remove the "implementation files" part if you do not
     // care about the size of the apk
