@@ -1516,6 +1516,10 @@ public class DictionaryActivity extends AppCompatActivity {
         // Dictionaries currently all contain http:// links.
         // Regenerating all will not happen soon, so for now replace all occurrences instead.
         html = html.replace("http://", "https://");
+        if (filterCommands) {
+            html = html.replaceAll("\\{\\{([^{}]*)\\}\\}", deleteCommands ? "" : "<i>$1</i>");
+            html = html.replaceAll("\\{([^{}]*)\\}", deleteCommands ? "" : "<i>$1</i>");
+        }
         // Log.d(LOG, "html=" + html);
         startActivityForResult(
             HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
@@ -1529,6 +1533,8 @@ public class DictionaryActivity extends AppCompatActivity {
         private static final float PADDING_DEFAULT_DP = 8;
 
         private static final float PADDING_LARGE_DP = 16;
+
+        private final Pattern wiktionaryPattern = Pattern.compile("(\\{\\{[^{}]*\\}\\}|\\{[^{}]*\\})");
 
         final Index index;
 
@@ -1624,7 +1630,7 @@ public class DictionaryActivity extends AppCompatActivity {
         }
 
         private String findWiktionaryCommands(String colText, ArrayList<int[]> pos, boolean remove) {
-            Matcher m = Pattern.compile("(\\{\\{[^{}]*\\}\\}|\\{[^{}]*\\})").matcher(colText);
+            Matcher m = wiktionaryPattern.matcher(colText);
             StringBuilder res = new StringBuilder();
             int last_pos = 0;
             while (m.find()) {
