@@ -876,7 +876,7 @@ public class DictionaryActivity extends AppCompatActivity {
             Log.d(LOG, "Can't updateTTSLanguage.");
             return;
         }
-        final Locale locale = new Locale(dictionary.indices.get(i).sortLanguage.getIsoCode());
+        final Locale locale = Locale.forLanguageTag(dictionary.indices.get(i).sortLanguage.getIsoCode());
         Log.d(LOG, "Setting TTS locale to: " + locale);
         try {
             final int ttsResult = textToSpeech.setLanguage(locale);

@@ -104,7 +104,7 @@ public class Language {
     public static synchronized Language lookup(final String isoCode) {
         Language lang = registry.get(isoCode.toLowerCase());
         if (lang == null) {
-            lang = new Language(new Locale(isoCode), isoCode);
+            lang = new Language(Locale.forLanguageTag(isoCode), isoCode);
         }
         return lang;
     }

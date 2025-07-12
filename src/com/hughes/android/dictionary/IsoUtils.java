@@ -202,7 +202,7 @@ public enum IsoUtils {
     }
 
     public String isoCodeToLocalizedLanguageName(final Context context, final String isoCode) {
-        String lang = new Locale(isoCode).getDisplayLanguage();
+        String lang = Locale.forLanguageTag(isoCode).getDisplayLanguage();
         if (!lang.isEmpty() && !lang.equals(isoCode))
         {
             return lang;
