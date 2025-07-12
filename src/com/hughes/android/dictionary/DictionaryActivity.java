@@ -31,6 +31,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.core.widget.TextViewCompat;
 import androidx.preference.PreferenceManager;
@@ -303,6 +306,20 @@ public class DictionaryActivity extends AppCompatActivity {
         prefs.edit().remove(C.DICT_FILE).remove(C.INDEX_SHORT_NAME).commit();
 
         setContentView(R.layout.dictionary_activity);
+
+        for (int id: Arrays.asList(R.id.floatSearchButton, R.id.floatSwapButton)) {
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(id), (v, windowInsets) -> {
+                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+                ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                mlp.leftMargin = insets.left;
+                mlp.bottomMargin = insets.bottom;
+                mlp.rightMargin = insets.right;
+                v.setLayoutParams(mlp);
+                // Return CONSUMED if you don't want the window insets to keep passing
+                // down to descendant views.
+                return WindowInsetsCompat.CONSUMED;
+            });
+        }
 
         theme = application.getSelectedTheme();
         textColorFg = ContextCompat.getColor(this, theme.tokenRowFgColor);
