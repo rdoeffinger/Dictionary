@@ -18,13 +18,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.hughes.util.StringUtil;
@@ -42,7 +48,6 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
     private static final String HTML = "html";
     private static final String TITLE = "title";
     private static final String TEXT_TO_HIGHLIGHT = "textToHighlight";
-    private static final String SHOW_OK_BUTTON = "showOKButton";
 
     public static Intent getHelpLaunchIntent(Context c) {
         final Intent intent = new Intent(c, HtmlDisplayActivity.class);
@@ -57,11 +62,10 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
     }
 
     public static Intent getHtmlIntent(Context c, final String html, final String textToHighlight,
-                                       final String title, final boolean showOkButton) {
+                                       final String title) {
         final Intent intent = new Intent(c, HtmlDisplayActivity.class);
         intent.putExtra(HTML, html);
         intent.putExtra(TEXT_TO_HIGHLIGHT, textToHighlight == null ? "" : textToHighlight);
-        intent.putExtra(SHOW_OK_BUTTON, showOkButton);
         if (title != null)
             intent.putExtra(TITLE, title);
         return intent;
@@ -87,6 +91,27 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
         if (title != null)
             setTitle(title);
 
+        final MyWebView webView = findViewById(R.id.webView);
+        ViewCompat.setOnApplyWindowInsetsListener(webView, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            // Unfortunately padding is ignored here, so set margins instead
+            // Also getSupportActionBar().getHeight() is often 0 so get the size from the attribute instead
+            TypedValue tv = new TypedValue();
+            getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+            int abSize = getResources().getDimensionPixelSize(tv.resourceId);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)v.getLayoutParams();
+            params.setMargins(
+                    insets.left,
+                    insets.top + abSize,
+                    insets.right,
+                    0
+            );
+            v.setLayoutParams(params);
+            // Return CONSUMED if you don't want the window insets to keep passing
+            // down to descendant views.
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);
         String html;
         if (htmlRes != -1) {
@@ -99,7 +124,6 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
         } else {
             html = getIntent().getStringExtra(HTML);
         }
-        final MyWebView webView = findViewById(R.id.webView);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String fontSize = prefs.getString(getString(R.string.fontSizeKey), "14");
         int fontSizeSp;
@@ -121,11 +145,6 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
             // This isn't working:
             // webView.findAll(textToHighlight);
             // webView.showFindDialog(textToHighlight, false);
-        }
-
-        final Button okButton = findViewById(R.id.okButton);
-        if (!getIntent().getBooleanExtra(SHOW_OK_BUTTON, true)) {
-            okButton.setVisibility(Button.GONE);
         }
     }
 

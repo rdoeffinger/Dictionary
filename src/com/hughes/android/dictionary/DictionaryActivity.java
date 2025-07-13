@@ -307,6 +307,19 @@ public class DictionaryActivity extends AppCompatActivity {
 
         setContentView(R.layout.dictionary_activity);
 
+        ViewCompat.setOnApplyWindowInsetsListener(getListView(), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(
+                    insets.left,
+                    insets.top + getSupportActionBar().getHeight(),
+                    insets.right,
+                    0
+            );
+            // Return CONSUMED if you don't want the window insets to keep passing
+            // down to descendant views.
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         for (int id: Arrays.asList(R.id.floatSearchButton, R.id.floatSwapButton)) {
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(id), (v, windowInsets) -> {
                 Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -1542,7 +1555,7 @@ public class DictionaryActivity extends AppCompatActivity {
         startActivityForResult(
             HtmlDisplayActivity.getHtmlIntent(getApplicationContext(), String.format(
                     "<html><head><meta name=\"viewport\" content=\"width=device-width\"><style type=\"text/css\">%s</style></head><body>%s</body></html>", style, html),
-                                              htmlTextToHighlight, title, false),
+                                              htmlTextToHighlight, title),
             0);
     }
 

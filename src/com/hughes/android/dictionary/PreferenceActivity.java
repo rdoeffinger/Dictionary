@@ -19,6 +19,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.Environment;
+import android.util.TypedValue;
+import android.view.ViewGroup;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
@@ -52,6 +58,24 @@ public class PreferenceActivity extends AppCompatActivity
          */
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preference_activity);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.prefFrag), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            // getSupportActionBar().getHeight() is often 0 so get the size from the attribute instead
+            TypedValue tv = new TypedValue();
+            getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+            int abSize = getResources().getDimensionPixelSize(tv.resourceId);
+            v.setPadding(
+                    insets.left,
+                    insets.top + abSize,
+                    insets.right,
+                    insets.bottom
+            );
+            // Return CONSUMED if you don't want the window insets to keep passing
+            // down to descendant views.
+            return WindowInsetsCompat.CONSUMED;
+        });
+
     }
 
     @Override

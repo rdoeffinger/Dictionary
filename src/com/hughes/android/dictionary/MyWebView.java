@@ -37,6 +37,9 @@ public class MyWebView extends WebView {
         super(context, attrs);
         getSettings().setSupportZoom(true);
         getSettings().setBuiltInZoomControls(true);
+        // Zoom controls are deprecated, ugly and are misplaced
+        // (e.g. hidden behind notch/navigation buttons)
+        getSettings().setDisplayZoomControls(false);
         // TODO: check why AUTO does not work and consider using it (API 29/Android 10 only)
         //getSettings().setForceDark(WebSettings.FORCE_DARK_ON);
 

@@ -2,12 +2,13 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/titleText"
@@ -49,9 +50,9 @@
             android:layout_gravity="left"
             android:autoLink="email"
             android:clickable="true"
-            android:text="@string/myEmail"
+            android:focusable="true"
             android:paddingBottom="10dip"
-            android:focusable="true" />
+            android:text="@string/myEmail" />
 
         <TextView
             android:id="@+id/webPage"
@@ -66,11 +67,11 @@
             android:layout_gravity="left"
             android:autoLink="web"
             android:clickable="true"
-            android:text="@string/webPageUrl"
+            android:focusable="true"
             android:paddingBottom="10dip"
-            android:focusable="true" />
+            android:text="@string/webPageUrl" />
 
-         <TextView
+        <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,8 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:autoLink="web"
-            android:text="Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano, 'Akira"
             android:paddingBottom="10dip"
+            android:text="Dominik Köppl, Uwe Trottmann, Michael Vogel, Laura Arjona, Fabio Casciano, 'Akira"
             tools:ignore="HardcodedText" />
 
         <TextView
