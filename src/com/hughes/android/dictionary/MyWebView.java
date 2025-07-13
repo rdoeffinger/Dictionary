@@ -45,7 +45,6 @@ public class MyWebView extends WebView {
 
         final WebViewClient webViewClient = new WebViewClient() {
             @Override
-            @SuppressWarnings("deprecation")
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (HtmlEntry.isQuickdicUrl(url)) {
                     Log.d(LOG, "Handling Quickdic URL: " + url);

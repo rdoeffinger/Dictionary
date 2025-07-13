@@ -17,7 +17,6 @@ package com.hughes.android.dictionary;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Build;
 import android.os.Environment;
 import android.util.TypedValue;
 import android.view.ViewGroup;
@@ -36,7 +35,6 @@ public class PreferenceActivity extends AppCompatActivity
 
     static boolean prefsMightHaveChanged = false;
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         DictionaryApplication.INSTANCE.init(getApplicationContext());
@@ -97,23 +95,10 @@ public class PreferenceActivity extends AppCompatActivity
         String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         if (new File(externalDir).canWrite())
             dirs += "\n" + externalDir + "/quickDic" + suffix;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            File[] files = getApplicationContext().getExternalFilesDirs(null);
-            for (File f : files) {
-                if (f.canWrite())
-                    dirs += "\n" + f.getAbsolutePath() + suffix;
-            }
-        } else {
-            File efd = null;
-            try {
-                efd = getApplicationContext().getExternalFilesDir(null);
-            } catch (Exception ignored) {
-            }
-            if (efd != null) {
-                String externalFilesDir = efd.getAbsolutePath();
-                if (new File(externalFilesDir).canWrite())
-                    dirs += "\n" + externalFilesDir + suffix;
-            }
+        File[] files = getApplicationContext().getExternalFilesDirs(null);
+        for (File f : files) {
+            if (f.canWrite())
+                dirs += "\n" + f.getAbsolutePath() + suffix;
         }
         File fd = getApplicationContext().getFilesDir();
         if (fd.canWrite())

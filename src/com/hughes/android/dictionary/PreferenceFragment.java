@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.preference.ListPreference;
@@ -46,15 +45,13 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
                         final SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(getContext());
                         prefs1.edit().putString(getResources().getString(R.string.quickdicDirectoryKey), t.getText().toString()).commit();
                     });
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                b.setNeutralButton(getString(R.string.choose), (dialogInterface, i) -> {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                    intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
-                    startActivityForResult(intent, 0x3253);
-                });
-            }
+            b.setNeutralButton(getString(R.string.choose), (dialogInterface, i) -> {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+                startActivityForResult(intent, 0x3253);
+            });
             b.create().show();
             return true;
         }

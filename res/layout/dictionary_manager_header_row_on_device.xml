@@ -9,7 +9,6 @@
     android:padding="10dip">
 
     <TextView
-        android:id="@+id/onDeviceTextId"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"

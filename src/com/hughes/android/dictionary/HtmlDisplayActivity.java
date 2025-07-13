@@ -29,15 +29,12 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.hughes.util.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 public final class HtmlDisplayActivity extends AppCompatActivity {
@@ -55,12 +52,6 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
         return intent;
     }
 
-    public static Intent getWhatsNewLaunchIntent(Context c) {
-        final Intent intent = new Intent(c, HtmlDisplayActivity.class);
-        intent.putExtra(HTML_RES, R.raw.whats_new);
-        return intent;
-    }
-
     public static Intent getHtmlIntent(Context c, final String html, final String textToHighlight,
                                        final String title) {
         final Intent intent = new Intent(c, HtmlDisplayActivity.class);
@@ -69,10 +60,6 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
         if (title != null)
             intent.putExtra(TITLE, title);
         return intent;
-    }
-
-    public void onOkClick(View dummy) {
-        finish();
     }
 
     /** Called when the activity is first created. */

@@ -20,7 +20,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.PreferenceManager;
@@ -247,7 +246,7 @@ public enum DictionaryApplication {
         }
         if (efd != null) {
             efd.mkdirs();
-            if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (!dictDir.isDirectory()) {
                 appContext.getExternalFilesDirs(null);
             }
             if (efd.isDirectory() && efd.canWrite() && checkFileCreate(DocumentFile.fromFile(efd))) {
@@ -268,7 +267,7 @@ public enum DictionaryApplication {
         if (dir.isEmpty()) {
             dir = selectDefaultDir();
         }
-        DocumentFile dictDir = null;
+        DocumentFile dictDir;
         Uri dirUri = Uri.parse(dir);
         if ("content".equals(dirUri.getScheme())) {
             dictDir = DocumentFile.fromTreeUri(appContext, dirUri);
@@ -277,7 +276,7 @@ public enum DictionaryApplication {
             df.mkdirs();
             dictDir = DocumentFile.fromFile(df);
         }
-        if (!dictDir.isDirectory() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (!dictDir.isDirectory()) {
             appContext.getExternalFilesDirs(null);
         }
         return dictDir;

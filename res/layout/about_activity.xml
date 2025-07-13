@@ -19,7 +19,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
-            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -28,7 +27,6 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -37,14 +35,12 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/contactMe"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
-            android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -55,13 +51,11 @@
             android:text="@string/myEmail" />
 
         <TextView
-            android:id="@+id/webPage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/webPage" />
 
         <TextView
-            android:id="@+id/webPageUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -72,13 +66,11 @@
             android:text="@string/webPageUrl" />
 
         <TextView
-            android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/contributionsFrom" />
 
         <TextView
-            android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -88,7 +80,6 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/license"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -96,7 +87,6 @@
             android:text="@string/license" />
 
         <TextView
-            android:id="@+id/licenseUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"

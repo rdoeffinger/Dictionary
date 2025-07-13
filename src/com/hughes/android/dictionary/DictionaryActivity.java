@@ -1345,7 +1345,6 @@ public class DictionaryActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void onCopy(final RowBase row) {
         defocusSearchText();
 
@@ -1365,12 +1364,6 @@ public class DictionaryActivity extends AppCompatActivity {
                 searchView.requestFocus();
             }
             return true;
-        }
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // Log.d(LOG, "Clearing dictionary prefs.");
-            // Pretend that we just autolaunched so that we won't do it again.
-            // DictionaryManagerActivity.lastAutoLaunchMillis =
-            // System.currentTimeMillis();
         }
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
             Log.d(LOG, "Trying to hide soft keyboard.");
@@ -1950,10 +1943,6 @@ public class DictionaryActivity extends AppCompatActivity {
             return;
         }
 
-        // if (!searchView.hasFocus()) {
-        // Log.d(LOG, "searchText changed without focus, doing nothing.");
-        // return;
-        // }
         Log.d(LOG, "onSearchTextChange: " + text);
         if (currentSearchOperation != null) {
             Log.d(LOG, "Interrupting currentSearchOperation.");

@@ -27,7 +27,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -156,11 +155,11 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                     }
 
                     dest = cursor
-                            .getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                            .getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI));
                     status = cursor
                             .getInt(cursor
-                                    .getColumnIndex(DownloadManager.COLUMN_STATUS));
-                    reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
+                                    .getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+                    reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON));
                 }
                 if (DownloadManager.STATUS_SUCCESSFUL != status) {
                     Log.w(LOG,
@@ -201,9 +200,8 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         ZipInputStream zipFile = null;
         boolean result = false;
         try {
-            if (zipUri.getScheme().equals("content")) {
+            if ("content".equals(zipUri.getScheme())) {
                 zipFileStream = context.getContentResolver().openInputStream(zipUri);
-                localZipFile = null;
             } else {
                 localZipFile = new File(zipUri.getPath());
                 try {
@@ -299,6 +297,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         readableCheckAndError(false);
 
         application.backgroundUpdateDictionaries(dictionaryUpdater);
@@ -336,19 +335,6 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                            .findViewById(R.id.hideDownloadable);
         showDownloadable.setOnCheckedChangeListener((buttonView, isChecked) -> onShowDownloadableChanged());
 
-        /*
-        Disable version update notification, I don't maintain the text really
-        and I don't think it is very useful.
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String thanksForUpdatingLatestVersion = getString(R.string.thanksForUpdatingVersion);
-        if (!prefs.getString(C.THANKS_FOR_UPDATING_VERSION, "").equals(
-                    thanksForUpdatingLatestVersion)) {
-            blockAutoLaunch = true;
-            startActivity(HtmlDisplayActivity.getWhatsNewLaunchIntent(getApplicationContext()));
-            prefs.edit().putString(C.THANKS_FOR_UPDATING_VERSION, thanksForUpdatingLatestVersion)
-            .commit();
-        }
-        */
         IntentFilter downloadManagerIntents = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         downloadManagerIntents.addAction(DownloadManager.ACTION_NOTIFICATION_CLICKED);
         ContextCompat.registerReceiver(this, broadcastReceiver, downloadManagerIntents, ContextCompat.RECEIVER_EXPORTED);
@@ -672,14 +658,14 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             throw new RuntimeException("Invalid download URL!", e);
         }
         while (cursor.moveToNext()) {
-            if (downloadUrl.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_URI))))
+            if (downloadUrl.equals(cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_URI))))
                 break;
-            if (destFile.equals(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))))
+            if (destFile.equals(cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TITLE))))
                 break;
         }
         boolean active = !cursor.isAfterLast();
         if (active && cancel) {
-            long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
+            long downloadId = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_ID));
             finishedDownloadIds.add(downloadId);
             downloadManager.remove(downloadId);
         }

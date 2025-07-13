@@ -66,20 +66,6 @@ public class DictionaryInfo implements Serializable {
         return !indexInfos.isEmpty();
     }
 
-    public StringBuilder append(final StringBuilder result) {
-        result.append(uncompressedFilename);
-        result.append("\t").append(downloadUrl);
-        result.append("\t").append(creationMillis);
-        result.append("\t").append(uncompressedBytes);
-        result.append("\t").append(zipBytes);
-        result.append("\t").append(indexInfos.size());
-        for (final IndexInfo indexInfo : indexInfos) {
-            indexInfo.append(result.append("\t"));
-        }
-        result.append("\t").append(dictInfo.replace("\n", "\\\\n"));
-        return result;
-    }
-
     public DictionaryInfo(final String line) {
         final String[] fields = line.split("\t");
         int i = 0;

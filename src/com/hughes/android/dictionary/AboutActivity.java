@@ -24,7 +24,6 @@ public final class AboutActivity extends Activity {
 
     /** Called when the activity is first created. */
     @Override
-    @SuppressWarnings("deprecation")
     public void onCreate(final Bundle savedInstanceState) {
         DictionaryApplication.INSTANCE.init(getApplicationContext());
         setTheme(DictionaryApplication.INSTANCE.getSelectedTheme().themeId);
