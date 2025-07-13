@@ -1050,7 +1050,7 @@ public class DictionaryActivity extends AppCompatActivity {
         final Index.IndexEntry dest = index.sortedIndexEntries.get(destIndexEntry);
         Log.d(LOG, "onUpDownButton, destIndexEntry=" + dest.token);
         setSearchText(dest.token, false);
-        jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
+        getListView().post(() -> jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow));
         defocusSearchText();
     }
 
@@ -1058,7 +1058,7 @@ public class DictionaryActivity extends AppCompatActivity {
         int destIndexEntry = rand.nextInt(index.sortedIndexEntries.size());
         final Index.IndexEntry dest = index.sortedIndexEntries.get(destIndexEntry);
         setSearchText(dest.token, false);
-        jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow);
+        getListView().post(() -> jumpToRow(index.sortedIndexEntries.get(destIndexEntry).startRow));
         defocusSearchText();
     }
 
