@@ -55,7 +55,7 @@ public class MyWebView extends WebView {
                     activity.finish();
                     return true;
                 }
-                return super.shouldOverrideUrlLoading(view, url);
+                return false;
             }
         };
         setWebViewClient(webViewClient);

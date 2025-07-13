@@ -445,9 +445,9 @@ public final class Index {
         return rowCount;
     }
 
-    public final List<RowBase> multiWordSearch(
-        final String searchText, final List<String> searchTokens,
-        final AtomicBoolean interrupted) {
+    public List<RowBase> multiWordSearch(
+            final String searchText, final List<String> searchTokens,
+            final AtomicBoolean interrupted) {
         final long startMills = System.currentTimeMillis();
         final List<RowBase> result = new ArrayList<>();
 

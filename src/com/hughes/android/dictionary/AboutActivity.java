@@ -20,6 +20,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import androidx.core.content.pm.PackageInfoCompat;
+
 public final class AboutActivity extends Activity {
 
     /** Called when the activity is first created. */
@@ -35,7 +37,7 @@ public final class AboutActivity extends Activity {
             PackageManager pm = getPackageManager();
             if (pm != null) {
                 PackageInfo p = pm.getPackageInfo(getPackageName(), 0);
-                ver = p.versionName + " (ID " + p.versionCode + ")";
+                ver = p.versionName + " (ID " + PackageInfoCompat.getLongVersionCode(p) + ")";
             }
         } catch (Exception ignored) {
         }
