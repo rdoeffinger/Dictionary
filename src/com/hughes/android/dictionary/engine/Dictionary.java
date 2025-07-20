@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.hughes.android.dictionary.DictionaryInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo;
 import com.hughes.util.CachingList;
 import com.hughes.util.DataInputBuffer;
 import com.hughes.util.raf.RAFList;

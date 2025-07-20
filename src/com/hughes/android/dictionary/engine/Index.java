@@ -37,8 +37,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-import com.hughes.android.dictionary.DictionaryInfo;
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.RowBase.RowKey;
 import com.hughes.util.CachingList;
 import com.hughes.util.DataInputBuffer;
@@ -410,7 +409,7 @@ public final class Index {
     }
 
     public IndexInfo getIndexInfo() {
-        return new DictionaryInfo.IndexInfo(shortName, sortedIndexEntries.size(), mainTokenCount);
+        return new IndexInfo(shortName, sortedIndexEntries.size(), mainTokenCount);
     }
 
     private static final int MAX_SEARCH_ROWS = 1000;

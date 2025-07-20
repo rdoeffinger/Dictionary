@@ -29,7 +29,8 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;

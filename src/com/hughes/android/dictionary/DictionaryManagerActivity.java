@@ -64,7 +64,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
 import com.hughes.android.util.IntentLauncher;
 
 import java.io.BufferedInputStream;

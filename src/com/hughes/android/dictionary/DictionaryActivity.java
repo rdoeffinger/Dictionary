@@ -85,7 +85,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hughes.android.dictionary.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.EntrySource;
 import com.hughes.android.dictionary.engine.HtmlEntry;

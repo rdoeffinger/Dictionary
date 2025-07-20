@@ -16,6 +16,8 @@ import androidx.preference.PreferenceManager;
 import android.text.InputType;
 import android.widget.EditText;
 
+import com.hughes.android.dictionary.engine.DictionaryInfo;
+
 import java.util.List;
 
 public class PreferenceFragment extends PreferenceFragmentCompat {

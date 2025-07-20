@@ -19,7 +19,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.hughes.android.dictionary.DictionaryApplication;
-import com.hughes.android.dictionary.DictionaryInfo;
+import com.hughes.android.dictionary.engine.DictionaryInfo;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
