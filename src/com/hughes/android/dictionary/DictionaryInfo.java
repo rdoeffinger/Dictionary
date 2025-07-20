@@ -27,19 +27,13 @@ public class DictionaryInfo implements Serializable {
         static final int NUM_CSV_FIELDS = 3;
 
         public final String shortName; // Often LangISO.
-        final int allTokenCount;
+        public final int allTokenCount; // Must be public for DictionaryPC
         public final int mainTokenCount;
 
         public IndexInfo(String shortName, int allTokenCount, int mainTokenCount) {
             this.shortName = shortName;
             this.allTokenCount = allTokenCount;
             this.mainTokenCount = mainTokenCount;
-        }
-
-        void append(StringBuilder result) {
-            result.append(shortName);
-            result.append("\t").append(allTokenCount);
-            result.append("\t").append(mainTokenCount);
         }
 
         public IndexInfo(final String[] fields, int i) {
