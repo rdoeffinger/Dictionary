@@ -479,7 +479,7 @@ public final class Index {
                 }
             }
 
-            if (searchTokensRegex.length() > 0) {
+            if (!searchTokensRegex.isEmpty()) {
                 searchTokensRegex.append("[\\s]*");
             }
             searchTokensRegex.append(Pattern.quote(normalized));
