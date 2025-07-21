@@ -25,6 +25,4 @@ public class C {
     public static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
     public static final String SHOW_DOWNLOADABLE = "showLocal";
 
-    public static final String THANKS_FOR_UPDATING_VERSION = "thanksForUpdatingVersion";
-
 }
