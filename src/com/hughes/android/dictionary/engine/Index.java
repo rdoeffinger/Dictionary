@@ -44,7 +44,7 @@ import com.hughes.util.DataInputBuffer;
 import com.hughes.util.StringUtil;
 import com.hughes.util.TransformingList;
 import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFSerializer;
+import com.hughes.util.raf.RAFListSerializer;
 import com.hughes.util.raf.UniformRAFList;
 import com.ibm.icu.text.Transliterator;
 
@@ -180,9 +180,9 @@ public final class Index {
         }
     }
 
-    private final class IndexEntrySerializer implements RAFSerializer<IndexEntry> {
+    private final class IndexEntrySerializer implements RAFListSerializer<IndexEntry> {
         @Override
-        public IndexEntry read(DataInput raf) throws IOException {
+        public IndexEntry read(DataInput raf, int index) throws IOException {
             return new IndexEntry(Index.this, raf);
         }
 
