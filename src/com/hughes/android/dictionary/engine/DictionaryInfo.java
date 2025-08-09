@@ -14,16 +14,10 @@
 
 package com.hughes.android.dictionary.engine;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class DictionaryInfo implements Serializable {
-
-    private static final long serialVersionUID = -6850863377577700388L;
-
-    public static final class IndexInfo implements Serializable {
-        private static final long serialVersionUID = 6524751236198309438L;
-
+public class DictionaryInfo {
+    public static final class IndexInfo {
         static final int NUM_CSV_FIELDS = 3;
 
         public final String shortName; // Often LangISO.

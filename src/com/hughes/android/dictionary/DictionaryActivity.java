@@ -457,7 +457,6 @@ public class DictionaryActivity extends AppCompatActivity {
             String bestFname = null;
             String bestIndex = null;
             int bestMatchLen = 2; // ignore shorter matches
-            AtomicBoolean dummy = new AtomicBoolean();
             for (int i = 0; dictFilename == null && i < dics.size(); ++i) {
                 try {
                     Log.d(LOG, "Checking dictionary " + dics.get(i).uncompressedFilename);
@@ -473,7 +472,7 @@ public class DictionaryActivity extends AppCompatActivity {
                             intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
                             break;
                         }
-                        int matchLen = getMatchLen(search, idx.findInsertionPoint(search, dummy));
+                        int matchLen = getMatchLen(search, idx.findInsertionPoint(search));
                         Log.d(LOG, "Found partial match length " + matchLen);
                         if (matchLen > bestMatchLen) {
                             bestFname = dictfile.getUri().toString();

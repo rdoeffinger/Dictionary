@@ -152,7 +152,7 @@ public class Dictionary {
         }
     }
 
-    final RAFListSerializer<HtmlEntry> htmlEntryIndexSerializer = new RAFListSerializer<HtmlEntry>() {
+    final RAFListSerializer<HtmlEntry> htmlEntryIndexSerializer = new RAFListSerializer<>() {
         @Override
         public void write(DataOutput raf, HtmlEntry t) {
             assert false;

@@ -230,7 +230,7 @@ public final class Index {
                     for (int i = 0; i < size; ++i) {
                         htmlEntryIndices[i] = StringUtil.readVarInt(raf);
                     }
-                    this.htmlEntries = new AbstractList<HtmlEntry>() {
+                    this.htmlEntries = new AbstractList<>() {
                         @Override
                         public HtmlEntry get(int i) {
                             return index.dict.htmlEntries.get(htmlEntryIndices[i]);
@@ -292,6 +292,11 @@ public final class Index {
         return index != -1 ? sortedIndexEntries.get(index) : null;
     }
 
+    public IndexEntry findInsertionPoint(String token) {
+        final int index = findInsertionPointIndex(token, null);
+        return sortedIndexEntries.get(index);
+    }
+
     private int compareIdx(String token, final Comparator<Object> sortCollator, int idx) {
         final IndexEntry entry = sortedIndexEntries.get(idx);
         return NormalizeComparator.compareWithoutDash(token, entry.normalizedToken(), sortCollator, dict.dictFileVersion);
@@ -321,7 +326,7 @@ public final class Index {
         final Comparator<Object> sortCollator = sortLanguage.getCollator();
         while (start < end) {
             final int mid = (start + end) / 2;
-            if (interrupted.get()) {
+            if (interrupted != null && interrupted.get()) {
                 return -1;
             }
             final IndexEntry midEntry = sortedIndexEntries.get(mid);
@@ -390,7 +395,7 @@ public final class Index {
                 }
                 if (matchLen > findMatchLen(sortCollator, token, e.normalizedToken()))
                     break;
-                if (interrupted.get()) return start;
+                if (interrupted != null && interrupted.get()) return start;
                 scan++;
             }
         }
@@ -401,7 +406,7 @@ public final class Index {
     private int windBackCase(final String token, int result, final AtomicBoolean interrupted) {
         while (result > 0 && sortedIndexEntries.get(result - 1).normalizedToken().equals(token)) {
             --result;
-            if (interrupted.get()) {
+            if (interrupted != null && interrupted.get()) {
                 return result;
             }
         }
@@ -426,7 +431,7 @@ public final class Index {
 
         int rowCount = 0;
         for (int index = insertionPointIndex; index < sortedIndexEntries.size(); ++index) {
-            if (interrupted.get()) {
+            if (interrupted != null && interrupted.get()) {
                 return -1;
             }
             final IndexEntry indexEntry = sortedIndexEntries.get(index);
@@ -456,8 +461,8 @@ public final class Index {
         int leastRows = Integer.MAX_VALUE;
         final StringBuilder searchTokensRegex = new StringBuilder();
         for (int i = 0; i < searchTokens.size(); ++i) {
-            if (interrupted.get()) {
-                return null;
+            if (interrupted != null && interrupted.get()) {
+                return result;
             }
             final String searchToken = searchTokens.get(i);
             final String normalized = normalizeToken(searchTokens.get(i));
@@ -517,8 +522,8 @@ public final class Index {
         final Set<RowKey> rowsAlreadySeen = new HashSet<>();
         for (int index = insertionPointIndex; index < sortedIndexEntries.size()
                 && matchCount < MAX_SEARCH_ROWS; ++index) {
-            if (interrupted.get()) {
-                return null;
+            if (interrupted != null && interrupted.get()) {
+                return result;
             }
             final IndexEntry indexEntry = sortedIndexEntries.get(index);
             if (!indexEntry.normalizedToken.startsWith(searchToken) &&
@@ -532,8 +537,8 @@ public final class Index {
             for (int rowIndex = indexEntry.startRow + 1; rowIndex < indexEntry.startRow + 1
                     + indexEntry.numRows
                     && rowIndex < rows.size(); ++rowIndex) {
-                if (interrupted.get()) {
-                    return null;
+                if (interrupted != null && interrupted.get()) {
+                    return result;
                 }
                 final RowBase row = rows.get(rowIndex);
                 final RowBase.RowKey rowKey = row.getRowKey();
@@ -556,7 +561,7 @@ public final class Index {
             swapPairEntries);
         for (final Collection<RowBase> rows : matches.values()) {
             final List<RowBase> ordered = new ArrayList<>(rows);
-            Collections.sort(ordered, lengthComparator);
+            ordered.sort(lengthComparator);
             result.addAll(ordered);
         }
 
