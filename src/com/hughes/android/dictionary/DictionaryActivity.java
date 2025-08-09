@@ -323,7 +323,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
         for (int id: Arrays.asList(R.id.floatSearchButton, R.id.floatSwapButton)) {
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(id), (v, windowInsets) -> {
-                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.ime());
                 ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
                 mlp.leftMargin = insets.left;
                 mlp.bottomMargin = insets.bottom;
