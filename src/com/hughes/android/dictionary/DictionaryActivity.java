@@ -1034,7 +1034,7 @@ public class DictionaryActivity extends AppCompatActivity {
         if (isFiltered()) {
             return;
         }
-        final int firstVisibleRow = getListView().getFirstVisiblePosition();
+        final int firstVisibleRow = Math.clamp(getListView().getFirstVisiblePosition(), 0, index.sortedIndexEntries.size() - 1);
         final RowBase row = index.rows.get(firstVisibleRow);
         final TokenRow tokenRow = row.getTokenRow(true);
         final int destIndexEntry;
