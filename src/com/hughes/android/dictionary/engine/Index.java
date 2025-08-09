@@ -230,7 +230,7 @@ public final class Index {
                     for (int i = 0; i < size; ++i) {
                         htmlEntryIndices[i] = StringUtil.readVarInt(raf);
                     }
-                    this.htmlEntries = new AbstractList<>() {
+                    this.htmlEntries = new AbstractList<HtmlEntry>() {
                         @Override
                         public HtmlEntry get(int i) {
                             return index.dict.htmlEntries.get(htmlEntryIndices[i]);
