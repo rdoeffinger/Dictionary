@@ -877,6 +877,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
     private void hideKeyboard() {
         Log.d(LOG, "Hide soft keyboard.");
+        getListView().requestFocusFromTouch(); // Fixes search not working from history list
         searchView.clearFocus();
         InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
@@ -1437,6 +1438,7 @@ public class DictionaryActivity extends AppCompatActivity {
         currentSearchOperation = null;
         // Note: it's important to post to the ListView, otherwise
         // the jumpToRow will randomly not work.
+        // It also randomly fails when the list view does not have focus
         getListView().post(() -> {
             if (currentSearchOperation == null) {
                 if (searchResult != null) {
@@ -1458,7 +1460,6 @@ public class DictionaryActivity extends AppCompatActivity {
 
     private void jumpToRow(final int row) {
         Log.d(LOG, "jumpToRow: " + row + ", refocusSearchText=" + false);
-        // getListView().requestFocusFromTouch();
         getListView().setSelectionFromTop(row, 0);
         getListView().setSelected(true);
     }
