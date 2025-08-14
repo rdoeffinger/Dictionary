@@ -778,6 +778,8 @@ public class DictionaryActivity extends AppCompatActivity {
             startActivity(getIntent());
         }
         showKeyboard();
+        // prepare list of available dictionaries
+        application.backgroundUpdateDictionaries(null);
     }
 
     /**
