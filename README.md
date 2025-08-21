@@ -18,7 +18,7 @@ issues, though help to debug any such issue would be welcome.
 
 ## Generating dictionaries
 An approximation of the steps for generating dictionaries:
-1. Go into the DictionaryPC repository
+1. Go into the [DictionaryPC repository](https://github.com/rdoeffinger/DictionaryPC)
 2. Run `data/downloadInputs.sh` to get the data
 3. Run `./compile.sh` (probably needs quite a few things to be installed or paths in it configured)
    Alternatively, download a release binary: https://github.com/rdoeffinger/DictionaryPC/releases
