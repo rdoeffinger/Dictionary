@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.0'
+        classpath 'com.android.tools.build:gradle:8.12.1'
     }
 }
 
@@ -82,13 +82,13 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
-        multiDexEnabled = true
+        multiDexEnabled true
         targetSdkVersion 36
         resourceConfigurations += ['de', 'es', 'eu', 'fr', 'it', 'ja', 'pt', 'pt-rBR', 'ru', 'tr', 'zh-rCN']
         minSdkVersion 21
     }
     compileOptions {
-        coreLibraryDesugaringEnabled = true
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
