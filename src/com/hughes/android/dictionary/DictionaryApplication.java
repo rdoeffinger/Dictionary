@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum DictionaryApplication {
     INSTANCE;
@@ -363,17 +364,11 @@ public enum DictionaryApplication {
         final DictionaryInfo dictionaryInfo = DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO
                                               .get(uncompressedFilename);
         if (dictionaryInfo != null) {
-            final StringBuilder nameBuilder = new StringBuilder();
 
             List<IndexInfo> sortedIndexInfos = sortedIndexInfos(dictionaryInfo.indexInfos);
-            for (int i = 0; i < sortedIndexInfos.size(); ++i) {
-                if (i > 0) {
-                    nameBuilder.append("-");
-                }
-                nameBuilder
-                .append(IsoUtils.INSTANCE.isoCodeToLocalizedLanguageName(appContext, sortedIndexInfos.get(i).shortName));
-            }
-            name = nameBuilder.toString();
+            name = sortedIndexInfos.stream()
+                   .map(e -> IsoUtils.INSTANCE.isoCodeToLocalizedLanguageName(appContext, e.shortName))
+                   .collect(Collectors.joining("-"));
         } else {
             name = uncompressedFilename.replace(".quickdic", "");
         }

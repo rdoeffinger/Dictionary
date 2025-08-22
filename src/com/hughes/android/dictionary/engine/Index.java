@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.RowBase.RowKey;
@@ -459,13 +460,12 @@ public final class Index {
 
         String bestPrefix = null;
         int leastRows = Integer.MAX_VALUE;
-        final StringBuilder searchTokensRegex = new StringBuilder();
         for (int i = 0; i < searchTokens.size(); ++i) {
             if (interrupted != null && interrupted.get()) {
                 return result;
             }
             final String searchToken = searchTokens.get(i);
-            final String normalized = normalizeToken(searchTokens.get(i));
+            final String normalized = normalizeToken(searchToken);
             // Normalize them all.
             searchTokens.set(i, normalized);
 
@@ -483,13 +483,11 @@ public final class Index {
                     }
                 }
             }
-
-            if (!searchTokensRegex.isEmpty()) {
-                searchTokensRegex.append("[\\s]*");
-            }
-            searchTokensRegex.append(Pattern.quote(normalized));
         }
-        final Pattern pattern = Pattern.compile(searchTokensRegex.toString());
+        String searchTokensRegex = searchTokens.stream()
+            .map(Pattern::quote)
+            .collect(Collectors.joining("[\\s]*"));
+        final Pattern pattern = Pattern.compile(searchTokensRegex);
 
         if (bestPrefix == null) {
             bestPrefix = searchTokens.get(0);

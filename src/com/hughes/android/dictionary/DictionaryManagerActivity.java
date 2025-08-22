@@ -124,7 +124,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
     private final Runnable dictionaryUpdater = new Runnable() {
         @Override
         public void run() {
-            if (uiHandler == null) {
+            if (uiHandler == null || isFinishing() || isDestroyed()) {
                 return;
             }
             uiHandler.post(DictionaryManagerActivity.this::setMyListAdapter);
@@ -211,8 +211,9 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                     zipFileStream = new FileInputStream(localZipFile);
                 } catch (Exception e) {
                     if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        uiHandler.post(() ->
-                        ActivityCompat.requestPermissions(this,
+                        if (uiHandler != null && !isFinishing() && !isDestroyed())
+                            uiHandler.post(() ->
+                            ActivityCompat.requestPermissions(this,
                                                   new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
                                                           Manifest.permission.WRITE_EXTERNAL_STORAGE
                                                                }, 0));
@@ -241,10 +242,12 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                     copyStream(zipFile, zipOut);
                 }
             }
-            uiHandler.post(() -> application.backgroundUpdateDictionaries(dictionaryUpdater));
-            if (!isFinishing())
+            if (uiHandler != null && !isFinishing() && !isDestroyed())
+            {
+                uiHandler.post(() -> application.backgroundUpdateDictionaries(dictionaryUpdater));
                 uiHandler.post(() -> Toast.makeText(context, getString(R.string.installationFinished, dest),
                                Toast.LENGTH_LONG).show());
+            }
             result = true;
         } catch (Exception e) {
             DocumentFile dir = application.getDictDir();
@@ -254,7 +257,10 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             } else {
                 msg = getString(R.string.unzippingFailed, dest + ": " + e.getMessage());
             }
-            uiHandler.post(() -> new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show());
+            if (uiHandler != null && !isFinishing() && !isDestroyed())
+            {
+                uiHandler.post(() -> new AlertDialog.Builder(context).setTitle(getString(R.string.error)).setMessage(msg).setNeutralButton("Close", null).show());
+            }
             Log.e(LOG, "Failed to unzip.", e);
         } finally {
             try {
@@ -745,6 +751,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         final StringBuilder builder = new StringBuilder();
         if (updateAvailable) {
             builder.append(getString(R.string.updateAvailable));
+            builder.append("; ");
         }
         assert buttons.getChildCount() == 4;
         for (int i = 0; i < 2; i++) {
@@ -769,13 +776,10 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             }
             button.setEnabled(canLaunch);
             button.setFocusable(canLaunch);
-            if (builder.length() != 0) {
-                builder.append("; ");
-            }
             builder.append(getString(R.string.indexInfo, indexInfo.shortName,
                                      indexInfo.mainTokenCount));
+            builder.append("; ");
         }
-        builder.append("; ");
         builder.append(getString(R.string.downloadButton, dictionaryInfo.uncompressedBytes / 1024.0 / 1024.0));
         if (broken) {
             name.setText("Broken: " + application.getDictionaryName(dictionaryInfo.uncompressedFilename));

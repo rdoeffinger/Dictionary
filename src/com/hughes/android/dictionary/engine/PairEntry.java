@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.hughes.util.StringUtil;
 import com.hughes.util.raf.RAFListSerializerSkippable;
@@ -219,19 +220,15 @@ public class PairEntry extends AbstractEntry implements Comparable<PairEntry> {
             return this.pairs.get(0).toStringTab();
         }
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < this.pairs.size(); ++i) {
-            if (i > 0) {
-                builder.append(" | ");
-            }
-            builder.append(this.pairs.get(i).lang1);
-        }
+        final String lang1 = this.pairs.stream()
+            .map(e -> e.lang1)
+            .collect(Collectors.joining(" | "));
+        builder.append(lang1);
         builder.append("\t");
-        for (int i = 0; i < this.pairs.size(); ++i) {
-            if (i > 0) {
-                builder.append(" | ");
-            }
-            builder.append(this.pairs.get(i).lang2);
-        }
+        final String lang2 = this.pairs.stream()
+                .map(e -> e.lang2)
+                .collect(Collectors.joining(" | "));
+        builder.append(lang2);
         return builder.toString();
     }
 
