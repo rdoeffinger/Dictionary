@@ -1076,7 +1076,7 @@ public class DictionaryActivity extends AppCompatActivity {
                 .getBoolean(getString(R.string.showPrevNextButtonsKey), true)) {
             // Next word.
             nextWordMenuItem = menu.add(getString(R.string.nextWord))
-                               .setIcon(R.drawable.arrow_down_float);
+                               .setIcon(R.drawable.arrow_drop_down_large_18px);
             nextWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             nextWordMenuItem.setOnMenuItemClickListener(item -> {
                 onUpDownButton(false);
@@ -1085,7 +1085,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
             // Previous word.
             previousWordMenuItem = menu.add(getString(R.string.previousWord))
-                                   .setIcon(R.drawable.arrow_up_float);
+                                   .setIcon(R.drawable.arrow_drop_up_large_18px);
             previousWordMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             previousWordMenuItem.setOnMenuItemClickListener(item -> {
                 onUpDownButton(true);
