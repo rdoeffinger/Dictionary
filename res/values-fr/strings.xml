@@ -3,15 +3,17 @@
 
     <!-- Global. -->
     <string name="about">À propos de QuickDic</string>
-    <string name="settings">Configuration</string>
+    <string name="settings">Paramètres</string>
     <string name="help">Aide</string>
     <string name="reportIssue">Signaler un problème</string>
+    <string name="browserDownload">Télécharger dans un navigateur web</string>
     <string name="no_dict_file">Merci de spécifier un répertoire par défaut dans les réglages.</string>
 
     <!-- DictionaryManagerActivity -->
     <string name="dictionaryManager">Gestion des dictionnaires</string>
     <string name="dictionariesOnDevice">Dictionnaires téléchargés</string>
-    <string name="downloadableDictionaries">Dictionnaire disponibles</string>
+    <string name="downloadableDictionaries">Dictionnaires disponibles</string>
+    <string name="sortDicts">Trier les dictionnaires</string>
     <string name="downloadButton">%.1fMB</string>
     <string name="updateAvailable">Mise à jour disponible !</string>
     <string name="moveToTop">Remonter en haut</string>
@@ -20,37 +22,43 @@
     <string name="managerShow">Afficher</string>
     <string name="managerHide">Masquer</string>
     <string name="error">Erreur</string>
-    <string name="unableToReadDictionaryDir">Impossible de lire le dictionnaire du répertoire : \n%1$s\n\nRépertoire Android de stockage externe : \n%2$s</string>
+    <string name="unableToReadDictionaryDir">Impossible de lire le répertoire des dictionnaires : \n%1$s\n\nRépertoire Android de stockage externe : \n%2$s</string>
 
     <!-- Download. -->
     <string name="downloadFailed">Le téléchargement a échoué : \n%s.</string>
-    <string name="unzippingDictionary">Décompression en cours : \n%s</string>
+    <string name="downloadManagerQueryFailed">Impossible de contacter le gestionnaire des téléchargements.\nEst-il désactivé ou manquant ?</string>
+    <string name="downloadManagerQueryPermissionDenied">Accès à Internet refusé</string>
+    <string name="unzippingDictionary">Décompression du répertoire en cours : \n%s</string>
     <string name="unzippingFailed">La décompression a échoué : \n%s</string>
     <string name="installationFinished">Installation terminée : \n%s.</string>
-    <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
+    <string name="notWritable">Le répertoire %s n\'est pas accessible en écriture. Changez les paramètres.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Rechercher</string>
     <string name="selectDictionary">Choisir un dictionnaire…</string>
     <string name="addToWordList">Ajouter à la liste de mots : %s</string>
     <string name="searchForSelection">Rechercher : %s</string>
-    <string name="failedAddingToWordList">Erreur pendant l\'ajout à la liste : %s</string>
-    <string name="invalidDictionary">Dictionnaire incorrect: fichier=%1$s, erreur=%2$s</string>
+    <string name="failedAddingToWordList">Erreur pendant l\'ajout à la liste de mots : %s</string>
+    <string name="invalidDictionary">Dictionnaire incorrect : fichier=%1$s, erreur=%2$s</string>
     <string name="noSearchResults">Aucun résultat.</string>
     <string name="aboutDictionary">À propos du dictionnaire</string>
-    <string name="fontFailure">Erreur de la police : %s</string>
+    <string name="fontFailure">Erreur de la police de caractères : %s</string>
     <string name="seeAlso">Voir aussi : %1$s (%2$s)</string>
     <string name="speak">Parler</string>
+    <string name="speak_left">Parler la partie gauche</string>
+    <string name="speak_right">Parler la partie droite</string>
     <string name="nextWord">Mot suivant</string>
     <string name="previousWord">Mot précédent</string>
-    
+    <string name="randomWord">Mot au hasard</string>
+    <string name="TTSbroken">La synthèse vocale ne marche pas sur cet appareil</string>
+
     <!-- About dictionary. -->
     <string name="dictionaryPath">Fichier : %s</string>
-    <string name="dictionarySize">Taille : %,d bytes</string>
-    <string name="dictionaryCreationTime">Créé : %tc</string>
-    <string name="indexName">Index : %s</string>
+    <string name="dictionarySize">Taille : %,d octets</string>
+    <string name="dictionaryCreationTime">Création : %tc</string>
+    <string name="indexName">Indice : %s</string>
     <string name="mainTokenCount">Nombre de mots : %,d</string>
-    <string name="sources">Source</string>
+    <string name="sources">Sources</string>
     <string name="sourceInfo">%1$s : %2$,d entrées</string>
 
     <!-- About. -->
@@ -65,22 +73,30 @@
     <!-- Preferences -->
 
     <string name="defaultDicTitle">Dictionnaire par défaut</string>
-    <string name="defaultDicSummary">Dictionnaire utilisé par défaut</string>
-    <string name="quickdicDirectoryTitle">Repertoire QuickDic</string>
-    <string name="quickdicDirectorySummary">Repertoire dans lequel QuickDic enrégistre les dictionnaires</string>
-    <string name="wordListFileTitle">Entrées du dictionnaire</string>
-    <string name="wordListFileSummary">Fichier où les entrées du dictionnaire sont ajoutées</string>
-    <string name="fontTitle">Police du dictionnaire</string>
-    <string name="fontSummary">Police de caractère utilisée</string>
-    <string name="fontSizeTitle">Taille de la police</string>
-    <string name="fontSizeSummary">Taille de la police de caractère</string>
+    <string name="defaultDicSummary">Dictionnaire utilisé par défaut.</string>
+    <string name="quickdicDirectoryTitle">Répertoire QuickDic</string>
+    <string name="quickdicDirectorySummary">Répertoire dans lequel QuickDic enregistre les dictionnaires (vide correspond au dossier QuickDic par défaut sur le stockage externe).</string>
+    <string name="choose">Choisir</string>
+    <string name="wordListFileTitle">Entrées des dictionnaires</string>
+    <string name="wordListFileSummary">Fichier où les entrées des dictionnaires sont ajoutées.</string>
+    <string name="fontTitle">Police de caractères</string>
+    <string name="fontSummary">Police de caractères utilisée pour les dictionnaires.</string>
+    <string name="fontSizeTitle">Taille de la police de caractères</string>
+    <string name="fontSizeSummary">Taille de la police de caractères utilisée pour les dictionnaires.</string>
     <string name="saveOnlyFirstSubentryTitle">Ne conserver que la première entrée</string>
-    <string name="saveOnlyFirstSubentrySummary">Pour les mots avec plusieurs sous-entrées, ne conserver que le premier dans la liste</string>
+    <string name="saveOnlyFirstSubentrySummary">Pour les mots avec plusieurs sous-entrées, ne conserver que le premier dans la liste.</string>
     <string name="clickOpensContextMenuTitle">Un clic ouvre le menu contextuel</string>
-    <string name="clickOpensContextMenuSummary">Un clic sur une entrée ouvre le menu contextuel (un clic long ouvre toujours le menu contextuel)</string>
+    <string name="clickOpensContextMenuSummary">Un clic sur une entrée ouvre le menu contextuel (un clic long ouvre toujours le menu contextuel).</string>
     <string name="showPrevNextButtonsTitle">Boutons de navigation</string>
-    <string name="showPrevNextButtonsSummary">Afficher ou masquer les boutons mot suivant/précédant dans le dictionnaire</string>
+    <string name="showPrevNextButtonsSummary">Afficher ou masquer dans les dictionnaires les boutons mot suivant / précédent.</string>
     <string name="themeTitle">Thème</string>
     <string name="themeSummary">Thème de couleurs de l\'interface utilisateur</string>
-    <string name="chosenNotWritable">Chosen directory not writable, try one of</string>
+    <string name="chosenNotWritable">Le répertoire choisi n\'est pas accessible en écriture.</string>
+
+    <string name="historySizeTitle">Historique des recherches</string>
+    <string name="historySizeSummary">Nombre d\'entrées à garder et à afficher dans l\'historique.</string>
+
+    <string name="commandHandlingTitle">Commandes Wiktionnaire</string>
+    <string name="commandHandlingSummary">Comment gérer les commandes Wiktionnaire dans les entrées des dictionnaires.</string>
+
 </resources>
