@@ -9,7 +9,7 @@
 
   <Preference
     android:key="@string/quickdicDirectoryKey"
-    android:title="@string/quickdicDirectoryTitle" 
+    android:title="@string/quickdicDirectoryTitle"
     android:summary="@string/quickdicDirectorySummary"
     android:defaultValue=""
     android:persistent="true"
@@ -18,7 +18,7 @@
 
   <EditTextPreference
     android:key="@string/wordListFileKey"
-    android:title="@string/wordListFileTitle" 
+    android:title="@string/wordListFileTitle"
     android:summary="@string/wordListFileSummary"
     android:defaultValue=""
     android:persistent="true"
@@ -36,7 +36,7 @@
 
   <EditTextPreference
     android:key="@string/fontSizeKey"
-    android:title="@string/fontSizeTitle" 
+    android:title="@string/fontSizeTitle"
     android:summary="@string/fontSizeSummary"
     android:defaultValue="14"
     android:persistent="true"

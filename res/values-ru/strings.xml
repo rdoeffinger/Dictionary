@@ -91,7 +91,7 @@
     <string name="themeTitle">Тема</string>
     <string name="themeSummary">Цветовая тема пользовательского интерфейса.</string>
     <string name="chosenNotWritable">Выбранный каталог недоступен для записи, попробуйте один из</string>
-    
+
     <string name="historySizeTitle">Записи истории поиска</string>
     <string name="historySizeSummary">Количество записей истории поиска, которые можно сохранить и отобразить.</string>
 </resources>
