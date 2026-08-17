@@ -18,10 +18,10 @@ configurations {
     smallicu
 }
 dependencies {
-    implementation "androidx.core:core:1.17.0"
+    implementation "androidx.core:core:1.19.0"
     implementation "androidx.preference:preference:1.2.1"
     implementation "androidx.documentfile:documentfile:1.1.0"
-    implementation "com.google.android.material:material:1.13.0"
+    implementation "com.google.android.material:material:1.14.0"
     // Note: you can just replace "smallicu" by implementation
     // and remove the "implementation files" part if you do not
     // care about the size of the apk
@@ -52,7 +52,7 @@ allprojects {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
     namespace = "com.hughes.android.dictionary"
     buildTypes {
         debug {
@@ -83,9 +83,9 @@ android {
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
         multiDexEnabled true
-        targetSdkVersion 36
+        targetSdkVersion 37
         resourceConfigurations += ['de', 'es', 'eu', 'fr', 'it', 'ja', 'pt', 'pt-rBR', 'ru', 'tr', 'zh-rCN']
-        minSdkVersion 21
+        minSdkVersion 23
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
