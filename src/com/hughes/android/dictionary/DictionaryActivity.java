@@ -296,7 +296,8 @@ public class DictionaryActivity extends AppCompatActivity {
         // This needs to be before super.onCreate, otherwise ActionbarSherlock
         // doesn't makes the background of the actionbar white when you're
         // in the dark theme.
-        setTheme(application.getSelectedTheme().themeId);
+        setTheme(application.getSelectedTheme().themeNoActionBarId);
+        androidx.activity.EdgeToEdge.enable(this);
 
         Log.d(LOG, "onCreate:" + this);
         super.onCreate(savedInstanceState);
@@ -307,18 +308,19 @@ public class DictionaryActivity extends AppCompatActivity {
         prefs.edit().remove(C.DICT_FILE).remove(C.INDEX_SHORT_NAME).commit();
 
         setContentView(R.layout.dictionary_activity);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, 0);
+            return windowInsets;
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(getListView(), (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            v.setPadding(
-                    insets.left,
-                    insets.top + getSupportActionBar().getHeight(),
-                    insets.right,
-                    0
-            );
-            // Return CONSUMED if you don't want the window insets to keep passing
-            // down to descendant views.
-            return WindowInsetsCompat.CONSUMED;
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            return windowInsets;
         });
 
         for (int id: Arrays.asList(R.id.floatSearchButton, R.id.floatSwapButton)) {
@@ -329,9 +331,7 @@ public class DictionaryActivity extends AppCompatActivity {
                 mlp.bottomMargin = insets.bottom;
                 mlp.rightMargin = insets.right;
                 v.setLayoutParams(mlp);
-                // Return CONSUMED if you don't want the window insets to keep passing
-                // down to descendant views.
-                return WindowInsetsCompat.CONSUMED;
+                return windowInsets;
             });
         }
 
