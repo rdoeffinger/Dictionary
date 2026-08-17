@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -12,14 +12,11 @@
         android:background="?attr/colorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
         android:nextFocusRight="@+id/floatSearchButton"
         android:choiceMode="singleChoice"
         android:clickable="true"
@@ -60,8 +57,7 @@
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
         android:text="@string/noSearchResults" />
 
 </RelativeLayout>
-
-</LinearLayout>

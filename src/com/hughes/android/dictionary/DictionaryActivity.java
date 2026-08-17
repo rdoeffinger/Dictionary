@@ -296,7 +296,7 @@ public class DictionaryActivity extends AppCompatActivity {
         // This needs to be before super.onCreate, otherwise ActionbarSherlock
         // doesn't makes the background of the actionbar white when you're
         // in the dark theme.
-        setTheme(application.getSelectedTheme().themeNoActionBarId);
+        setTheme(application.getSelectedTheme().themeId);
         androidx.activity.EdgeToEdge.enable(this);
 
         Log.d(LOG, "onCreate:" + this);

@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseThemeLight" parent="@style/Theme.AppCompat.Light">
+    <style name="AppBaseThemeLight" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="colorPrimary">@color/theme_light_token_row_main_bg</item>
         <item name="colorPrimaryDark">#CCCCCC</item>
@@ -24,7 +24,7 @@
         -->
     </style>
 
-    <style name="AppBaseThemeDark" parent="@style/Theme.AppCompat">
+    <style name="AppBaseThemeDark" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="colorPrimary">@color/theme_default_token_row_main_bg</item>
         <item name="colorPrimaryDark">#000000</item>
@@ -48,11 +48,6 @@
 
     <style name="Theme.Default" parent="AppBaseThemeDark" />
 
-    <style name="Theme.Default.NoActionBar" parent="Theme.Default">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
     <style name="Theme.Default.TokenRow.Fg" parent="Theme.Default">
 
         <!-- <item name="android:textColor">#FFFFFF</item> -->
@@ -70,11 +65,6 @@
     <!-- Light theme -->
 
     <style name="Theme.Light" parent="AppBaseThemeLight" />
-
-    <style name="Theme.Light.NoActionBar" parent="Theme.Light">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
 
     <style name="Theme.Light.TokenRow.Fg" parent="Theme.Light">
 

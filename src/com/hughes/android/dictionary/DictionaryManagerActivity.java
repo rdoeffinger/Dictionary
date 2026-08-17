@@ -42,6 +42,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -324,16 +327,29 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         // This must be first, otherwise the action bar doesn't get
         // styled properly.
         setTheme(application.getSelectedTheme().themeId);
+        androidx.activity.EdgeToEdge.enable(this);
 
         super.onCreate(savedInstanceState);
         Log.d(LOG, "onCreate:" + this);
-
-        setTheme(application.getSelectedTheme().themeId);
 
         blockAutoLaunch = false;
 
         // UI init.
         setContentView(R.layout.dictionary_manager_activity);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, 0);
+            return windowInsets;
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(getListView(), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            return windowInsets;
+        });
 
         dictionariesOnDeviceHeaderRow = (LinearLayout) LayoutInflater.from(
                                             getListView().getContext()).inflate(
@@ -381,8 +397,8 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         // wrong place.
         filterSearchView.setQueryHint(getString(R.string.searchText));
         filterSearchView.setSubmitButtonEnabled(false);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         filterSearchView.setLayoutParams(lp);
         filterSearchView.setInputType(InputType.TYPE_CLASS_TEXT);
         filterSearchView.setImeOptions(

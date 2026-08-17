@@ -14,24 +14,53 @@
 
 package com.hughes.android.dictionary;
 
-import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.pm.PackageInfoCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-public final class AboutActivity extends Activity {
+public final class AboutActivity extends AppCompatActivity {
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         DictionaryApplication.INSTANCE.init(getApplicationContext());
         setTheme(DictionaryApplication.INSTANCE.getSelectedTheme().themeId);
+        androidx.activity.EdgeToEdge.enable(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_activity);
+
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, 0);
+            return windowInsets;
+        });
+
+        final View scrollView = findViewById(R.id.scrollView);
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            return windowInsets;
+        });
+
         String ver = "???";
         try {
             PackageManager pm = getPackageManager();
@@ -43,6 +72,15 @@ public final class AboutActivity extends Activity {
         }
         TextView titleView = findViewById(R.id.titleText);
         titleView.setText("QuickDic " + ver);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

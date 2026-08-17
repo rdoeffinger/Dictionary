@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,9 +28,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
 import com.hughes.util.StringUtil;
 
@@ -67,36 +66,33 @@ public final class HtmlDisplayActivity extends AppCompatActivity {
     public void onCreate(final Bundle savedInstanceState) {
         DictionaryApplication.INSTANCE.init(getApplicationContext());
         setTheme(DictionaryApplication.INSTANCE.getSelectedTheme().themeId);
+        androidx.activity.EdgeToEdge.enable(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.html_display_activity);
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         final String title = getIntent().getStringExtra(TITLE);
         if (title != null)
             setTitle(title);
 
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, 0);
+            return windowInsets;
+        });
+
         final MyWebView webView = findViewById(R.id.webView);
         ViewCompat.setOnApplyWindowInsetsListener(webView, (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            // Unfortunately padding is ignored here, so set margins instead
-            // Also getSupportActionBar().getHeight() is often 0 so get the size from the attribute instead
-            TypedValue tv = new TypedValue();
-            getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-            int abSize = getResources().getDimensionPixelSize(tv.resourceId);
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)v.getLayoutParams();
-            params.setMargins(
-                    insets.left,
-                    insets.top + abSize,
-                    insets.right,
-                    0
-            );
-            v.setLayoutParams(params);
-            // Return CONSUMED if you don't want the window insets to keep passing
-            // down to descendant views.
-            return WindowInsetsCompat.CONSUMED;
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            return windowInsets;
         });
 
         final int htmlRes = getIntent().getIntExtra(HTML_RES, -1);

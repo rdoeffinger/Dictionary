@@ -18,8 +18,9 @@ import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.TypedValue;
+import android.view.MenuItem;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,6 +40,7 @@ public class PreferenceActivity extends AppCompatActivity
         DictionaryApplication.INSTANCE.init(getApplicationContext());
         final DictionaryApplication application = DictionaryApplication.INSTANCE;
         setTheme(application.getSelectedTheme().themeId);
+        androidx.activity.EdgeToEdge.enable(this);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getString(getString(R.string.quickdicDirectoryKey), "").isEmpty()) {
@@ -56,23 +58,33 @@ public class PreferenceActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preference_activity);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.prefFrag), (v, windowInsets) -> {
-            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            // getSupportActionBar().getHeight() is often 0 so get the size from the attribute instead
-            TypedValue tv = new TypedValue();
-            getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-            int abSize = getResources().getDimensionPixelSize(tv.resourceId);
-            v.setPadding(
-                    insets.left,
-                    insets.top + abSize,
-                    insets.right,
-                    insets.bottom
-            );
-            // Return CONSUMED if you don't want the window insets to keep passing
-            // down to descendant views.
-            return WindowInsetsCompat.CONSUMED;
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, insets.top, insets.right, 0);
+            return windowInsets;
         });
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.prefFrag), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            return windowInsets;
+        });
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
