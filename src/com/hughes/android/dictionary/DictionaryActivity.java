@@ -451,16 +451,23 @@ public class DictionaryActivity extends AppCompatActivity {
                 intent.putExtra(C.DICT_FILE, application.getPath(dictfile).getUri().toString());
         }
         String dictFilename = intent.getStringExtra(C.DICT_FILE);
-        if (dictFilename == null && intent.getStringExtra(C.SEARCH_TOKEN) != null) {
+        final String search = intent.getStringExtra(C.SEARCH_TOKEN);
+        if (intent.getStringExtra(C.INDEX_SHORT_NAME) == null && search != null) {
             final List<DictionaryInfo> dics = application.getDictionariesOnDevice(null);
-            final String search = intent.getStringExtra(C.SEARCH_TOKEN);
             String bestFname = null;
             String bestIndex = null;
             int bestMatchLen = 2; // ignore shorter matches
-            for (int i = 0; dictFilename == null && i < dics.size(); ++i) {
+            for (int i = 0; i < dics.size(); ++i) {
                 try {
-                    Log.d(LOG, "Checking dictionary " + dics.get(i).uncompressedFilename);
                     final DocumentFile dictfile = application.getPath(dics.get(i).uncompressedFilename);
+                    final String uriString = dictfile.getUri().toString();
+
+                    // If a dictionary is already specified (e.g. default), only search that one.
+                    if (dictFilename != null && !dictFilename.equals(uriString)) {
+                        continue;
+                    }
+
+                    Log.d(LOG, "Checking dictionary " + dics.get(i).uncompressedFilename);
                     FileChannel c = getContentResolver().openAssetFileDescriptor(dictfile.getUri(), "r").createInputStream().getChannel();
                     Dictionary dic = new Dictionary(c);
                     for (int j = 0; j < dic.indices.size(); ++j) {
@@ -468,14 +475,14 @@ public class DictionaryActivity extends AppCompatActivity {
                         Log.d(LOG, "Checking index " + idx.shortName);
                         if (idx.findExact(search) != null) {
                             Log.d(LOG, "Found exact match");
-                            dictFilename = dictfile.getUri().toString();
+                            dictFilename = uriString;
                             intent.putExtra(C.INDEX_SHORT_NAME, idx.shortName);
                             break;
                         }
                         int matchLen = getMatchLen(search, idx.findInsertionPoint(search));
                         Log.d(LOG, "Found partial match length " + matchLen);
                         if (matchLen > bestMatchLen) {
-                            bestFname = dictfile.getUri().toString();
+                            bestFname = uriString;
                             bestIndex = idx.shortName;
                             bestMatchLen = matchLen;
                         }
