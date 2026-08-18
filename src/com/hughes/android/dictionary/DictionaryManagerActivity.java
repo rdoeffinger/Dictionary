@@ -231,7 +231,7 @@ public class DictionaryManagerActivity extends AppCompatActivity {
                 // Note: this check prevents security issues like accidental path
                 // traversal, which unfortunately ZipInputStream has no protection against.
                 // So take extra care when changing it.
-                if (!Pattern.matches("[-A-Za-z]+\\.quickdic", zipEntry.getName())) {
+                if (!Pattern.matches("[a-zA-Z0-9._-]+\\.quickdic", zipEntry.getName())) {
                     Log.w(LOG, "Invalid zip entry: " + zipEntry.getName());
                     continue;
                 }

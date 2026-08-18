@@ -139,35 +139,25 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <!-- Allow direct opening of dictionary files -->
+            <!-- Filter for intents WITH a MIME type -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="content"
-                      android:host="*"
-                      android:mimeType="application/octet-stream"
-                      android:pathPattern=".*\\.quickdic" />
+                <data android:scheme="content" android:host="*" />
+                <data android:scheme="file" android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.quickdic" />
+                <data android:pathSuffix=".quickdic" />
             </intent-filter>
+
+            <!-- Filter for intents WITHOUT a MIME type -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="file"
-                      android:host="*"
-                      android:mimeType="application/octet-stream"
-                      android:pathPattern=".*\\.quickdic" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="content"
-                      android:host="*"
-                      android:pathPattern=".*\\.quickdic" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="file"
-                      android:host="*"
-                      android:pathPattern=".*\\.quickdic" />
+                <data android:scheme="content" android:host="*" />
+                <data android:scheme="file" android:host="*" />
+                <data android:pathPattern=".*\\.quickdic" />
+                <data android:pathSuffix=".quickdic" />
             </intent-filter>
         </activity>
         <activity
