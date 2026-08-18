@@ -76,6 +76,7 @@
 
     <!-- Preferences -->
 
+    <string name="none">None</string>
     <string name="defaultDicKey" translatable="false">defaultddic</string>
     <string name="defaultDicTitle">Default Dic</string>
     <string name="defaultDicSummary">The directory to fired up when nothing else mentioned.</string>

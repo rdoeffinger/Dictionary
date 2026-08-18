@@ -54,12 +54,15 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
                 R.string.defaultDicKey));
         List<DictionaryInfo> dicts = application.getDictionariesOnDevice(null);
 
-        final CharSequence[] entries = new CharSequence[dicts.size()];
-        final CharSequence[] entryvalues = new CharSequence[dicts.size()];
+        final CharSequence[] entries = new CharSequence[dicts.size() + 1];
+        final CharSequence[] entryvalues = new CharSequence[dicts.size() + 1];
 
-        for (int i = 0; i < entries.length; ++i) {
-            entries[i] = dicts.get(i).dictInfo;
-            entryvalues[i] = dicts.get(i).uncompressedFilename;
+        entries[0] = getString(R.string.none);
+        entryvalues[0] = null;
+
+        for (int i = 0; i < dicts.size(); ++i) {
+            entries[i + 1] = dicts.get(i).dictInfo;
+            entryvalues[i + 1] = dicts.get(i).uncompressedFilename;
         }
 
         defaultDic.setEntries(entries);
