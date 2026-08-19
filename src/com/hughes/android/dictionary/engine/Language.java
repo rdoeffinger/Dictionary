@@ -62,8 +62,6 @@ public class Language {
     }
 
     public synchronized Comparator<Object> getCollator() {
-        if (!DictionaryApplication.USE_COLLATOR)
-            return (o, t1) -> ((String) o).compareToIgnoreCase((String) t1);
         // TODO: consider if this should be cached - but must be thread-safe
         return CollatorWrapper.getInstanceStrengthIdentical(locale);
     }

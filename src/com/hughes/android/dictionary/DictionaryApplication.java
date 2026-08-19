@@ -61,16 +61,6 @@ public enum DictionaryApplication {
 
     static final String LOG = "QuickDicApp";
 
-    // If set to false, avoid use of ICU collator
-    // Works well enough for most european languages,
-    // gives faster startup and avoids crashes on some
-    // devices due to Dalvik bugs (e.g. ARMv6, S5570i, CM11)
-    // when using ICU4J.
-    // Leave it enabled by default for correctness except
-    // for my known broken development/performance test device config.
-    //static public final boolean USE_COLLATOR = !android.os.Build.FINGERPRINT.equals("Samsung/cm_tassve/tassve:4.4.4/KTU84Q/20150211:userdebug/release-keys");
-    public static final boolean USE_COLLATOR = true;
-
     public static final TransliteratorManager.ThreadSetup threadBackground = () -> {
         // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
         // can make Transliterator go from 20 seconds to 3 minutes (!)
@@ -381,7 +371,7 @@ public enum DictionaryApplication {
         PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig);
     }
 
-    final Comparator<Object> collator = USE_COLLATOR ? CollatorWrapper.getInstance() : null;
+    final Comparator<Object> collator = CollatorWrapper.getInstance();
     final Comparator<String> uncompressedFilenameComparator = (uncompressedFilename1, uncompressedFilename2) -> {
         final String name1 = getDictionaryName(uncompressedFilename1);
         final String name2 = getDictionaryName(uncompressedFilename2);
