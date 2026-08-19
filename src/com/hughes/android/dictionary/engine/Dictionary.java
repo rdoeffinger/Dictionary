@@ -14,6 +14,11 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.util.CachingList;
+import com.hughes.util.DataInputBuffer;
+import com.hughes.util.raf.RAFList;
+import com.hughes.util.raf.RAFListSerializer;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -24,12 +29,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.hughes.android.dictionary.engine.DictionaryInfo;
-import com.hughes.util.CachingList;
-import com.hughes.util.DataInputBuffer;
-import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFListSerializer;
 
 public class Dictionary {
 

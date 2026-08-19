@@ -14,9 +14,8 @@
 
 package com.hughes.android.dictionary;
 
-import java.util.Locale;
-
 import java.text.Collator;
+import java.util.Locale;
 
 public final class CollatorWrapper {
 public static Collator getInstance() {

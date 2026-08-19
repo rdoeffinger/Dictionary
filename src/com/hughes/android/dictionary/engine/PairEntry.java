@@ -14,16 +14,19 @@
 
 package com.hughes.android.dictionary.engine;
 
-import java.io.*;
+import com.hughes.util.StringUtil;
+import com.hughes.util.raf.RAFListSerializerSkippable;
+import com.ibm.icu.text.Transliterator;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.hughes.util.StringUtil;
-import com.hughes.util.raf.RAFListSerializerSkippable;
-import com.ibm.icu.text.Transliterator;
 
 public class PairEntry extends AbstractEntry implements Comparable<PairEntry> {
 

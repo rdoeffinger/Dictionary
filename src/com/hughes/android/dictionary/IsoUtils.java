@@ -15,11 +15,6 @@
 
 package com.hughes.android.dictionary;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +25,11 @@ import android.widget.LinearLayout;
 
 import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Language.LanguageResources;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public enum IsoUtils {
     INSTANCE;

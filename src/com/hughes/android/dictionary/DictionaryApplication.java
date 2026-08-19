@@ -14,7 +14,6 @@
 
 package com.hughes.android.dictionary;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,18 +21,19 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Environment;
-import androidx.documentfile.provider.DocumentFile;
-import androidx.preference.PreferenceManager;
-
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.documentfile.provider.DocumentFile;
+import androidx.preference.PreferenceManager;
+
 import com.google.android.material.color.DynamicColors;
+import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.DictionaryInfo;
 import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
-import com.hughes.android.dictionary.engine.Dictionary;
 import com.hughes.android.dictionary.engine.TransliteratorManager;
 import com.hughes.android.util.PersistentObjectCache;
 import com.hughes.util.ListUtil;

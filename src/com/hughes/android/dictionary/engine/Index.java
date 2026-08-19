@@ -14,6 +14,17 @@
 
 package com.hughes.android.dictionary.engine;
 
+import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
+import com.hughes.android.dictionary.engine.RowBase.RowKey;
+import com.hughes.util.CachingList;
+import com.hughes.util.DataInputBuffer;
+import com.hughes.util.StringUtil;
+import com.hughes.util.TransformingList;
+import com.hughes.util.raf.RAFList;
+import com.hughes.util.raf.RAFListSerializer;
+import com.hughes.util.raf.UniformRAFList;
+import com.ibm.icu.text.Transliterator;
+
 import java.io.BufferedOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -37,17 +48,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
-import com.hughes.android.dictionary.engine.RowBase.RowKey;
-import com.hughes.util.CachingList;
-import com.hughes.util.DataInputBuffer;
-import com.hughes.util.StringUtil;
-import com.hughes.util.TransformingList;
-import com.hughes.util.raf.RAFList;
-import com.hughes.util.raf.RAFListSerializer;
-import com.hughes.util.raf.UniformRAFList;
-import com.ibm.icu.text.Transliterator;
 
 public final class Index {
 
