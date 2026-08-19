@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -221,17 +222,22 @@ public enum IsoUtils {
         View result;
 
         if (languageResources == null || languageResources.flagId <= 0) {
-            Button button = new Button(context);
+            Button button = new Button(context, null, 0, R.style.Widget_Dictionary_LanguageButton);
             button.setText(indexInfo.shortName);
             result = button;
         } else {
-            ImageButton button = new ImageButton(context);
+            ImageButton button = new ImageButton(context, null, 0, R.style.Widget_Dictionary_LanguageButton);
             button.setImageResource(languageResources.flagId);
             button.setContentDescription(isoCodeToLocalizedLanguageName(button.getContext(), indexInfo.shortName));
             button.setScaleType(ImageView.ScaleType.FIT_CENTER);
             result = button;
         }
-        result.setLayoutParams(new LinearLayout.LayoutParams(size, size * 2 / 3));
+        // Force a 3:2 aspect ratio for language buttons and center them vertically.
+        // Also add a right margin to space them out when multiple indices are present.
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(size, size * 2 / 3);
+        layoutParams.gravity = Gravity.CENTER_VERTICAL;
+        layoutParams.setMargins(0, 0, 8, 0);
+        result.setLayoutParams(layoutParams);
         return result;
     }
 

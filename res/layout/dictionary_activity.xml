@@ -25,9 +25,6 @@
         android:focusableInTouchMode="true"
         android:clipToPadding="false" />
 
-     <!-- force fabSize to mini, otherwise it is normal on some
-          phones and mini on others, with not particular sense to it.
-          Also leaves more space for content. -->
      <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatSwapButton"
         app:fabSize="mini"
@@ -58,6 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
+        android:gravity="center"
         android:text="@string/noSearchResults" />
 
 </RelativeLayout>

@@ -30,7 +30,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -156,7 +155,6 @@ public class DictionaryActivity extends AppCompatActivity {
     private volatile boolean ttsReady;
 
     private Typeface typeface;
-    private DictionaryApplication.Theme theme = DictionaryApplication.Theme.LIGHT;
     private int textColorFg = Color.BLACK;
     private int fontSizeSp;
 
@@ -194,6 +192,12 @@ public class DictionaryActivity extends AppCompatActivity {
 
     // Visible for testing.
     private ListAdapter indexAdapter = null;
+
+    private int resolveColorAttribute(int attr) {
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(attr, typedValue, true);
+        return typedValue.data;
+    }
 
     /**
      * For some languages, loading the transliterators used in this search takes
@@ -331,8 +335,7 @@ public class DictionaryActivity extends AppCompatActivity {
             });
         }
 
-        theme = application.getSelectedTheme();
-        textColorFg = ContextCompat.getColor(this, theme.tokenRowFgColor);
+        textColorFg = resolveColorAttribute(com.google.android.material.R.attr.colorOnSurface);
 
         if (dictRaf != null) {
             try {
@@ -715,17 +718,18 @@ public class DictionaryActivity extends AppCompatActivity {
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         customSearchView.setLayoutParams(layoutParams);
 
-        languageButton = new ImageButton(customSearchView.getContext());
+        languageButton = new ImageButton(customSearchView.getContext(), null, 0, R.style.Widget_Dictionary_LanguageButton);
         languageButton.setId(R.id.languageButton);
-        languageButton.setScaleType(ScaleType.FIT_CENTER);
         languageButton.setOnClickListener(v -> onLanguageButtonLongClick(v.getContext()));
-        languageButton.setAdjustViewBounds(true);
 
-        languageTextButton = new Button(customSearchView.getContext());
+        languageTextButton = new Button(customSearchView.getContext(), null, 0, R.style.Widget_Dictionary_LanguageButton);
         languageTextButton.setId(R.id.languageTextButton);
         languageTextButton.setOnClickListener(v -> onLanguageButtonLongClick(v.getContext()));
 
-        LinearLayout.LayoutParams lpb = new LinearLayout.LayoutParams(application.languageButtonPixels, LinearLayout.LayoutParams.MATCH_PARENT);
+        // Use a fixed aspect ratio (3:2) for the flag buttons and center them vertically
+        // to prevent them from stretching to the full height of the Toolbar.
+        LinearLayout.LayoutParams lpb = new LinearLayout.LayoutParams(application.languageButtonPixels, application.languageButtonPixels * 2 / 3);
+        lpb.gravity = Gravity.CENTER_VERTICAL;
         customSearchView.addView(languageButton, lpb);
         customSearchView.addView(languageTextButton, lpb);
 
@@ -988,6 +992,11 @@ public class DictionaryActivity extends AppCompatActivity {
                 final DictionaryInfo dictionaryInfo = getItem(position);
 
                 final LinearLayout result = new LinearLayout(parent.getContext());
+                // Ensure buttons are centered vertically and spaced consistently in the selection list.
+                result.setOrientation(LinearLayout.HORIZONTAL);
+                result.setGravity(Gravity.CENTER_VERTICAL);
+                result.setPadding(application.languageButtonPixels / 8, application.languageButtonPixels / 16,
+                                   application.languageButtonPixels / 8, application.languageButtonPixels / 16);
 
                 for (int i = 0; i < dictionaryInfo.indexInfos.size(); ++i) {
                     final IndexInfo indexInfo = dictionaryInfo.indexInfos.get(i);
@@ -1707,9 +1716,8 @@ public class DictionaryActivity extends AppCompatActivity {
                 result.setClickable(true);
                 result.setFocusable(false);
                 result.setLongClickable(true);
-//                result.setBackgroundResource(android.R.drawable.menuitem_background);
 
-                result.setBackgroundResource(theme.normalRowBg);
+                result.setBackgroundColor(resolveColorAttribute(com.google.android.material.R.attr.colorSurface));
             } else if (result.getChildCount() > rowCount) {
                 result.removeViews(rowCount, result.getChildCount() - rowCount);
             }
@@ -1833,7 +1841,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
                 textView.setTypeface(typeface);
                 if (isTokenRow) {
-                    TextViewCompat.setTextAppearance(textView, theme.tokenRowFg);
+                    TextViewCompat.setTextAppearance(textView, resolveColorAttribute(com.google.android.material.R.attr.textAppearanceTitleLarge));
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 4 * fontSizeSp / 3);
                 } else {
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSizeSp);
@@ -1845,8 +1853,9 @@ public class DictionaryActivity extends AppCompatActivity {
                 }
             }
 
-            textView.setBackgroundResource(hasMainEntry ? theme.tokenRowMainBg
-                                           : theme.tokenRowOtherBg);
+            textView.setBackgroundColor(hasMainEntry ?
+                    resolveColorAttribute(com.google.android.material.R.attr.colorSurfaceContainer) :
+                    resolveColorAttribute(com.google.android.material.R.attr.colorSurface));
 
             // Make it so we can long-click on these token rows, too:
             final Spannable textSpannable = new SpannableString(text);

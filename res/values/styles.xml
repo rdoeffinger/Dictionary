@@ -11,14 +11,6 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <!--
-            Make search icon magnifying glass disappear:
-            http://stackoverflow.com/questions/13604506/show-actionbarsherlock-searchview-always-expanded
-        -->
-        <!--
-      <item name="searchViewSearchIcon">@android:color/transparent</item>
-      <item name="searchViewCloseIcon">@android:color/transparent</item>
-        -->
     </style>
 
     <style name="AppBaseThemeDark" parent="@style/Theme.Material3.Dark.NoActionBar">
@@ -28,14 +20,6 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <!--
-            Make search icon magnifying glass disappear:
-            http://stackoverflow.com/questions/13604506/show-actionbarsherlock-searchview-always-expanded
-        -->
-        <!--
-      <item name="searchViewSearchIcon">@android:color/transparent</item>
-      <item name="searchViewCloseIcon">@android:color/transparent</item>
-        -->
     </style>
 
     <!-- Dark theme -->
@@ -43,9 +27,7 @@
     <style name="Theme.Default" parent="AppBaseThemeDark" />
 
     <style name="Theme.Default.TokenRow.Fg" parent="Theme.Default">
-
-        <!-- <item name="android:textColor">#FFFFFF</item> -->
-        <item name="android:textColorLink">#00AAFF</item>
+        <item name="android:textColorLink">?attr/colorTertiary</item>
     </style>
 
     <color name="theme_default_token_row_fg">#FFFFFF</color>
@@ -61,9 +43,7 @@
     <style name="Theme.Light" parent="AppBaseThemeLight" />
 
     <style name="Theme.Light.TokenRow.Fg" parent="Theme.Light">
-
-        <!-- <item name="android:textColor">#000000</item> -->
-        <item name="android:textColorLink">#0000FF</item>
+        <item name="android:textColorLink">?attr/colorTertiary</item>
     </style>
 
     <color name="theme_light_token_row_fg">#000000</color>
@@ -71,4 +51,14 @@
     <color name="theme_light_token_row_other_bg">#EEEEEE</color>
     <color name="theme_light_normal_row_bg">#FFFFFF</color>
     <color name="gray">#777777</color>
+
+    <style name="Widget.Dictionary.LanguageButton" parent="">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:background">?attr/colorSurfaceContainer</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:gravity">center</item>
+    </style>
+
 </resources>
