@@ -819,6 +819,40 @@ public class DictionaryManagerActivity extends AppCompatActivity {
         return row;
     }
 
+    private void checkStuckDownload(final DownloadManager downloadManager, final long downloadId, final boolean wifiOnly) {
+        int status = DownloadManager.STATUS_SUCCESSFUL;
+        int reason = -1;
+        final DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+        try (Cursor cursor = downloadManager.query(query)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+                reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON));
+            }
+        } catch (Exception e) {
+            Log.w(LOG, "Failed to check initial download status", e);
+        }
+        Log.w(LOG, "checkStuckDownload: id=" + downloadId + ", status=" + status + ", reason=" + reason);
+
+        if (status != DownloadManager.STATUS_PAUSED && status != DownloadManager.STATUS_PENDING) {
+            return;
+        }
+
+        try {
+            downloadManager.remove(downloadId);
+        } catch (Exception e) {
+            Log.w(LOG, "Failed to remove stuck download", e);
+            return;
+        }
+
+        String msg = wifiOnly ? getString(R.string.downloadFailedNoWifi) : getString(R.string.downloadFailedNoNetwork);
+        new AlertDialog.Builder(this).setTitle(getString(R.string.error))
+                .setMessage(msg)
+                .setNeutralButton("Close", null).show();
+        // Reset status of download button
+        setMyListAdapter();
+    }
+
     private synchronized void downloadDictionary(final String downloadUrl, long bytes, Button downloadButton) {
         if (isDownloadActive(downloadUrl, true)) {
             downloadButton
@@ -856,16 +890,31 @@ public class DictionaryManagerActivity extends AppCompatActivity {
             return;
         }
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean wifiOnly = prefs.getBoolean(C.WIFI_ONLY, true);
+        if (wifiOnly) {
+            request.setAllowedNetworkTypes(Request.NETWORK_WIFI);
+        }
+
+        long downloadId;
         try {
-            downloadManager.enqueue(request);
+            downloadId = downloadManager.enqueue(request);
         } catch (Exception e) {
             if (destFilePath != null) destFilePath.delete();
             request = new Request(Uri.parse(downloadUrl));
             request.setTitle(destFile);
-            downloadManager.enqueue(request);
+            if (wifiOnly) {
+                request.setAllowedNetworkTypes(Request.NETWORK_WIFI);
+            }
+            downloadId = downloadManager.enqueue(request);
         }
+
         Log.w(LOG, "Download started: " + destFile);
         downloadButton.setText("X");
+        if (uiHandler != null) {
+            final long id = downloadId;
+            uiHandler.postDelayed(() -> checkStuckDownload(downloadManager, id, wifiOnly), 2000);
+        }
     }
 
 }

@@ -24,5 +24,6 @@ public class C {
     public static final String SEARCH_HISTORY = "searchHistory";
     public static final String CAN_AUTO_LAUNCH_DICT = "canAutoLaunch";
     public static final String SHOW_DOWNLOADABLE = "showLocal";
+    public static final String WIFI_ONLY = "wifiOnly";
 
 }

@@ -66,6 +66,14 @@
     android:persistent="true"
   />
 
+  <CheckBoxPreference
+    android:key="@string/wifiOnlyKey"
+    android:title="@string/wifiOnlyTitle"
+    android:summary="@string/wifiOnlySummary"
+    android:defaultValue="true"
+    android:persistent="true"
+  />
+
   <ListPreference
     android:key="@string/themeKey"
     android:title="@string/themeTitle"

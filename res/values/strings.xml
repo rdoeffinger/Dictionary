@@ -34,6 +34,8 @@
     <string name="unzippingFailed">Unzipping failed: \n%s</string>
     <string name="installationFinished">Installation finished: \n%s.</string>
     <string name="notWritable">Dictionary location %s not writable, change in settings.</string>
+    <string name="downloadFailedNoNetwork">Download failed: No network connection.</string>
+    <string name="downloadFailedNoWifi">Download failed: WiFi connection required.</string>
 
     <!-- DictionaryActivity -->
     <string name="searchText">Search Text</string>
@@ -114,5 +116,9 @@
     <string name="commandHandlingKey" translatable="false">commandHandling</string>
     <string name="commandHandlingTitle">Wiktionary commands</string>
     <string name="commandHandlingSummary">How to handle Wiktionary commands in dictionary entries.</string>
+
+    <string name="wifiOnlyKey" translatable="false">wifiOnly</string>
+    <string name="wifiOnlyTitle">WiFi only downloads</string>
+    <string name="wifiOnlySummary">Only allow downloading dictionaries when connected to WiFi.</string>
 
 </resources>
