@@ -179,6 +179,7 @@ public class DictionaryActivity extends AppCompatActivity {
     private SearchView searchView;
     private AutoCompleteTextView searchTextView;
     private ImageButton languageButton;
+    private Button languageTextButton;
     private SearchView.OnQueryTextListener onQueryTextListener;
 
     private MenuItem nextWordMenuItem;
@@ -720,8 +721,14 @@ public class DictionaryActivity extends AppCompatActivity {
         languageButton.setScaleType(ScaleType.FIT_CENTER);
         languageButton.setOnClickListener(v -> onLanguageButtonLongClick(v.getContext()));
         languageButton.setAdjustViewBounds(true);
+
+        languageTextButton = new Button(customSearchView.getContext());
+        languageTextButton.setId(R.id.languageTextButton);
+        languageTextButton.setOnClickListener(v -> onLanguageButtonLongClick(v.getContext()));
+
         LinearLayout.LayoutParams lpb = new LinearLayout.LayoutParams(application.languageButtonPixels, LinearLayout.LayoutParams.MATCH_PARENT);
         customSearchView.addView(languageButton, lpb);
+        customSearchView.addView(languageTextButton, lpb);
 
         searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setId(R.id.searchView);
@@ -773,6 +780,7 @@ public class DictionaryActivity extends AppCompatActivity {
         getListView().setNextFocusLeftId(R.id.searchView);
         findViewById(R.id.floatSwapButton).setNextFocusRightId(R.id.languageButton);
         languageButton.setNextFocusLeftId(R.id.floatSwapButton);
+        languageTextButton.setNextFocusLeftId(R.id.floatSwapButton);
     }
 
     @Override
@@ -893,16 +901,9 @@ public class DictionaryActivity extends AppCompatActivity {
     }
 
     private void updateLangButton() {
-        final int flagId = IsoUtils.INSTANCE.getFlagIdForIsoCode(index.shortName);
-        if (flagId != 0) {
-            languageButton.setImageResource(flagId);
-        } else {
-            if (indexIndex % 2 == 0) {
-                languageButton.setImageResource(android.R.drawable.ic_media_next);
-            } else {
-                languageButton.setImageResource(android.R.drawable.ic_media_previous);
-            }
-        }
+        final IndexInfo indexInfo = new IndexInfo(index.shortName, 0, index.mainTokenCount);
+        final View visibleButton = IsoUtils.INSTANCE.setupButton(languageTextButton, languageButton, indexInfo);
+        findViewById(R.id.floatSwapButton).setNextFocusRightId(visibleButton.getId());
         updateTTSLanguage(indexIndex);
     }
 

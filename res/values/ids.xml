@@ -2,4 +2,5 @@
 <resources>
     <item name="searchView" type="id" />
     <item name="languageButton" type="id" />
+    <item name="languageTextButton" type="id" />
 </resources>
