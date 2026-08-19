@@ -14,6 +14,7 @@
 
 package com.hughes.android.dictionary;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.material.color.DynamicColors;
 import com.hughes.android.dictionary.engine.DictionaryInfo;
 import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo;
 import com.hughes.android.dictionary.engine.Dictionary;
@@ -192,6 +194,13 @@ public enum DictionaryApplication {
                 appContext.setTheme(getSelectedTheme().themeId);
             }
         });
+    }
+
+    public static void applyTheme(AppCompatActivity activity) {
+        INSTANCE.init(activity.getApplicationContext());
+        activity.setTheme(INSTANCE.getSelectedTheme().themeId);
+        DynamicColors.applyToActivityIfAvailable(activity);
+        androidx.activity.EdgeToEdge.enable(activity);
     }
 
     public static void onCreateGlobalOptionsMenu(

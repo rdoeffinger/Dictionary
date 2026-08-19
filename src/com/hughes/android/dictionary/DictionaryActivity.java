@@ -292,13 +292,8 @@ public class DictionaryActivity extends AppCompatActivity {
         // when called via special search intents avoid focusing the search field
         // and thus popping up the keyboard
         boolean focusSearchView = true;
-        DictionaryApplication.INSTANCE.init(getApplicationContext());
+        DictionaryApplication.applyTheme(this);
         application = DictionaryApplication.INSTANCE;
-        // This needs to be before super.onCreate, otherwise ActionbarSherlock
-        // doesn't makes the background of the actionbar white when you're
-        // in the dark theme.
-        setTheme(application.getSelectedTheme().themeId);
-        androidx.activity.EdgeToEdge.enable(this);
 
         Log.d(LOG, "onCreate:" + this);
         super.onCreate(savedInstanceState);

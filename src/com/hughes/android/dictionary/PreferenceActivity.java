@@ -37,10 +37,8 @@ public class PreferenceActivity extends AppCompatActivity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        DictionaryApplication.INSTANCE.init(getApplicationContext());
+        DictionaryApplication.applyTheme(this);
         final DictionaryApplication application = DictionaryApplication.INSTANCE;
-        setTheme(application.getSelectedTheme().themeId);
-        androidx.activity.EdgeToEdge.enable(this);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getString(getString(R.string.quickdicDirectoryKey), "").isEmpty()) {

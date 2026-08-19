@@ -4,11 +4,8 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseThemeLight" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="AppBaseThemeLight" parent="@style/Theme.Material3.Light.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="colorPrimary">@color/theme_light_token_row_main_bg</item>
-        <item name="colorPrimaryDark">#CCCCCC</item>
-        <item name="colorAccent">#0000FF</item>
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -24,11 +21,8 @@
         -->
     </style>
 
-    <style name="AppBaseThemeDark" parent="@style/Theme.AppCompat.NoActionBar">
+    <style name="AppBaseThemeDark" parent="@style/Theme.Material3.Dark.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="colorPrimary">@color/theme_default_token_row_main_bg</item>
-        <item name="colorPrimaryDark">#000000</item>
-        <item name="colorAccent">#00AAFF</item>
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to

@@ -34,9 +34,7 @@ public final class AboutActivity extends AppCompatActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        DictionaryApplication.INSTANCE.init(getApplicationContext());
-        setTheme(DictionaryApplication.INSTANCE.getSelectedTheme().themeId);
-        androidx.activity.EdgeToEdge.enable(this);
+        DictionaryApplication.applyTheme(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_activity);

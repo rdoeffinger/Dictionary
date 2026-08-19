@@ -322,12 +322,8 @@ public class DictionaryManagerActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        DictionaryApplication.INSTANCE.init(getApplicationContext());
+        DictionaryApplication.applyTheme(this);
         application = DictionaryApplication.INSTANCE;
-        // This must be first, otherwise the action bar doesn't get
-        // styled properly.
-        setTheme(application.getSelectedTheme().themeId);
-        androidx.activity.EdgeToEdge.enable(this);
 
         super.onCreate(savedInstanceState);
         Log.d(LOG, "onCreate:" + this);

@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        android:background="?attr/colorSurfaceContainer"
+        app:popupTheme="@style/ThemeOverlay.Material3.ActionBar" />
 
 <ListView
     android:id="@id/android:list"
