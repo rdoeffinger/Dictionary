@@ -510,8 +510,12 @@ public class DictionaryActivity extends AppCompatActivity {
 
         ttsReady = false;
         textToSpeech = new TextToSpeech(getApplicationContext(), status -> {
-            ttsReady = true;
-            updateTTSLanguage(indexIndex);
+            if (status == TextToSpeech.SUCCESS) {
+                ttsReady = true;
+                updateTTSLanguage(indexIndex);
+            } else {
+                Log.e(LOG, "TTS initialization failed: status=" + status);
+            }
         });
 
         try {
@@ -909,7 +913,9 @@ public class DictionaryActivity extends AppCompatActivity {
 
     @SuppressWarnings("deprecation")
     private void speak(String text) {
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        if (textToSpeech != null && ttsReady) {
+            textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 
     private void updateTTSLanguage(int i) {
@@ -917,15 +923,17 @@ public class DictionaryActivity extends AppCompatActivity {
             Log.d(LOG, "Can't updateTTSLanguage.");
             return;
         }
-        final Locale locale = Locale.forLanguageTag(dictionary.indices.get(i).sortLanguage.getIsoCode());
-        Log.d(LOG, "Setting TTS locale to: " + locale);
+        final String isoCode = dictionary.indices.get(i).sortLanguage.getIsoCode();
+        final Locale locale = Locale.forLanguageTag(isoCode);
+        Log.d(LOG, "Setting TTS locale to: " + locale + " (iso: " + isoCode + ")");
         try {
             final int ttsResult = textToSpeech.setLanguage(locale);
             if (ttsResult != TextToSpeech.LANG_AVAILABLE &&
                     ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE) {
-                Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult);
+                Log.e(LOG, "TTS not available in this language: ttsResult=" + ttsResult + " for locale " + locale);
             }
         } catch (Exception e) {
+            Log.e(LOG, "Exception setting TTS language", e);
             if (!isFinishing())
                 Toast.makeText(this, getString(R.string.TTSbroken), Toast.LENGTH_LONG).show();
         }
