@@ -35,13 +35,11 @@ import com.hughes.android.dictionary.engine.DictionaryInfo
 import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo
 import com.hughes.android.dictionary.engine.TransliteratorManager
 import com.hughes.android.dictionary.engine.TransliteratorManager.ThreadSetup
-import com.hughes.android.util.PersistentObjectCache
 import com.hughes.util.ListUtil
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
-import java.io.Serializable
 import java.nio.BufferUnderflowException
 import java.util.Collections
 import java.util.Locale
@@ -57,23 +55,13 @@ enum class DictionaryApplication {
         LIGHT(R.style.Theme_Light)
     }
 
-    class DictionaryConfig : Serializable {
+    class DictionaryConfig {
         // User-ordered list, persisted, just the ones that are/have been
         // present.
         val dictionaryFilesOrdered: MutableList<String> = ArrayList()
 
         val uncompressedFilenameToDictionaryInfo: MutableMap<String, DictionaryInfo> =
             HashMap()
-
-        val isValid: Boolean
-            /**
-             * Sometimes a deserialized version of this data structure isn't valid.
-             */
-            get() = uncompressedFilenameToDictionaryInfo != null && dictionaryFilesOrdered != null
-
-        companion object {
-            private val serialVersionUID = -1444177164708201263L
-        }
     }
 
     var dictionaryConfig: DictionaryConfig? = null
@@ -97,15 +85,7 @@ enum class DictionaryApplication {
         ).toInt()
 
         // Load the dictionaries we know about.
-        dictionaryConfig = PersistentObjectCache.init(appContext).read(
-            C.DICTIONARY_CONFIGS, DictionaryConfig::class.java
-        )
-        if (dictionaryConfig == null) {
-            dictionaryConfig = DictionaryConfig()
-        }
-        if (!dictionaryConfig!!.isValid) {
-            dictionaryConfig = DictionaryConfig()
-        }
+        dictionaryConfig = readConfig(appContext!!)
 
         // Theme stuff.
         appContext!!.setTheme(selectedTheme.themeId)
@@ -275,7 +255,7 @@ enum class DictionaryApplication {
     fun moveDictionaryToTop(dictionaryInfo: DictionaryInfo) {
         dictionaryConfig!!.dictionaryFilesOrdered.remove(dictionaryInfo.uncompressedFilename)
         dictionaryConfig!!.dictionaryFilesOrdered.add(0, dictionaryInfo.uncompressedFilename)
-        PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig)
+        writeConfig(appContext!!, dictionaryConfig!!)
     }
 
     @Synchronized
@@ -284,7 +264,7 @@ enum class DictionaryApplication {
             dictionaryConfig!!.dictionaryFilesOrdered,
             uncompressedFilenameComparator
         )
-        PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig)
+        writeConfig(appContext!!, dictionaryConfig!!)
     }
 
     @Synchronized
@@ -294,7 +274,7 @@ enum class DictionaryApplication {
         dictionaryConfig!!.uncompressedFilenameToDictionaryInfo
             .remove(dictionaryInfo.uncompressedFilename)
         getPath(dictionaryInfo.uncompressedFilename).delete()
-        PersistentObjectCache.getInstance().write(C.DICTIONARY_CONFIGS, dictionaryConfig)
+        writeConfig(appContext!!, dictionaryConfig!!)
     }
 
     val collator: java.util.Comparator<Any?>? = CollatorWrapper.getInstance()
@@ -392,8 +372,7 @@ enum class DictionaryApplication {
             }
 
             try {
-                PersistentObjectCache.getInstance()
-                    .write(C.DICTIONARY_CONFIGS, newDictionaryConfig)
+                writeConfig(appContext!!, newDictionaryConfig)
             } catch (e: Exception) {
                 Log.e(LOG, "Failed persisting dictionary configs", e)
             }
@@ -600,6 +579,38 @@ enum class DictionaryApplication {
                 // do not crash just because of a truncated or corrupt dictionary file
                 return getErrorDictionaryInfo(file)
             }
+        }
+
+        fun writeConfig(context: Context, config: DictionaryConfig) {
+            val file = File(context.filesDir, C.DICTIONARY_CONFIGS)
+            try {
+                file.writeText("v1\n" + config.dictionaryFilesOrdered.joinToString("\n"))
+            } catch (e: Exception) {
+                Log.e(LOG, "Failed to write dictionary config", e)
+            }
+        }
+
+        fun readConfig(context: Context): DictionaryConfig {
+            val config = DictionaryConfig()
+            val file = File(context.filesDir, C.DICTIONARY_CONFIGS)
+            if (!file.exists()) return config
+            try {
+                val lines = file.readLines()
+                if (lines.isEmpty() || lines[0] != "v1") return config
+
+                for (name in lines.drop(1)) {
+                    val dictFile = INSTANCE.getPath(name)
+                    if (!dictFile.exists()) continue;
+                    config.dictionaryFilesOrdered.add(name)
+                    // populate dummy until background scan completes
+                    config.uncompressedFilenameToDictionaryInfo[name] =
+                        DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO?.get(name)
+                            ?: getErrorDictionaryInfo(dictFile)
+                }
+            } catch (e: Exception) {
+                Log.e(LOG, "Failed to read dictionary config", e)
+            }
+            return config
         }
     }
 }

@@ -18,9 +18,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import com.hughes.android.dictionary.DictionaryApplication;
-import com.hughes.android.dictionary.engine.DictionaryInfo;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -53,11 +50,8 @@ public class PersistentObjectCache {
             // Note: try to avoid adding more classes.
             // LinkedHashMap is already more than enough for a DoS
             if (name.equals(String.class.getName()) ||
-                    name.equals(DictionaryInfo.IndexInfo.class.getName()) ||
                     name.equals(ArrayList.class.getName()) ||
                     name.equals(HashMap.class.getName()) ||
-                    name.equals(DictionaryInfo.class.getName()) ||
-                    name.equals(DictionaryApplication.DictionaryConfig.class.getName()) ||
                     name.equals(LinkedHashMap.class.getName())) {
                 return super.resolveClass(desc);
             }
