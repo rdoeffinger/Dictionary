@@ -492,7 +492,7 @@ class DictionaryActivity : AppCompatActivity() {
         }
 
         ttsReady = false
-        textToSpeech = TextToSpeech(applicationContext) { status ->
+        textToSpeech = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 ttsReady = true
                 updateTTSLanguage(indexIndex)
@@ -929,14 +929,19 @@ class DictionaryActivity : AppCompatActivity() {
         Log.d(LOG, "Setting TTS locale to: $locale (iso: $isoCode)")
         try {
             val ttsResult = textToSpeech!!.setLanguage(locale)
-            if (ttsResult != TextToSpeech.LANG_AVAILABLE &&
-                ttsResult != TextToSpeech.LANG_COUNTRY_AVAILABLE
+            if (ttsResult == TextToSpeech.LANG_AVAILABLE ||
+                ttsResult == TextToSpeech.LANG_COUNTRY_AVAILABLE ||
+                ttsResult == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE
             ) {
+                Log.d(LOG, "TTS language set successfully: ttsResult=$ttsResult")
+            } else {
                 Log.e(
                     LOG,
                     "TTS not available in this language: ttsResult=$ttsResult for locale $locale"
                 )
             }
+        } catch (e: IllegalArgumentException) {
+            Log.e(LOG, "Invalid locale for TTS: $locale", e)
         } catch (e: Exception) {
             Log.e(LOG, "Exception setting TTS language", e)
             if (!isFinishing) Toast.makeText(
