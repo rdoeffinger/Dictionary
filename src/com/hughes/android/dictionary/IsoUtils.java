@@ -191,6 +191,19 @@ public enum IsoUtils {
         isoCodeToResources.put("SH", new LanguageResources("Serbo-Croatian", R.string.SH));
         isoCodeToResources.put("SD", new LanguageResources("Sindhi", R.string.SD));
 
+        isoCodeToResources.put("VRPAT", new LanguageResources(
+                               "Austrian Vehicle Registration Plates", R.string.VRP_AT,
+                               R.drawable.vehicle_a));
+        isoCodeToResources.put("VRPCH", new LanguageResources(
+                               "Swiss Vehicle Registration Plates", R.string.VRP_CH,
+                               R.drawable.vehicle_ch));
+        isoCodeToResources.put("VRPDE", new LanguageResources(
+                               "German Vehicle Registration Plates", R.string.VRP_DE,
+                               R.drawable.vehicle_d));
+        isoCodeToResources.put("VRPXW", new LanguageResources(
+                               "International Vehicle Registration Plates", R.string.VRP_XW,
+                               R.drawable.vehicle_xw));
+
         // Hack to allow lower-case ISO codes to work:
         for (final String isoCode : new ArrayList<>(isoCodeToResources.keySet())) {
             isoCodeToResources.put(isoCode.toLowerCase(), isoCodeToResources.get(isoCode));
