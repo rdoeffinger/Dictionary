@@ -141,7 +141,8 @@ public final class Index {
             }
         } else if (dict.dictFileVersion >= 4) {
             stoplist = new HashSet<>();
-            raf.readInt(); // length
+            int length = raf.readInt();
+            int stoplistEnd = raf.position() + length;
             raf.skipBytes(18);
             byte b = raf.readByte();
             raf.skipBytes(b == 'L' ? 71 : 33);
@@ -149,6 +150,9 @@ public final class Index {
                 stoplist.add(raf.readUTF());
             }
             if (b != 0x78) throw new IOException("Invalid data in dictionary stoplist!");
+            if (raf.position() != stoplistEnd) {
+                throw new IOException("Stoplist length mismatch: expected " + stoplistEnd + " but at " + raf.position());
+            }
         } else {
             stoplist = Collections.emptySet();
         }
