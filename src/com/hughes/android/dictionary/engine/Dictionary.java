@@ -180,8 +180,12 @@ public class Dictionary {
         final DictionaryInfo result = new DictionaryInfo();
         result.creationMillis = this.creationMillis;
         result.dictInfo = this.dictInfo;
-        for (final Index index : indices) {
-            result.indexInfos.add(index.getIndexInfo());
+        try {
+            for (final Index index : indices) {
+                result.indexInfos.add(index.getIndexInfo());
+            }
+        } catch (Exception e) {
+            return new DictionaryInfo();
         }
         return result;
     }
