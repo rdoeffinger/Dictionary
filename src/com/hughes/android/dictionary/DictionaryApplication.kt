@@ -43,7 +43,6 @@ import java.io.InputStreamReader
 import java.nio.BufferUnderflowException
 import java.util.Collections
 import java.util.Locale
-import java.util.stream.Collectors
 
 enum class DictionaryApplication {
     INSTANCE;
@@ -103,7 +102,7 @@ enum class DictionaryApplication {
         val dir = defaultDictDir.absolutePath
         val dictDir = File(dir)
         val fileList = if (dictDir.isDirectory) dictDir.list() else null
-        if (fileList != null && fileList.size > 0) {
+        if (!fileList.isNullOrEmpty()) {
             return dir
         }
         var efd: File? = null
@@ -236,16 +235,14 @@ enum class DictionaryApplication {
             DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!![uncompressedFilename]
         if (dictionaryInfo != null) {
             val sortedIndexInfos = sortedIndexInfos(dictionaryInfo.indexInfos)
-            name = sortedIndexInfos.stream()
-                .map { e ->
+            name = sortedIndexInfos.joinToString("-") { e ->
                     IsoUtils.INSTANCE.isoCodeToLocalizedLanguageName(
                         appContext,
-                        e!!.shortName
+                        e.shortName
                     )
                 }
-                .collect(Collectors.joining("-"))
         } else {
-            name = uncompressedFilename.replace(".quickdic", "")
+            name = uncompressedFilename.removeSuffix(".quickdic")
         }
         fileToNameCache[uncompressedFilename] = name
         return name
@@ -339,7 +336,7 @@ enum class DictionaryApplication {
                 for (file in dictDirFiles) {
                     if (file.name!!.endsWith(".zip")) {
                         if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!!
-                                .containsKey(file.name!!.replace(".zip", ""))
+                                .containsKey(file.name!!.removeSuffix(".zip"))
                         ) {
                             file.delete()
                         }
@@ -353,7 +350,7 @@ enum class DictionaryApplication {
                         // We have it in our list already.
                         continue
                     }
-                    val dictionaryInfo: DictionaryInfo =
+                    val dictionaryInfo =
                         getDictionaryInfo(file, appContext!!.contentResolver)
                     if (!dictionaryInfo.isValid) {
                         Log.e(LOG, "Unable to parse dictionary: " + file.uri.path)
@@ -406,16 +403,9 @@ enum class DictionaryApplication {
 
     @Synchronized
     fun getDictionariesOnDevice(filters: Array<String>?): MutableList<DictionaryInfo> {
-        val result: MutableList<DictionaryInfo> = ArrayList(
-            dictionaryConfig!!.dictionaryFilesOrdered.size
-        )
-        for (uncompressedFilename in dictionaryConfig!!.dictionaryFilesOrdered) {
-            val dictionaryInfo = dictionaryConfig!!.uncompressedFilenameToDictionaryInfo[uncompressedFilename]
-            if (dictionaryInfo != null && matchesFilters(dictionaryInfo, filters)) {
-                result.add(dictionaryInfo)
-            }
-        }
-        return result
+        return dictionaryConfig!!.dictionaryFilesOrdered.mapNotNull {
+            dictionaryConfig!!.uncompressedFilenameToDictionaryInfo[it]
+        }.filter { matchesFilters(it, filters) }.toMutableList()
     }
 
     fun getDownloadableDictionaries(filters: Array<String>?): MutableList<DictionaryInfo> {
@@ -423,17 +413,10 @@ enum class DictionaryApplication {
             dictionaryConfig!!.dictionaryFilesOrdered.size
         )
 
-        val remaining: MutableMap<String, DictionaryInfo> = HashMap(
-            DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!!
-        )
+        val remaining = DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!!.toMutableMap()
         remaining.keys.removeAll(dictionaryConfig!!.dictionaryFilesOrdered)
-        for (dictionaryInfo in remaining.values) {
-            if (matchesFilters(dictionaryInfo, filters)) {
-                result.add(dictionaryInfo)
-            }
-        }
-        Collections.sort(result, dictionaryInfoComparator)
-        return result
+        return remaining.values.filter { matchesFilters(it, filters) }
+            .sortedWith(dictionaryInfoComparator).toMutableList()
     }
 
     fun updateAvailable(dictionaryInfo: DictionaryInfo): Boolean {
@@ -600,7 +583,7 @@ enum class DictionaryApplication {
 
                 for (name in lines.drop(1)) {
                     val dictFile = INSTANCE.getPath(name)
-                    if (!dictFile.exists()) continue;
+                    if (!dictFile.exists()) continue
                     config.dictionaryFilesOrdered.add(name)
                     // populate dummy until background scan completes
                     config.uncompressedFilenameToDictionaryInfo[name] =

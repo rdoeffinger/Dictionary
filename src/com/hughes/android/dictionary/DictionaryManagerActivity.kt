@@ -643,8 +643,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
     }
 
     private fun setMyListAdapter() {
-        val filter = if (filterSearchView == null) "" else filterSearchView!!.query
-            .toString()
+        val filter = filterSearchView?.query?.toString() ?: ""
         val filters: Array<String> =
             filter.trim { it <= ' ' }.lowercase(Locale.getDefault()).split("[\\s\\-]+".toRegex())
                 .dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -657,9 +656,8 @@ class DictionaryManagerActivity : AppCompatActivity() {
         query.setFilterByStatus(DownloadManager.STATUS_PAUSED or DownloadManager.STATUS_PENDING or DownloadManager.STATUS_RUNNING)
         val cursor = downloadManagerQuery(downloadManager, query, cancel) ?: return cancel
 
-        val destFile: String?
-        try {
-            destFile = File(URL(downloadUrl).path).name
+        val destFile: String = try {
+            File(URL(downloadUrl).path).name
         } catch (e: MalformedURLException) {
             throw RuntimeException("Invalid download URL!", e)
         }

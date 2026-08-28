@@ -201,12 +201,7 @@ class DictionaryActivity : AppCompatActivity() {
 
     private fun getMatchLen(search: String, e: Index.IndexEntry?): Int {
         if (e == null) return 0
-        for (i in search.indices) {
-            val a = search.substring(0, i + 1)
-            val b = e.token.substring(0, i + 1)
-            if (!a.equals(b, ignoreCase = true)) return i
-        }
-        return search.length
+        return search.commonPrefixWith(e.token, ignoreCase = true).length
     }
 
     private fun dictionaryOpenFail(e: Exception) {
@@ -243,14 +238,12 @@ class DictionaryActivity : AppCompatActivity() {
 
     private fun addToSearchHistory(text: String? = searchView!!.query.toString()) {
         if (text.isNullOrEmpty() || searchHistoryLimit == 0) return
-        val exists = searchHistory.indexOf(text)
-        if (exists >= 0) searchHistory.removeAt(exists)
-        else if (searchHistory.size >= searchHistoryLimit) searchHistory.removeAt(searchHistory.size - 1)
+        searchHistory.remove(text)
+        if (searchHistory.size >= searchHistoryLimit) searchHistory.removeLast()
         searchHistory.add(0, text)
         searchHistoryCursor = MatrixCursor(arrayOf("_id", "search"))
-        for (i in searchHistory.indices) {
-            val row = arrayOf<Any?>(i, searchHistory[i])
-            searchHistoryCursor.addRow(row)
+        searchHistory.forEachIndexed { i, s ->
+            searchHistoryCursor.addRow(arrayOf<Any?>(i, s))
         }
         if (searchView!!.suggestionsAdapter.cursor != null) {
             searchView!!.suggestionsAdapter.swapCursor(searchHistoryCursor)
@@ -321,7 +314,6 @@ class DictionaryActivity : AppCompatActivity() {
             dictRaf = null
         }
 
-        val intent = getIntent()
         val intentAction = intent.action
         /*
           @author Dominik Köppl Querying the Intent
@@ -333,41 +325,28 @@ class DictionaryActivity : AppCompatActivity() {
         if ("com.hughes.action.ACTION_SEARCH_DICT" == intentAction) {
             focusSearchView = false
             val query = intent.getStringExtra(SearchManager.QUERY)
-            var from = intent.getStringExtra("from")
-            if (from != null) from = from.lowercase()
-            var to = intent.getStringExtra("to")
-            if (to != null) to = to.lowercase()
+            var from = intent.getStringExtra("from")?.lowercase()
+            var to = intent.getStringExtra("to")?.lowercase()
             if (query != null) {
-                getIntent().putExtra(C.SEARCH_TOKEN, query)
+                intent.putExtra(C.SEARCH_TOKEN, query)
             }
             if (intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null)) {
                 Log.d(LOG, "DictSearch: from: $from to $to")
-                val dicts: MutableList<DictionaryInfo> = application!!.getDictionariesOnDevice(null)
-                for (info in dicts) {
-                    var hasFrom = from == null
-                    var hasTo = to == null
-                    for (index in info.indexInfos) {
-                        if (!hasFrom && index.shortName.lowercase() == from) hasFrom = true
-                        if (!hasTo && index.shortName.lowercase() == to) hasTo = true
-                    }
-                    if (hasFrom && hasTo) {
-                        if (from != null) {
-                            var which_index = 0
-                            while (which_index < info.indexInfos.size) {
-                                if (info.indexInfos[which_index].shortName.lowercase() == from) break
-                                ++which_index
-                            }
-                            intent.putExtra(
-                                C.INDEX_SHORT_NAME,
-                                info.indexInfos[which_index].shortName
-                            )
-                        }
-                        intent.putExtra(
-                            C.DICT_FILE, application!!.getPath(info.uncompressedFilename)
-                                .getUri().toString()
-                        )
-                        break
-                    }
+                val dicts = application!!.getDictionariesOnDevice(null)
+                // search for dictionary with matching indices
+                val requiredIndices = listOfNotNull(from, to)
+                val info = dicts.find { dict ->
+                    val hasIndices = dict.indexInfos.map { it.shortName.lowercase() }
+                    hasIndices.containsAll(requiredIndices)
+                }
+                if (info != null) {
+                    // if any index matches from (in particular, from is not null)
+                    val fromIndex = info.indexInfos.find { it.shortName.equals(from, ignoreCase = true) }
+                    if (fromIndex != null) intent.putExtra(C.INDEX_SHORT_NAME, fromIndex.shortName)
+                    intent.putExtra(
+                        C.DICT_FILE, application!!.getPath(info.uncompressedFilename)
+                            .uri.toString()
+                    )
                 }
             }
         }
@@ -426,14 +405,14 @@ class DictionaryActivity : AppCompatActivity() {
         var dictFilename = intent.getStringExtra(C.DICT_FILE)
         val search = intent.getStringExtra(C.SEARCH_TOKEN)
         if (intent.getStringExtra(C.INDEX_SHORT_NAME) == null && search != null) {
-            val dics: MutableList<DictionaryInfo> = application!!.getDictionariesOnDevice(null)
+            val dics = application!!.getDictionariesOnDevice(null)
             var bestFname: String? = null
             var bestIndex: String? = null
             var bestMatchLen = 2 // ignore shorter matches
-            for (i in dics.indices) {
+            for (d in dics) {
                 try {
                     val dictfile: DocumentFile =
-                        application!!.getPath(dics[i].uncompressedFilename)
+                        application!!.getPath(d.uncompressedFilename)
                     val uriString = dictfile.uri.toString()
 
                     // If a dictionary is already specified (e.g. default), only search that one.
@@ -441,12 +420,11 @@ class DictionaryActivity : AppCompatActivity() {
                         continue
                     }
 
-                    Log.d(LOG, "Checking dictionary " + dics[i].uncompressedFilename)
+                    Log.d(LOG, "Checking dictionary " + d.uncompressedFilename)
                     val c = contentResolver.openAssetFileDescriptor(dictfile.uri, "r")!!
                         .createInputStream().channel
                     val dic = Dictionary(c)
-                    for (j in dic.indices.indices) {
-                        val idx = dic.indices[j]
+                    for (idx in dic.indices) {
                         Log.d(LOG, "Checking index " + idx.shortName)
                         if (idx.findExact(search) != null) {
                             Log.d(LOG, "Found exact match")
@@ -678,9 +656,8 @@ class DictionaryActivity : AppCompatActivity() {
         })
 
         // Set up search history
-        var savedHistory: ArrayList<String?>? = null
-        if (savedInstanceState != null) savedHistory =
-            savedInstanceState.getStringArrayList(C.SEARCH_HISTORY)
+        var savedHistory =
+            savedInstanceState?.getStringArrayList(C.SEARCH_HISTORY)
         if (savedHistory.isNullOrEmpty()) {
             savedHistory = ArrayList()
             for (i in 0..<searchHistoryLimit) {
@@ -688,9 +665,7 @@ class DictionaryActivity : AppCompatActivity() {
                 savedHistory.add(h)
             }
         }
-        for (i in savedHistory.indices.reversed()) {
-            addToSearchHistory(savedHistory[i])
-        }
+        savedHistory.asReversed().forEach { addToSearchHistory(it) }
         addToSearchHistory(text)
 
         setSearchText(text, true)
@@ -1342,8 +1317,7 @@ class DictionaryActivity : AppCompatActivity() {
     ) {
         var indexToUse = -1
         var numFound = 0
-        for (i in dictionary!!.indices.indices) {
-            val index = dictionary!!.indices[i]
+        dictionary!!.indices.forEachIndexed() { i, index ->
             if (indexPrepFinished) {
                 println("Doing index lookup: on $selectedText")
                 val indexEntry = index.findExact(selectedText)
@@ -1359,12 +1333,9 @@ class DictionaryActivity : AppCompatActivity() {
                 Log.w(LOG, "Skipping findExact on index " + index.shortName)
             }
         }
-        if (numFound != 1) {
-            indexToUse = defaultIndexToUse
-        }
+        val actualIndexToUse = if (numFound == 1) indexToUse else defaultIndexToUse
         // Without this extra delay, the call to jumpToRow that this
         // invokes doesn't always actually have any effect.
-        val actualIndexToUse = indexToUse
         listView.postDelayed({
             setIndexAndSearchText(actualIndexToUse, selectedText, true)
             addToSearchHistory(selectedText)
@@ -1564,11 +1535,11 @@ class DictionaryActivity : AppCompatActivity() {
         override fun run() {
             try {
                 searchStartMillis = System.currentTimeMillis()
-                val searchTokenArray: Array<String> = WHITESPACE.split(searchText)
+                val searchTokenArray = WHITESPACE.split(searchText)
                 if (searchTokenArray.size == 1) {
                     searchResult = index.findInsertionPoint(searchText, interrupted)
                 } else {
-                    searchTokens = listOf(*searchTokenArray)
+                    searchTokens = searchTokenArray.toList()
                     multiWordSearchResult = index.multiWordSearch(
                         searchText, searchTokens,
                         interrupted
