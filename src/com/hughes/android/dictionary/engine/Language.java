@@ -15,7 +15,6 @@
 package com.hughes.android.dictionary.engine;
 
 import com.hughes.android.dictionary.CollatorWrapper;
-import com.hughes.android.dictionary.DictionaryApplication;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -68,21 +67,6 @@ public class Language {
 
     public String getDefaultNormalizerRules() {
         return ":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;";
-    }
-
-    /**
-     * A practical pattern to identify strong RTL characters. This pattern is
-     * not completely correct according to the Unicode standard. It is
-     * simplified for performance and small code size.
-     */
-    private static final String rtlChars =
-        "\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC";
-
-    @SuppressWarnings("unused")
-    public static String fixBidiText(String text) {
-        // TODO: RTL text (e.g. arabic) in parenthesis might need extra
-        // \u200e markers sometimes - check what exactly is going on there.
-        return text;
     }
 
     // ----------------------------------------------------------------
