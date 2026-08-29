@@ -29,19 +29,18 @@ import java.io.File
 class PreferenceActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     public override fun onCreate(savedInstanceState: Bundle?) {
         DictionaryApplication.applyTheme(this)
-        val application = DictionaryApplication.INSTANCE
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         if (prefs.getString(getString(R.string.quickdicDirectoryKey), "")!!.isEmpty()) {
             prefs.edit().putString(
                 getString(R.string.quickdicDirectoryKey),
-                application.dictDir.uri.path
+                DictionaryApplication.dictDir.uri.path
             ).commit()
         }
         if (prefs.getString(getString(R.string.wordListFileKey), "")!!.isEmpty()) {
             prefs.edit().putString(
                 getString(R.string.wordListFileKey),
-                application.wordListFile!!.uri.path
+                DictionaryApplication.wordListFile!!.uri.path
             ).commit()
         }
 
@@ -110,9 +109,8 @@ class PreferenceActivity : AppCompatActivity(), OnSharedPreferenceChangeListener
     }
 
     override fun onSharedPreferenceChanged(p: SharedPreferences?, v: String?) {
-        DictionaryApplication.INSTANCE.init(applicationContext)
-        val application = DictionaryApplication.INSTANCE
-        val dictDir = application.dictDir
+        DictionaryApplication.init(applicationContext)
+        val dictDir = DictionaryApplication.dictDir
         if (!dictDir.isDirectory || !dictDir.canWrite() || !DictionaryApplication.checkFileCreate(
                 dictDir
             )
@@ -122,7 +120,7 @@ class PreferenceActivity : AppCompatActivity(), OnSharedPreferenceChangeListener
                 .setMessage(getString(R.string.chosenNotWritable) + dirs)
                 .setNeutralButton("Close", null).show()
         }
-        val wordlist = application.wordListFile!!
+        val wordlist = DictionaryApplication.wordListFile!!
         var ok = false
         try {
             ok = wordlist.canWrite()

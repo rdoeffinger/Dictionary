@@ -57,9 +57,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.hughes.android.dictionary.DictionaryActivity.Companion.getLaunchIntent
-import com.hughes.android.dictionary.DictionaryApplication.Companion.applyTheme
-import com.hughes.android.dictionary.DictionaryApplication.Companion.checkFileCreate
-import com.hughes.android.dictionary.DictionaryApplication.Companion.onCreateGlobalOptionsMenu
+import com.hughes.android.dictionary.DictionaryApplication.applyTheme
+import com.hughes.android.dictionary.DictionaryApplication.checkFileCreate
+import com.hughes.android.dictionary.DictionaryApplication.onCreateGlobalOptionsMenu
 import com.hughes.android.dictionary.engine.DictionaryInfo
 import com.hughes.android.dictionary.engine.DictionaryInfo.IndexInfo
 import com.hughes.android.util.IntentLauncher
@@ -86,8 +86,6 @@ class DictionaryManagerActivity : AppCompatActivity() {
 
     // For DownloadManager bug workaround
     private val finishedDownloadIds: MutableSet<Long?> = HashSet()
-
-    private var application: DictionaryApplication? = null
 
     private var filterSearchView: SearchView? = null
     private var showDownloadable: ToggleButton? = null
@@ -223,11 +221,11 @@ class DictionaryManagerActivity : AppCompatActivity() {
                     continue
                 }
                 Log.d(LOG, "Unzipping entry: " + zipEntry.name)
-                var targetFile: DocumentFile? = application!!.dictDir.findFile(zipEntry.name)
+                var targetFile: DocumentFile? = DictionaryApplication.dictDir.findFile(zipEntry.name)
                 if (targetFile != null && targetFile.exists()) {
                     targetFile.renameTo(zipEntry.name.replace(".quickdic", ".bak.quickdic"))
                 }
-                targetFile = application!!.dictDir.createFile("", zipEntry.name)
+                targetFile = DictionaryApplication.dictDir.createFile("", zipEntry.name)
                 context.contentResolver.openAssetFileDescriptor(targetFile!!.uri, "wt")!!
                     .createOutputStream().use { zipOut ->
                         copyStream(zipFile, zipOut)
@@ -235,7 +233,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
             }
             if (uiHandler != null && !isFinishing && !isDestroyed) {
                 uiHandler!!.post {
-                    application!!.backgroundUpdateDictionaries(
+                    DictionaryApplication.backgroundUpdateDictionaries(
                         dictionaryUpdater
                     )
                 }
@@ -248,7 +246,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
             }
             result = true
         } catch (e: Exception) {
-            val dir: DocumentFile = application!!.dictDir
+            val dir: DocumentFile = DictionaryApplication.dictDir
             val msg: String = if (!dir.canWrite() || !checkFileCreate(dir)) {
                 getString(R.string.notWritable, dir.uri.path)
             } else {
@@ -279,7 +277,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
     }
 
     private fun readableCheckAndError(requestPermission: Boolean) {
-        val dictDir: DocumentFile = application!!.dictDir
+        val dictDir: DocumentFile = DictionaryApplication.dictDir
         if (dictDir.canRead()) return
         blockAutoLaunch = true
         if (requestPermission &&
@@ -320,14 +318,13 @@ class DictionaryManagerActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         readableCheckAndError(false)
 
-        application!!.backgroundUpdateDictionaries(dictionaryUpdater)
+        DictionaryApplication.backgroundUpdateDictionaries(dictionaryUpdater)
 
         setMyListAdapter()
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
-        application = DictionaryApplication.INSTANCE
 
         super.onCreate(savedInstanceState)
         Log.d(LOG, "onCreate:$this")
@@ -494,7 +491,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
         // next time.
         prefs.edit().remove(C.DICT_FILE).remove(C.INDEX_SHORT_NAME).commit()
 
-        application!!.backgroundUpdateDictionaries(dictionaryUpdater)
+        DictionaryApplication.backgroundUpdateDictionaries(dictionaryUpdater)
 
         setMyListAdapter()
     }
@@ -506,7 +503,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
         val sort = menu.add(getString(R.string.sortDicts))
         sort.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
         sort.setOnMenuItemClickListener { _ ->
-            application!!.sortDictionaries()
+            DictionaryApplication.sortDictionaries()
             setMyListAdapter()
             true
         }
@@ -545,7 +542,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
             val moveToTopMenuItem =
                 menu.add(R.string.moveToTop)
             moveToTopMenuItem.setOnMenuItemClickListener { _ ->
-                application!!.moveDictionaryToTop(row.dictionaryInfo)
+                DictionaryApplication.moveDictionaryToTop(row.dictionaryInfo)
                 setMyListAdapter()
                 true
             }
@@ -555,7 +552,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
             val deleteMenuItem = menu.add(R.string.deleteDictionary)
             deleteMenuItem
                 .setOnMenuItemClickListener { _ ->
-                    application!!.deleteDictionary(row.dictionaryInfo)
+                    DictionaryApplication.deleteDictionary(row.dictionaryInfo)
                     setMyListAdapter()
                     true
                 }
@@ -571,9 +568,9 @@ class DictionaryManagerActivity : AppCompatActivity() {
 
     internal inner class MyListAdapter(filters: Array<String>?) :
         BaseAdapter() {
-        val dictionariesOnDevice: MutableList<DictionaryInfo> = application!!.getDictionariesOnDevice(filters)
+        val dictionariesOnDevice: MutableList<DictionaryInfo> = DictionaryApplication.getDictionariesOnDevice(filters)
         val downloadableDictionaries: MutableList<DictionaryInfo> = if (showDownloadable!!.isChecked) {
-            application!!.getDownloadableDictionaries(filters)
+            DictionaryApplication.getDownloadableDictionaries(filters)
         } else {
             mutableListOf()
         }
@@ -717,12 +714,12 @@ class DictionaryManagerActivity : AppCompatActivity() {
         }
         val name = row.findViewById<TextView>(R.id.dictionaryName)
         val details = row.findViewById<TextView>(R.id.dictionaryDetails)
-        name.text = application!!.getDictionaryName(dictionaryInfo.uncompressedFilename)
+        name.text = DictionaryApplication.getDictionaryName(dictionaryInfo.uncompressedFilename)
 
-        val updateAvailable: Boolean = application!!.updateAvailable(dictionaryInfo)
+        val updateAvailable: Boolean = DictionaryApplication.updateAvailable(dictionaryInfo)
         val downloadButton = row.findViewById<Button>(R.id.downloadButton)
         val downloadable: DictionaryInfo? =
-            application!!.getDownloadable(dictionaryInfo.uncompressedFilename)
+            DictionaryApplication.getDownloadable(dictionaryInfo.uncompressedFilename)
         var broken = false
         if (!dictionaryInfo.isValid) {
             broken = true
@@ -733,7 +730,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
                 R.string.downloadButton,
                 downloadable.zipBytes / 1024.0 / 1024.0
             )
-            downloadButton.minWidth = application!!.languageButtonPixels * 3 / 2
+            downloadButton.minWidth = DictionaryApplication.languageButtonPixels * 3 / 2
             downloadButton.setOnClickListener { _ ->
                 downloadDictionary(
                     downloadable.downloadUrl,
@@ -750,7 +747,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
 
         val buttons = row.findViewById<LinearLayout>(R.id.dictionaryLauncherButtons)
 
-        val sortedIndexInfos: MutableList<IndexInfo> = application!!
+        val sortedIndexInfos: MutableList<IndexInfo> = DictionaryApplication
             .sortedIndexInfos(dictionaryInfo.indexInfos)
         val builder = StringBuilder()
         if (updateAvailable) {
@@ -778,7 +775,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
                         buttons.context,
                         getLaunchIntent(
                             applicationContext,
-                            application!!.getPath(dictionaryInfo.uncompressedFilename).getUri()
+                            DictionaryApplication.getPath(dictionaryInfo.uncompressedFilename).getUri()
                                 .toString(),
                             indexInfo.shortName, ""
                         )
@@ -802,7 +799,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
             )
         )
         if (broken) {
-            name.text = "Broken: " + application!!.getDictionaryName(dictionaryInfo.uncompressedFilename)
+            name.text = "Broken: " + DictionaryApplication.getDictionaryName(dictionaryInfo.uncompressedFilename)
             builder.append("; Cannot be used, redownload, check hardware/file system")
         }
         details.text = builder.toString()
@@ -813,7 +810,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
                     parent.context,
                     getLaunchIntent(
                         applicationContext,
-                        application!!.getPath(dictionaryInfo.uncompressedFilename).getUri()
+                        DictionaryApplication.getPath(dictionaryInfo.uncompressedFilename).getUri()
                             .toString(),
                         dictionaryInfo.indexInfos[0].shortName, ""
                     )
@@ -895,9 +892,9 @@ class DictionaryManagerActivity : AppCompatActivity() {
         }
         Log.d(LOG, "Downloading to: $destFile")
         request.setTitle(destFile)
-        var destFilePath: DocumentFile? = application!!.dictDir.findFile(destFile)
+        var destFilePath: DocumentFile? = DictionaryApplication.dictDir.findFile(destFile)
         destFilePath?.delete()
-        destFilePath = application!!.dictDir.createFile("", destFile)
+        destFilePath = DictionaryApplication.dictDir.createFile("", destFile)
         try {
             request.setDestinationUri(destFilePath!!.uri)
         } catch (_: Exception) {

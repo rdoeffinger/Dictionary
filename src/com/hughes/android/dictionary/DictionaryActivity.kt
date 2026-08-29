@@ -79,8 +79,8 @@ import androidx.cursoradapter.widget.CursorAdapter
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.hughes.android.dictionary.DictionaryApplication.Companion.applyTheme
-import com.hughes.android.dictionary.DictionaryApplication.Companion.onCreateGlobalOptionsMenu
+import com.hughes.android.dictionary.DictionaryApplication.applyTheme
+import com.hughes.android.dictionary.DictionaryApplication.onCreateGlobalOptionsMenu
 import com.hughes.android.dictionary.HtmlDisplayActivity.Companion.getHtmlIntent
 import com.hughes.android.dictionary.engine.Dictionary
 import com.hughes.android.dictionary.engine.DictionaryInfo
@@ -112,7 +112,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 class DictionaryActivity : AppCompatActivity() {
-    private var application: DictionaryApplication? = null
 
     private var dictFile: DocumentFile? = null
     private var dictRaf: FileChannel? = null
@@ -256,7 +255,6 @@ class DictionaryActivity : AppCompatActivity() {
         // and thus popping up the keyboard
         var focusSearchView = true
         applyTheme(this)
-        application = DictionaryApplication.INSTANCE
 
         Log.d(LOG, "onCreate:$this")
         super.onCreate(savedInstanceState)
@@ -332,7 +330,7 @@ class DictionaryActivity : AppCompatActivity() {
             }
             if (intent.getStringExtra(C.DICT_FILE) == null && (from != null || to != null)) {
                 Log.d(LOG, "DictSearch: from: $from to $to")
-                val dicts = application!!.getDictionariesOnDevice(null)
+                val dicts = DictionaryApplication.getDictionariesOnDevice(null)
                 // search for dictionary with matching indices
                 val requiredIndices = listOfNotNull(from, to)
                 val info = dicts.find { dict ->
@@ -344,7 +342,7 @@ class DictionaryActivity : AppCompatActivity() {
                     val fromIndex = info.indexInfos.find { it.shortName.equals(from, ignoreCase = true) }
                     if (fromIndex != null) intent.putExtra(C.INDEX_SHORT_NAME, fromIndex.shortName)
                     intent.putExtra(
-                        C.DICT_FILE, application!!.getPath(info.uncompressedFilename)
+                        C.DICT_FILE, DictionaryApplication.getPath(info.uncompressedFilename)
                             .uri.toString()
                     )
                 }
@@ -400,20 +398,20 @@ class DictionaryActivity : AppCompatActivity() {
             val dictfile = prefs.getString(getString(R.string.defaultDicKey), null)
             if (dictfile != null) intent.putExtra(
                 C.DICT_FILE,
-                application!!.getPath(dictfile).getUri().toString()
+                DictionaryApplication.getPath(dictfile).getUri().toString()
             )
         }
         var dictFilename = intent.getStringExtra(C.DICT_FILE)
         val search = intent.getStringExtra(C.SEARCH_TOKEN)
         if (intent.getStringExtra(C.INDEX_SHORT_NAME) == null && search != null) {
-            val dics = application!!.getDictionariesOnDevice(null)
+            val dics = DictionaryApplication.getDictionariesOnDevice(null)
             var bestFname: String? = null
             var bestIndex: String? = null
             var bestMatchLen = 2 // ignore shorter matches
             for (d in dics) {
                 try {
                     val dictfile: DocumentFile =
-                        application!!.getPath(d.uncompressedFilename)
+                        DictionaryApplication.getPath(d.uncompressedFilename)
                     val uriString = dictfile.uri.toString()
 
                     // If a dictionary is already specified (e.g. default), only search that one.
@@ -482,7 +480,7 @@ class DictionaryActivity : AppCompatActivity() {
 
         try {
             if (dictRaf == null) {
-                dictFileTitleName = application!!.getDictionaryName(dictFile!!.name!!)
+                dictFileTitleName = DictionaryApplication.getDictionaryName(dictFile!!.name!!)
                 dictRaf = contentResolver.openAssetFileDescriptor(dictFile!!.uri, "r")!!
                     .createInputStream().channel
             }
@@ -588,7 +586,7 @@ class DictionaryActivity : AppCompatActivity() {
         registerForContextMenu(listView)
 
         // Cache some prefs.
-        wordList = application!!.wordListFile
+        wordList = DictionaryApplication.wordListFile
         saveOnlyFirstSubentry = prefs.getBoolean(
             getString(R.string.saveOnlyFirstSubentryKey),
             false
@@ -713,8 +711,8 @@ class DictionaryActivity : AppCompatActivity() {
         // Use a fixed aspect ratio (3:2) for the flag buttons and center them vertically
         // to prevent them from stretching to the full height of the Toolbar.
         val lpb: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
-            application!!.languageButtonPixels,
-            application!!.languageButtonPixels * 2 / 3
+            DictionaryApplication.languageButtonPixels,
+            DictionaryApplication.languageButtonPixels * 2 / 3
         )
         lpb.gravity = Gravity.CENTER_VERTICAL
         customSearchView.addView(languageButton, lpb)
@@ -781,7 +779,7 @@ class DictionaryActivity : AppCompatActivity() {
         }
         showKeyboard()
         // prepare list of available dictionaries
-        application!!.backgroundUpdateDictionaries(null)
+        DictionaryApplication.backgroundUpdateDictionaries(null)
     }
 
     /**
@@ -955,7 +953,7 @@ class DictionaryActivity : AppCompatActivity() {
         dialog.setTitle(R.string.selectDictionary)
 
         val installedDicts: MutableList<DictionaryInfo> =
-            application!!.getDictionariesOnDevice(null)
+            DictionaryApplication.getDictionariesOnDevice(null)
 
         val listView = dialog.findViewById<ListView>(android.R.id.list)
         val button = Button(listView.context)
@@ -983,21 +981,21 @@ class DictionaryActivity : AppCompatActivity() {
                 result.orientation = LinearLayout.HORIZONTAL
                 result.gravity = Gravity.CENTER_VERTICAL
                 result.setPadding(
-                    application!!.languageButtonPixels / 8, application!!.languageButtonPixels / 16,
-                    application!!.languageButtonPixels / 8, application!!.languageButtonPixels / 16
+                    DictionaryApplication.languageButtonPixels / 8, DictionaryApplication.languageButtonPixels / 16,
+                    DictionaryApplication.languageButtonPixels / 8, DictionaryApplication.languageButtonPixels / 16
                 )
 
                 for (i in dictionaryInfo.indexInfos.indices) {
                     val indexInfo = dictionaryInfo.indexInfos[i]
                     val button = IsoUtils.INSTANCE.createButton(
                         parent.context,
-                        indexInfo, application!!.languageButtonPixels
+                        indexInfo, DictionaryApplication.languageButtonPixels
                     )
                     val intentLauncher: IntentLauncher = object : IntentLauncher(
                         parent.context,
                         getLaunchIntent(
                             applicationContext,
-                            application!!.getPath(dictionaryInfo.uncompressedFilename).getUri()
+                            DictionaryApplication.getPath(dictionaryInfo.uncompressedFilename).getUri()
                                 .toString(),
                             indexInfo.shortName, searchView!!.query.toString()
                         )
@@ -1017,7 +1015,7 @@ class DictionaryActivity : AppCompatActivity() {
                 }
 
                 val nameView = TextView(parent.context)
-                val name: String = application!!
+                val name: String = DictionaryApplication
                     .getDictionaryName(dictionaryInfo.uncompressedFilename)
                 nameView.text = name
                 val layoutParams = LinearLayout.LayoutParams(
@@ -1569,7 +1567,7 @@ class DictionaryActivity : AppCompatActivity() {
         } else if (typeface === Typeface.MONOSPACE) {
             style = "font-family: monospace;"
         }
-        if (application!!.selectedTheme == DictionaryApplication.Theme.DEFAULT) style += "body { background-color: black; color: white; } a { color: #00aaff; }"
+        if (DictionaryApplication.selectedTheme == DictionaryApplication.Theme.DEFAULT) style += "body { background-color: black; color: white; } a { color: #00aaff; }"
         // Dictionaries currently all contain http:// links.
         // Regenerating all will not happen soon, so for now replace all occurrences instead.
         html = html.replace("http://", "https://")

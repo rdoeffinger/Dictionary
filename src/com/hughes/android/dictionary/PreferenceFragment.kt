@@ -51,14 +51,13 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     var dirPickerLauncher: ActivityResultLauncher<Uri?>? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, s: String?) {
-        val application = DictionaryApplication.INSTANCE
         addPreferencesFromResource(R.xml.preferences)
         val defaultDic = findPreference<ListPreference?>(
             resources.getString(
                 R.string.defaultDicKey
             )
         )
-        val dicts = application.getDictionariesOnDevice(null)
+        val dicts = DictionaryApplication.getDictionariesOnDevice(null)
 
         val entries = arrayOfNulls<CharSequence>(dicts.size + 1)
         val entryvalues = arrayOfNulls<CharSequence>(dicts.size + 1)

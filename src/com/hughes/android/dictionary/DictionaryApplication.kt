@@ -44,8 +44,7 @@ import java.nio.BufferUnderflowException
 import java.util.Collections
 import java.util.Locale
 
-enum class DictionaryApplication {
-    INSTANCE;
+object DictionaryApplication {
 
     private var appContext: Context? = null
 
@@ -77,7 +76,7 @@ enum class DictionaryApplication {
         appContext = c
         Log.d("QuickDic", "Application: onCreate")
         TransliteratorManager.init(null, threadBackground)
-        DictionaryApplication.staticInit(appContext!!)
+        staticInit(appContext!!)
 
         languageButtonPixels = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 60f, appContext!!.resources.displayMetrics
@@ -426,170 +425,168 @@ enum class DictionaryApplication {
         return DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!![uncompressedFilename]
     }
 
-    companion object {
-        const val LOG: String = "QuickDicApp"
+    const val LOG: String = "QuickDicApp"
 
-        @JvmField
-        val threadBackground: ThreadSetup = ThreadSetup {
-            // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
-            // can make Transliterator go from 20 seconds to 3 minutes (!)
-            Process.setThreadPriority(Process.THREAD_PRIORITY_LESS_FAVORABLE)
+    @JvmField
+    val threadBackground: ThreadSetup = ThreadSetup {
+        // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
+        // can make Transliterator go from 20 seconds to 3 minutes (!)
+        Process.setThreadPriority(Process.THREAD_PRIORITY_LESS_FAVORABLE)
+    }
+
+    // Static, determined by resources (and locale).
+    // Unordered.
+    var DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO: MutableMap<String, DictionaryInfo>? =
+        null
+
+    @Synchronized
+    fun staticInit(context: Context) {
+        if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO != null) {
+            return
         }
-
-        // Static, determined by resources (and locale).
-        // Unordered.
-        var DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO: MutableMap<String, DictionaryInfo>? =
-            null
-
-        @Synchronized
-        fun staticInit(context: Context) {
-            if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO != null) {
-                return
-            }
-            DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO =
-                HashMap()
-            val reader = BufferedReader(
-                InputStreamReader(context.resources.openRawResource(R.raw.dictionary_info))
-            )
-            try {
-                var line: String?
-                while ((reader.readLine().also { line = it }) != null) {
-                    if (line!!.isEmpty() || line[0] == '#') {
-                        continue
-                    }
-                    val dictionaryInfo = DictionaryInfo(line)
-                    DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!![dictionaryInfo.uncompressedFilename] =
-                        dictionaryInfo
+        DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO =
+            HashMap()
+        val reader = BufferedReader(
+            InputStreamReader(context.resources.openRawResource(R.raw.dictionary_info))
+        )
+        try {
+            var line: String?
+            while ((reader.readLine().also { line = it }) != null) {
+                if (line!!.isEmpty() || line[0] == '#') {
+                    continue
                 }
-            } catch (e: IOException) {
-                Log.e(LOG, "Failed to load downloadable dictionary lists.", e)
+                val dictionaryInfo = DictionaryInfo(line)
+                DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!![dictionaryInfo.uncompressedFilename] =
+                    dictionaryInfo
             }
-            try {
-                reader.close()
-            } catch (_: IOException) {
-            }
+        } catch (e: IOException) {
+            Log.e(LOG, "Failed to load downloadable dictionary lists.", e)
+        }
+        try {
+            reader.close()
+        } catch (_: IOException) {
+        }
+    }
+
+    @JvmStatic
+    fun applyTheme(activity: AppCompatActivity) {
+        init(activity.applicationContext)
+        activity.setTheme(selectedTheme.themeId)
+        DynamicColors.applyToActivityIfAvailable(activity)
+        activity.enableEdgeToEdge()
+    }
+
+    @JvmStatic
+    fun onCreateGlobalOptionsMenu(
+        context: Context, menu: Menu
+    ) {
+        val c = context.applicationContext
+
+        val preferences = menu.add(c.getString(R.string.settings))
+        preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        preferences.setOnMenuItemClickListener { _ ->
+            PreferenceActivity.prefsMightHaveChanged = true
+            val intent = Intent(c, PreferenceActivity::class.java)
+            context.startActivity(intent)
+            false
         }
 
-        @JvmStatic
-        fun applyTheme(activity: AppCompatActivity) {
-            INSTANCE.init(activity.applicationContext)
-            activity.setTheme(INSTANCE.selectedTheme.themeId)
-            DynamicColors.applyToActivityIfAvailable(activity)
-            activity.enableEdgeToEdge()
+        val help = menu.add(c.getString(R.string.help))
+        help.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        help.setOnMenuItemClickListener { _ ->
+            context.startActivity(getHelpLaunchIntent(c))
+            false
         }
 
-        @JvmStatic
-        fun onCreateGlobalOptionsMenu(
-            context: Context, menu: Menu
-        ) {
-            val c = context.applicationContext
-
-            val preferences = menu.add(c.getString(R.string.settings))
-            preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            preferences.setOnMenuItemClickListener { _ ->
-                PreferenceActivity.prefsMightHaveChanged = true
-                val intent = Intent(c, PreferenceActivity::class.java)
-                context.startActivity(intent)
-                false
-            }
-
-            val help = menu.add(c.getString(R.string.help))
-            help.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            help.setOnMenuItemClickListener { _ ->
-                context.startActivity(getHelpLaunchIntent(c))
-                false
-            }
-
-            val reportIssue = menu.add(c.getString(R.string.reportIssue))
-            reportIssue.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            reportIssue.setOnMenuItemClickListener { _ ->
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri
-                    .parse("https://github.com/rdoeffinger/Dictionary/issues")
-                context.startActivity(intent)
-                false
-            }
-
-            val about = menu.add(c.getString(R.string.about))
-            about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            about.setOnMenuItemClickListener { _ ->
-                val intent = Intent(c, AboutActivity::class.java)
-                context.startActivity(intent)
-                false
-            }
+        val reportIssue = menu.add(c.getString(R.string.reportIssue))
+        reportIssue.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        reportIssue.setOnMenuItemClickListener { _ ->
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri
+                .parse("https://github.com/rdoeffinger/Dictionary/issues")
+            context.startActivity(intent)
+            false
         }
 
-        @JvmStatic
-        fun checkFileCreate(dir: DocumentFile): Boolean {
-            var testfile = dir.findFile("quickdic_writetest")
-            testfile?.delete()
-            if (testfile != null && testfile.exists()) return false
-            testfile = dir.createFile("", "quickdic_writetest")
-            if (testfile == null) return false
-            return testfile.exists() and testfile.delete()
+        val about = menu.add(c.getString(R.string.about))
+        about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        about.setOnMenuItemClickListener { _ ->
+            val intent = Intent(c, AboutActivity::class.java)
+            context.startActivity(intent)
+            false
         }
+    }
 
-        // get DictionaryInfo for case when Dictionary cannot be opened
-        private fun getErrorDictionaryInfo(file: DocumentFile): DictionaryInfo {
-            val dictionaryInfo = DictionaryInfo()
-            dictionaryInfo.uncompressedFilename = file.name
-            dictionaryInfo.uncompressedBytes = file.length()
-            return dictionaryInfo
-        }
+    @JvmStatic
+    fun checkFileCreate(dir: DocumentFile): Boolean {
+        var testfile = dir.findFile("quickdic_writetest")
+        testfile?.delete()
+        if (testfile != null && testfile.exists()) return false
+        testfile = dir.createFile("", "quickdic_writetest")
+        if (testfile == null) return false
+        return testfile.exists() and testfile.delete()
+    }
 
-        fun getDictionaryInfo(file: DocumentFile, r: ContentResolver): DictionaryInfo {
-            try {
-                r.openAssetFileDescriptor(file.uri, "r")!!.createInputStream().use { s ->
-                    val dict = Dictionary(s.channel)
-                    val dictionaryInfo = dict.getDictionaryInfo()
-                    dictionaryInfo.uncompressedFilename = file.name
-                    dictionaryInfo.uncompressedBytes = file.length()
-                    s.close()
-                    return dictionaryInfo
-                }
-            } catch (_: IOException) {
-                return getErrorDictionaryInfo(file)
-            } catch (_: IllegalArgumentException) {
-                // Most likely due to a Buffer.limit beyond size of file,
-                // do not crash just because of a truncated dictionary file
-                return getErrorDictionaryInfo(file)
-            } catch (_: BufferUnderflowException) {
-                // Most likely due to a read beyond the buffer limit set,
-                // do not crash just because of a truncated or corrupt dictionary file
-                return getErrorDictionaryInfo(file)
+    // get DictionaryInfo for case when Dictionary cannot be opened
+    private fun getErrorDictionaryInfo(file: DocumentFile): DictionaryInfo {
+        val dictionaryInfo = DictionaryInfo()
+        dictionaryInfo.uncompressedFilename = file.name
+        dictionaryInfo.uncompressedBytes = file.length()
+        return dictionaryInfo
+    }
+
+    fun getDictionaryInfo(file: DocumentFile, r: ContentResolver): DictionaryInfo {
+        try {
+            r.openAssetFileDescriptor(file.uri, "r")!!.createInputStream().use { s ->
+                val dict = Dictionary(s.channel)
+                val dictionaryInfo = dict.getDictionaryInfo()
+                dictionaryInfo.uncompressedFilename = file.name
+                dictionaryInfo.uncompressedBytes = file.length()
+                s.close()
+                return dictionaryInfo
             }
+        } catch (_: IOException) {
+            return getErrorDictionaryInfo(file)
+        } catch (_: IllegalArgumentException) {
+            // Most likely due to a Buffer.limit beyond size of file,
+            // do not crash just because of a truncated dictionary file
+            return getErrorDictionaryInfo(file)
+        } catch (_: BufferUnderflowException) {
+            // Most likely due to a read beyond the buffer limit set,
+            // do not crash just because of a truncated or corrupt dictionary file
+            return getErrorDictionaryInfo(file)
         }
+    }
 
-        fun writeConfig(context: Context, config: DictionaryConfig) {
-            val file = File(context.filesDir, C.DICTIONARY_CONFIGS)
-            try {
-                file.writeText("v1\n" + config.dictionaryFilesOrdered.joinToString("\n"))
-            } catch (e: Exception) {
-                Log.e(LOG, "Failed to write dictionary config", e)
+    fun writeConfig(context: Context, config: DictionaryConfig) {
+        val file = File(context.filesDir, C.DICTIONARY_CONFIGS)
+        try {
+            file.writeText("v1\n" + config.dictionaryFilesOrdered.joinToString("\n"))
+        } catch (e: Exception) {
+            Log.e(LOG, "Failed to write dictionary config", e)
+        }
+    }
+
+    fun readConfig(context: Context): DictionaryConfig {
+        val config = DictionaryConfig()
+        val file = File(context.filesDir, C.DICTIONARY_CONFIGS)
+        if (!file.exists()) return config
+        try {
+            val lines = file.readLines()
+            if (lines.isEmpty() || lines[0] != "v1") return config
+
+            for (name in lines.drop(1)) {
+                val dictFile = getPath(name)
+                if (!dictFile.exists()) continue
+                config.dictionaryFilesOrdered.add(name)
+                // populate dummy until background scan completes
+                config.uncompressedFilenameToDictionaryInfo[name] =
+                    DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO?.get(name)
+                        ?: getErrorDictionaryInfo(dictFile)
             }
+        } catch (e: Exception) {
+            Log.e(LOG, "Failed to read dictionary config", e)
         }
-
-        fun readConfig(context: Context): DictionaryConfig {
-            val config = DictionaryConfig()
-            val file = File(context.filesDir, C.DICTIONARY_CONFIGS)
-            if (!file.exists()) return config
-            try {
-                val lines = file.readLines()
-                if (lines.isEmpty() || lines[0] != "v1") return config
-
-                for (name in lines.drop(1)) {
-                    val dictFile = INSTANCE.getPath(name)
-                    if (!dictFile.exists()) continue
-                    config.dictionaryFilesOrdered.add(name)
-                    // populate dummy until background scan completes
-                    config.uncompressedFilenameToDictionaryInfo[name] =
-                        DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO?.get(name)
-                            ?: getErrorDictionaryInfo(dictFile)
-                }
-            } catch (e: Exception) {
-                Log.e(LOG, "Failed to read dictionary config", e)
-            }
-            return config
-        }
+        return config
     }
 }
