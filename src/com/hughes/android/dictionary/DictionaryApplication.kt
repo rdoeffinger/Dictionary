@@ -330,37 +330,32 @@ object DictionaryApplication {
             // about already?
             // Pick them up and put them at the end of the list.
             val toAddSorted: MutableList<String> = ArrayList()
-            val dictDirFiles = dictDir.listFiles()
-            if (dictDirFiles != null) {
-                for (file in dictDirFiles) {
-                    if (file.name!!.endsWith(".zip")) {
-                        if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!!
-                                .containsKey(file.name!!.removeSuffix(".zip"))
-                        ) {
-                            file.delete()
-                        }
-                    }
-                    if (!file.name!!.endsWith(".quickdic")) {
-                        continue
-                    }
-                    if (newDictionaryConfig.uncompressedFilenameToDictionaryInfo
-                            .containsKey(file.name)
+            for (file in dictDir.listFiles()) {
+                if (file.name!!.endsWith(".zip")) {
+                    if (DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!!
+                            .containsKey(file.name!!.removeSuffix(".zip"))
                     ) {
-                        // We have it in our list already.
-                        continue
+                        file.delete()
                     }
-                    val dictionaryInfo =
-                        getDictionaryInfo(file, appContext!!.contentResolver)
-                    if (!dictionaryInfo.isValid) {
-                        Log.e(LOG, "Unable to parse dictionary: " + file.uri.path)
-                    }
-
-                    toAddSorted.add(file.name!!)
-                    newDictionaryConfig.uncompressedFilenameToDictionaryInfo[file.name!!] =
-                        dictionaryInfo
                 }
-            } else {
-                Log.w(LOG, "dictDir is not a directory: " + dictDir.uri.path)
+                if (!file.name!!.endsWith(".quickdic")) {
+                    continue
+                }
+                if (newDictionaryConfig.uncompressedFilenameToDictionaryInfo
+                        .containsKey(file.name)
+                ) {
+                    // We have it in our list already.
+                    continue
+                }
+                val dictionaryInfo =
+                    getDictionaryInfo(file, appContext!!.contentResolver)
+                if (!dictionaryInfo.isValid) {
+                    Log.e(LOG, "Unable to parse dictionary: " + file.uri.path)
+                }
+
+                toAddSorted.add(file.name!!)
+                newDictionaryConfig.uncompressedFilenameToDictionaryInfo[file.name!!] =
+                    dictionaryInfo
             }
             if (!toAddSorted.isEmpty()) {
                 Collections.sort(toAddSorted, uncompressedFilenameComparator)
