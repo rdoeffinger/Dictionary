@@ -95,7 +95,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
 
     private var uiHandler: Handler? = null
 
-    private val dictionaryUpdater: Runnable = object : Runnable {
+    private val dictionaryUpdater = object : Runnable {
         override fun run() {
             if (uiHandler == null || isFinishing || isDestroyed) {
                 return
@@ -104,7 +104,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
         }
     }
 
-    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private val broadcastReceiver = object : BroadcastReceiver() {
         @Synchronized
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
@@ -246,8 +246,8 @@ class DictionaryManagerActivity : AppCompatActivity() {
             }
             result = true
         } catch (e: Exception) {
-            val dir: DocumentFile = DictionaryApplication.dictDir
-            val msg: String = if (!dir.canWrite() || !checkFileCreate(dir)) {
+            val dir = DictionaryApplication.dictDir
+            val msg = if (!dir.canWrite() || !checkFileCreate(dir)) {
                 getString(R.string.notWritable, dir.uri.path)
             } else {
                 getString(R.string.unzippingFailed, dest + ": " + e.message)
@@ -277,7 +277,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
     }
 
     private fun readableCheckAndError(requestPermission: Boolean) {
-        val dictDir: DocumentFile = DictionaryApplication.dictDir
+        val dictDir = DictionaryApplication.dictDir
         if (dictDir.canRead()) return
         blockAutoLaunch = true
         if (requestPermission &&
@@ -653,7 +653,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
         query.setFilterByStatus(DownloadManager.STATUS_PAUSED or DownloadManager.STATUS_PENDING or DownloadManager.STATUS_RUNNING)
         val cursor = downloadManagerQuery(downloadManager, query, cancel) ?: return cancel
 
-        val destFile: String = try {
+        val destFile = try {
             File(URL(downloadUrl).path).name
         } catch (e: MalformedURLException) {
             throw RuntimeException("Invalid download URL!", e)
@@ -716,7 +716,7 @@ class DictionaryManagerActivity : AppCompatActivity() {
         val details = row.findViewById<TextView>(R.id.dictionaryDetails)
         name.text = DictionaryApplication.getDictionaryName(dictionaryInfo.uncompressedFilename)
 
-        val updateAvailable: Boolean = DictionaryApplication.updateAvailable(dictionaryInfo)
+        val updateAvailable = DictionaryApplication.updateAvailable(dictionaryInfo)
         val downloadButton = row.findViewById<Button>(R.id.downloadButton)
         val downloadable: DictionaryInfo? =
             DictionaryApplication.getDownloadable(dictionaryInfo.uncompressedFilename)

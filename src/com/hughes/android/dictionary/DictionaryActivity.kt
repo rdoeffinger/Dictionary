@@ -102,10 +102,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Random
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.concurrent.Volatile
 import kotlin.math.max
@@ -129,7 +127,7 @@ class DictionaryActivity : AppCompatActivity() {
 
     private val uiHandler = Handler(Looper.getMainLooper())
 
-    private val searchExecutor: ExecutorService =
+    private val searchExecutor =
         Executors.newSingleThreadExecutor { r ->
             Thread(
                 r,
@@ -410,7 +408,7 @@ class DictionaryActivity : AppCompatActivity() {
             var bestMatchLen = 2 // ignore shorter matches
             for (d in dics) {
                 try {
-                    val dictfile: DocumentFile =
+                    val dictfile =
                         DictionaryApplication.getPath(d.uncompressedFilename)
                     val uriString = dictfile.uri.toString()
 
@@ -542,7 +540,7 @@ class DictionaryActivity : AppCompatActivity() {
             Log.d(LOG, "Prepping indices took:" + (System.currentTimeMillis() - startMillis))
         }.start()
 
-        var fontName: String = prefs.getString(getString(R.string.fontKey), "FreeSerif.otf.jpg")!!
+        var fontName = prefs.getString(getString(R.string.fontKey), "FreeSerif.otf.jpg")!!
         when (fontName) {
             "SYSTEM" -> typeface = Typeface.DEFAULT
             "SERIF" -> typeface = Typeface.SERIF
@@ -567,14 +565,14 @@ class DictionaryActivity : AppCompatActivity() {
             Log.w(LOG, "Unable to create typeface, using default.")
             typeface = Typeface.DEFAULT
         }
-        val fontSize: String = prefs.getString(getString(R.string.fontSizeKey), "14")!!
+        val fontSize = prefs.getString(getString(R.string.fontSizeKey), "14")!!
         fontSizeSp = try {
             fontSize.trim { it <= ' ' }.toInt()
         } catch (_: NumberFormatException) {
             14
         }
 
-        val searchHistoryLimitStr: String =
+        val searchHistoryLimitStr =
             prefs.getString(getString(R.string.historySizeKey), "" + DEFAULT_SEARCH_HISTORY)!!
         searchHistoryLimit = try {
             min(searchHistoryLimitStr.trim { it <= ' ' }.toInt(), MAX_SEARCH_HISTORY)
@@ -596,7 +594,7 @@ class DictionaryActivity : AppCompatActivity() {
             !packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
         )
         Log.d(LOG, "wordList=$wordList, saveOnlyFirstSubentry=$saveOnlyFirstSubentry")
-        val commandHandling: String =
+        val commandHandling =
             prefs.getString(getString(R.string.commandHandlingKey), "commandItalic")!!
         filterCommands = true
         deleteCommands = false
@@ -959,7 +957,7 @@ class DictionaryActivity : AppCompatActivity() {
         val button = Button(listView.context)
         val name = getString(R.string.dictionaryManager)
         button.text = name
-        val intentLauncher: IntentLauncher = object : IntentLauncher(
+        val intentLauncher = object : IntentLauncher(
             listView.context,
             DictionaryManagerActivity.getLaunchIntent(applicationContext)
         ) {
@@ -991,7 +989,7 @@ class DictionaryActivity : AppCompatActivity() {
                         parent.context,
                         indexInfo, DictionaryApplication.languageButtonPixels
                     )
-                    val intentLauncher: IntentLauncher = object : IntentLauncher(
+                    val intentLauncher = object : IntentLauncher(
                         parent.context,
                         getLaunchIntent(
                             applicationContext,
@@ -1015,7 +1013,7 @@ class DictionaryActivity : AppCompatActivity() {
                 }
 
                 val nameView = TextView(parent.context)
-                val name: String = DictionaryApplication
+                val name = DictionaryApplication
                     .getDictionaryName(dictionaryInfo.uncompressedFilename)
                 nameView.text = name
                 val layoutParams = LinearLayout.LayoutParams(
@@ -1055,7 +1053,7 @@ class DictionaryActivity : AppCompatActivity() {
         )
         val row = index!!.rows[firstVisibleRow]
         val tokenRow = row.getTokenRow(true)
-        val destIndexEntry: Int = if (up) {
+        val destIndexEntry = if (up) {
             if (row !== tokenRow) {
                 tokenRow.referenceIndex
             } else {
@@ -1507,13 +1505,13 @@ class DictionaryActivity : AppCompatActivity() {
     }
 
     internal inner class SearchOperation(searchText: String, val index: Index) : Runnable {
-        val interrupted: AtomicBoolean = AtomicBoolean(false)
+        val interrupted = AtomicBoolean(false)
 
         val searchText: String = StringUtil.normalizeWhitespace(searchText)
 
         var searchTokens: List<String>? = null // filled in for multiWord.
 
-        var searchStartMillis: Long = 0
+        var searchStartMillis = 0L
 
         var searchResult: Index.IndexEntry? = null
 
@@ -1593,7 +1591,7 @@ class DictionaryActivity : AppCompatActivity() {
     }
 
     internal inner class IndexAdapter : BaseAdapter {
-        private val wiktionaryPattern: Pattern =
+        private val wiktionaryPattern =
             Pattern.compile("(\\{\\{[^{}]*\\}\\}|\\{[^{}]*\\})")
 
         val index: Index
@@ -1833,8 +1831,8 @@ class DictionaryActivity : AppCompatActivity() {
                     col1Text = findWiktionaryCommands(col1Text, col1Cursive, deleteCommands)
                     col2Text = findWiktionaryCommands(col2Text, col2Cursive, deleteCommands)
                 }
-                val col1Spannable: Spannable = SpannableString(col1Text)
-                val col2Spannable: Spannable = SpannableString(col2Text)
+                val col1Spannable = SpannableString(col1Text)
+                val col2Spannable = SpannableString(col2Text)
 
                 for (pos in col1Cursive) {
                     col1Spannable.setSpan(
@@ -1922,11 +1920,11 @@ class DictionaryActivity : AppCompatActivity() {
             )
 
             // Make it so we can long-click on these token rows, too:
-            val textSpannable: Spannable = SpannableString(text)
+            val textSpannable = SpannableString(text)
             createTokenLinkSpans(textView, textSpannable, text)
 
             if (!htmlEntries.isEmpty()) {
-                val clickableSpan: ClickableSpan = object : ClickableSpan() {
+                val clickableSpan = object : ClickableSpan() {
                     override fun onClick(widget: View) {
                     }
                 }
@@ -1974,7 +1972,7 @@ class DictionaryActivity : AppCompatActivity() {
         // Saw from the source code that LinkMovementMethod sets the selection!
         // http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.3.1_r1/android/text/method/LinkMovementMethod.java#LinkMovementMethod
         textView.movementMethod = LinkMovementMethod.getInstance()
-        val matcher: Matcher = CHAR_DASH.matcher(text)
+        val matcher = CHAR_DASH.matcher(text)
         while (matcher.find()) {
             spannable.setSpan(
                 NonLinkClickableSpan(), matcher.start(),
@@ -2106,8 +2104,8 @@ class DictionaryActivity : AppCompatActivity() {
             prefs.commit()
         }
 
-        private val WHITESPACE: Pattern = Pattern.compile("\\s+")
+        private val WHITESPACE = Pattern.compile("\\s+")
 
-        private val CHAR_DASH: Pattern = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+")
+        private val CHAR_DASH = Pattern.compile("['\\p{L}\\p{M}\\p{N}]+")
     }
 }

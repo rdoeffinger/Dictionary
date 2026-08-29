@@ -19,7 +19,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         if (preference.key == resources.getString(R.string.quickdicDirectoryKey)) {
             val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-            val current: String =
+            val current =
                 prefs.getString(resources.getString(R.string.quickdicDirectoryKey), "")!!
             val t = EditText(activity)
             t.setText(current)

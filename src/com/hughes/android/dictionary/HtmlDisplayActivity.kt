@@ -76,8 +76,8 @@ class HtmlDisplayActivity : AppCompatActivity() {
             html = intent.getStringExtra(HTML)
         }
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val fontSize: String = prefs.getString(getString(R.string.fontSizeKey), "14")!!
-        val fontSizeSp: Int = try {
+        val fontSize = prefs.getString(getString(R.string.fontSizeKey), "14")!!
+        val fontSizeSp = try {
             fontSize.trim { it <= ' ' }.toInt()
         } catch (_: NumberFormatException) {
             14

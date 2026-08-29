@@ -131,7 +131,7 @@ object DictionaryApplication {
             // prefsMightHaveChanged.
             val prefs =
                 PreferenceManager.getDefaultSharedPreferences(appContext!!)
-            var dir: String =
+            var dir =
                 prefs.getString(appContext!!.getString(R.string.quickdicDirectoryKey), "")!!
             if (dir.isEmpty()) {
                 dir = selectDefaultDir()
@@ -161,7 +161,7 @@ object DictionaryApplication {
         get() {
             val prefs =
                 PreferenceManager.getDefaultSharedPreferences(appContext!!)
-            val file: String =
+            val file =
                 prefs.getString(appContext!!.getString(R.string.wordListFileKey), "")!!
             if (file.isEmpty()) return defaultWordListFile()
             val u = Uri.parse(file)
@@ -174,7 +174,7 @@ object DictionaryApplication {
         get() {
             val prefs =
                 PreferenceManager.getDefaultSharedPreferences(appContext!!)
-            val theme: String =
+            val theme =
                 prefs.getString(appContext!!.getString(R.string.themeKey), "themeSystem")!!
             when (theme) {
                 "themeLight" -> {
@@ -196,7 +196,7 @@ object DictionaryApplication {
         return res ?: DocumentFile.fromFile(File(uncompressedFilename))
     }
 
-    var defaultLangISO2: String = Locale.getDefault().language.lowercase(Locale.getDefault())
+    var defaultLangISO2 = Locale.getDefault().language.lowercase(Locale.getDefault())
     var defaultLangName: String? = null
     val fileToNameCache: MutableMap<String?, String?> = HashMap()
 
@@ -425,10 +425,10 @@ object DictionaryApplication {
         return DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!![uncompressedFilename]
     }
 
-    const val LOG: String = "QuickDicApp"
+    const val LOG = "QuickDicApp"
 
     @JvmField
-    val threadBackground: ThreadSetup = ThreadSetup {
+    val threadBackground = ThreadSetup {
         // THREAD_PRIORITY_BACKGROUND seemed like a good idea, but it
         // can make Transliterator go from 20 seconds to 3 minutes (!)
         Process.setThreadPriority(Process.THREAD_PRIORITY_LESS_FAVORABLE)

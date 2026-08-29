@@ -136,6 +136,6 @@ class PreferenceActivity : AppCompatActivity(), OnSharedPreferenceChangeListener
 
     companion object {
         @JvmField
-        var prefsMightHaveChanged: Boolean = false
+        var prefsMightHaveChanged = false
     }
 }

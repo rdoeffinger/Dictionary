@@ -26,7 +26,7 @@ class MyWebView : WebView {
 
         // TODO: check why AUTO does not work and consider using it (API 29/Android 10 only)
         //getSettings().setForceDark(WebSettings.FORCE_DARK_ON);
-        val webViewClient: WebViewClient = object : WebViewClient() {
+        val webViewClient = object : WebViewClient() {
             @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String): Boolean {
                 if (HtmlEntry.isQuickdicUrl(url)) {
