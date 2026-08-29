@@ -83,13 +83,13 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.quickdic'
-        multiDexEnabled true
+        multiDexEnabled = true
         targetSdkVersion 37
         resourceConfigurations += ['de', 'es', 'eu', 'fr', 'it', 'ja', 'pt', 'pt-rBR', 'ru', 'tr', 'zh-rCN']
         minSdkVersion 23
     }
     compileOptions {
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
