@@ -227,10 +227,10 @@ class DictionaryActivity : AppCompatActivity() {
     private fun saveSearchHistory() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val ed = prefs.edit()
-        for (i in searchHistory.indices) {
+        searchHistory.forEachIndexed { i, text ->
             ed.putString("history$i", searchHistory[i])
         }
-        for (i in searchHistory.size..MAX_SEARCH_HISTORY) {
+        (searchHistory.size..MAX_SEARCH_HISTORY).forEach { i ->
             ed.remove("history$i")
         }
         ed.apply()
@@ -314,7 +314,7 @@ class DictionaryActivity : AppCompatActivity() {
             dictRaf = null
         }
 
-        val intentAction = intent.action
+        when (intent.action) {
         /*
           @author Dominik Köppl Querying the Intent
          *         com.hughes.action.ACTION_SEARCH_DICT is the advanced query
@@ -322,11 +322,11 @@ class DictionaryActivity : AppCompatActivity() {
          *         -> language in which the phrase is written to -> to which
          *         language shall be translated
          */
-        if ("com.hughes.action.ACTION_SEARCH_DICT" == intentAction) {
+        "com.hughes.action.ACTION_SEARCH_DICT" -> {
             focusSearchView = false
             val query = intent.getStringExtra(SearchManager.QUERY)
-            var from = intent.getStringExtra("from")?.lowercase()
-            var to = intent.getStringExtra("to")?.lowercase()
+            val from = intent.getStringExtra("from")?.lowercase()
+            val to = intent.getStringExtra("to")?.lowercase()
             if (query != null) {
                 intent.putExtra(C.SEARCH_TOKEN, query)
             }
@@ -355,28 +355,28 @@ class DictionaryActivity : AppCompatActivity() {
          *         simple query Arguments follow from android standard (see
          *         documentation)
          */
-        if (intentAction != null && intentAction == Intent.ACTION_SEARCH) {
+        Intent.ACTION_SEARCH -> {
             focusSearchView = false
             val query = intent.getStringExtra(SearchManager.QUERY)
-            if (query != null) getIntent().putExtra(C.SEARCH_TOKEN, query)
+            if (query != null) intent.putExtra(C.SEARCH_TOKEN, query)
         }
-        if (intentAction != null && intentAction == Intent.ACTION_SEND) {
+        Intent.ACTION_SEND -> {
             focusSearchView = false
             val query = intent.getStringExtra(Intent.EXTRA_TEXT)
-            if (query != null) getIntent().putExtra(C.SEARCH_TOKEN, query)
+            if (query != null) intent.putExtra(C.SEARCH_TOKEN, query)
         }
         /*
          * This processes text on M+ devices where QuickDic shows up in the context menu.
          */
-        if (intentAction != null && intentAction == Intent.ACTION_PROCESS_TEXT) {
+        Intent.ACTION_PROCESS_TEXT -> {
             focusSearchView = false
             val query = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)
             if (query != null) {
-                getIntent().putExtra(C.SEARCH_TOKEN, query)
+                intent.putExtra(C.SEARCH_TOKEN, query)
             }
         }
         // Support opening dictionary file directly
-        if (intentAction != null && intentAction == Intent.ACTION_VIEW) {
+        Intent.ACTION_VIEW -> {
             val uri = intent.data
             intent.putExtra(C.DICT_FILE, uri.toString())
             dictFileTitleName = uri!!.lastPathSegment
@@ -388,6 +388,7 @@ class DictionaryActivity : AppCompatActivity() {
                 dictionaryOpenFail(e)
                 return
             }
+        }
         }
         /*
           @author Dominik Köppl If no dictionary is chosen, use the default
@@ -495,13 +496,7 @@ class DictionaryActivity : AppCompatActivity() {
         if (savedInstanceState != null && savedInstanceState.getString(C.INDEX_SHORT_NAME) != null) {
             targetIndex = savedInstanceState.getString(C.INDEX_SHORT_NAME)
         }
-        indexIndex = 0
-        for (i in dictionary!!.indices.indices) {
-            if (dictionary!!.indices[i].shortName == targetIndex) {
-                indexIndex = i
-                break
-            }
-        }
+        indexIndex = dictionary!!.indices.indexOfFirst { it.shortName == targetIndex }.coerceAtLeast(0)
         Log.d(LOG, "Loading index $indexIndex")
         index = dictionary!!.indices[indexIndex]
         listView.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
@@ -619,7 +614,7 @@ class DictionaryActivity : AppCompatActivity() {
         }
 
         // Set the search text from the intent, then the saved state.
-        var text = getIntent().getStringExtra(C.SEARCH_TOKEN)
+        var text = intent.getStringExtra(C.SEARCH_TOKEN)
         if (savedInstanceState != null) {
             text = savedInstanceState.getString(C.SEARCH_TOKEN)
         }
@@ -1317,7 +1312,7 @@ class DictionaryActivity : AppCompatActivity() {
     ) {
         var indexToUse = -1
         var numFound = 0
-        dictionary!!.indices.forEachIndexed() { i, index ->
+        dictionary!!.indices.forEachIndexed { i, index ->
             if (indexPrepFinished) {
                 println("Doing index lookup: on $selectedText")
                 val indexEntry = index.findExact(selectedText)
@@ -1526,8 +1521,6 @@ class DictionaryActivity : AppCompatActivity() {
 
         var multiWordSearchResult: MutableList<RowBase>? = null
 
-        var done: Boolean = false
-
         override fun toString(): String {
             return String.format("SearchOperation(%s,%s)", searchText, interrupted)
         }
@@ -1558,11 +1551,6 @@ class DictionaryActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.e(LOG, "Failure during search (can happen during Activity close): " + e.message)
-            } finally {
-                synchronized(this) {
-                    done = true
-                    (this as Object).notifyAll()
-                }
             }
         }
     }

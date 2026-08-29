@@ -409,10 +409,6 @@ enum class DictionaryApplication {
     }
 
     fun getDownloadableDictionaries(filters: Array<String>?): MutableList<DictionaryInfo> {
-        val result: MutableList<DictionaryInfo> = ArrayList(
-            dictionaryConfig!!.dictionaryFilesOrdered.size
-        )
-
         val remaining = DOWNLOADABLE_UNCOMPRESSED_FILENAME_NAME_TO_DICTIONARY_INFO!!.toMutableMap()
         remaining.keys.removeAll(dictionaryConfig!!.dictionaryFilesOrdered)
         return remaining.values.filter { matchesFilters(it, filters) }
