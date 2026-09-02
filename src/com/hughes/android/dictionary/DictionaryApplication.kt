@@ -17,6 +17,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Environment
 import android.os.Process
@@ -24,8 +25,10 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColors
@@ -86,11 +89,23 @@ object DictionaryApplication {
         dictionaryConfig = readConfig(appContext!!)
 
         // Theme stuff.
-        appContext!!.setTheme(selectedTheme.themeId)
         val prefs = PreferenceManager.getDefaultSharedPreferences(appContext!!)
+        fun updateNightMode() {
+            val themeStr = prefs.getString(appContext!!.getString(R.string.themeKey), "themeSystem")
+            val mode = when (themeStr) {
+                "themeLight" -> AppCompatDelegate.MODE_NIGHT_NO
+                "themeDark" -> AppCompatDelegate.MODE_NIGHT_YES
+                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+            AppCompatDelegate.setDefaultNightMode(mode)
+        }
+        updateNightMode()
+        appContext!!.setTheme(selectedTheme.themeId)
+
         prefs.registerOnSharedPreferenceChangeListener { _, key ->
             Log.d("QuickDic", "prefs changed: $key")
             if (key == appContext!!.getString(R.string.themeKey)) {
+                updateNightMode()
                 appContext!!.setTheme(selectedTheme.themeId)
             }
         }
@@ -466,9 +481,16 @@ object DictionaryApplication {
     @JvmStatic
     fun applyTheme(activity: AppCompatActivity) {
         init(activity.applicationContext)
-        activity.setTheme(selectedTheme.themeId)
+        val theme = selectedTheme
+        activity.setTheme(theme.themeId)
         DynamicColors.applyToActivityIfAvailable(activity)
-        activity.enableEdgeToEdge()
+        activity.enableEdgeToEdge(
+            statusBarStyle = if (theme == Theme.DEFAULT) {
+                SystemBarStyle.dark(Color.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+            }
+        )
     }
 
     @JvmStatic
