@@ -13,6 +13,7 @@
 // limitations under the License.
 package com.hughes.android.dictionary
 
+import android.app.Dialog
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -29,6 +30,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.WindowCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColors
@@ -491,6 +493,13 @@ object DictionaryApplication {
                 SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
             }
         )
+    }
+
+    @JvmStatic
+    fun applyThemeToDialog(dialog: Dialog) {
+        val theme = selectedTheme
+        val window = dialog.window ?: return
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = (theme == Theme.LIGHT)
     }
 
     @JvmStatic

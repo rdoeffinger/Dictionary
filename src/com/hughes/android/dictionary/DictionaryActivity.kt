@@ -44,6 +44,7 @@ import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -78,6 +79,7 @@ import androidx.core.widget.TextViewCompat
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.hughes.android.dictionary.DictionaryApplication.applyTheme
 import com.hughes.android.dictionary.DictionaryApplication.onCreateGlobalOptionsMenu
@@ -946,14 +948,17 @@ class DictionaryActivity : AppCompatActivity() {
     }
 
     private fun onLanguageButtonLongClick(context: Context) {
-        val dialog = Dialog(context)
-        dialog.setContentView(R.layout.select_dictionary_dialog)
-        dialog.setTitle(R.string.selectDictionary)
+        val view = LayoutInflater.from(context).inflate(R.layout.select_dictionary_dialog, null)
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(view)
+            .setTitle(R.string.selectDictionary)
+            .create()
+        DictionaryApplication.applyThemeToDialog(dialog)
 
         val installedDicts: MutableList<DictionaryInfo> =
             DictionaryApplication.getDictionariesOnDevice(null)
 
-        val listView = dialog.findViewById<ListView>(android.R.id.list)
+        val listView = view.findViewById<ListView>(android.R.id.list)
         val button = Button(listView.context)
         val name = getString(R.string.dictionaryManager)
         button.text = name
@@ -1127,6 +1132,7 @@ class DictionaryActivity : AppCompatActivity() {
                 val context = listView.context
                 val dialog = Dialog(context)
                 dialog.setContentView(R.layout.about_dictionary_dialog)
+                DictionaryApplication.applyThemeToDialog(dialog)
                 val textView = dialog.findViewById<TextView>(R.id.text)
 
                 dialog.setTitle(dictFileTitleName)
@@ -2020,6 +2026,7 @@ class DictionaryActivity : AppCompatActivity() {
         if ("thadolina" == text) {
             val dialog = Dialog(listView.context)
             dialog.setContentView(R.layout.thadolina_dialog)
+            DictionaryApplication.applyThemeToDialog(dialog)
             dialog.setTitle("Ti amo, amore mio!")
             val imageView = dialog.findViewById<ImageView>(R.id.thadolina_image)
             imageView.setOnClickListener { _ ->
