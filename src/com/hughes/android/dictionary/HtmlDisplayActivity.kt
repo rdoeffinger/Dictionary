@@ -21,8 +21,6 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
 import com.hughes.util.StringUtil
 import java.io.IOException
@@ -44,24 +42,7 @@ class HtmlDisplayActivity : AppCompatActivity() {
         val title = intent.getStringExtra(TITLE)
         if (title != null) setTitle(title)
 
-        ViewCompat.setOnApplyWindowInsetsListener(
-            toolbar
-        ) { v, windowInsets ->
-            val insets =
-                windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout())
-            v.setPadding(insets.left, insets.top, insets.right, 0)
-            windowInsets
-        }
-
         val webView = findViewById<MyWebView>(R.id.webView)
-        ViewCompat.setOnApplyWindowInsetsListener(
-            webView
-        ) { v, windowInsets ->
-            val insets =
-                windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
-            v.setPadding(insets.left, 0, insets.right, insets.bottom)
-            windowInsets
-        }
 
         val htmlRes = intent.getIntExtra(HTML_RES, -1)
         var html: String?
