@@ -63,7 +63,8 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         val entryvalues = arrayOfNulls<CharSequence>(dicts.size + 1)
 
         entries[0] = getString(R.string.none)
-        entryvalues[0] = null
+        // Use "" instead of null to avoid a NullPointerException in ListPreference.
+        entryvalues[0] = ""
 
         for (i in dicts.indices) {
             entries[i + 1] = dicts[i].dictInfo

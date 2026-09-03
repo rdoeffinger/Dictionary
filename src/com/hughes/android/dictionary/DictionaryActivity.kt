@@ -396,7 +396,8 @@ class DictionaryActivity : AppCompatActivity() {
          */
         if (intent.getStringExtra(C.DICT_FILE) == null) {
             val dictfile = prefs.getString(getString(R.string.defaultDicKey), null)
-            if (dictfile != null) intent.putExtra(
+            // Treat "" as null.
+            if (!dictfile.isNullOrEmpty()) intent.putExtra(
                 C.DICT_FILE,
                 DictionaryApplication.getPath(dictfile).getUri().toString()
             )
