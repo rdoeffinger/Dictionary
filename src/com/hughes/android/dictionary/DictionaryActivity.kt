@@ -855,14 +855,15 @@ class DictionaryActivity : AppCompatActivity() {
             }, delay.toLong())
             delay += 100
         }
-        searchView!!.post {
+        // Give focus a chance to be processed first
+        searchView!!.postDelayed({
             searchTextView!!.threshold = 0
             try {
                 searchTextView!!.showDropDown()
                 // ignore any errors, in particular BadTokenException happens a lot
             } catch (_: Exception) {
             }
-        }
+        }, 10)
     }
 
     private fun hideKeyboard() {
