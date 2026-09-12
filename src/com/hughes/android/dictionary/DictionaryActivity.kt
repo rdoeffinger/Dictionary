@@ -238,7 +238,8 @@ class DictionaryActivity : AppCompatActivity() {
     private fun addToSearchHistory(text: String? = searchView!!.query.toString()) {
         if (text.isNullOrEmpty() || searchHistoryLimit == 0) return
         searchHistory.remove(text)
-        if (searchHistory.size >= searchHistoryLimit) searchHistory.removeLast()
+        // removeLast is KTX and will crash on Android 15
+        if (searchHistory.size >= searchHistoryLimit) searchHistory.removeAt(list.lastIndex)
         searchHistory.add(0, text)
         searchHistoryCursor = MatrixCursor(arrayOf("_id", "search"))
         searchHistory.forEachIndexed { i, s ->
