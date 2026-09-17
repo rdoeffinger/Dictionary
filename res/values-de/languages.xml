@@ -88,4 +88,9 @@
     <string name="ZH">Chinesisch</string>
     <string name="ZU">Zulu</string>
 
+    <string name="VRP_AT">Österreichische KFZ-Kennzeichen</string>
+    <string name="VRP_CH">Schweizer KFZ-Kennzeichen</string>
+    <string name="VRP_DE">Deutsche KFZ-Kennzeichen</string>
+    <string name="VRP_XW">Internationale KFZ-Kennzeichen</string>
+
 </resources>

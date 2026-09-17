@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="400"
+   height="262"
+   id="svg2816">
+  <defs
+     id="defs2820" />
+  <path
+     d="M 200.00531,5 C 146.59448,5 98.16234,18.77337 62.81286,41.34496 27.46338,63.91655 5,95.61615 5,131 5,166.38386 27.46338,198.08346 62.81286,220.65504 98.16234,243.22663 146.59448,257 200.00531,257 253.41614,257 301.83766,243.22663 337.18714,220.65504 372.53662,198.08346 395,166.38386 395,131 395,95.61615 372.53662,63.91655 337.18714,41.34496 301.83766,18.77337 253.41614,5 200.00531,5 z"
+     id="path2828-7-6"
+     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
+  <path
+     d="M 200.00546,0.22924764 C 145.22512,0.22924764 95.551124,14.524114 59.295247,37.950335 23.03937,61.376554 1.4843998e-6,94.276404 1.4843998e-6,131 1.4843998e-6,167.7236 23.03937,200.62345 59.295247,224.04966 c 36.255877,23.42622 85.929873,37.72109 140.710213,37.72109 54.78034,0 104.44341,-14.29487 140.6993,-37.72109 C 376.96064,200.62345 400,167.7236 400,131 400,94.276404 376.96064,61.376554 340.70476,37.950335 304.44887,14.524114 254.7858,0.22924764 200.00546,0.22924764 z"
+     id="path2828-7"
+     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:none;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
+  <g
+     transform="matrix(1.4832592,0,0,1.5262076,-23.399335,-10.720002)"
+     id="text3592"
+     style="font-size:4.89984035px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Transport Heavy;-inkscape-font-specification:'Transport Heavy,'">
+    <path
+       d="m 146.84563,86.667025 -25.18107,0 0,-16.867129 c -4e-5,-4.904549 -0.26919,-7.964953 -0.80747,-9.18122 -0.53835,-1.216106 -1.72463,-1.8242 -3.55884,-1.824282 -2.07353,8.2e-5 -3.38941,0.737769 -3.94763,2.213063 -0.55828,1.475454 -0.8374,4.665452 -0.83737,9.570002 l 0,44.979011 c -3e-5,4.70527 0.27909,7.77564 0.83737,9.21113 0.55822,1.43551 1.81428,2.15326 3.76819,2.15325 1.87409,1e-5 3.10025,-0.71774 3.67847,-2.15325 0.57815,-1.43549 0.86724,-4.80492 0.86728,-10.10832 l 0,-12.14194 25.18107,0 0,3.76819 c -6e-5,10.00865 -0.70784,17.1064 -2.12334,21.29325 -1.41563,4.18689 -4.54581,7.85539 -9.39057,11.00551 -4.84486,3.15012 -10.81613,4.72518 -17.91384,4.72518 -7.37691,0 -13.45784,-1.33581 -18.242821,-4.00743 -4.785012,-2.67163 -7.955072,-6.37003 -9.51019,-11.09523 -1.55513,-4.72517 -2.332692,-11.83288 -2.332688,-21.32316 l 0,-28.291314 c -4e-6,-6.978057 0.239246,-12.211647 0.717751,-15.700785 0.478494,-3.488981 1.904024,-6.848447 4.276594,-10.078408 2.372552,-3.229784 5.662236,-5.771813 9.869064,-7.626096 4.20679,-1.854089 9.04163,-2.781182 14.50453,-2.781281 7.41672,9.9e-5 13.53752,1.435597 18.36245,4.306501 4.82482,2.871092 7.99488,6.44987 9.51019,10.736345 1.51518,4.286643 2.27281,10.955732 2.27287,20.007286 z"
+       id="path3611"
+       style="font-size:122.49602509px;font-family:Impact;-inkscape-font-specification:Impact" />
+    <path
+       d="m 213.89546,44.439391 0,96.836459 -25.18107,0 0,-40.67251 -7.53638,0 0,40.67251 -25.18106,0 0,-96.836459 25.18106,0 0,34.631445 7.53638,0 0,-34.631445 z"
+       id="path3613"
+       style="font-size:122.49602509px;font-family:Impact;-inkscape-font-specification:Impact" />
+  </g>
+</svg>

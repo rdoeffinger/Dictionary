@@ -88,4 +88,9 @@
     <string name="ZH">Chinese</string>
     <string name="ZU">Zulu</string>
 
+    <string name="VRP_AT">Austrian Vehicle Registration Plates</string>
+    <string name="VRP_CH">Swiss Vehicle Registration Plates</string>
+    <string name="VRP_DE">German Vehicle Registration Plates</string>
+    <string name="VRP_XW">International Vehicle Registration Plates</string>
+
 </resources>
