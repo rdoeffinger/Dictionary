@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">QuickDic</string>
+
+    <!-- Global. -->
+    <string name="about">In contu de QuickDic</string>
+    <string name="settings">Impostatziones</string>
+    <string name="help">Agiudu</string>
+    <string name="reportIssue">Sinnala unu problema</string>
+    <string name="browserDownload">Iscàrriga in su navigadore</string>
+    <string name="no_dict_file">Dislinda unu ditzionàriu predefinidu in sas impostatziones.</string>
+
+    <!-- DictionaryManagerActivity -->
+    <string name="dictionaryManager">Manigiadore de ditzionàrios</string>
+    <string name="dictionariesOnDevice">Ditzionàrios in su dispositivu</string>
+    <string name="downloadableDictionaries">Ditzionàrios iscarrigàbiles</string>
+    <string name="sortDicts">Òrdina sos ditzionàrios</string>
+    <string name="downloadButton">%.1fMB</string>
+    <string name="updateAvailable">Atualizatzione!</string>
+    <string name="moveToTop">Move cara a pitzos</string>
+    <string name="deleteDictionary">Iscantzella su ditzionàriu</string>
+    <string name="indexInfo">%1$s: %2$,d paràulas</string>
+    <string name="managerShow">Mustra</string>
+    <string name="managerHide">Cua</string>
+    <string name="error">Error</string>
+    <string name="unableToReadDictionaryDir">Non faghet a lèghere sa cartella de sos ditzionàrios: \n%1$s\n\nCartella de archiviatzione esterna de Android: \n%2$s</string>
+
+    <!-- Download. -->
+    <string name="downloadFailed">Iscarrigamentu fallidu: \n%s.</string>
+    <string name="downloadManagerQueryFailed">Non faghet a consultare su gestore de iscarrigamentos.\nEst disabilitadu o mancat?</string>
+    <string name="downloadManagerQueryPermissionDenied">Permissu pro ìnternet negadu</string>
+    <string name="unzippingDictionary">Estraende su ditzionàriu: \n%s</string>
+    <string name="unzippingFailed">Estratzione fallida: \n%s</string>
+    <string name="installationFinished">Installatzione acabada: \n%s.</string>
+    <string name="notWritable">Non faghet a iscrìere in sa positzione de su ditzionàriu %s, càmbia·la in sas impostatziones.</string>
+    <string name="downloadFailedNoNetwork">Iscarrigamentu fallidu: peruna connessione de rete.</string>
+    <string name="downloadFailedNoWifi">Iscarrigamentu fallidu: b\'at bisòngiu de una connessione WiFi.</string>
+
+    <!-- DictionaryActivity -->
+    <string name="searchText">Chirca testu</string>
+    <string name="selectDictionary">Seletziona unu ditzionàriu…</string>
+    <string name="addToWordList">Annanghe a sa lista de paràulas: %s</string>
+    <string name="searchForSelection">Chirca: %s</string>
+    <string name="failedAddingToWordList">Faddina annanghende a sa lista de paràulas: %s</string>
+    <string name="invalidDictionary">Ditzionàriu non vàlidu: documentu=%1$s, errore=%2$s</string>
+    <string name="noSearchResults">Perunu resurtadu de chirca.</string>
+    <string name="aboutDictionary">In contu de su ditzionàriu</string>
+    <string name="fontFailure">Faddina de caràtere: %s</string>
+    <string name="seeAlso">Pòmpia fintzas: %1$s (%2$s)</string>
+    <string name="speak">Chistiona</string>
+    <string name="speak_left">Pronùntzia sa parte a manca</string>
+    <string name="speak_right">Pronùntzia sa parte a destra</string>
+    <string name="nextWord">Paràula imbeniente</string>
+    <string name="previousWord">Paràula anteposta</string>
+    <string name="randomWord">Paràula a casu</string>
+    <string name="TTSbroken">Su TTS non funtzionat in custu dispositivu</string>
+
+    <!-- About dictionary. -->
+    <string name="dictionaryPath">Documentu: %s</string>
+    <string name="dictionarySize">Mannària: %,d bytes</string>
+    <string name="dictionaryCreationTime">Creadu: %tc</string>
+    <string name="indexName">Ìnditze: %s</string>
+    <string name="mainTokenCount">Nùmeru de paràulas: %,d</string>
+    <string name="sources">Fontes</string>
+    <string name="sourceInfo">%1$s : %2$,d intradas</string>
+
+    <!-- About. -->
+    <string name="contactMe">Si ses impreende QuickDic, mi diat agradare a t\'intèndere.
+  A dolu mannu, non mi nche potzo pigare responsabilidades subra de su cuntenutu de sos ditzionàrios (francu de sa formatatzione), ca est ingendradu dae àteras fontes.
+  Pro praghere imbia cummentos, cussìgios, sinnalatziones de faddinas de còdighe, o unu saludu curtzu a:</string>
+    <string name="myEmail" formatted="false" translatable="false">quickdic@reimardoeffinger.de</string>
+    <string name="webPage">Pro àteras informatziones, pòmpia:</string>
+    <string name="webPageUrl" translatable="false">https://github.com/rdoeffinger/Dictionary/releases/</string>
+    <string name="contributionsFrom">Contributziones de:</string>
+    <string name="license">QuickDic cu.tenet còdighe suta de deretu de autore de Google e publicadu cun litzèntzia Apache 2.0.</string>
+    <string name="licenseUrl" translatable="false">http://www.apache.org/licenses/LICENSE-2.0</string>
+
+    <!-- Preferences -->
+
+    <string name="none">Perunu</string>
+    <string name="defaultDicKey" translatable="false">defaultddic</string>
+    <string name="defaultDicTitle">Ditzionàriu predefinidu</string>
+    <string name="defaultDicSummary">Sa cartella de impreare cando non b\'at nudda de àteru ischertadu.</string>
+    <string name="quickdicDirectoryKey" translatable="false">quickdicDirectory</string>
+    <string name="quickdicDirectoryTitle">Cartella de QuickDic</string>
+    <string name="quickdicDirectorySummary">Sa cartella in ue QuickDic archìviat sos ditzionàrios (bòidu pro sa cartella predefinida de quickDic in sa memòria esterna).</string>
+    <string name="choose">issèbera</string>
+    <string name="wordListFileKey" translatable="false">wordListFile</string>
+    <string name="wordListFileTitle">Documentu de lista de paràulas</string>
+    <string name="wordListFileSummary">S\'archìviu locale a ue s\'at a annànghere sa lista de paràulas.</string>
+    <string name="fontKey" translatable="false">font</string>
+    <string name="fontTitle">Caràtere de su ditzionàriu</string>
+    <string name="fontSummary">Caràtere impreadu pro ammustrare sos ditzionàrios.</string>
+    <string name="fontSizeKey" translatable="false">fontSize</string>
+    <string name="fontSizeTitle">Mannària de su caràtere</string>
+    <string name="fontSizeSummary">Sa mannària de su caràtere pro sas rigas de su ditzionàriu.</string>
+    <string name="saveOnlyFirstSubentryKey" translatable="false">saveOnlyFirstSubentry</string>
+    <string name="saveOnlyFirstSubentryTitle">Sarva sa prima suta-intrada ebbia</string>
+    <string name="saveOnlyFirstSubentrySummary">Pro sas intradas cun suta-intradas mùltiplas, iscrie petzi sa prima in sa lista de paràulas.</string>
+    <string name="clickOpensContextMenuKey" translatable="false">clickOpensContextMenu</string>
+    <string name="clickOpensContextMenuTitle">S\'incarcada aberit su menù de cuntestu</string>
+    <string name="clickOpensContextMenuSummary">Aberi su menù de cuntestu incarchende in sos elementos (sas incarcadas longas ant semper a abèrrere su menù de cuntestu).</string>
+    <string name="showPrevNextButtonsKey" translatable="false">showPrevNextButtons</string>
+    <string name="showPrevNextButtonsTitle">Ammustra sos butones cara a susu/a giosso</string>
+    <string name="showPrevNextButtonsSummary">Ammustra o cua sos butones de sas paràulas anteposta e imbeniente in sa vista de ditzionàriu.</string>
+    <string name="themeKey" translatable="false">theme</string>
+    <string name="themeTitle">Tema IU</string>
+    <string name="themeSummary">Tema de colores de s\'interfache de utente.</string>
+    <string name="chosenNotWritable">In sa cartella isseberada non si podet iscrìere, proa·nde una intre</string>
+
+    <string name="historySizeKey" translatable="false">historySize</string>
+    <string name="historySizeTitle">Intradas de cronologia de chirca</string>
+    <string name="historySizeSummary">Su nùmeru de intradas de cronologia de chirca de sarvare e ammustrare.</string>
+
+    <string name="commandHandlingKey" translatable="false">commandHandling</string>
+    <string name="commandHandlingTitle">Cumandos de Wiktionary</string>
+    <string name="commandHandlingSummary">Comente gestire sos cumandos de Wiktionary in sas intradas de sos ditzionàrios.</string>
+
+    <string name="wifiOnlyKey" translatable="false">wifiOnly</string>
+    <string name="wifiOnlyTitle">Iscarrigamentos petzi cun su WiFi/string>
+    <string name="wifiOnlySummary">Permite de iscarrigare sos ditzionàrios petzi cando ses connessu a su WiFi.</string>
+
+</resources>
